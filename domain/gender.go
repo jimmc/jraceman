@@ -1,7 +1,7 @@
 package domain
 
 // GenderRepo describes how Gender records are loaded and saved.
-type GenderRepo interace {
+type GenderRepo interface {
   FindById(ID string) (Gender, error)
   Save(Gender) error
 }

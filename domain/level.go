@@ -1,7 +1,7 @@
 package domain
 
 // LevelRepo describes how Level records are loaded and saved.
-type LevelRepo interace {
+type LevelRepo interface {
   FindById(ID string) (Level, error)
   Save(Level) error
 }

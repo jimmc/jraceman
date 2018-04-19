@@ -1,7 +1,7 @@
 package domain
 
 // SiteRepo describes how Site records are loaded and saved.
-type SiteRepo interace {
+type SiteRepo interface {
   FindById(ID string) (Site, error)
   Save(Site) error
 }

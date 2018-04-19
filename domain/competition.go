@@ -1,7 +1,7 @@
 package domain
 
 // CompetitionRepo describes how Competition records are loaded and saved.
-type CompetitionRepo interace {
+type CompetitionRepo interface {
   FindById(ID string) (Competition, error)
   Save(Competition) error
 }

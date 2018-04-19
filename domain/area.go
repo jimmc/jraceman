@@ -1,7 +1,7 @@
 package domain
 
 // AreaRepo describes how Area records are loaded and saved.
-type AreaRepo interace {
+type AreaRepo interface {
   FindById(ID string) (Area, error)
   Save(Area) error
 }
@@ -15,6 +15,6 @@ type Area struct {
   ExtraLanes int
 }
 
-func (a *Area) Site() (Site, error) {
+func (a *Area) Site() (*Site, error) {
   return nil, nil       // TODO - need a SiteRepo
 }

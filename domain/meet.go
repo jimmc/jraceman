@@ -1,7 +1,7 @@
 package domain
 
 // MeetRepo describes how Meet records are loaded and saved.
-type MeetRepo interace {
+type MeetRepo interface {
   FindById(ID string) (Meet, error)
   Save(Meet) error
 }
