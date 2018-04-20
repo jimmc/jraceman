@@ -17,6 +17,17 @@ type config struct {
   uiRoot string
 }
 
+type SiteRepoTest struct {}
+func (r *SiteRepoTest) FindById(ID string) (domain.Site, error) {
+  return domain.Site{
+    ID: ID,
+    Name: "Site" + ID,
+  }, nil
+}
+func (r *SiteRepoTest) Save(site domain.Site) error {
+  return nil
+}
+
 func main() {
   config := &config{}
 
@@ -25,19 +36,23 @@ func main() {
 
   flag.Parse()
 
-  area := domain.Area{}         // Just to use the domain package
+  domainRepos := &domain.Repos{
+    Site: &SiteRepoTest{},
+  }
   ph := app.Placeholder{}       // Just to use the app package
-  log.Printf("area is %v, ph is %v", area, ph)
+  log.Printf("ph is %v", ph)
 
   mux := http.NewServeMux()
 
   uiFileHandler := http.FileServer(http.Dir(config.uiRoot))
+  apiPrefix := "/api/"
   apiHandler := api.NewHandler(&api.Config{
-    Prefix: "/api/",
+    Prefix: apiPrefix,
+    DomainRepos: domainRepos,
   })
   mux.Handle("/ui/", http.StripPrefix("/ui/", uiFileHandler))
-  mux.Handle("/api/", apiHandler)
-  // mux.Handle("/api/", authHandler.RequireAuth(apiHandler))
+  mux.Handle(apiPrefix, apiHandler)
+  // mux.Handle(apiPrefix, authHandler.RequireAuth(apiHandler))
   // mux.Handle("/auth/", authHandler.ApiHandler)
   mux.HandleFunc("/", redirectToUi)
 

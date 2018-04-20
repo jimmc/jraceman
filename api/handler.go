@@ -3,6 +3,9 @@ package api
 import (
   "fmt"
   "net/http"
+
+  "github.com/jimmc/jracemango/api/crud"
+  "github.com/jimmc/jracemango/domain"
 )
 
 type handler struct {
@@ -11,13 +14,22 @@ type handler struct {
 
 type Config struct {
   Prefix string
+  DomainRepos *domain.Repos
 }
 
 func NewHandler(c *Config) http.Handler {
   h := handler{config: c}
   mux := http.NewServeMux()
+
+  crudPrefix := h.apiPrefix("crud")
+  crudConfig := &crud.Config{
+    Prefix: crudPrefix,
+    DomainRepos: c.DomainRepos,
+  }
+  crudHandler := crud.NewHandler(crudConfig)
+  mux.Handle(crudPrefix, crudHandler)
+
   mux.HandleFunc(h.apiPrefix("foo"), h.foo)
-  // mux.HandleFunc(h.apiPrefix("bar"), h.bar)
   return mux
 }
 
