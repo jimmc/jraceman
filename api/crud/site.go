@@ -51,7 +51,7 @@ func (h *handler) siteList(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) siteGet(w http.ResponseWriter, r *http.Request, path string) {
-  result, err := h.config.DomainRepos.Site.FindById(path)
+  result, err := h.config.DomainRepos.Site().FindById(path)
   if err != nil {
     http.Error(w, err.Error(), http.StatusBadRequest)
     return

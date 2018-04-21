@@ -7,25 +7,14 @@ import (
   "net/http"
   "strconv"
 
-  "github.com/jimmc/jracemango/domain"
   "github.com/jimmc/jracemango/api"
   "github.com/jimmc/jracemango/app"
+  "github.com/jimmc/jracemango/dbrepo"
 )
 
 type config struct {
   port int
   uiRoot string
-}
-
-type SiteRepoTest struct {}
-func (r *SiteRepoTest) FindById(ID string) (domain.Site, error) {
-  return domain.Site{
-    ID: ID,
-    Name: "Site" + ID,
-  }, nil
-}
-func (r *SiteRepoTest) Save(site domain.Site) error {
-  return nil
 }
 
 func main() {
@@ -36,9 +25,12 @@ func main() {
 
   flag.Parse()
 
-  domainRepos := &domain.Repos{
-    Site: &SiteRepoTest{},
+  dbRepos, err := dbrepo.Open()
+  if err != nil {
+    log.Fatal("Failed to open repository: %v", err)
   }
+  defer dbRepos.Close()
+
   ph := app.Placeholder{}       // Just to use the app package
   log.Printf("ph is %v", ph)
 
@@ -48,7 +40,7 @@ func main() {
   apiPrefix := "/api/"
   apiHandler := api.NewHandler(&api.Config{
     Prefix: apiPrefix,
-    DomainRepos: domainRepos,
+    DomainRepos: dbRepos,
   })
   mux.Handle("/ui/", http.StripPrefix("/ui/", uiFileHandler))
   mux.Handle(apiPrefix, apiHandler)

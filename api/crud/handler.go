@@ -13,7 +13,7 @@ type handler struct {
 
 type Config struct {
   Prefix string
-  DomainRepos *domain.Repos
+  DomainRepos domain.Repos
 }
 
 func NewHandler(c *Config) http.Handler {
