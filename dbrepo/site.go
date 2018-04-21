@@ -2,6 +2,7 @@ package dbrepo
 
 import (
   "database/sql"
+  "fmt"
 
   "github.com/jimmc/jracemango/domain"
 )
@@ -45,37 +46,34 @@ func (r *dbSiteRepo) Populate() error {
 }
 
 func (r *dbSiteRepo) FindById(ID string) (*domain.Site, error) {
-  rows, err := r.db.Query("select id, name from site where id=?", ID)
+  var site domain.Site
+  err := r.db.QueryRow("select id, name from site where id=?", ID).Scan(&site.ID, &site.Name)
     // Placeholder is ? for MySQL,$N for PostgreSQL,
     // SQLite uses either of those, Oracle is :param1
-  if err != nil {
-    return nil, err
-  }
-  defer rows.Close()
-  var site domain.Site
-  if !rows.Next() {
-    return nil, nil     // No data and no error
-  }
-  err = rows.Scan(&site.ID, &site.Name)
-  if err != nil {
-    return nil, err
-  }
-  // TODO - could call rows.Next again and return error if it is true
-  // (which means more than one matching row)
-  err = rows.Err()
   if err != nil {
     return nil, err
   }
   return &site, nil
 }
 
-func (r *dbSiteRepo) TestFindById(ID string) (*domain.Site, error) {
-  return &domain.Site{
-    ID: ID,
-    Name: "Site-" + ID,
-  }, nil
-}
-
 func (r *dbSiteRepo) Save(site *domain.Site) error {
+  // TODO - generate an ID if blank
+  sql := "insert into site(id, name) values(?, ?);"
+  stmt, err := r.db.Prepare(sql)        // TODO - do this in an init phase
+  if err != nil {
+    return err
+  }
+  defer stmt.Close()
+  res, err := stmt.Exec(site.ID, site.Name)
+  if err != nil {
+    return err
+  }
+  rowCnt, err := res.RowsAffected()
+  if err != nil {
+    return err
+  }
+  if rowCnt != 1 {
+    return fmt.Errorf("Row %s[%s] was not properly inserted", "site", site.ID);
+  }
   return nil
 }
