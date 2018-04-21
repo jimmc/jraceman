@@ -27,6 +27,10 @@ func (sc *siteCrud) FindById(ID string) (interface{}, error) {
   return sc.h.config.DomainRepos.Site().FindById(ID)
 }
 
+func (sc *siteCrud) DeleteById(ID string) error {
+  return sc.h.config.DomainRepos.Site().DeleteById(ID)
+}
+
 func (h *handler) site(w http.ResponseWriter, r *http.Request) {
   sc := &siteCrud{h}
   h.stdcrud(w, r, sc)

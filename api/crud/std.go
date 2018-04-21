@@ -13,13 +13,14 @@ type std interface {
   NewEntity() interface{}       // such as a new Site
   Save(entity interface{}) error        // function must cast entity to its type
   FindById(ID string) (interface{}, error)       // returns same type as NewEntity
+  DeleteById(ID string) error
 }
 
 func (h *handler) stdcrud(w http.ResponseWriter, r *http.Request, st std) {
   // TODO - check authorization
   entityType := st.EntityTypeName()
   entityID := strings.TrimPrefix(r.URL.Path, h.crudPrefix(entityType))
-  log.Printf("%s entityID: %s", entityType, entityID);
+  log.Printf("%s %s '%s'", r.Method, entityType, entityID);
   switch r.Method {
     case http.MethodGet:
       if entityID == "" {
@@ -98,6 +99,13 @@ func (h *handler) stdUpdate(w http.ResponseWriter, r *http.Request, st std, enti
 }
 
 func (h *handler) stdDelete(w http.ResponseWriter, r *http.Request, st std, entityID string) {
-  msg := fmt.Sprintf("Delete %s is not implemented", st.EntityTypeName())
-  http.Error(w, msg, http.StatusNotImplemented)
+  err := st.DeleteById(entityID)
+  if err != nil {
+    msg := fmt.Sprintf("Error deleting data: %v", err)
+    http.Error(w, msg, http.StatusBadRequest)
+    return
+  }
+  res := `{"status": "ok"}`
+  w.WriteHeader(http.StatusOK)
+  w.Write([]byte(res))
 }

@@ -77,3 +77,27 @@ func (r *dbSiteRepo) Save(site *domain.Site) error {
   }
   return nil
 }
+
+func (r *dbSiteRepo) DeleteById(ID string) error {
+  sql := "delete from site where id=?;"
+  stmt, err := r.db.Prepare(sql)        // TODO - do this in an init phase
+  if err != nil {
+    return err
+  }
+  defer stmt.Close()
+  res, err := stmt.Exec(ID)
+  if err != nil {
+    return err
+  }
+  rowCnt, err := res.RowsAffected()
+  if err != nil {
+    return err
+  }
+  if rowCnt == 0 {
+    return fmt.Errorf("No %s rows deleted", "site")
+  }
+  if rowCnt > 1 {
+    return fmt.Errorf("Deleted %d %s rows for ID %s", rowCnt, "site", ID)
+  }
+  return nil
+}
