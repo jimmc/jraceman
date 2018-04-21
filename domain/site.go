@@ -2,8 +2,8 @@ package domain
 
 // SiteRepo describes how Site records are loaded and saved.
 type SiteRepo interface {
-  FindById(ID string) (Site, error)
-  Save(Site) error
+  FindById(ID string) (*Site, error)
+  Save(*Site) error
 }
 
 // Site describes an event venue.

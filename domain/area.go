@@ -2,8 +2,8 @@ package domain
 
 // AreaRepo describes how Area records are loaded and saved.
 type AreaRepo interface {
-  FindById(ID string) (Area, error)
-  Save(Area) error
+  FindById(ID string) (*Area, error)
+  Save(*Area) error
 }
 
 // Area describes an event area such as a race course.
