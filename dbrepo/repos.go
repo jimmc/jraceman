@@ -2,9 +2,9 @@ package dbrepo
 
 import (
   "database/sql"
+  "fmt"
   "log"
-  // _ "github.com/go-sql-driver/mysql"
-  _ "github.com/proullon/ramsql/driver"
+  "strings"
 
   "github.com/jimmc/jracemango/domain"
 )
@@ -23,11 +23,16 @@ func (r *Repos) Site() domain.SiteRepo {
   return r.dbSite
 }
 
-func Open() (*Repos, error) {
-  dbtype := "ramsql"
-  dbloc := "TestDatabase"
-  // dbtype := "mysql"
-  // dbloc := "user:password@tcp(127.0.0.1:3306)/hello"
+// Open opens a database repository.
+// The repoPath argument is of the form dbtype:dbinfo,
+// such as "ramsql:TestDatabase" or "mysql:user:password@tcp(...)/hello".
+func Open(repoPath string) (*Repos, error) {
+  colon := strings.Index(repoPath, ":")
+  if colon <= 0 {
+    return nil, fmt.Errorf("Bad format for repoPath, it must have a DB type followed by a colon")
+  }
+  dbtype := repoPath[:colon]
+  dbloc := repoPath[colon+1:]
   log.Printf("Opening dbrepo type %s at %s", dbtype, dbloc)
   db, err := sql.Open(dbtype, dbloc)
   if err != nil {
@@ -44,12 +49,6 @@ func Open() (*Repos, error) {
     db: db,
     dbArea: &dbAreaRepo{db},
     dbSite: &dbSiteRepo{db},
-  }
-
-  // TODO - for testing, with ramsql, create tables
-  err = r.CreateTables()
-  if err == nil {
-    r.dbSite.Populate()
   }
 
   return r, err

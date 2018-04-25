@@ -10,6 +10,9 @@ import (
   "github.com/jimmc/jracemango/api"
   "github.com/jimmc/jracemango/app"
   "github.com/jimmc/jracemango/dbrepo"
+
+  // _ "github.com/go-sql-driver/mysql"
+  _ "github.com/proullon/ramsql/driver"
 )
 
 type config struct {
@@ -25,11 +28,19 @@ func main() {
 
   flag.Parse()
 
-  dbRepos, err := dbrepo.Open()
+  repoPath := "ramsql:TestDatabase"
+  // repoPath := "mysql:user:password@tcp(127.0.0.1:3306)/hello"
+  dbRepos, err := dbrepo.Open(repoPath)
   if err != nil {
-    log.Fatal("Failed to open repository: %v", err)
+    log.Fatalf("Failed to open repository: %v", err)
   }
   defer dbRepos.Close()
+
+  // TODO - for testing, with ramsql, create tables
+  err = dbRepos.CreateTables()
+  if err != nil {
+    log.Fatalf("Failed to create repository tables: %v", err)
+  }
 
   ph := app.Placeholder{}       // Just to use the app package
   log.Printf("ph is %v", ph)

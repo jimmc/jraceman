@@ -26,24 +26,6 @@ func (r *dbSiteRepo) CreateTable() error {
   return err
 }
 
-// For testing, put some data into our table
-func (r *dbSiteRepo) Populate() error {
-  columns := "INSERT into site(id, name) values ("
-  values := [] string {
-    "S1, 'Site One'",
-    "S2, 'Site Two'",
-    "S3, 'Site Three'",
-  }
-  for _, vv := range values {
-    sql := columns + vv + ");"
-    _, err := r.db.Exec(sql)
-    if err != nil {
-      return err
-    }
-  }
-  return nil
-}
-
 // Placeholder is ? for MySQL,$N for PostgreSQL,
 // SQLite uses either of those, Oracle is :param1
 
