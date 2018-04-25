@@ -5,6 +5,7 @@ type SiteRepo interface {
   FindById(ID string) (*Site, error)
   Save(*Site) error
   DeleteById(ID string) error
+  UpdateById(ID string, oldSite, newSite *Site) error
 }
 
 // Site describes an event venue.

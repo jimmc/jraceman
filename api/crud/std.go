@@ -14,6 +14,7 @@ type std interface {
   Save(entity interface{}) error        // function must cast entity to its type
   FindById(ID string) (interface{}, error)       // returns same type as NewEntity
   DeleteById(ID string) error
+  UpdateById(ID string, newEntity, oldEntity interface{}) error
 }
 
 func (h *handler) stdcrud(w http.ResponseWriter, r *http.Request, st std) {
@@ -54,22 +55,17 @@ func (h *handler) stdcrud(w http.ResponseWriter, r *http.Request, st std) {
 func (h *handler) stdCreate(w http.ResponseWriter, r *http.Request, st std) {
   decoder := json.NewDecoder(r.Body)
   entity := st.NewEntity()
-  err := decoder.Decode(entity)
-  if err != nil {
+  if err := decoder.Decode(entity); err != nil {
     msg := fmt.Sprintf("Error decoding JSON: %v", err)
     http.Error(w, msg, http.StatusBadRequest)
     return
   }
-  defer r.Body.Close()
-  err = st.Save(entity)
-  if err != nil {
+  if err := st.Save(entity); err != nil {
     msg := fmt.Sprintf("Error saving data: %v", err)
     http.Error(w, msg, http.StatusBadRequest)
     return
   }
-  res := `{"status": "ok"}`
-  w.WriteHeader(http.StatusOK)
-  w.Write([]byte(res))
+  h.stdOkResponse(w)
 }
 
 func (h *handler) stdList(w http.ResponseWriter, r *http.Request, st std) {
@@ -94,17 +90,38 @@ func (h *handler) stdGet(w http.ResponseWriter, r *http.Request, st std, entityI
 }
 
 func (h *handler) stdUpdate(w http.ResponseWriter, r *http.Request, st std, entityID string) {
-  msg := fmt.Sprintf("Update %s is not implemented", st.EntityTypeName())
-  http.Error(w, msg, http.StatusNotImplemented)
+  oldEntity, err := st.FindById(entityID)
+  if err != nil {
+    http.Error(w, err.Error(), http.StatusBadRequest)
+    return
+  }
+
+  decoder := json.NewDecoder(r.Body)
+  newEntity := st.NewEntity()
+  if err := decoder.Decode(newEntity); err != nil {
+    msg := fmt.Sprintf("Error decoding JSON: %v", err)
+    http.Error(w, msg, http.StatusBadRequest)
+    return
+  }
+
+  if err := st.UpdateById(entityID, oldEntity, newEntity); err != nil {
+    msg := fmt.Sprintf("Error updating data: %v", err)
+    http.Error(w, msg, http.StatusBadRequest)
+    return
+  }
+  h.stdOkResponse(w)
 }
 
 func (h *handler) stdDelete(w http.ResponseWriter, r *http.Request, st std, entityID string) {
-  err := st.DeleteById(entityID)
-  if err != nil {
+  if err := st.DeleteById(entityID); err != nil {
     msg := fmt.Sprintf("Error deleting data: %v", err)
     http.Error(w, msg, http.StatusBadRequest)
     return
   }
+  h.stdOkResponse(w)
+}
+
+func (h *handler) stdOkResponse(w http.ResponseWriter) {
   res := `{"status": "ok"}`
   w.WriteHeader(http.StatusOK)
   w.Write([]byte(res))

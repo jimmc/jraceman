@@ -2,6 +2,7 @@ package dbrepo
 
 import (
   "database/sql"
+  "fmt"
 
   "github.com/jimmc/jracemango/domain"
 )
@@ -49,4 +50,8 @@ func (r *dbSiteRepo) DeleteById(ID string) error {
   sql := "delete from site where id=?;"
   res, err := r.db.Exec(sql, ID)
   return requireOneResult(res, err, "Deleted", "site", ID)
+}
+
+func (r *dbSiteRepo) UpdateById(ID string, oldSite, newSite *domain.Site) error {
+  return fmt.Errorf("UpdateById for Site is not implemented")   // TODO
 }

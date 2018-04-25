@@ -31,7 +31,14 @@ func (sc *siteCrud) DeleteById(ID string) error {
   return sc.h.config.DomainRepos.Site().DeleteById(ID)
 }
 
+func (sc *siteCrud) UpdateById(ID string, oldEntity, newEntity interface{}) error {
+  var oldSite *domain.Site = oldEntity.(*domain.Site)
+  var newSite *domain.Site = newEntity.(*domain.Site)
+  return sc.h.config.DomainRepos.Site().UpdateById(ID, oldSite, newSite)
+}
+
 func (h *handler) site(w http.ResponseWriter, r *http.Request) {
   sc := &siteCrud{h}
   h.stdcrud(w, r, sc)
 }
+
