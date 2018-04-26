@@ -2,7 +2,6 @@ package dbrepo
 
 import (
   "database/sql"
-  "fmt"
 
   "github.com/jimmc/jracemango/domain"
 )
@@ -41,8 +40,8 @@ func (r *dbSiteRepo) FindById(ID string) (*domain.Site, error) {
 
 func (r *dbSiteRepo) Save(site *domain.Site) error {
   // TODO - generate an ID if blank
-  insertSql := "insert into site(id, name) values(?, ?);"
-  res, err := r.db.Exec(insertSql, site.ID, site.Name)
+  sql := "insert into site(id, name) values(?, ?);"
+  res, err := r.db.Exec(sql, site.ID, site.Name)
   return requireOneResult(res, err, "Inserted", "site", site.ID)
 }
 
@@ -53,5 +52,7 @@ func (r *dbSiteRepo) DeleteById(ID string) error {
 }
 
 func (r *dbSiteRepo) UpdateById(ID string, oldSite, newSite *domain.Site, diffs domain.Diffs) error {
-  return fmt.Errorf("UpdateById for Site is not implemented")   // TODO
+  sql, vals := modsToSql("site", diffs.Modified(), ID)
+  res, err := r.db.Exec(sql, vals...)
+  return requireOneResult(res, err, "Updated", "site", ID)
 }
