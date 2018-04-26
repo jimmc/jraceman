@@ -23,7 +23,7 @@ func TestSiteHappyPath(t *testing.T) {
   if err := siteRepo.Populate(); err != nil {
     t.Fatalf("Populate failed: %v", err)
   }
-  site, err := siteRepo.FindById("S4")
+  site, err := siteRepo.FindByID("S4")
   if err == nil {
     t.Errorf("Did not get error as expected from FindByID %s", "S4")
   }
@@ -37,7 +37,7 @@ func TestSiteHappyPath(t *testing.T) {
     t.Errorf("Error saving new site record")
   }
 
-  site, err = siteRepo.FindById("S4")
+  site, err = siteRepo.FindByID("S4")
   if err != nil {
     t.Fatalf("Error retrieving just-added site")
   }

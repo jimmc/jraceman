@@ -23,18 +23,18 @@ func (sc *siteCrud) Save(entity interface{}) error {
   return sc.h.config.DomainRepos.Site().Save(site)
 }
 
-func (sc *siteCrud) FindById(ID string) (interface{}, error) {
-  return sc.h.config.DomainRepos.Site().FindById(ID)
+func (sc *siteCrud) FindByID(ID string) (interface{}, error) {
+  return sc.h.config.DomainRepos.Site().FindByID(ID)
 }
 
-func (sc *siteCrud) DeleteById(ID string) error {
-  return sc.h.config.DomainRepos.Site().DeleteById(ID)
+func (sc *siteCrud) DeleteByID(ID string) error {
+  return sc.h.config.DomainRepos.Site().DeleteByID(ID)
 }
 
-func (sc *siteCrud) UpdateById(ID string, oldEntity, newEntity interface{}, diffs domain.Diffs) error {
+func (sc *siteCrud) UpdateByID(ID string, oldEntity, newEntity interface{}, diffs domain.Diffs) error {
   var oldSite *domain.Site = oldEntity.(*domain.Site)
   var newSite *domain.Site = newEntity.(*domain.Site)
-  return sc.h.config.DomainRepos.Site().UpdateById(ID, oldSite, newSite, diffs)
+  return sc.h.config.DomainRepos.Site().UpdateByID(ID, oldSite, newSite, diffs)
 }
 
 func (h *handler) site(w http.ResponseWriter, r *http.Request) {

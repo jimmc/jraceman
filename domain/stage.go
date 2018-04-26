@@ -2,7 +2,7 @@ package domain
 
 // StageRepo describes how Stage records are loaded and saved.
 type StageRepo interface {
-  FindById(ID string) (Stage, error)
+  FindByID(ID string) (Stage, error)
   Save(Stage) error
 }
 

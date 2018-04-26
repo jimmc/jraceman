@@ -14,9 +14,9 @@ type std interface {
   EntityTypeName() string   // such as "site"
   NewEntity() interface{}       // such as a new Site
   Save(entity interface{}) error        // function must cast entity to its type
-  FindById(ID string) (interface{}, error)       // returns same type as NewEntity
-  DeleteById(ID string) error
-  UpdateById(ID string, newEntity, oldEntity interface{}, diffs domain.Diffs) error
+  FindByID(ID string) (interface{}, error)       // returns same type as NewEntity
+  DeleteByID(ID string) error
+  UpdateByID(ID string, newEntity, oldEntity interface{}, diffs domain.Diffs) error
 }
 
 func (h *handler) stdcrud(w http.ResponseWriter, r *http.Request, st std) {
@@ -76,7 +76,7 @@ func (h *handler) stdList(w http.ResponseWriter, r *http.Request, st std) {
 }
 
 func (h *handler) stdGet(w http.ResponseWriter, r *http.Request, st std, entityID string) {
-  result, err := st.FindById(entityID)
+  result, err := st.FindByID(entityID)
   if err != nil {
     http.Error(w, err.Error(), http.StatusBadRequest)
     return
@@ -92,7 +92,7 @@ func (h *handler) stdGet(w http.ResponseWriter, r *http.Request, st std, entityI
 }
 
 func (h *handler) stdUpdate(w http.ResponseWriter, r *http.Request, st std, entityID string) {
-  oldEntity, err := st.FindById(entityID)
+  oldEntity, err := st.FindByID(entityID)
   if err != nil {
     http.Error(w, err.Error(), http.StatusBadRequest)
     return
@@ -114,7 +114,7 @@ func (h *handler) stdUpdate(w http.ResponseWriter, r *http.Request, st std, enti
   }
   log.Printf("entity diffs: %v", diffs.Modified())
 
-  if err := st.UpdateById(entityID, oldEntity, newEntity, diffs); err != nil {
+  if err := st.UpdateByID(entityID, oldEntity, newEntity, diffs); err != nil {
     msg := fmt.Sprintf("Error updating data: %v", err)
     http.Error(w, msg, http.StatusBadRequest)
     return
@@ -123,7 +123,7 @@ func (h *handler) stdUpdate(w http.ResponseWriter, r *http.Request, st std, enti
 }
 
 func (h *handler) stdDelete(w http.ResponseWriter, r *http.Request, st std, entityID string) {
-  if err := st.DeleteById(entityID); err != nil {
+  if err := st.DeleteByID(entityID); err != nil {
     msg := fmt.Sprintf("Error deleting data: %v", err)
     http.Error(w, msg, http.StatusBadRequest)
     return

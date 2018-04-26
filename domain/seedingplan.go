@@ -2,7 +2,7 @@ package domain
 
 // SeedingPlanRepo describes how SeedingPlan records are loaded and saved.
 type SeedingPlanRepo interface {
-  FindById(ID string) (SeedingPlan, error)
+  FindByID(ID string) (SeedingPlan, error)
   Save(SeedingPlan) error
 }
 

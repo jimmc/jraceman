@@ -29,7 +29,7 @@ func (r *dbSiteRepo) CreateTable() error {
 // Placeholder is ? for MySQL,$N for PostgreSQL,
 // SQLite uses either of those, Oracle is :param1
 
-func (r *dbSiteRepo) FindById(ID string) (*domain.Site, error) {
+func (r *dbSiteRepo) FindByID(ID string) (*domain.Site, error) {
   var site domain.Site
   err := r.db.QueryRow("select id, name from site where id=?", ID).Scan(&site.ID, &site.Name)
   if err != nil {
@@ -45,13 +45,13 @@ func (r *dbSiteRepo) Save(site *domain.Site) error {
   return requireOneResult(res, err, "Inserted", "site", site.ID)
 }
 
-func (r *dbSiteRepo) DeleteById(ID string) error {
+func (r *dbSiteRepo) DeleteByID(ID string) error {
   sql := "delete from site where id=?;"
   res, err := r.db.Exec(sql, ID)
   return requireOneResult(res, err, "Deleted", "site", ID)
 }
 
-func (r *dbSiteRepo) UpdateById(ID string, oldSite, newSite *domain.Site, diffs domain.Diffs) error {
+func (r *dbSiteRepo) UpdateByID(ID string, oldSite, newSite *domain.Site, diffs domain.Diffs) error {
   sql, vals := modsToSql("site", diffs.Modified(), ID)
   res, err := r.db.Exec(sql, vals...)
   return requireOneResult(res, err, "Updated", "site", ID)

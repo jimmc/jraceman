@@ -2,10 +2,10 @@ package domain
 
 // SiteRepo describes how Site records are manipulated in the repository.
 type SiteRepo interface {
-  FindById(ID string) (*Site, error)
+  FindByID(ID string) (*Site, error)
   Save(*Site) error
-  DeleteById(ID string) error
-  UpdateById(ID string, oldSite, newSite *Site, diffs Diffs) error
+  DeleteByID(ID string) error
+  UpdateByID(ID string, oldSite, newSite *Site, diffs Diffs) error
 }
 
 // Site describes an event venue.
