@@ -6,6 +6,8 @@ import (
   "log"
   "net/http"
   "strings"
+
+  "github.com/jimmc/jracemango/domain"
 )
 
 type std interface {
@@ -14,7 +16,7 @@ type std interface {
   Save(entity interface{}) error        // function must cast entity to its type
   FindById(ID string) (interface{}, error)       // returns same type as NewEntity
   DeleteById(ID string) error
-  UpdateById(ID string, newEntity, oldEntity interface{}) error
+  UpdateById(ID string, newEntity, oldEntity interface{}, diffs domain.Diffs) error
 }
 
 func (h *handler) stdcrud(w http.ResponseWriter, r *http.Request, st std) {
@@ -104,7 +106,15 @@ func (h *handler) stdUpdate(w http.ResponseWriter, r *http.Request, st std, enti
     return
   }
 
-  if err := st.UpdateById(entityID, oldEntity, newEntity); err != nil {
+  diffs, equal := deepDiff(oldEntity, newEntity)
+  if equal {
+    msg := fmt.Sprintf("No change specified")   // Maybe this should not be an error?
+    http.Error(w, msg, http.StatusBadRequest)
+    return
+  }
+  log.Printf("entity diffs: %v", diffs.Modified())
+
+  if err := st.UpdateById(entityID, oldEntity, newEntity, diffs); err != nil {
     msg := fmt.Sprintf("Error updating data: %v", err)
     http.Error(w, msg, http.StatusBadRequest)
     return

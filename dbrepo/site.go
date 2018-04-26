@@ -52,6 +52,6 @@ func (r *dbSiteRepo) DeleteById(ID string) error {
   return requireOneResult(res, err, "Deleted", "site", ID)
 }
 
-func (r *dbSiteRepo) UpdateById(ID string, oldSite, newSite *domain.Site) error {
+func (r *dbSiteRepo) UpdateById(ID string, oldSite, newSite *domain.Site, diffs domain.Diffs) error {
   return fmt.Errorf("UpdateById for Site is not implemented")   // TODO
 }
