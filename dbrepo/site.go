@@ -11,17 +11,7 @@ type dbSiteRepo struct {
 }
 
 func (r *dbSiteRepo) CreateTable() error {
-  sql := `CREATE TABLE site (
-      id string primary key,
-      name string,
-      street string,
-      street2 string,
-      city string,
-      state string,
-      zip string,
-      country string,
-      phone string,
-      fax string);`
+  sql := stdCreateTableSqlFromStruct("site", domain.Site{})
   _, err := r.db.Exec(sql)
   return err
 }
@@ -30,12 +20,12 @@ func (r *dbSiteRepo) CreateTable() error {
 // SQLite uses either of those, Oracle is :param1
 
 func (r *dbSiteRepo) FindByID(ID string) (*domain.Site, error) {
-  var site domain.Site
-  err := r.db.QueryRow("select id, name from site where id=?", ID).Scan(&site.ID, &site.Name)
-  if err != nil {
+  site := &domain.Site{}
+  sql, targets := stdFindByIDSqlFromStruct("site", site)
+  if err := r.db.QueryRow(sql, ID).Scan(targets...); err != nil {
     return nil, err
   }
-  return &site, nil
+  return site, nil
 }
 
 func (r *dbSiteRepo) Save(site *domain.Site) error {

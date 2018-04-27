@@ -12,12 +12,12 @@ type SiteRepo interface {
 type Site struct {
   ID string
   Name string
-  Street string
-  Street2 string
-  City string
-  State string
-  Zip string
-  Country string
-  Phone string
-  Fax string
+  Street *string
+  Street2 *string
+  City *string
+  State *string
+  Zip *string
+  Country *string
+  Phone *string
+  Fax *string
 }

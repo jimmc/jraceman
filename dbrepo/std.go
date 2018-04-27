@@ -4,8 +4,50 @@ import (
   "database/sql"
   "fmt"
   "log"
+  "reflect"
   "strings"
 )
+
+// StdCreateTableSqlFromStruct generates an SQL CREATE TABLE command using
+// the fields of the given struct. All field names are converted to lower case.
+func stdCreateTableSqlFromStruct(tableName string, entity interface{}) string {
+  val := reflect.Indirect(reflect.ValueOf(entity))
+  typ := val.Type()
+  numFields := typ.NumField()
+  columnSpecs := make([]string, numFields)
+  for i := 0; i < numFields; i++ {
+    field := typ.Field(i)
+    columnName := strings.ToLower(field.Name)
+    goTypeName := field.Type.String()     // string, *string, int
+    goTypeName = strings.TrimPrefix(goTypeName, "*")
+    columnType := goTypeName            // TODO - convert as required
+    columnSpec := columnName + " " + columnType
+    if columnName == "id" {
+      columnSpec = columnSpec + " primary key"
+    }
+    columnSpecs[i] = columnSpec
+  }
+  sql := "CREATE TABLE " + tableName + "(" + strings.Join(columnSpecs, ",") + ");"
+  return sql
+}
+
+// StdFindByIDSqlFromStruct generatesand SQL QUERY statement using
+// thefields of the give struct.
+func stdFindByIDSqlFromStruct(tableName string, entity interface{}) (string, []interface{}) {
+  val := reflect.Indirect(reflect.ValueOf(entity))
+  typ := val.Type()
+  numFields := typ.NumField()
+  columnNames := make([]string, numFields)
+  targets := make([]interface{}, numFields)
+  for i := 0; i < numFields; i++ {
+    field := typ.Field(i)
+    columnName := strings.ToLower(field.Name)
+    columnNames[i] = columnName
+    targets[i] = val.Field(i).Addr().Interface()
+  }
+  sql := "SELECT " + strings.Join(columnNames, ",") + " from " + tableName + " where id=?"
+  return sql, targets
+}
 
 // RequireOneResult gets the result of sql.Stmt.Exec and verifies that it
 // affected exactly one row, which should be the case for operations that
