@@ -43,6 +43,12 @@ func (h *handler) stdcrud(w http.ResponseWriter, r *http.Request, st std) {
       } else {
         h.stdUpdate(w, r, st ,entityID)
       }
+    case http.MethodPatch:
+      if entityID == "" {
+        http.Error(w, "Entity ID must be specified on a PATCH", http.StatusBadRequest)
+      } else {
+        h.stdPatch(w, r, st ,entityID)
+      }
     case http.MethodDelete:
       if entityID == "" {
         http.Error(w, "Entity ID must be specified on a DELETE", http.StatusBadRequest)
@@ -107,6 +113,43 @@ func (h *handler) stdUpdate(w http.ResponseWriter, r *http.Request, st std, enti
   }
 
   diffs, equal := deepDiff(oldEntity, newEntity)
+  if equal {
+    msg := fmt.Sprintf("No change specified")   // Maybe this should not be an error?
+    http.Error(w, msg, http.StatusBadRequest)
+    return
+  }
+  log.Printf("entity diffs: %v", diffs.Modified())
+
+  if err := st.UpdateByID(entityID, oldEntity, newEntity, diffs); err != nil {
+    msg := fmt.Sprintf("Error updating data: %v", err)
+    http.Error(w, msg, http.StatusBadRequest)
+    return
+  }
+  h.stdOkResponse(w)
+}
+
+func (h *handler) stdPatch(w http.ResponseWriter, r *http.Request, st std, entityID string) {
+  oldEntity, err := st.FindByID(entityID)
+  if err != nil {
+    http.Error(w, err.Error(), http.StatusBadRequest)
+    return
+  }
+
+  decoder := json.NewDecoder(r.Body)
+  var patch interface{}
+  if err := decoder.Decode(&patch); err != nil {
+    msg := fmt.Sprintf("Error decoding JSON patch: %v", err)
+    http.Error(w, msg, http.StatusBadRequest)
+    return
+  }
+
+  newEntity := st.NewEntity()
+  diffs, equal, err := patchToDiffs(oldEntity, newEntity, patch)
+  if err != nil {
+    msg := fmt.Sprintf("Error merging JSON patch: %v", err)
+    http.Error(w, msg, http.StatusBadRequest)
+    return
+  }
   if equal {
     msg := fmt.Sprintf("No change specified")   // Maybe this should not be an error?
     http.Error(w, msg, http.StatusBadRequest)
