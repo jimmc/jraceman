@@ -2,6 +2,7 @@ package dbrepo
 
 import (
   "database/sql"
+  "io"
 
   "github.com/jimmc/jracemango/domain"
 )
@@ -42,4 +43,12 @@ func (r *dbSiteRepo) UpdateByID(ID string, oldSite, newSite *domain.Site, diffs 
   sql, vals := modsToSql("site", diffs.Modified(), ID)
   res, err := r.db.Exec(sql, vals...)
   return requireOneResult(res, err, "Updated", "site", ID)
+}
+
+func (r *dbSiteRepo) Export(dbr *Repos, w io.Writer) error {
+  if err := dbr.exportTableHeaderFromStruct(w, "site", &domain.Site{}); err != nil {
+    return err
+  }
+  io.WriteString(w, "#TODO - output table data for site table\n")
+  return nil
 }

@@ -10,6 +10,21 @@ import (
 // Placeholder is ? for MySQL,$N for PostgreSQL,
 // SQLite uses either of those, Oracle is :param1
 
+// StdColumnNamesFromStruct generates a list of column names
+// based on the fields of the given struct. For each field in the struct:
+//   * The field name is converted to lower case.
+func stdColumnNamesFromStruct(entity interface{}) []string {
+  val := reflect.Indirect(reflect.ValueOf(entity))
+  typ := val.Type()
+  numFields := typ.NumField()
+  columnNames := make([]string, numFields)
+  for i := 0; i < numFields; i++ {
+    field := typ.Field(i)
+    columnNames[i] = strings.ToLower(field.Name)
+  }
+  return columnNames
+}
+
 // StdCreateTableSqlFromStruct generates an SQL CREATE TABLE command using
 // the fields of the given struct. For each field in the struct:
 //   * The field name is converted to lower case for the column name.
