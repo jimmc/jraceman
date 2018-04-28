@@ -4,8 +4,8 @@ package domain
 type SiteRepo interface {
   FindByID(ID string) (*Site, error)
   Save(*Site) error
-  DeleteByID(ID string) error
   UpdateByID(ID string, oldSite, newSite *Site, diffs Diffs) error
+  DeleteByID(ID string) error
 }
 
 // Site describes an event venue.

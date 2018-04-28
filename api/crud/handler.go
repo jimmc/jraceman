@@ -19,6 +19,7 @@ type Config struct {
 func NewHandler(c *Config) http.Handler {
   h := handler{config: c}
   mux := http.NewServeMux()
+  mux.HandleFunc(h.crudPrefix("area"), h.area)
   mux.HandleFunc(h.crudPrefix("site"), h.site)
   return mux
 }

@@ -55,9 +55,15 @@ func Open(repoPath string) (*Repos, error) {
 }
 
 func (r *Repos) CreateTables() error {
-  err := r.dbSite.CreateTable()
-  log.Printf("Site.CreateTable error result: %v", err)
-  return err
+  if err := r.dbSite.CreateTable(); err != nil {
+    return fmt.Errorf("error creating Site table: %v", err)
+  }
+
+  if err := r.dbArea.CreateTable(); err != nil {
+    return fmt.Errorf("error creating Area table: %v", err)
+  }
+
+  return nil
 }
 
 func (r *Repos) Close() {

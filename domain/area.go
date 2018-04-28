@@ -4,6 +4,8 @@ package domain
 type AreaRepo interface {
   FindByID(ID string) (*Area, error)
   Save(*Area) error
+  UpdateByID(ID string, oldArea, newArea *Area, diffs Diffs) error
+  DeleteByID(ID string) error
 }
 
 // Area describes an event area such as a race course.
