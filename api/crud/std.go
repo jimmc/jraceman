@@ -10,6 +10,8 @@ import (
   "github.com/jimmc/jracemango/domain"
 )
 
+// Std defines the type-specific methods that are needed by the generic
+// CRUD code.
 type std interface {
   EntityTypeName() string   // such as "site"
   NewEntity() interface{}       // such as a new Site
@@ -19,6 +21,10 @@ type std interface {
   UpdateByID(ID string, newEntity, oldEntity interface{}, diffs domain.Diffs) error
 }
 
+// StdCrud is an http handler that takes care of most of the work for
+// CRUD requests on our domain types. The API CRUD handler for a specific
+// type turns around and calls this handler with a type-specific std that
+// defines the type-specific methods needed by this handler.
 func (h *handler) stdcrud(w http.ResponseWriter, r *http.Request, st std) {
   // TODO - check authorization
   entityType := st.EntityTypeName()
@@ -77,6 +83,8 @@ func (h *handler) stdCreate(w http.ResponseWriter, r *http.Request, st std) {
 }
 
 func (h *handler) stdList(w http.ResponseWriter, r *http.Request, st std) {
+  // TODO - use query parameters for offset and limit to control the query
+  // and allow paging through the entire list.
   msg := fmt.Sprintf("List of %s is not implemented", st.EntityTypeName())
   http.Error(w, msg, http.StatusNotImplemented)
 }

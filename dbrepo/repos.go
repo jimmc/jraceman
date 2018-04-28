@@ -9,6 +9,7 @@ import (
   "github.com/jimmc/jracemango/domain"
 )
 
+// Repos implements the domain.Repos interface.
 type Repos struct {
   db *sql.DB
   dbArea *dbAreaRepo
@@ -26,6 +27,8 @@ func (r *Repos) Site() domain.SiteRepo {
 // Open opens a database repository.
 // The repoPath argument is of the form dbtype:dbinfo,
 // such as "ramsql:TestDatabase" or "mysql:user:password@tcp(...)/hello".
+// Note, however, that this package does not import any sql drivers;
+// the main program should import whatever drivers it wants to use.
 func Open(repoPath string) (*Repos, error) {
   colon := strings.Index(repoPath, ":")
   if colon <= 0 {
@@ -54,6 +57,9 @@ func Open(repoPath string) (*Repos, error) {
   return r, err
 }
 
+// CreateTables creates all of the tables in a new database.
+// This method is not idempotent, it will fail if any of the
+// tables already exist.
 func (r *Repos) CreateTables() error {
   if err := r.dbSite.CreateTable(); err != nil {
     return fmt.Errorf("error creating Site table: %v", err)
@@ -66,6 +72,7 @@ func (r *Repos) CreateTables() error {
   return nil
 }
 
+// Close closes the database.
 func (r *Repos) Close() {
   if r.db == nil {
     return

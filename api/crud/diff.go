@@ -1,5 +1,8 @@
 package crud
 
+// This file contains some wrappers around some external packages
+// to make it easier to replace them if desired.
+
 import (
   "encoding/json"
   "fmt"
@@ -14,6 +17,8 @@ type diffReader struct {
   messagediff *messagediff.Diff
 }
 
+// Modified returns a map of the fields that differ between the original
+// old and new structs.
 func (d *diffReader) Modified() map[string]interface{} {
   mods := make(map[string]interface{})
   for k, v := range d.messagediff.Modified {
@@ -23,6 +28,7 @@ func (d *diffReader) Modified() map[string]interface{} {
   return mods
 }
 
+// DeepDiff compares two structs and generates a diff.
 func deepDiff(oldEntity, newEntity interface{}) (diffs domain.Diffs, equal bool) {
   diff, equal := messagediff.DeepDiff(oldEntity, newEntity)
   return &diffReader{

@@ -11,11 +11,13 @@ type handler struct {
   config *Config
 }
 
+// Config provides configuration of the http handler for CRUD calls.
 type Config struct {
   Prefix string
   DomainRepos domain.Repos
 }
 
+// NewHandler creates the http handler for CRUD calls.
 func NewHandler(c *Config) http.Handler {
   h := handler{config: c}
   mux := http.NewServeMux()

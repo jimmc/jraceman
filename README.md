@@ -19,3 +19,9 @@ To run the unit tests:
     go test ./...
 
 ### Documentation
+
+To view the go documentation in your web browser:
+
+    godoc -http=":6060"
+
+Then open [localhost:6060](http://localhost:6060/) in your browser.

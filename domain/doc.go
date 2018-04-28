@@ -1,5 +1,5 @@
 /*
-The domain package defines the domain entities used in jraceman.
+Package domain defines the domain entities used in jraceman.
 These are the Go structs that are used for all of the app-specific
 algorithms, and define the canonical forms of the data.
 

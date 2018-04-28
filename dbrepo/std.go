@@ -12,7 +12,11 @@ import (
 // SQLite uses either of those, Oracle is :param1
 
 // StdCreateTableSqlFromStruct generates an SQL CREATE TABLE command using
-// the fields of the given struct. All field names are converted to lower case.
+// the fields of the given struct. For each field in the struct:
+// * The field name is converted to lower case for the column name.
+// * int and string fields are declared as that same type column.
+// * The id field is declared as primary key.
+// * Non-pointer fields are declared as not null.
 func stdCreateTableSqlFromStruct(tableName string, entity interface{}) string {
   val := reflect.Indirect(reflect.ValueOf(entity))
   typ := val.Type()
@@ -39,7 +43,8 @@ func stdCreateTableSqlFromStruct(tableName string, entity interface{}) string {
 }
 
 // StdFindByIDSqlFromStruct generates an SQL QUERY statement using
-// the fields of the given struct.
+// the fields of the given struct. For each field in the struct:
+// * The field name is converted to lower case.
 func stdFindByIDSqlFromStruct(tableName string, entity interface{}) (string, []interface{}) {
   val := reflect.Indirect(reflect.ValueOf(entity))
   typ := val.Type()
@@ -58,7 +63,9 @@ func stdFindByIDSqlFromStruct(tableName string, entity interface{}) (string, []i
 }
 
 // StdInsertSqlFromStruct generates an SQL INSERT statement using
-// the fields of the given struct.
+// the fields of the given struct. For each field in the struct:
+// * If the field is a nil pointer, it is ignore.
+// * The field name is converted to lower case.
 func stdInsertSqlFromStruct(tableName string, entity interface{}) (string, []interface{}) {
   val := reflect.Indirect(reflect.ValueOf(entity))
   typ := val.Type()
@@ -111,7 +118,9 @@ func requireOneResult(res sql.Result, err error, action, entityType, ID string) 
 
 // ColumnsUpdateStringAndValues generates a string for the column-and-values portion
 // of an SQL update statement, in the form "col1 = ?, col2 = ?", and also returns
-// an array of values that correspond to those columns.
+// an array of values that correspond to those columns. For each field in the map:
+// * The field name is converted to lower case.
+// * If the field is a nil pointer, the value NULL is used.
 func columnsUpdateStringAndVals(mods map[string]interface{}) (string, []interface{}) {
   var keys []string
   var vals []interface{}
