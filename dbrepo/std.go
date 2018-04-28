@@ -1,7 +1,6 @@
 package dbrepo
 
 import (
-  "database/sql"
   "fmt"
   "log"
   "reflect"
@@ -64,7 +63,7 @@ func stdFindByIDSqlFromStruct(tableName string, entity interface{}) (string, []i
 
 // StdInsertSqlFromStruct generates an SQL INSERT statement using
 // the fields of the given struct. For each field in the struct:
-//   * If the field is a nil pointer, it is ignore.
+//   * If the field is a nil pointer, it is ignored.
 //   * The field name is converted to lower case.
 func stdInsertSqlFromStruct(tableName string, entity interface{}) (string, []interface{}) {
   val := reflect.Indirect(reflect.ValueOf(entity))
@@ -94,12 +93,18 @@ func stdInsertSqlFromStruct(tableName string, entity interface{}) (string, []int
   return sql, values
 }
 
+// We need only the RowsAffected function from the database/sql.Result interface.
+type sqlRowsAffected interface {
+  RowsAffected() (int64, error)
+}
+
 // RequireOneResult gets the result of sql.Stmt.Exec and verifies that it
 // affected exactly one row, which should be the case for operations that
-// use the entity ID. The action string is used in error messages, and
+// use the entity ID. The res argument is typically a sql.Result.
+// The action string is used in error messages, and
 // should be capitalized and past tense, such as "Deleted".
 // The entityType should the name of the entity, such as "site".
-func requireOneResult(res sql.Result, err error, action, entityType, ID string) error {
+func requireOneResult(res sqlRowsAffected, err error, action, entityType, ID string) error {
   if err != nil {
     return err
   }
@@ -145,7 +150,7 @@ func columnsUpdateStringAndVals(mods map[string]interface{}) (string, []interfac
 func modsToSql(table string, mods map[string]interface{}, ID string) (string, []interface{}) {
   log.Printf("mods = %v", mods)
   kvString, vals := columnsUpdateStringAndVals(mods)
-  updateSql := "update " + table + " set " + kvString + " where id = ?"
+  updateSql := "update " + table + " set " + kvString + " where id = ?;"
   vals = append(vals, ID)
   log.Printf("updateSql = %q, vals = %v", updateSql, vals)
   return updateSql, vals
