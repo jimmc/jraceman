@@ -16,9 +16,6 @@ func (r *dbSiteRepo) CreateTable() error {
   return err
 }
 
-// Placeholder is ? for MySQL,$N for PostgreSQL,
-// SQLite uses either of those, Oracle is :param1
-
 func (r *dbSiteRepo) FindByID(ID string) (*domain.Site, error) {
   site := &domain.Site{}
   sql, targets := stdFindByIDSqlFromStruct("site", site)
@@ -30,13 +27,13 @@ func (r *dbSiteRepo) FindByID(ID string) (*domain.Site, error) {
 
 func (r *dbSiteRepo) Save(site *domain.Site) error {
   // TODO - generate an ID if blank
-  sql := "insert into site(id, name) values(?, ?);"
-  res, err := r.db.Exec(sql, site.ID, site.Name)
+  sql, values := stdInsertSqlFromStruct("site", site)
+  res, err := r.db.Exec(sql, values...)
   return requireOneResult(res, err, "Inserted", "site", site.ID)
 }
 
 func (r *dbSiteRepo) DeleteByID(ID string) error {
-  sql := "delete from site where id=?;"
+  sql := stdDeleteByIDSql("site")
   res, err := r.db.Exec(sql, ID)
   return requireOneResult(res, err, "Deleted", "site", ID)
 }
