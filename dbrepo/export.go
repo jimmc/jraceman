@@ -10,12 +10,18 @@ func (r *Repos) Export(w io.Writer) error {
   if err := r.exportHeader(w); err != nil {
     return err
   }
-  if err := r.dbArea.Export(r, w); err != nil {
-    return err
-  }
+
+  // The order of output of the tables is important: tables with
+  // foreign keys should be after the tables the point to.
+
   if err := r.dbSite.Export(r, w); err != nil {
     return err
   }
+
+  if err := r.dbArea.Export(r, w); err != nil {
+    return err
+  }
+
   return nil
 }
 
