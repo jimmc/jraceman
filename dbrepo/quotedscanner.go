@@ -11,6 +11,7 @@ import (
 const (
   TokenErr = iota
   TokenComma
+  TokenNull
   TokenInt
   TokenBool
   TokenString
@@ -36,6 +37,51 @@ func NewQuotedScanner(line string) *QuotedScanner {
   q.runes = []rune(strings.TrimSpace(line))
   q.pos = 0
   return q
+}
+
+// CommaSeparatedValues scans the entire line and returns the values
+// between the commas. If there are two commas with no value between,
+// a null value is assumed for that position. If there are two values
+// without a comma between, an error is returned. When an error is
+// returned, the values that have been scanned so far are also returned.
+func (q *QuotedScanner) CommaSeparatedTokens() ([]*QuotedToken, error) {
+  values := make([]*QuotedToken, 0)
+  commaNext := false    // True when we expect to see a comma token
+  for q.Next() {
+    t := q.Token()
+    if t.Err != nil {
+      return values, t.Err
+    }
+    if t.Type == TokenComma {
+      if !commaNext {
+        // If we weren't expecting a comma, then we have a blank field
+        values = append(values, &QuotedToken{
+          Type: TokenNull,
+          Pos: t.Pos,
+        })
+      }
+      commaNext = false;
+    } else {
+      if commaNext {
+        // We need a comma between every value
+        values = append(values, t)      // Return that token so caller can see the problem.
+        return values, fmt.Errorf("expected comma at pos=%d before token %v", t.Pos, t.Source)
+      }
+      values = append(values, t)
+      commaNext = true
+    }
+  }
+  return values, nil
+}
+
+// TokensToValues extracts the value field from each token and returns a slice
+// of interface{} the same length as the given slice of tokens.
+func (q *QuotedScanner) TokensToValues(tokens []*QuotedToken) []interface{} {
+  values := make([]interface{}, len(tokens))
+  for n, t := range tokens {
+    values[n] = t.Value
+  }
+  return values
 }
 
 func (q *QuotedScanner) Next() bool {
@@ -133,13 +179,19 @@ func (q *QuotedScanner) Next() bool {
       }
     }
   default:
-    // The only other thing we support is boolean values
+    // The only other thing we support is boolean values or null
     end := start + 1
     for end < len(q.runes) && q.runes[end] != ',' {
       end++
     }
     source := string(q.runes[start:end])
-    if source == "true" {
+    if source == "null" {
+      q.nextToken = &QuotedToken{
+        Type: TokenNull,
+        Pos: start,
+        Source: source,
+      }
+    } else if source == "true" {
       q.nextToken = &QuotedToken{
         Type: TokenBool,
         Pos: start,
