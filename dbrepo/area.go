@@ -2,6 +2,7 @@ package dbrepo
 
 import (
   "database/sql"
+  "io"
 
   "github.com/jimmc/jracemango/domain"
 )
@@ -42,4 +43,9 @@ func (r *dbAreaRepo) UpdateByID(ID string, oldArea, newArea *domain.Area, diffs 
   sql, vals := modsToSql("area", diffs.Modified(), ID)
   res, err := r.db.Exec(sql, vals...)
   return requireOneResult(res, err, "Updated", "area", ID)
+}
+
+func (r *dbAreaRepo) Export(dbr *Repos, w io.Writer) error {
+  area := &domain.Area{}
+  return dbr.exportTableFromStruct(w, "area", area)
 }

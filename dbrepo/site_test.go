@@ -10,7 +10,7 @@ import (
 )
 
 func TestSiteHappyPath(t *testing.T) {
-  dbr, err := Open("ramsql:TestDatabase")
+  dbr, err := Open("ramsql:TestSiteRepo")
   if err != nil {
     t.Fatalf("Error opening database: %v", err)
   }
@@ -27,7 +27,7 @@ func TestSiteHappyPath(t *testing.T) {
   if err == nil {
     t.Errorf("Did not get error as expected from FindByID %s", "S4")
   }
-  log.Printf("For not-found S1, site is %v", site)
+  log.Printf("For not-found id S4, site is %v", site)
 
   newSite := &domain.Site{
     ID: "S4",

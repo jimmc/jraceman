@@ -69,7 +69,7 @@ func main() {
     }
     outFile, err := os.Create(config.exportFile)
     if err != nil {
-      log.Fatalf("Error opening export output file %s: %v", outFile, err)
+      log.Fatalf("Error opening export output file %s: %v", config.exportFile, err)
     }
     defer outFile.Close()
     log.Printf("Exporting to %s\n", config.exportFile)

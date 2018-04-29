@@ -56,10 +56,12 @@ func stdCreateTableSqlFromStruct(tableName string, entity interface{}) string {
   return sql
 }
 
-// StdFindByIDSqlFromStruct generates an SQL QUERY statement using
-// the fields of the given struct. For each field in the struct:
+// StdSelectSqlFromStruct generates an SQL QUERY statement
+// using the fields of the given struct. For each field in the struct:
 //   * The field name is converted to lower case.
-func stdFindByIDSqlFromStruct(tableName string, entity interface{}) (string, []interface{}) {
+// There is no semicolon at the end of the sql, so the caller can append more
+// sql to it such as a where clause.
+func stdSelectSqlFromStruct(tableName string, entity interface{}) (string, []interface{}) {
   val := reflect.Indirect(reflect.ValueOf(entity))
   typ := val.Type()
   numFields := typ.NumField()
@@ -71,7 +73,17 @@ func stdFindByIDSqlFromStruct(tableName string, entity interface{}) (string, []i
     columnNames[i] = columnName
     targets[i] = val.Field(i).Addr().Interface()
   }
-  sql := "SELECT " + strings.Join(columnNames, ",") + " from " + tableName + " where id=?;"
+  sql := "SELECT " + strings.Join(columnNames, ",") + " from " + tableName
+  return sql, targets
+}
+
+// StdFindByIDSqlFromStruct generates an SQL QUERY statement,
+// with a WHERE clause limiting it to a matching id,
+// using the fields of the given struct. For each field in the struct:
+//   * The field name is converted to lower case.
+func stdFindByIDSqlFromStruct(tableName string, entity interface{}) (string, []interface{}) {
+  sql, targets := stdSelectSqlFromStruct(tableName, entity)
+  sql = sql + " where id=?;"
   log.Printf("stdFindByIDSql: %v\n", sql)
   return sql, targets
 }

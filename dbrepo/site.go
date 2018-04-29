@@ -46,9 +46,6 @@ func (r *dbSiteRepo) UpdateByID(ID string, oldSite, newSite *domain.Site, diffs 
 }
 
 func (r *dbSiteRepo) Export(dbr *Repos, w io.Writer) error {
-  if err := dbr.exportTableHeaderFromStruct(w, "site", &domain.Site{}); err != nil {
-    return err
-  }
-  io.WriteString(w, "#TODO - output table data for site table\n")
-  return nil
+  site := &domain.Site{}
+  return dbr.exportTableFromStruct(w, "site", site)
 }
