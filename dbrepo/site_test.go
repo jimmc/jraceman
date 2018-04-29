@@ -1,13 +1,19 @@
 package dbrepo
 
 import (
-  "log"
   "testing"
 
   "github.com/jimmc/jracemango/domain"
 
   _ "github.com/proullon/ramsql/driver"
 )
+
+type diffs struct {}
+func (d *diffs) Modified() map[string]interface{} {
+  return map[string]interface{}{
+    "Name": "Site FOUR",
+  }
+}
 
 func TestSiteHappyPath(t *testing.T) {
   dbr, err := Open("ramsql:TestSiteRepo")
@@ -23,11 +29,11 @@ func TestSiteHappyPath(t *testing.T) {
   if err := siteRepo.Populate(); err != nil {
     t.Fatalf("Populate failed: %v", err)
   }
+
   site, err := siteRepo.FindByID("S4")
   if err == nil {
     t.Errorf("Did not get error as expected from FindByID %s", "S4")
   }
-  log.Printf("For not-found id S4, site is %v", site)
 
   newSite := &domain.Site{
     ID: "S4",
@@ -42,10 +48,29 @@ func TestSiteHappyPath(t *testing.T) {
     t.Fatalf("Error retrieving just-added site")
   }
   if got, want := site.Name, newSite.Name; got != want {
-    t.Errorf("Got name %s, expecting %s", got, want)
+    t.Errorf("After save, got name %s, expecting %s", got, want)
   }
 
-  // TODO - delete it, make sure FindByID doesn't still find it
+  newSite.Name = "Site FOUR"
+  if err := siteRepo.UpdateByID("S4", site, newSite, &diffs{}); err != nil {
+    t.Errorf("Error updating S4: %v", err)
+  }
+  site, err = siteRepo.FindByID("S4")
+  if err != nil {
+    t.Fatalf("Error retrieving just-updated site")
+  }
+  if got, want := site.Name, newSite.Name; got != want {
+    t.Errorf("After update, got name %s, expecting %s", got, want)
+  }
+
+  if err := siteRepo.DeleteByID("S4"); err != nil {
+    t.Errorf("Error deleting S4: %v", err)
+  }
+
+  site, err = siteRepo.FindByID("S4")
+  if err == nil {
+    t.Errorf("Still found S4 after deleting it")
+  }
 }
 
 // For testing, put some data into our table
