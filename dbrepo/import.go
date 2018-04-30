@@ -117,6 +117,7 @@ func (im *Importer) setTable(tableName string) error {
 func (im *Importer) setColumns(columns string) error {
   columnNames := strings.Split(columns, ",")
   hasID := false
+  im.idIndex = -1
   for n, _ := range columnNames {
     columnNames[n] = strings.TrimPrefix(strings.TrimSuffix(columnNames[n], `"`), `"`)
     if columnNames[n] == "id" {
@@ -133,6 +134,9 @@ func (im *Importer) setColumns(columns string) error {
 
 // ImportDataLine processes a line with field data values.
 func (im *Importer) importDataLine(line string) error {
+  if im.idIndex < 0 {
+    return fmt.Errorf("id column has not been specified")
+  }
   s := NewQuotedScanner(line)
   tokens, err := s.CommaSeparatedTokens()
   if err != nil {
