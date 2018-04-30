@@ -11,8 +11,18 @@ type dbRowRepo struct {
   db *sql.DB
 }
 
+func NewRowRepo(dbrepos *Repos) *dbRowRepo {
+  return &dbRowRepo{
+    db: dbrepos.db,
+  }
+}
+
 func (r *dbRowRepo) Read(table string, columns []string, ID string) ([]interface{}, error) {
+  values := make([]interface{}, len(columns))
   targets := make([]interface{}, len(columns))
+  for i := 0; i < len(values); i++ {
+    targets[i] = &values[i]
+  }
   selSql := "SELECT " + strings.Join(columns, ",") + " from " + table + " where id=?;"
   err := r.db.QueryRow(selSql, ID).Scan(targets...)
   if err != nil {
@@ -23,7 +33,16 @@ func (r *dbRowRepo) Read(table string, columns []string, ID string) ([]interface
           table, ID, err)
     }
   }
-  return targets, nil
+  // Convert to the expected common data types
+  for i, v := range values {
+    switch vv := v.(type) {
+    case []uint8:
+      values[i] = string(vv)
+    case int64:
+      values[i] = int(vv)
+    }
+  }
+  return values, nil
 }
 
 func (r *dbRowRepo) Insert(table string, columns[]string, values []interface{}, ID string) error {

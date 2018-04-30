@@ -26,6 +26,7 @@ type config struct {
   // actions
   create bool
   exportFile string
+  importFile string
 }
 
 func main() {
@@ -39,6 +40,7 @@ func main() {
   // Action flags
   flag.BoolVar(&config.create, "create", false, "true to create the database specified by -db")
   flag.StringVar(&config.exportFile, "export", "", "export the database to a text file")
+  flag.StringVar(&config.importFile, "import", "", "import a text file to the database")
 
   flag.Parse()
 
@@ -64,28 +66,58 @@ func main() {
   }
 
   if config.exportFile != "" {
-    if _, err := os.Stat(config.exportFile); !os.IsNotExist(err) {
-      log.Fatalf("Output file %s exists, will not overwrite", config.exportFile)
-    }
-    outFile, err := os.Create(config.exportFile)
-    if err != nil {
-      log.Fatalf("Error opening export output file %s: %v", config.exportFile, err)
-    }
-    defer outFile.Close()
-    log.Printf("Exporting to %s\n", config.exportFile)
-    if err := dbRepos.Export(outFile); err != nil {
-      log.Fatalf("Error exporting to %s: %v", config.exportFile, err)
+    if err := exportFile(config, dbRepos); err != nil {
+      log.Fatalf(err.Error())
     }
     actionTaken = true;
   }
 
-  ph := app.Placeholder{}       // Just to use the app package
-  log.Printf("ph is %v", ph)
+  if config.importFile != "" {
+    if err := importFile(config, dbRepos); err != nil {
+      log.Fatalf(err.Error())
+    }
+    actionTaken = true;
+  }
+
+  _ = app.Placeholder{}       // Just to use the app package
 
   if !actionTaken {
     runHttpServer(config, dbRepos)
     // Doesn't return.
   }
+}
+
+func exportFile(config *config, dbRepos *dbrepo.Repos) error {
+  if _, err := os.Stat(config.exportFile); !os.IsNotExist(err) {
+    return fmt.Errorf("output file %s exists, will not overwrite", config.exportFile)
+  }
+  outFile, err := os.Create(config.exportFile)
+  if err != nil {
+    return fmt.Errorf("error opening export output file %s: %v", config.exportFile, err)
+  }
+  defer outFile.Close()
+  log.Printf("Exporting to %s\n", config.exportFile)
+  if err := dbRepos.Export(outFile); err != nil {
+    return fmt.Errorf("error exporting to %s: %v", config.exportFile, err)
+  }
+  return nil
+}
+
+func importFile(config *config, dbRepos *dbrepo.Repos) error {
+  inFile, err := os.Open(config.importFile)
+  if err != nil {
+    return fmt.Errorf("error opening import imput file %s: %v", config.importFile, err)
+  }
+  defer inFile.Close()
+  im := dbrepo.NewImporter(dbrepo.NewRowRepo(dbRepos))
+  log.Printf("Importing from %s\n", config.importFile)
+  if err := im.Import(inFile); err != nil {
+    return fmt.Errorf("error importing from %s: %v", config.importFile, err)
+  }
+  insertCount, updateCount, unchangedCount := im.Counts()
+  log.Printf("Import done: inserted %d, updated %d, unchanged %d records\n",
+      insertCount, updateCount, unchangedCount)
+  return nil
 }
 
 func runHttpServer(config *config, dbRepos *dbrepo.Repos) {

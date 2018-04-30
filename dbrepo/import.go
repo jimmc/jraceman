@@ -4,6 +4,7 @@ import (
   "bufio"
   "fmt"
   "io"
+  "log"
   "strings"
 )
 
@@ -13,6 +14,9 @@ type Importer struct {
   tableName string
   columnNames []string
   idIndex int
+  insertCount int
+  updateCount int
+  unchangedCount int
 }
 
 type RowRepo interface {
@@ -25,6 +29,10 @@ func NewImporter(rowRepo RowRepo) *Importer {
   return &Importer{
     rowRepo: rowRepo,
   }
+}
+
+func (im *Importer) Counts() (insertCount, updateCount, unchangedCount int) {
+  return im.insertCount, im.updateCount, im.unchangedCount
 }
 
 func (im *Importer) Import(reader io.Reader) error {
@@ -172,6 +180,8 @@ func (im *Importer) importDataLine(line string) error {
       if values[i] != existingValues[i] {
         diffColumns = append(diffColumns, im.columnNames[i])
         diffValues = append(diffValues, values[i])
+        log.Printf("column:%s old:%v(%T) new:%v(%T)",
+            im.columnNames[i], existingValues[i], existingValues[i], values[i], values[i])
       }
     }
   }
@@ -180,12 +190,15 @@ func (im *Importer) importDataLine(line string) error {
     if err := im.rowRepo.Insert(im.tableName, im.columnNames, values, ID); err != nil {
       return err
     }
+    im.insertCount++
   } else if len(diffColumns) > 0 {
     if err := im.rowRepo.Update(im.tableName, diffColumns, diffValues, ID); err != nil {
       return err
     }
+    im.updateCount++
   } else {
     // No change to the existing data.
+    im.unchangedCount++
   }
 
   return nil
