@@ -80,7 +80,7 @@ func TestModsToSql(t *testing.T) {
     "Opt2": nil,
   }
   sql, values := modsToSql("foo", mods, "123")
-  if got, want := sql, "update foo set opt2 = NULL, num = ?, required = ? where id = ?;"; got != want {
+  if got, want := sql, "update foo set num = ?, opt2 = NULL, required = ? where id = ?;"; got != want {
     t.Errorf("Update sql: got %v, want %v", got, want)
   }
   // Values should not include Opt2, but does include ID

@@ -4,6 +4,7 @@ import (
   "fmt"
   "log"
   "reflect"
+  "sort"
   "strings"
 )
 
@@ -154,9 +155,18 @@ func requireOneResult(res sqlRowsAffected, err error, action, entityType, ID str
 //   * The field name is converted to lower case.
 //   * If the field is a nil pointer, the value NULL is used.
 func columnsUpdateStringAndVals(mods map[string]interface{}) (string, []interface{}) {
+  // We get the keys and sort them so that we have a determinisitic ordering.
+  allkeys := make([]string, len(mods))
+  i := 0
+  for k := range mods {
+    allkeys[i] = k
+    i++
+  }
+  sort.Strings(allkeys)
   var keys []string
   var vals []interface{}
-  for k, v := range mods {
+  for _, k := range allkeys {
+    v := mods[k]
     if strings.HasPrefix(k, ".") {
       k = strings.TrimPrefix(k, ".")
     }
