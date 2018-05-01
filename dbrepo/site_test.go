@@ -5,20 +5,27 @@ import (
 
   "github.com/jimmc/jracemango/domain"
 
-  _ "github.com/proullon/ramsql/driver"
+  _ "github.com/mattn/go-sqlite3"
 )
 
-type diffs struct {}
-func (d *diffs) Modified() map[string]interface{} {
+type siteDiffs struct {}
+func (d *siteDiffs) Modified() map[string]interface{} {
   return map[string]interface{}{
     "Name": "Site FOUR",
   }
 }
 
+func TestSiteCreateTable(t *testing.T) {
+  sql := stdCreateTableSqlFromStruct("site", domain.Site{})
+  if got, want := sql, "CREATE TABLE site(id string primary key, name string not null, street string, street2 string, city string, state string, zip string, country string, phone string, fax string);"; got != want {
+    t.Errorf("Create site table: got %v, want %v", got, want)
+  }
+}
+
 func TestSiteHappyPath(t *testing.T) {
-  dbr, err := Open("ramsql:TestSiteRepo")
+  dbr, err := Open("sqlite3::memory:")
   if err != nil {
-    t.Fatalf("Error opening database: %v", err)
+    t.Fatalf("Error opening in-memory database: %v", err)
   }
   defer dbr.Close()
   siteRepo := dbr.Site().(*dbSiteRepo)
@@ -52,7 +59,7 @@ func TestSiteHappyPath(t *testing.T) {
   }
 
   newSite.Name = "Site FOUR"
-  if err := siteRepo.UpdateByID("S4", site, newSite, &diffs{}); err != nil {
+  if err := siteRepo.UpdateByID("S4", site, newSite, &siteDiffs{}); err != nil {
     t.Errorf("Error updating S4: %v", err)
   }
   site, err = siteRepo.FindByID("S4")
@@ -77,9 +84,9 @@ func TestSiteHappyPath(t *testing.T) {
 func (r *dbSiteRepo) Populate() error {
   columns := "INSERT into site(id, name) values ("
   values := [] string {
-    "S1, 'Site One'",
-    "S2, 'Site Two'",
-    "S3, 'Site Three'",
+    "'S1', 'Site One'",
+    "'S2', 'Site Two'",
+    "'S3', 'Site Three'",
   }
   for _, vv := range values {
     sql := columns + vv + ");"

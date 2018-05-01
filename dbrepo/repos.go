@@ -26,8 +26,8 @@ func (r *Repos) Site() domain.SiteRepo {
 
 // Open opens a database repository.
 // The repoPath argument is of the form dbtype:dbinfo,
-// such as "ramsql:TestDatabase" or "mysql:user:password@tcp(...)/hello".
-// Note, however, that this package does not import any sql drivers;
+// such as "sqlite3:/foo/bar" or "mysql:user:password@tcp(...)/hello".
+// Note, however, that the dbrepo package does not import any sql drivers;
 // the main program should import whatever drivers it wants to use.
 func Open(repoPath string) (*Repos, error) {
   colon := strings.Index(repoPath, ":")

@@ -13,7 +13,6 @@ import (
   "github.com/jimmc/jracemango/dbrepo"
 
   // _ "github.com/go-sql-driver/mysql"
-  _ "github.com/proullon/ramsql/driver" // driver name: ramsql
   _ "github.com/mattn/go-sqlite3"       // driver name: sqlite3
 )
 

@@ -32,6 +32,8 @@ func stdColumnNamesFromStruct(entity interface{}) []string {
 //   * int and string fields are declared as that same type column.
 //   * The id field is declared as primary key.
 //   * Non-pointer fields are declared as not null.
+//   * Field names ending in ID are declared as foreign key references to the
+//     id field of a table whose name matches the first part of the field name
 func stdCreateTableSqlFromStruct(tableName string, entity interface{}) string {
   val := reflect.Indirect(reflect.ValueOf(entity))
   typ := val.Type()
@@ -42,13 +44,20 @@ func stdCreateTableSqlFromStruct(tableName string, entity interface{}) string {
     columnName := strings.ToLower(field.Name)
     goTypeName := field.Type.String()     // string, *string, int
     isPointer := strings.HasPrefix(goTypeName, "*")
+    isForeignKey := strings.HasSuffix(field.Name, "ID")
     goTypeName = strings.TrimPrefix(goTypeName, "*")
     columnType := goTypeName            // TODO - convert as required
     columnSpec := columnName + " " + columnType
     if columnName == "id" {
       columnSpec = columnSpec + " primary key"
-    } else if !isPointer {
-      columnSpec = columnSpec + " not null"
+    } else {
+      if !isPointer {
+        columnSpec = columnSpec + " not null"
+      }
+      if isForeignKey {
+        referenceTable := strings.TrimSuffix(columnName, "id")
+        columnSpec = columnSpec + " references " + referenceTable + "(id)"
+      }
     }
     columnSpecs[i] = columnSpec
   }

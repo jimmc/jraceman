@@ -2,12 +2,14 @@ package dbrepo
 
 import (
   "testing"
+
+  _ "github.com/mattn/go-sqlite3"
 )
 
 func TestOpenNormal(t *testing.T) {
-  dbr, err := Open("ramsql:Test")
+  dbr, err := Open("sqlite3::memory:")
   if err != nil {
-    t.Errorf("Failed to open ramsql database: %v", err)
+    t.Errorf("Failed to open sqlite3 in-memory database: %v", err)
   }
   dbr.Close()
 }
@@ -27,9 +29,9 @@ func TestOpenNoType(t *testing.T) {
 }
 
 func TestCreateTables(t *testing.T) {
-  dbr, err := Open("ramsql:Test2")
+  dbr, err := Open("sqlite3::memory:")
   if err != nil {
-    t.Errorf("Failed to open ramsql database: %v", err)
+    t.Errorf("Failed to open sqlite3 in-memory database: %v", err)
   }
   defer dbr.Close()
   if err := dbr.CreateTables(); err != nil {
