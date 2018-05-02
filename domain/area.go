@@ -3,6 +3,7 @@ package domain
 // AreaRepo describes how Area records are loaded and saved.
 type AreaRepo interface {
   FindByID(ID string) (*Area, error)
+  List(offset, limit int) ([]*Area, error)
   Save(*Area) error
   UpdateByID(ID string, oldArea, newArea *Area, diffs Diffs) error
   DeleteByID(ID string) error

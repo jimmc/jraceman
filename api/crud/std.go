@@ -5,6 +5,7 @@ import (
   "fmt"
   "log"
   "net/http"
+  "strconv"
   "strings"
 
   "github.com/jimmc/jracemango/domain"
@@ -15,6 +16,7 @@ import (
 type std interface {
   EntityTypeName() string   // such as "site"
   NewEntity() interface{}       // such as a new Site
+  List(offset, limit int) ([]interface{}, error)
   Save(entity interface{}) error        // function must cast entity to its type
   FindByID(ID string) (interface{}, error)       // returns same type as NewEntity
   DeleteByID(ID string) error
@@ -83,10 +85,38 @@ func (h *handler) stdCreate(w http.ResponseWriter, r *http.Request, st std) {
 }
 
 func (h *handler) stdList(w http.ResponseWriter, r *http.Request, st std) {
-  // TODO - use query parameters for offset and limit to control the query
-  // and allow paging through the entire list.
-  msg := fmt.Sprintf("List of %s is not implemented", st.EntityTypeName())
-  http.Error(w, msg, http.StatusNotImplemented)
+  limit, err := intQueryParam(r, "limit", 0)
+  if err != nil || limit < 0 {
+    msg := fmt.Sprintf("Bad format for limit")
+    http.Error(w, msg, http.StatusBadRequest)
+    return
+  }
+  offset, err := intQueryParam(r, "offset", 0)
+  if err != nil || offset < 0 {
+    msg := fmt.Sprintf("Bad format for offset")
+    http.Error(w, msg, http.StatusBadRequest)
+    return
+  }
+  if offset > 0 && limit == 0 {
+    msg := fmt.Sprintf("Must specify limit when specifying offset")
+    http.Error(w, msg, http.StatusBadRequest)
+    return
+  }
+
+  result, err := st.List(offset, limit)
+  if err != nil {
+    http.Error(w, err.Error(), http.StatusBadRequest)
+    return
+  }
+
+  // TODO - add offset and limit info to the result?
+  b, err := json.MarshalIndent(result, "", "  ")
+  if err != nil {
+    http.Error(w, fmt.Sprintf("Failed to marshall json results: %v", err), http.StatusInternalServerError)
+    return
+  }
+  w.WriteHeader(http.StatusOK)
+  w.Write(b)
 }
 
 func (h *handler) stdGet(w http.ResponseWriter, r *http.Request, st std, entityID string) {
@@ -186,4 +216,16 @@ func (h *handler) stdOkResponse(w http.ResponseWriter) {
   res := `{"status": "ok"}`
   w.WriteHeader(http.StatusOK)
   w.Write([]byte(res))
+}
+
+func intQueryParam(r *http.Request, paramName string, dflt int) (int, error) {
+  s := r.URL.Query().Get(paramName)
+  if s == "" {
+    return dflt, nil
+  }
+  n, err := strconv.Atoi(s)
+  if err != nil {
+    return dflt, err
+  }
+  return n, nil
 }

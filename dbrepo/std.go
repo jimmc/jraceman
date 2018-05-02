@@ -5,6 +5,7 @@ import (
   "log"
   "reflect"
   "sort"
+  "strconv"
   "strings"
 )
 
@@ -95,6 +96,22 @@ func stdFindByIDSqlFromStruct(tableName string, entity interface{}) (string, []i
   sql, targets := stdSelectSqlFromStruct(tableName, entity)
   sql = sql + " where id=?;"
   log.Printf("stdFindByIDSql: %v\n", sql)
+  return sql, targets
+}
+
+// StdListSqlFromStruct generates an SQL QUERY statement,
+// with OFFSET and LIMIT clauses,
+// using the fields of the given struct. For each field in the struct:
+//   * The field name is converted to lower case.
+func stdListSqlFromStruct(tableName string, entity interface{}, offset, limit int) (string, []interface{}) {
+  sql, targets := stdSelectSqlFromStruct(tableName, entity)
+  if limit != 0 {
+    sql = sql + " limit " + strconv.Itoa(limit)
+  }
+  if offset != 0 {
+    sql = sql + " offset " + strconv.Itoa(offset)
+  }
+  log.Printf("stdListSql: %v\n", sql)
   return sql, targets
 }
 

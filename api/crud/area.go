@@ -23,6 +23,18 @@ func (sc *areaCrud) Save(entity interface{}) error {
   return sc.h.config.DomainRepos.Area().Save(area)
 }
 
+func (sc *areaCrud) List(offset, limit int) ([]interface{}, error) {
+  sites, err := sc.h.config.DomainRepos.Area().List(offset, limit)
+  if err != nil {
+    return nil, err
+  }
+  a := make([]interface{}, len(sites))
+  for i, area := range sites {
+    a[i] = area
+  }
+  return a, nil
+}
+
 func (sc *areaCrud) FindByID(ID string) (interface{}, error) {
   return sc.h.config.DomainRepos.Area().FindByID(ID)
 }

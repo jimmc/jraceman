@@ -23,6 +23,18 @@ func (sc *siteCrud) Save(entity interface{}) error {
   return sc.h.config.DomainRepos.Site().Save(site)
 }
 
+func (sc *siteCrud) List(offset, limit int) ([]interface{}, error) {
+  sites, err := sc.h.config.DomainRepos.Site().List(offset, limit)
+  if err != nil {
+    return nil, err
+  }
+  a := make([]interface{}, len(sites))
+  for i, site := range sites {
+    a[i] = site
+  }
+  return a, nil
+}
+
 func (sc *siteCrud) FindByID(ID string) (interface{}, error) {
   return sc.h.config.DomainRepos.Site().FindByID(ID)
 }

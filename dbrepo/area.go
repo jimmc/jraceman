@@ -33,6 +33,27 @@ func (r *dbAreaRepo) Save(area *domain.Area) error {
   return requireOneResult(res, err, "Inserted", "area", area.ID)
 }
 
+func (r *dbAreaRepo) List(offset, limit int) ([]*domain.Area, error) {
+  area := &domain.Area{}
+  sql, targets := stdListSqlFromStruct("area", area, offset, limit)
+  rows, err := r.db.Query(sql)
+  if err != nil {
+    return nil, err
+  }
+  defer rows.Close()
+  areas := make([]*domain.Area, 0)
+  for rows.Next() {
+    err := rows.Scan(targets...)
+    if err != nil {
+      return nil, err
+    }
+    areaCopy := domain.Area(*area)
+    areas = append(areas, &areaCopy)
+  }
+  err = rows.Err()
+  return areas, err
+}
+
 func (r *dbAreaRepo) DeleteByID(ID string) error {
   sql := stdDeleteByIDSql("area")
   res, err := r.db.Exec(sql, ID)
