@@ -28,6 +28,12 @@ func stdColumnNamesFromStruct(entity interface{}) []string {
   return columnNames
 }
 
+func stdCreateTableFromStruct(db *sql.DB, tableName string, entity interface{}) error {
+  sql := stdCreateTableSqlFromStruct(tableName, entity)
+  _, err := db.Exec(sql)
+  return err
+}
+
 // StdCreateTableSqlFromStruct generates an SQL CREATE TABLE command using
 // the fields of the given struct. For each field in the struct:
 //   * The field name is converted to lower case for the column name.
@@ -116,6 +122,12 @@ func stdListSqlFromStruct(tableName string, entity interface{}, offset, limit in
   return sql, targets
 }
 
+func stdInsertFromStruct(db *sql.DB, tableName string, entity interface{}, ID string) error {
+  sql, values := stdInsertSqlFromStruct(tableName, entity)
+  res, err := db.Exec(sql, values...)
+  return requireOneResult(res, err, "Inserted", tableName, ID)
+}
+
 // StdInsertSqlFromStruct generates an SQL INSERT statement using
 // the fields of the given struct. For each field in the struct:
 //   * If the field is a nil pointer, it is ignored.
@@ -196,6 +208,13 @@ func requireOneResult(res sqlRowsAffected, err error, action, entityType, ID str
   return nil
 }
 
+// StdUpdateByID updates a record by ID.
+func stdUpdateByID(db *sql.DB, tableName string, mods map[string]interface{}, ID string) error {
+  sql, vals := modsToSql(tableName, mods, ID)
+  res, err := db.Exec(sql, vals...)
+  return requireOneResult(res, err, "Updated", tableName, ID)
+}
+
 // ColumnsUpdateStringAndValues generates a string for the column-and-values portion
 // of an SQL update statement, in the form "col1 = ?, col2 = ?", and also returns
 // an array of values that correspond to those columns. For each field in the map:
@@ -238,6 +257,13 @@ func modsToSql(table string, mods map[string]interface{}, ID string) (string, []
   vals = append(vals, ID)
   log.Printf("updateSql = %q, vals = %v", updateSql, vals)
   return updateSql, vals
+}
+
+// StdDelete deletes a record by ID.
+func stdDeleteByID(db *sql.DB, tableName, ID string) error {
+  sql := stdDeleteByIDSql(tableName)
+  res, err := db.Exec(sql, ID)
+  return requireOneResult(res, err, "Deleted", "site", ID)
 }
 
 // StdDeleteSql generates an SQL DELETE statement.

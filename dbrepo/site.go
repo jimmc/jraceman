@@ -12,9 +12,7 @@ type dbSiteRepo struct {
 }
 
 func (r *dbSiteRepo) CreateTable() error {
-  sql := stdCreateTableSqlFromStruct("site", domain.Site{})
-  _, err := r.db.Exec(sql)
-  return err
+  return stdCreateTableFromStruct(r.db, "site", domain.Site{})
 }
 
 func (r *dbSiteRepo) FindByID(ID string) (*domain.Site, error) {
@@ -28,9 +26,7 @@ func (r *dbSiteRepo) FindByID(ID string) (*domain.Site, error) {
 
 func (r *dbSiteRepo) Save(site *domain.Site) error {
   // TODO - generate an ID if blank
-  sql, values := stdInsertSqlFromStruct("site", site)
-  res, err := r.db.Exec(sql, values...)
-  return requireOneResult(res, err, "Inserted", "site", site.ID)
+  return stdInsertFromStruct(r.db, "site", site, site.ID)
 }
 
 func (r *dbSiteRepo) List(offset, limit int) ([]*domain.Site, error) {
@@ -45,18 +41,13 @@ func (r *dbSiteRepo) List(offset, limit int) ([]*domain.Site, error) {
 }
 
 func (r *dbSiteRepo) DeleteByID(ID string) error {
-  sql := stdDeleteByIDSql("site")
-  res, err := r.db.Exec(sql, ID)
-  return requireOneResult(res, err, "Deleted", "site", ID)
+  return stdDeleteByID(r.db, "site", ID)
 }
 
 func (r *dbSiteRepo) UpdateByID(ID string, oldSite, newSite *domain.Site, diffs domain.Diffs) error {
-  sql, vals := modsToSql("site", diffs.Modified(), ID)
-  res, err := r.db.Exec(sql, vals...)
-  return requireOneResult(res, err, "Updated", "site", ID)
+  return stdUpdateByID(r.db, "site", diffs.Modified(), ID)
 }
 
 func (r *dbSiteRepo) Export(dbr *Repos, w io.Writer) error {
-  site := &domain.Site{}
-  return dbr.exportTableFromStruct(w, "site", site)
+  return dbr.exportTableFromStruct(w, "site", &domain.Site{})
 }
