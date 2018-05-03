@@ -1,6 +1,7 @@
 package dbrepo
 
 import (
+  "database/sql"
   "fmt"
   "log"
   "reflect"
@@ -145,6 +146,26 @@ func stdInsertSqlFromStruct(tableName string, entity interface{}) (string, []int
   log.Printf("stdInsertSql: %v\n", sql)
   log.Printf("  values: %v\n", values)
   return sql, values
+}
+
+// StdQueryAndCollect issues a Query for the given sql, then interates through
+// the returned rows. For each row, it retrieves the data into targets, then
+// calls the collect function. The assumption is that the targets store the
+// results into data that is accessible to the collect function.
+func stdQueryAndCollect(db *sql.DB, sql string, targets []interface{}, collect func()) error {
+  rows, err := db.Query(sql)
+  if err != nil {
+    return err
+  }
+  defer rows.Close()
+  for rows.Next() {
+    err := rows.Scan(targets...)
+    if err != nil {
+      return err
+    }
+    collect()
+  }
+  return rows.Err()
 }
 
 // We need only the RowsAffected function from the database/sql.Result interface.

@@ -35,22 +35,12 @@ func (r *dbAreaRepo) Save(area *domain.Area) error {
 
 func (r *dbAreaRepo) List(offset, limit int) ([]*domain.Area, error) {
   area := &domain.Area{}
-  sql, targets := stdListSqlFromStruct("area", area, offset, limit)
-  rows, err := r.db.Query(sql)
-  if err != nil {
-    return nil, err
-  }
-  defer rows.Close()
   areas := make([]*domain.Area, 0)
-  for rows.Next() {
-    err := rows.Scan(targets...)
-    if err != nil {
-      return nil, err
-    }
+  sql, targets := stdListSqlFromStruct("area", area, offset, limit)
+  err := stdQueryAndCollect(r.db, sql, targets, func() {
     areaCopy := domain.Area(*area)
     areas = append(areas, &areaCopy)
-  }
-  err = rows.Err()
+  })
   return areas, err
 }
 

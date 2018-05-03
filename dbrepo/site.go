@@ -35,22 +35,12 @@ func (r *dbSiteRepo) Save(site *domain.Site) error {
 
 func (r *dbSiteRepo) List(offset, limit int) ([]*domain.Site, error) {
   site := &domain.Site{}
-  sql, targets := stdListSqlFromStruct("site", site, offset, limit)
-  rows, err := r.db.Query(sql)
-  if err != nil {
-    return nil, err
-  }
-  defer rows.Close()
   sites := make([]*domain.Site, 0)
-  for rows.Next() {
-    err := rows.Scan(targets...)
-    if err != nil {
-      return nil, err
-    }
+  sql, targets := stdListSqlFromStruct("site", site, offset, limit)
+  err := stdQueryAndCollect(r.db, sql, targets, func() {
     siteCopy := domain.Site(*site)
     sites = append(sites, &siteCopy)
-  }
-  err = rows.Err()
+  })
   return sites, err
 }
 
