@@ -1,4 +1,4 @@
-package dbrepo
+package structsql
 
 import (
   "errors"
@@ -23,7 +23,7 @@ var foo = &Foo{
 }
 
 func TestCreateTableSql(t *testing.T) {
-  if got, want := stdCreateTableSqlFromStruct("foo", foo),
+  if got, want := CreateTableSql("foo", foo),
       "CREATE TABLE foo(id string primary key, num int not null, " +
       "required string not null, optional string, opt2 string);";
       got != want {
@@ -32,7 +32,7 @@ func TestCreateTableSql(t *testing.T) {
 }
 
 func TestSelectSql(t *testing.T) {
-  sql, targets := stdSelectSqlFromStruct("foo", foo)
+  sql, targets := SelectSql("foo", foo)
   if got, want := sql,
       "SELECT id,num,required,optional,opt2 from foo"
       got != want {
@@ -44,7 +44,7 @@ func TestSelectSql(t *testing.T) {
 }
 
 func TestFindByIDSql(t *testing.T) {
-  sql, targets := stdFindByIDSqlFromStruct("foo", foo)
+  sql, targets := FindByIDSql("foo", foo)
   if got, want := sql, 
       "SELECT id,num,required,optional,opt2 from foo where id=?;";
       got != want {
@@ -55,8 +55,8 @@ func TestFindByIDSql(t *testing.T) {
   }
 }
 
-func TestInsertSqlFromStruct(t *testing.T) {
-  sql, values := stdInsertSqlFromStruct("foo", foo)
+func TestInsertSql(t *testing.T) {
+  sql, values := InsertSql("foo", foo)
   if got, want := sql,
       "INSERT into foo(id,num,required,optional) values (?,?,?,?);";
       got != want {
@@ -68,7 +68,7 @@ func TestInsertSqlFromStruct(t *testing.T) {
 }
 
 func TestDeleteByIDSql(t *testing.T) {
-  if got, want := stdDeleteByIDSql("foo"), "delete from foo where id=?;"; got != want {
+  if got, want := DeleteByIDSql("foo"), "delete from foo where id=?;"; got != want {
     t.Errorf("DeleteByIDSql: got %v, want %v", got, want)
   }
 }
@@ -79,7 +79,7 @@ func TestModsToSql(t *testing.T) {
     "Required": "qqq",
     "Opt2": nil,
   }
-  sql, values := modsToSql("foo", mods, "123")
+  sql, values := ModsToSql("foo", mods, "123")
   if got, want := sql, "update foo set num = ?, opt2 = NULL, required = ? where id = ?;"; got != want {
     t.Errorf("Update sql: got %v, want %v", got, want)
   }
@@ -107,19 +107,19 @@ func TestRequireOneResult(t *testing.T) {
   oTwo := &oneResultTester{2, nil}
   oErr := &oneResultTester{0, errors.New("Test error")}
 
-  if got, want := requireOneResult(oOne, nil, "Tested", "foo", "123"), error(nil); got != want {
+  if got, want := RequireOneResult(oOne, nil, "Tested", "foo", "123"), error(nil); got != want {
     t.Errorf("Happy path: got %v, want %v", got, want)
   }
-  if got, want := requireOneResult(oOne, errors.New("Test error"), "Tested", "foo", "123"), errors.New("Test error"); got.Error() != want.Error() {
+  if got, want := RequireOneResult(oOne, errors.New("Test error"), "Tested", "foo", "123"), errors.New("Test error"); got.Error() != want.Error() {
     t.Errorf("With passed-in error: got %v, want %v", got, want)
   }
-  if got, want := requireOneResult(oErr, nil, "Tested", "foo", "123"), errors.New("Test error"); got.Error() != want.Error() {
+  if got, want := RequireOneResult(oErr, nil, "Tested", "foo", "123"), errors.New("Test error"); got.Error() != want.Error() {
     t.Errorf("With sql error: got %v, want %v", got, want)
   }
-  if got, want := requireOneResult(oZero, nil, "Tested", "foo", "123"), errors.New("Wrong-count error"); got == nil {
+  if got, want := RequireOneResult(oZero, nil, "Tested", "foo", "123"), errors.New("Wrong-count error"); got == nil {
     t.Errorf("With count==0: got %v, want %v", got, want)
   }
-  if got, want := requireOneResult(oTwo, nil, "Tested", "foo", "123"), errors.New("Wrong-count error"); got == nil {
+  if got, want := RequireOneResult(oTwo, nil, "Tested", "foo", "123"), errors.New("Wrong-count error"); got == nil {
     t.Errorf("With count==0: got %v, want %v", got, want)
   }
 }

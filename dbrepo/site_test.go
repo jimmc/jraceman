@@ -3,6 +3,7 @@ package dbrepo
 import (
   "testing"
 
+  "github.com/jimmc/jracemango/dbrepo/structsql"
   "github.com/jimmc/jracemango/domain"
 
   _ "github.com/mattn/go-sqlite3"
@@ -16,7 +17,7 @@ func (d *siteDiffs) Modified() map[string]interface{} {
 }
 
 func TestSiteCreateTable(t *testing.T) {
-  sql := stdCreateTableSqlFromStruct("site", domain.Site{})
+  sql := structsql.CreateTableSql("site", domain.Site{})
   if got, want := sql, "CREATE TABLE site(id string primary key, name string not null, street string, street2 string, city string, state string, zip string, country string, phone string, fax string);"; got != want {
     t.Errorf("Create site table: got %v, want %v", got, want)
   }

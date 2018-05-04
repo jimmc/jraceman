@@ -4,6 +4,8 @@ import (
   "fmt"
   "io"
   "strings"
+
+  "github.com/jimmc/jracemango/dbrepo/structsql"
 )
 
 func (r *Repos) Export(w io.Writer) error {
@@ -42,13 +44,13 @@ func (r *Repos) exportTableFromStruct(w io.Writer, tableName string, element int
 
 func (r *Repos) exportTableHeaderFromStruct(w io.Writer, tableName string, element interface{}) error {
   io.WriteString(w, "\n!table " + tableName + "\n")
-  colnames := `"` + strings.Join(stdColumnNamesFromStruct(element), `","`) + `"`
+  colnames := `"` + strings.Join(structsql.ColumnNames(element), `","`) + `"`
   io.WriteString(w, "!columns " + colnames + "\n")
   return nil
 }
 
 func (r *Repos) exportTableDataFromStruct(w io.Writer, tableName string, element interface{}) error {
-  sql, targets := stdSelectSqlFromStruct(tableName, element)
+  sql, targets := structsql.SelectSql(tableName, element)
   sql = sql + ";"
   rows, err := r.db.Query(sql)
   if err != nil {

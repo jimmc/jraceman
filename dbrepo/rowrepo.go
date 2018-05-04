@@ -4,6 +4,9 @@ import (
   "database/sql"
   "fmt"
   "strings"
+
+  // TODO - We only need structsql for requireOneResult, maybe that can go elsewhere
+  "github.com/jimmc/jracemango/dbrepo/structsql"
 )
 
 // dbRowRepo implements the RowRepo interface for use by Importer.
@@ -49,12 +52,12 @@ func (r *dbRowRepo) Insert(table string, columns[]string, values []interface{}, 
   insSql := "INSERT into " + table + "(" + strings.Join(columns, ",") + ") values(" +
       strings.Repeat("?,", len(columns) - 1) + "?);"
   res, err := r.db.Exec(insSql, values...)
-  return requireOneResult(res, err, "Inserted", table, ID)
+  return structsql.RequireOneResult(res, err, "Inserted", table, ID)
 }
 
 func (r *dbRowRepo) Update(table string, columns[]string, values []interface{}, ID string) error {
   insSql := "UPDATE " + table + " set " + strings.Join(columns, " = ?, ") + " = ? where id = ?;"
   values = append(values, ID)
   res, err := r.db.Exec(insSql, values...)
-  return requireOneResult(res, err, "Updated", table, ID)
+  return structsql.RequireOneResult(res, err, "Updated", table, ID)
 }
