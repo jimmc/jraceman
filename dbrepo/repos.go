@@ -3,9 +3,11 @@ package dbrepo
 import (
   "database/sql"
   "fmt"
+  "io"
   "log"
   "strings"
 
+  "github.com/jimmc/jracemango/dbrepo/ixport"
   "github.com/jimmc/jracemango/domain"
 )
 
@@ -57,6 +59,15 @@ func Open(repoPath string) (*Repos, error) {
   return r, err
 }
 
+// Close closes the database.
+func (r *Repos) Close() {
+  if r.db == nil {
+    return
+  }
+  r.db.Close()
+  r.db = nil
+}
+
 // CreateTables creates all of the tables in a new database.
 // This method is not idempotent, it will fail if any of the
 // tables already exist.
@@ -72,11 +83,32 @@ func (r *Repos) CreateTables() error {
   return nil
 }
 
-// Close closes the database.
-func (r *Repos) Close() {
-  if r.db == nil {
-    return
+// Import reads in the specified text file and loads our tables.
+func (r *Repos) Import(in io.Reader) (int, int, int, error) {
+  im := ixport.NewImporter(NewRowRepo(r))
+  err := im.Import(in)
+  insertCount, updateCount, unchangedCount := im.Counts()
+  return insertCount, updateCount, unchangedCount, err
+}
+
+// Export writes out all of our tables to a text file that can
+// be loaded back in later using Import.
+func (r *Repos) Export(w io.Writer) error {
+  e := ixport.NewExporter(r.db)
+  if err := e.ExportHeader(w); err != nil {
+    return err
   }
-  r.db.Close()
-  r.db = nil
+
+  // The order of output of the tables is important: tables with
+  // foreign keys should be after the tables the point to.
+
+  if err := r.dbSite.Export(e, w); err != nil {
+    return err
+  }
+
+  if err := r.dbArea.Export(e, w); err != nil {
+    return err
+  }
+
+  return nil
 }

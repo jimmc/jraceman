@@ -4,6 +4,7 @@ import (
   "database/sql"
   "io"
 
+  "github.com/jimmc/jracemango/dbrepo/ixport"
   "github.com/jimmc/jracemango/dbrepo/structsql"
   "github.com/jimmc/jracemango/domain"
 )
@@ -49,6 +50,6 @@ func (r *dbSiteRepo) UpdateByID(ID string, oldSite, newSite *domain.Site, diffs 
   return structsql.UpdateByID(r.db, "site", diffs.Modified(), ID)
 }
 
-func (r *dbSiteRepo) Export(dbr *Repos, w io.Writer) error {
-  return dbr.exportTableFromStruct(w, "site", &domain.Site{})
+func (r *dbSiteRepo) Export(e *ixport.Exporter, w io.Writer) error {
+  return e.ExportTableFromStruct(w, "site", &domain.Site{})
 }

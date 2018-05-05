@@ -108,12 +108,12 @@ func importFile(config *config, dbRepos *dbrepo.Repos) error {
     return fmt.Errorf("error opening import imput file %s: %v", config.importFile, err)
   }
   defer inFile.Close()
-  im := dbrepo.NewImporter(dbrepo.NewRowRepo(dbRepos))
+
   log.Printf("Importing from %s\n", config.importFile)
-  if err := im.Import(inFile); err != nil {
+  insertCount, updateCount, unchangedCount, err := dbRepos.Import(inFile)
+  if err != nil {
     return fmt.Errorf("error importing from %s: %v", config.importFile, err)
   }
-  insertCount, updateCount, unchangedCount := im.Counts()
   log.Printf("Import done: inserted %d, updated %d, unchanged %d records\n",
       insertCount, updateCount, unchangedCount)
   return nil

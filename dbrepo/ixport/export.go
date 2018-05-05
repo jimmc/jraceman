@@ -1,6 +1,7 @@
-package dbrepo
+package ixport
 
 import (
+  "database/sql"
   "fmt"
   "io"
   "strings"
@@ -8,26 +9,15 @@ import (
   "github.com/jimmc/jracemango/dbrepo/structsql"
 )
 
-func (r *Repos) Export(w io.Writer) error {
-  if err := r.exportHeader(w); err != nil {
-    return err
-  }
-
-  // The order of output of the tables is important: tables with
-  // foreign keys should be after the tables the point to.
-
-  if err := r.dbSite.Export(r, w); err != nil {
-    return err
-  }
-
-  if err := r.dbArea.Export(r, w); err != nil {
-    return err
-  }
-
-  return nil
+type Exporter struct{
+  db *sql.DB
 }
 
-func (r *Repos) exportHeader(w io.Writer) error {
+func NewExporter(db *sql.DB) *Exporter {
+  return &Exporter{db}
+}
+
+func (e *Exporter) ExportHeader(w io.Writer) error {
   io.WriteString(w, "#!jraceman -import\n")
   io.WriteString(w, "!exportVersion 2\n")
   io.WriteString(w, "!appInfo JRaceman v2.0.0\n")       // TODO - get real version
@@ -35,24 +25,24 @@ func (r *Repos) exportHeader(w io.Writer) error {
   return nil
 }
 
-func (r *Repos) exportTableFromStruct(w io.Writer, tableName string, element interface{}) error {
-  if err := r.exportTableHeaderFromStruct(w, tableName, element); err != nil {
+func (e *Exporter) ExportTableFromStruct(w io.Writer, tableName string, element interface{}) error {
+  if err := e.exportTableHeaderFromStruct(w, tableName, element); err != nil {
     return err
   }
-  return r.exportTableDataFromStruct(w, tableName, element)
+  return e.exportTableDataFromStruct(w, tableName, element)
 }
 
-func (r *Repos) exportTableHeaderFromStruct(w io.Writer, tableName string, element interface{}) error {
+func (e *Exporter) exportTableHeaderFromStruct(w io.Writer, tableName string, element interface{}) error {
   io.WriteString(w, "\n!table " + tableName + "\n")
   colnames := `"` + strings.Join(structsql.ColumnNames(element), `","`) + `"`
   io.WriteString(w, "!columns " + colnames + "\n")
   return nil
 }
 
-func (r *Repos) exportTableDataFromStruct(w io.Writer, tableName string, element interface{}) error {
+func (e *Exporter) exportTableDataFromStruct(w io.Writer, tableName string, element interface{}) error {
   sql, targets := structsql.SelectSql(tableName, element)
   sql = sql + ";"
-  rows, err := r.db.Query(sql)
+  rows, err := e.db.Query(sql)
   if err != nil {
     return err
   }
