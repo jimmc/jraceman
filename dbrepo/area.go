@@ -5,6 +5,7 @@ import (
   "io"
 
   "github.com/jimmc/jracemango/dbrepo/ixport"
+  "github.com/jimmc/jracemango/dbrepo/strsql"
   "github.com/jimmc/jracemango/dbrepo/structsql"
   "github.com/jimmc/jracemango/domain"
 )
@@ -35,7 +36,7 @@ func (r *dbAreaRepo) List(offset, limit int) ([]*domain.Area, error) {
   area := &domain.Area{}
   areas := make([]*domain.Area, 0)
   sql, targets := structsql.ListSql("area", area, offset, limit)
-  err := structsql.QueryAndCollect(r.db, sql, targets, func() {
+  err := strsql.QueryAndCollect(r.db, sql, targets, func() {
     areaCopy := domain.Area(*area)
     areas = append(areas, &areaCopy)
   })

@@ -5,12 +5,10 @@ import (
   "reflect"
   "testing"
 
-  "github.com/jimmc/jracemango/dbrepo/structsql"
-
   _ "github.com/mattn/go-sqlite3"
 )
 
-type testRow struct {
+type eTestRow struct {
   n int;
   s string;
 }
@@ -30,23 +28,23 @@ INSERT into test(n, s) values(1, 'a'), (2, 'b'), (3, 'c');
     t.Fatalf("Error calling ExecMulti: %v", err)
   }
 
-  rows := make([]*testRow, 0)
-  row := &testRow{}
+  rows := make([]*eTestRow, 0)
+  row := &eTestRow{}
   targets := []interface{}{
     &row.n,
     &row.s,
   }
   collector := func() {
-    rowCopy := testRow(*row)
+    rowCopy := eTestRow(*row)
     rows = append(rows, &rowCopy)
   }
-  expectedResult := []*testRow{
-    &testRow{1, "a"},
-    &testRow{2, "b"},
-    &testRow{3, "c"},
+  expectedResult := []*eTestRow{
+    &eTestRow{1, "a"},
+    &eTestRow{2, "b"},
+    &eTestRow{3, "c"},
   }
   query := "SELECT n, s from test order by n;"
-  if err := structsql.QueryAndCollect(db, query, targets, collector); err != nil {
+  if err := QueryAndCollect(db, query, targets, collector); err != nil {
     t.Fatalf("Error collecting rows: %v", err)
   }
 

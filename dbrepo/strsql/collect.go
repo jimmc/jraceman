@@ -1,4 +1,4 @@
-package structsql
+package strsql
 
 import (
   "database/sql"

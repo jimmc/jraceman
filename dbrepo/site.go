@@ -5,6 +5,7 @@ import (
   "io"
 
   "github.com/jimmc/jracemango/dbrepo/ixport"
+  "github.com/jimmc/jracemango/dbrepo/strsql"
   "github.com/jimmc/jracemango/dbrepo/structsql"
   "github.com/jimmc/jracemango/domain"
 )
@@ -35,7 +36,7 @@ func (r *dbSiteRepo) List(offset, limit int) ([]*domain.Site, error) {
   site := &domain.Site{}
   sites := make([]*domain.Site, 0)
   sql, targets := structsql.ListSql("site", site, offset, limit)
-  err := structsql.QueryAndCollect(r.db, sql, targets, func() {
+  err := strsql.QueryAndCollect(r.db, sql, targets, func() {
     siteCopy := domain.Site(*site)
     sites = append(sites, &siteCopy)
   })
