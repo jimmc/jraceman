@@ -12,20 +12,24 @@ func TestOpenNormal(t *testing.T) {
     t.Errorf("Failed to open sqlite3 in-memory database: %v", err)
   }
   dbr.Close()
+
+  // Call Close a second time to make sure it does nothing bad.
+  dbr.Close()
 }
 
 func TestOpenNoType(t *testing.T) {
-  dbr, err := Open(":foo")
+  dbr, err := Open("foo")
   if err == nil {
     dbr.Close()
     t.Errorf("Expected error opening database")
   }
 
-  dbr, err = Open("foo")
+  dbr, err = Open("badtype:foo")
   if err == nil {
     dbr.Close()
     t.Errorf("Expected error opening database")
   }
+
 }
 
 func TestCreateTables(t *testing.T) {

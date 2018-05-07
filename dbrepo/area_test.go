@@ -38,6 +38,14 @@ func TestAreaHappyPath(t *testing.T) {
     t.Fatalf("Populate failed: %v", err)
   }
 
+  areas, err := areaRepo.List(0, 4)
+  if err != nil {
+    t.Errorf("List failed: %v", err)
+  }
+  if got, want := len(areas), 3; got != want {
+    t.Errorf("List count: got %d, want %d", got, want)
+  }
+
   area, err := areaRepo.FindByID("A4")
   if err == nil {
     t.Errorf("Did not get error as expected from FindByID %s", "A4")

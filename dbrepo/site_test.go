@@ -38,6 +38,14 @@ func TestSiteHappyPath(t *testing.T) {
     t.Fatalf("Populate failed: %v", err)
   }
 
+  sites, err := siteRepo.List(0, 4)
+  if err != nil {
+    t.Errorf("List failed: %v", err)
+  }
+  if got, want := len(sites), 3; got != want {
+    t.Errorf("List count: got %d, want %d", got, want)
+  }
+
   site, err := siteRepo.FindByID("S4")
   if err == nil {
     t.Errorf("Did not get error as expected from FindByID %s", "S4")
