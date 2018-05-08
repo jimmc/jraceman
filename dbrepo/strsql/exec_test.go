@@ -93,3 +93,16 @@ INSERT into test(n, s)
     t.Errorf("Results array, got %v, want %v", got, want)
   }
 }
+
+func TestExecErrors(t *testing.T) {
+  setup := "invalid sql"
+  db, err := sql.Open("sqlite3", ":memory:")
+  if err != nil {
+    t.Fatalf("error opening test database: %v", err)
+  }
+  defer db.Close()
+
+  if err := ExecMulti(db,setup); err == nil {
+    t.Errorf("Expected error for invalid sql")
+  }
+}

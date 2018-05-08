@@ -1,8 +1,10 @@
 package dbrepo
 
 import (
+  "bytes"
   "testing"
 
+  "github.com/jimmc/jracemango/dbrepo/ixport"
   "github.com/jimmc/jracemango/dbrepo/structsql"
   "github.com/jimmc/jracemango/domain"
 
@@ -87,6 +89,22 @@ func TestAreaHappyPath(t *testing.T) {
   area, err = areaRepo.FindByID("A4")
   if err == nil {
     t.Errorf("Still found A4 after deleting it")
+  }
+
+  e := ixport.NewExporter(dbr.db)
+  buf := bytes.NewBufferString("")
+  if err = areaRepo.Export(e, buf); err != nil {
+    t.Errorf("Error exporting")
+  }
+  expectedExport := `
+!table area
+!columns "id","name","siteid","lanes","extralanes"
+"A1","Area One","S1",9,0
+"A2","Area Two","S1",9,2
+"A3","Area Three","S2",100,0
+`
+  if got, want := buf.String(), expectedExport; got != want {
+    t.Errorf("Export got %v, want %v", got, want)
   }
 }
 

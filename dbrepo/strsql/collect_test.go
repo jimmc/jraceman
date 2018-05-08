@@ -65,3 +65,25 @@ func TestCollectNone(t *testing.T) {
     t.Errorf("Results array, got %v, want %v", got, want)
   }
 }
+
+func TestQueryAndCollectErrors(t *testing.T) {
+  db, err := sql.Open("sqlite3", ":memory:")
+  if err != nil {
+    t.Fatalf("Error opening test database: %v", err)
+  }
+  defer db.Close()
+
+  if err := setupDatabase(db); err != nil {
+    t.Fatalf("Error setting up database: %v", err)
+  }
+
+  // Test the first error return.
+  if err := QueryAndCollect(db, "invalid sql", nil, nil); err == nil {
+    t.Errorf("Expected error for invalid sql")
+  }
+
+  // Test the second error return (not enough targets).
+  if err := QueryAndCollect(db, "SELECT s from test;", nil, nil); err == nil {
+    t.Errorf("Expected error for sql for empty table")
+  }
+}

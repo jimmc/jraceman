@@ -1,8 +1,10 @@
 package dbrepo
 
 import (
+  "bytes"
   "testing"
 
+  "github.com/jimmc/jracemango/dbrepo/ixport"
   "github.com/jimmc/jracemango/dbrepo/structsql"
   "github.com/jimmc/jracemango/domain"
 
@@ -86,6 +88,22 @@ func TestSiteHappyPath(t *testing.T) {
   site, err = siteRepo.FindByID("S4")
   if err == nil {
     t.Errorf("Still found S4 after deleting it")
+  }
+
+  e := ixport.NewExporter(dbr.db)
+  buf := bytes.NewBufferString("")
+  if err = siteRepo.Export(e, buf); err != nil {
+    t.Errorf("Error exporting")
+  }
+  expectedExport := `
+!table site
+!columns "id","name","street","street2","city","state","zip","country","phone","fax"
+"S1","Site One",null,null,null,null,null,null,null,null
+"S2","Site Two",null,null,null,null,null,null,null,null
+"S3","Site Three",null,null,null,null,null,null,null,null
+`
+  if got, want := buf.String(), expectedExport; got != want {
+    t.Errorf("Export got %v, want %v", got, want)
   }
 }
 
