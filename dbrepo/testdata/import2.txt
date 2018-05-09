@@ -1,0 +1,16 @@
+#!jraceman -import
+!exportVersion 2
+!appInfo JRaceman v2.0.0
+!type database
+
+!table site
+!columns "id","name","street","street2","city","state","zip","country","phone","fax"
+"S1","Site One",null,null,"Anytown",null,null,"USA",null,null
+"S2","Site Two",null,null,"Centerville",null,null,null,null,null
+
+!table area
+!columns "id","name","siteid","lanes","extralanes"
+"A1","Main Course","S1",9,2
+"A2","Distance Course","S1",150,0
+"A3","Center Course","S2",9,1
+"A4","Side Course","S2",9,0

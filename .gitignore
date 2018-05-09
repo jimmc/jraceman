@@ -1,2 +1,3 @@
 jracemango
 *.swp
+*/testdata/*.out

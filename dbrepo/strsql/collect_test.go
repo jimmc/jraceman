@@ -5,7 +5,7 @@ import (
   "reflect"
   "testing"
 
-  _ "github.com/mattn/go-sqlite3"
+  "github.com/jimmc/jracemango/dbrepo/dbtesting"
 )
 
 type testRow struct {
@@ -14,21 +14,11 @@ type testRow struct {
 }
 
 func setupDatabase(db *sql.DB) error {
-  createSql := "CREATE table test(n int, s string);"
-  if _, err := db.Exec(createSql); err != nil {
-    return err
-  }
-
-  insertSql := "INSERT into test(n, s) values(1, 'a'), (2, 'b'), (3, 'c');"
-  if _, err := db.Exec(insertSql); err != nil {
-    return err
-  }
-
-  return nil
+  return dbtesting.CreateAndPopulateTestTable(db)
 }
 
 func TestCollectNone(t *testing.T) {
-  db, err := sql.Open("sqlite3", ":memory:")
+  db, err := dbtesting.EmptyDb()
   if err != nil {
     t.Fatalf("Error opening test database: %v", err)
   }
@@ -67,7 +57,7 @@ func TestCollectNone(t *testing.T) {
 }
 
 func TestQueryAndCollectErrors(t *testing.T) {
-  db, err := sql.Open("sqlite3", ":memory:")
+  db, err := dbtesting.EmptyDb()
   if err != nil {
     t.Fatalf("Error opening test database: %v", err)
   }
