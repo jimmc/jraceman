@@ -1,8 +1,10 @@
-package structsql
+package structsql_test
 
 import (
   "errors"
   "testing"
+
+  "github.com/jimmc/jracemango/dbrepo/structsql"
 )
 
 type oneResultTester struct {
@@ -19,19 +21,19 @@ func TestRequireOneResult(t *testing.T) {
   oTwo := &oneResultTester{2, nil}
   oErr := &oneResultTester{0, errors.New("Test error")}
 
-  if got, want := RequireOneResult(oOne, nil, "Tested", "foo", "123"), error(nil); got != want {
+  if got, want := structsql.RequireOneResult(oOne, nil, "Tested", "foo", "123"), error(nil); got != want {
     t.Errorf("Happy path: got %v, want %v", got, want)
   }
-  if got, want := RequireOneResult(oOne, errors.New("Test error"), "Tested", "foo", "123"), errors.New("Test error"); got.Error() != want.Error() {
+  if got, want := structsql.RequireOneResult(oOne, errors.New("Test error"), "Tested", "foo", "123"), errors.New("Test error"); got.Error() != want.Error() {
     t.Errorf("With passed-in error: got %v, want %v", got, want)
   }
-  if got, want := RequireOneResult(oErr, nil, "Tested", "foo", "123"), errors.New("Test error"); got.Error() != want.Error() {
+  if got, want := structsql.RequireOneResult(oErr, nil, "Tested", "foo", "123"), errors.New("Test error"); got.Error() != want.Error() {
     t.Errorf("With sql error: got %v, want %v", got, want)
   }
-  if got, want := RequireOneResult(oZero, nil, "Tested", "foo", "123"), errors.New("Wrong-count error"); got == nil {
+  if got, want := structsql.RequireOneResult(oZero, nil, "Tested", "foo", "123"), errors.New("Wrong-count error"); got == nil {
     t.Errorf("With count==0: got %v, want %v", got, want)
   }
-  if got, want := RequireOneResult(oTwo, nil, "Tested", "foo", "123"), errors.New("Wrong-count error"); got == nil {
+  if got, want := structsql.RequireOneResult(oTwo, nil, "Tested", "foo", "123"), errors.New("Wrong-count error"); got == nil {
     t.Errorf("With count==0: got %v, want %v", got, want)
   }
 }

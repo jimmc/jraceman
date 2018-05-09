@@ -1,71 +1,73 @@
-package ixport
+package ixport_test
 
 import (
   "reflect"
   "testing"
+
+  "github.com/jimmc/jracemango/dbrepo/ixport"
 )
 
 func TestQuotedScannerEmpty(t *testing.T) {
-  q := NewQuotedScanner("")
+  q := ixport.NewQuotedScanner("")
   if q.Next() {
     t.Errorf("Empty string should have no tokens")
   }
 }
 
 func TestQuotedScannerBasic(t *testing.T) {
-  q := NewQuotedScanner("123,true,,\"abc\",null,456")
+  q := ixport.NewQuotedScanner("123,true,,\"abc\",null,456")
 
-  expectedTokens := []*QuotedToken{
-    &QuotedToken{
-      Type: TokenInt,
+  expectedTokens := []*ixport.QuotedToken{
+    &ixport.QuotedToken{
+      Type: ixport.TokenInt,
       Pos: 0,
       Source: "123",
       Value: 123,
     },
-    &QuotedToken{
-      Type: TokenComma,
+    &ixport.QuotedToken{
+      Type: ixport.TokenComma,
       Pos: 3,
       Source: ",",
     },
-    &QuotedToken{
-      Type: TokenBool,
+    &ixport.QuotedToken{
+      Type: ixport.TokenBool,
       Pos: 4,
       Source: "true",
       Value: true,
     },
-    &QuotedToken{
-      Type: TokenComma,
+    &ixport.QuotedToken{
+      Type: ixport.TokenComma,
       Pos: 8,
       Source: ",",
     },
-    &QuotedToken{
-      Type: TokenComma,
+    &ixport.QuotedToken{
+      Type: ixport.TokenComma,
       Pos: 9,
       Source: ",",
     },
-    &QuotedToken{
-      Type: TokenString,
+    &ixport.QuotedToken{
+      Type: ixport.TokenString,
       Pos: 10,
       Source: "\"abc\"",
       Value: "abc",
     },
-    &QuotedToken{
-      Type: TokenComma,
+    &ixport.QuotedToken{
+      Type: ixport.TokenComma,
       Pos: 15,
       Source: ",",
     },
-    &QuotedToken{
-      Type: TokenNull,
+    &ixport.QuotedToken{
+      Type: ixport.TokenNull,
       Pos: 16,
       Source: "null",
     },
-    &QuotedToken{
-      Type: TokenComma,
+    &ixport.QuotedToken{
+      Type: ixport.TokenComma,
       Pos: 20,
       Source: ",",
     },
-    &QuotedToken{
-      Type: TokenInt,
+    &ixport.QuotedToken{
+      Type: ixport.TokenInt,
       Pos: 21,
       Source: "456",
       Value: 456,
@@ -88,33 +90,33 @@ func TestQuotedScannerBasic(t *testing.T) {
 }
 
 func TestQuotedScannerQuotes(t *testing.T) {
-  q := NewQuotedScanner(`"a\"b","c\\d","e\n\t"`)
+  q := ixport.NewQuotedScanner(`"a\"b","c\\d","e\n\t"`)
 
-  expectedTokens := []*QuotedToken{
-    &QuotedToken{
-      Type: TokenString,
+  expectedTokens := []*ixport.QuotedToken{
+    &ixport.QuotedToken{
+      Type: ixport.TokenString,
       Pos: 0,
       Source: `"a\"b"`,
       Value: `a"b`,
     },
-    &QuotedToken{
-      Type: TokenComma,
+    &ixport.QuotedToken{
+      Type: ixport.TokenComma,
       Pos: 6,
       Source: ",",
     },
-    &QuotedToken{
-      Type: TokenString,
+    &ixport.QuotedToken{
+      Type: ixport.TokenString,
       Pos: 7,
       Source: `"c\\d"`,
       Value: `c\d`,
     },
-    &QuotedToken{
-      Type: TokenComma,
+    &ixport.QuotedToken{
+      Type: ixport.TokenComma,
       Pos: 13,
       Source: ",",
     },
-    &QuotedToken{
-      Type: TokenString,
+    &ixport.QuotedToken{
+      Type: ixport.TokenString,
       Pos: 14,
       Source: `"e\n\t"`,
       Value: "e\n\t",
@@ -139,34 +141,34 @@ func TestQuotedScannerQuotes(t *testing.T) {
 // TODO - add test for bad strings, test for bad calling sequences
 
 func TestQuotedScannerCommaSeparatedTokens(t *testing.T) {
-  q := NewQuotedScanner("123,true,,\"abc\",456")
+  q := ixport.NewQuotedScanner("123,true,,\"abc\",456")
 
-  expectedTokens := []*QuotedToken{
-    &QuotedToken{
-      Type: TokenInt,
+  expectedTokens := []*ixport.QuotedToken{
+    &ixport.QuotedToken{
+      Type: ixport.TokenInt,
       Pos: 0,
       Source: "123",
       Value: 123,
     },
-    &QuotedToken{
-      Type: TokenBool,
+    &ixport.QuotedToken{
+      Type: ixport.TokenBool,
       Pos: 4,
       Source: "true",
       Value: true,
     },
-    &QuotedToken{
-      Type: TokenNull,
+    &ixport.QuotedToken{
+      Type: ixport.TokenNull,
       Pos: 9,
       Source: "",
     },
-    &QuotedToken{
-      Type: TokenString,
+    &ixport.QuotedToken{
+      Type: ixport.TokenString,
       Pos: 10,
       Source: "\"abc\"",
       Value: "abc",
     },
-    &QuotedToken{
-      Type: TokenInt,
+    &ixport.QuotedToken{
+      Type: ixport.TokenInt,
       Pos: 16,
       Source: "456",
       Value: 456,
@@ -188,26 +190,26 @@ func TestQuotedScannerCommaSeparatedTokens(t *testing.T) {
 }
 
 func TestQuotedScannerTokensToValues(t *testing.T) {
-  tokens := []*QuotedToken{
-    &QuotedToken{
-      Type: TokenInt,
+  tokens := []*ixport.QuotedToken{
+    &ixport.QuotedToken{
+      Type: ixport.TokenInt,
       Pos: 0,
       Source: "123",
       Value: 123,
     },
-    &QuotedToken{
-      Type: TokenBool,
+    &ixport.QuotedToken{
+      Type: ixport.TokenBool,
       Pos: 4,
       Source: "true",
       Value: true,
     },
-    &QuotedToken{
-      Type: TokenNull,
+    &ixport.QuotedToken{
+      Type: ixport.TokenNull,
       Pos: 9,
       Source: "",
     },
-    &QuotedToken{
-      Type: TokenString,
+    &ixport.QuotedToken{
+      Type: ixport.TokenString,
       Pos: 10,
       Source: "\"abc\"",
       Value: "abc",
@@ -220,7 +222,7 @@ func TestQuotedScannerTokensToValues(t *testing.T) {
     "abc",
   }
 
-  q := NewQuotedScanner("")
+  q := ixport.NewQuotedScanner("")
   if got, want := q.TokensToValues(tokens), expectedValues; !reflect.DeepEqual(got, want) {
     t.Fatalf("Values: got %v, want %v", got, want)
   }

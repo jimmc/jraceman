@@ -1,4 +1,4 @@
-package strsql
+package strsql_test
 
 import (
   "database/sql"
@@ -7,6 +7,7 @@ import (
   "testing"
 
   "github.com/jimmc/jracemango/dbrepo/dbtesting"
+  "github.com/jimmc/jracemango/dbrepo/strsql"
 )
 
 type eTestRow struct {
@@ -25,7 +26,7 @@ func collectETestRows(db *sql.DB, query string) ([]*eTestRow, error) {
     rowCopy := eTestRow(*row)
     rows = append(rows, &rowCopy)
   }
-  err := QueryAndCollect(db, query, targets, collector)
+  err := strsql.QueryAndCollect(db, query, targets, collector)
   return rows, err
 }
 
@@ -36,7 +37,7 @@ func setupAndCollectETestRows(setup, query string) ([]*eTestRow, error) {
   }
   defer db.Close()
 
-  if err := ExecMulti(db,setup); err != nil {
+  if err := strsql.ExecMulti(db,setup); err != nil {
     return nil, fmt.Errorf("error calling ExecMulti: %v", err)
   }
 
@@ -102,7 +103,7 @@ func TestExecErrors(t *testing.T) {
   }
   defer db.Close()
 
-  if err := ExecMulti(db,setup); err == nil {
+  if err := strsql.ExecMulti(db,setup); err == nil {
     t.Errorf("Expected error for invalid sql")
   }
 }

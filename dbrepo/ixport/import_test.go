@@ -1,9 +1,11 @@
-package ixport
+package ixport_test
 
 import (
   "reflect"
   "strings"
   "testing"
+
+  "github.com/jimmc/jracemango/dbrepo/ixport"
 )
 
 // TestRowRepo implements the RowRepo interface with methods that capture
@@ -57,11 +59,14 @@ func (tr *testRowRepo) Update(table string, columns[]string, values []interface{
 
 func TestImportDataLineNewRow(t *testing.T) {
   trr := &testRowRepo{}
-  im := NewImporter(trr)
-  im.tableName = "xtable"
-  im.columnNames = []string{"id","scol","bcol","ncol","icol"}
-  err := im.importDataLine(`"A1","abc",true,null,456`)
-  if err != nil {
+  im := ixport.NewImporter(trr)
+  if err := im.ImportLine("!table xtable"); err != nil {
+    t.Fatalf("Setting table: %v", err)
+  }
+  if err := im.ImportLine(`!columns "id","scol","bcol","ncol","icol"`); err != nil {
+    t.Fatalf("Setting columns: %v", err)
+  }
+  if err := im.ImportLine(`"A1","abc",true,null,456`); err != nil {
     t.Fatalf("Importing data line: %v", err)
   }
   if got, want := trr.table, "xtable"; got != want {
@@ -76,18 +81,21 @@ func TestImportDataLineNewRow(t *testing.T) {
   if got, want := trr.updateCount, 0; got != want {
     t.Errorf("UpdateCount, got %v, want %v", got, want)
   }
-  if got, want := trr.columns, im.columnNames; !reflect.DeepEqual(got, want) {
+  if got, want := trr.columns, im.ColumnNames(); !reflect.DeepEqual(got, want) {
     t.Errorf("Column names, got %v, want %v", got, want)
   }
 }
 
 func TestImportDataLineNoChangeRow(t *testing.T) {
   trr := &testRowRepo{}
-  im := NewImporter(trr)
-  im.tableName = "xtable"
-  im.columnNames = []string{"id","scol","bcol","ncol","icol"}
-  err := im.importDataLine(`"A2","abc",true,null,456`)
-  if err != nil {
+  im := ixport.NewImporter(trr)
+  if err := im.ImportLine("!table xtable"); err != nil {
+    t.Fatalf("Setting table: %v", err)
+  }
+  if err := im.ImportLine(`!columns "id","scol","bcol","ncol","icol"`); err != nil {
+    t.Fatalf("Setting columns: %v", err)
+  }
+  if err := im.ImportLine(`"A2","abc",true,null,456`); err != nil {
     t.Fatalf("Importing data line: %v", err)
   }
   if got, want := trr.table, "xtable"; got != want {
@@ -102,17 +110,21 @@ func TestImportDataLineNoChangeRow(t *testing.T) {
   if got, want := trr.updateCount, 0; got != want {
     t.Errorf("UpdateCount, got %v, want %v", got, want)
   }
-  if got, want := trr.columns, im.columnNames; !reflect.DeepEqual(got, want) {
+  if got, want := trr.columns, im.ColumnNames(); !reflect.DeepEqual(got, want) {
     t.Errorf("Column names, got %v, want %v", got, want)
   }
 }
 
 func TestImportDataLineUpdateRow(t *testing.T) {
   trr := &testRowRepo{}
-  im := NewImporter(trr)
-  im.tableName = "xtable"
-  im.columnNames = []string{"id","scol","bcol","ncol","icol"}
-  if err := im.importDataLine(`"A3","abc",true,null,456`); err != nil {
+  im := ixport.NewImporter(trr)
+  if err := im.ImportLine("!table xtable"); err != nil {
+    t.Fatalf("Setting table: %v", err)
+  }
+  if err := im.ImportLine(`!columns "id","scol","bcol","ncol","icol"`); err != nil {
+    t.Fatalf("Setting columns: %v", err)
+  }
+  if err := im.ImportLine(`"A3","abc",true,null,456`); err != nil {
     t.Fatalf("Importing data line: %v", err)
   }
   if got, want := trr.table, "xtable"; got != want {
@@ -134,59 +146,59 @@ func TestImportDataLineUpdateRow(t *testing.T) {
 
 func TestImportModeLine(t *testing.T) {
   trr := &testRowRepo{}
-  im := NewImporter(trr)
+  im := ixport.NewImporter(trr)
 
-  if err := im.importModeLine("!table foo"); err != nil {
+  if err := im.ImportLine("!table foo"); err != nil {
     t.Fatalf("Importing mode line (table): %v", err)
   }
-  if got, want := im.tableName, "foo"; got != want {
+  if got, want := im.TableName(), "foo"; got != want {
     t.Errorf("Table name, got %v, want %v", got, want)
   }
 
-  if err := im.importModeLine(`!columns "id","col2","col3"`); err != nil {
+  if err := im.ImportLine(`!columns "id","col2","col3"`); err != nil {
     t.Fatalf("Importing mode line (colmns): %v", err)
   }
-  if got, want := im.columnNames, []string{"id", "col2", "col3"}; !reflect.DeepEqual(got, want) {
+  if got, want := im.ColumnNames(), []string{"id", "col2", "col3"}; !reflect.DeepEqual(got, want) {
     t.Errorf("Column names, got %v, want %v", got, want)
   }
 
-  if err := im.importModeLine(`!columns "col1","col2"`); err == nil {
+  if err := im.ImportLine(`!columns "col1","col2"`); err == nil {
     t.Errorf("Importing mode line (colmns): id col should be required")
   }
 }
 
 func TestImportIgnoreLine(t *testing.T) {
   trr := &testRowRepo{}
-  im := NewImporter(trr)
+  im := ixport.NewImporter(trr)
 
-  if err := im.importLine(""); err != nil {
+  if err := im.ImportLine(""); err != nil {
     t.Errorf("Importing empty line: %v", err)
   }
-  if err := im.importLine("   "); err != nil {
+  if err := im.ImportLine("   "); err != nil {
     t.Errorf("Importing spaces line: %v", err)
   }
-  if err := im.importLine("# This is a comment line"); err != nil {
+  if err := im.ImportLine("# This is a comment line"); err != nil {
     t.Errorf("Importing comment line: %v", err)
   }
-  if err := im.importLine("  # This is a comment line"); err != nil {
+  if err := im.ImportLine("  # This is a comment line"); err != nil {
     t.Errorf("Importing spaces+comment line: %v", err)
   }
 }
 
 func TestImportLine(t *testing.T) {
   trr := &testRowRepo{}
-  im := NewImporter(trr)
+  im := ixport.NewImporter(trr)
 
-  if err := im.importLine("  ! table foo "); err != nil {
+  if err := im.ImportLine("  ! table foo "); err != nil {
     t.Errorf("Importing table line: %v", err)
   }
-  if got, want := im.tableName, "foo"; got != want {
+  if got, want := im.TableName(), "foo"; got != want {
     t.Errorf("Table name, got %v, want %v", got, want)
   }
-  if err := im.importLine(`  ! columns "id","scol","bcol","ncol","icol" `); err != nil {
+  if err := im.ImportLine(`  ! columns "id","scol","bcol","ncol","icol" `); err != nil {
     t.Errorf("Importing columns line: %v", err)
   }
-  if err := im.importDataLine(`"A1","abc",true,null,456`); err != nil {
+  if err := im.ImportLine(`"A1","abc",true,null,456`); err != nil {
     t.Fatalf("Data line: %v", err)
   }
   if got, want := trr.insertCount, 1; got != want {
@@ -196,7 +208,7 @@ func TestImportLine(t *testing.T) {
 
 func TestImport(t *testing.T) {
   trr := &testRowRepo{}
-  im := NewImporter(trr)
+  im := ixport.NewImporter(trr)
   source := `#!jraceman -import
 !exportVersion 1
 !appInfo JRaceman v1.1.6
@@ -210,7 +222,7 @@ func TestImport(t *testing.T) {
   if err := im.Import(strings.NewReader(source)); err != nil {
     t.Fatalf("Importing string: %v", err)
   }
-  if got, want := im.tableName, "thing"; got != want {
+  if got, want := im.TableName(), "thing"; got != want {
     t.Errorf("Table name, got %v, want %v", got, want)
   }
   if got, want := trr.readCount, 2; got != want {

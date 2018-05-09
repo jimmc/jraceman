@@ -31,6 +31,14 @@ func NewImporter(rowRepo RowRepo) *Importer {
   }
 }
 
+func (im *Importer) TableName() string {
+  return im.tableName
+}
+
+func (im *Importer) ColumnNames() []string {
+  return im.columnNames
+}
+
 func (im *Importer) Counts() (insertCount, updateCount, unchangedCount int) {
   return im.insertCount, im.updateCount, im.unchangedCount
 }
@@ -41,7 +49,7 @@ func (im *Importer) Import(reader io.Reader) error {
   for scanner.Scan() {
     im.lineno++         // First line is line 1.
     line := scanner.Text()
-    if err := im.importLine(line); err != nil {
+    if err := im.ImportLine(line); err != nil {
       return fmt.Errorf("error at line %d: %v", im.lineno, err)
     }
   }
@@ -56,7 +64,7 @@ func (im *Importer) reset() {
   im.tableName = ""
 }
 
-func (im *Importer) importLine(line string) error {
+func (im *Importer) ImportLine(line string) error {
   line = strings.TrimSpace(line)
   if line == "" || strings.HasPrefix(line, "#") {
     return nil          // Blank line or comment line.

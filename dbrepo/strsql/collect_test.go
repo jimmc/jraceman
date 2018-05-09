@@ -1,4 +1,4 @@
-package strsql
+package strsql_test
 
 import (
   "database/sql"
@@ -6,6 +6,7 @@ import (
   "testing"
 
   "github.com/jimmc/jracemango/dbrepo/dbtesting"
+  "github.com/jimmc/jracemango/dbrepo/strsql"
 )
 
 type testRow struct {
@@ -44,7 +45,7 @@ func TestCollectNone(t *testing.T) {
     &testRow{3, "c"},
   }
   query := "SELECT n, s from test order by n;"
-  if err := QueryAndCollect(db, query, targets, collector); err != nil {
+  if err := strsql.QueryAndCollect(db, query, targets, collector); err != nil {
     t.Fatalf("Error collecting rows: %v", err)
   }
 
@@ -68,12 +69,12 @@ func TestQueryAndCollectErrors(t *testing.T) {
   }
 
   // Test the first error return.
-  if err := QueryAndCollect(db, "invalid sql", nil, nil); err == nil {
+  if err := strsql.QueryAndCollect(db, "invalid sql", nil, nil); err == nil {
     t.Errorf("Expected error for invalid sql")
   }
 
   // Test the second error return (not enough targets).
-  if err := QueryAndCollect(db, "SELECT s from test;", nil, nil); err == nil {
+  if err := strsql.QueryAndCollect(db, "SELECT s from test;", nil, nil); err == nil {
     t.Errorf("Expected error for sql for empty table")
   }
 }

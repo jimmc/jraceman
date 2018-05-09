@@ -1,9 +1,10 @@
-package dbrepo
+package dbrepo_test
 
 import (
   "bytes"
   "testing"
 
+  "github.com/jimmc/jracemango/dbrepo"
   "github.com/jimmc/jracemango/dbrepo/ixport"
   "github.com/jimmc/jracemango/dbrepo/structsql"
   "github.com/jimmc/jracemango/domain"
@@ -26,17 +27,17 @@ func TestAreaCreateTable(t *testing.T) {
 }
 
 func TestAreaHappyPath(t *testing.T) {
-  dbr, err := Open("sqlite3::memory:")
+  dbr, err := dbrepo.Open("sqlite3::memory:")
   if err != nil {
     t.Fatalf("Error opening in-memory database: %v", err)
   }
   defer dbr.Close()
-  areaRepo := dbr.Area().(*dbAreaRepo)
+  areaRepo := dbr.Area().(*dbrepo.DBAreaRepo)
 
   if err := areaRepo.CreateTable(); err != nil {
     t.Fatalf("CreateTable failed: %v", err)
   }
-  if err := areaRepo.Populate(); err != nil {
+  if err := populateArea(dbr); err != nil {
     t.Fatalf("Populate failed: %v", err)
   }
 
@@ -91,7 +92,7 @@ func TestAreaHappyPath(t *testing.T) {
     t.Errorf("Still found A4 after deleting it")
   }
 
-  e := ixport.NewExporter(dbr.db)
+  e := ixport.NewExporter(dbr.DB())
   buf := bytes.NewBufferString("")
   if err = areaRepo.Export(e, buf); err != nil {
     t.Errorf("Error exporting")
@@ -109,7 +110,7 @@ func TestAreaHappyPath(t *testing.T) {
 }
 
 // For testing, put some data into our table
-func (r *dbAreaRepo) Populate() error {
+func populateArea(dbr *dbrepo.Repos) error {
   columns := "INSERT into area(id, name, siteid, lanes, extralanes) values ("
   values := [] string {
     "'A1', 'Area One', 'S1', 9, 0",
@@ -118,7 +119,7 @@ func (r *dbAreaRepo) Populate() error {
   }
   for _, vv := range values {
     sql := columns + vv + ");"
-    _, err := r.db.Exec(sql)
+    _, err := dbr.DB().Exec(sql)
     if err != nil {
       return err
     }

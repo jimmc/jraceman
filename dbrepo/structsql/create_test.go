@@ -1,7 +1,9 @@
-package structsql
+package structsql_test
 
 import (
   "testing"
+
+  "github.com/jimmc/jracemango/dbrepo/structsql"
 )
 
 type Foo struct {
@@ -21,7 +23,7 @@ var foo = &Foo{
 }
 
 func TestCreateTableSql(t *testing.T) {
-  if got, want := CreateTableSql("foo", foo),
+  if got, want := structsql.CreateTableSql("foo", foo),
       "CREATE TABLE foo(id string primary key, num int not null, " +
       "required string not null, optional string, opt2 string);";
       got != want {

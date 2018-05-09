@@ -1,11 +1,13 @@
-package structsql
+package structsql_test
 
 import (
   "testing"
+
+  "github.com/jimmc/jracemango/dbrepo/structsql"
 )
 
 func TestSelectSql(t *testing.T) {
-  sql, targets := SelectSql("foo", foo)
+  sql, targets := structsql.SelectSql("foo", foo)
   if got, want := sql,
       "SELECT id,num,required,optional,opt2 from foo"
       got != want {
@@ -17,7 +19,7 @@ func TestSelectSql(t *testing.T) {
 }
 
 func TestFindByIDSql(t *testing.T) {
-  sql, targets := FindByIDSql("foo", foo)
+  sql, targets := structsql.FindByIDSql("foo", foo)
   if got, want := sql, 
       "SELECT id,num,required,optional,opt2 from foo where id=?;";
       got != want {

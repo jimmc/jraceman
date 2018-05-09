@@ -10,15 +10,15 @@ import (
   "github.com/jimmc/jracemango/domain"
 )
 
-type dbAreaRepo struct {
+type DBAreaRepo struct {
   db *sql.DB
 }
 
-func (r *dbAreaRepo) CreateTable() error {
+func (r *DBAreaRepo) CreateTable() error {
   return structsql.CreateTable(r.db, "area", domain.Area{})
 }
 
-func (r *dbAreaRepo) FindByID(ID string) (*domain.Area, error) {
+func (r *DBAreaRepo) FindByID(ID string) (*domain.Area, error) {
   area := &domain.Area{}
   sql, targets := structsql.FindByIDSql("area", area)
   if err := r.db.QueryRow(sql, ID).Scan(targets...); err != nil {
@@ -27,12 +27,12 @@ func (r *dbAreaRepo) FindByID(ID string) (*domain.Area, error) {
   return area, nil
 }
 
-func (r *dbAreaRepo) Save(area *domain.Area) error {
+func (r *DBAreaRepo) Save(area *domain.Area) error {
   // TODO - generate an ID if blank
   return structsql.Insert(r.db, "area", area, area.ID)
 }
 
-func (r *dbAreaRepo) List(offset, limit int) ([]*domain.Area, error) {
+func (r *DBAreaRepo) List(offset, limit int) ([]*domain.Area, error) {
   area := &domain.Area{}
   areas := make([]*domain.Area, 0)
   sql, targets := structsql.ListSql("area", area, offset, limit)
@@ -43,14 +43,14 @@ func (r *dbAreaRepo) List(offset, limit int) ([]*domain.Area, error) {
   return areas, err
 }
 
-func (r *dbAreaRepo) DeleteByID(ID string) error {
+func (r *DBAreaRepo) DeleteByID(ID string) error {
   return structsql.DeleteByID(r.db, "area", ID)
 }
 
-func (r *dbAreaRepo) UpdateByID(ID string, oldArea, newArea *domain.Area, diffs domain.Diffs) error {
+func (r *DBAreaRepo) UpdateByID(ID string, oldArea, newArea *domain.Area, diffs domain.Diffs) error {
   return structsql.UpdateByID(r.db, "area", diffs.Modified(), ID)
 }
 
-func (r *dbAreaRepo) Export(e *ixport.Exporter, w io.Writer) error {
+func (r *DBAreaRepo) Export(e *ixport.Exporter, w io.Writer) error {
   return e.ExportTableFromStruct(w, "area", &domain.Area{})
 }

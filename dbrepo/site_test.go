@@ -1,9 +1,10 @@
-package dbrepo
+package dbrepo_test
 
 import (
   "bytes"
   "testing"
 
+  "github.com/jimmc/jracemango/dbrepo"
   "github.com/jimmc/jracemango/dbrepo/ixport"
   "github.com/jimmc/jracemango/dbrepo/structsql"
   "github.com/jimmc/jracemango/domain"
@@ -26,17 +27,17 @@ func TestSiteCreateTable(t *testing.T) {
 }
 
 func TestSiteHappyPath(t *testing.T) {
-  dbr, err := Open("sqlite3::memory:")
+  dbr, err := dbrepo.Open("sqlite3::memory:")
   if err != nil {
     t.Fatalf("Error opening in-memory database: %v", err)
   }
   defer dbr.Close()
-  siteRepo := dbr.Site().(*dbSiteRepo)
+  siteRepo := dbr.Site().(*dbrepo.DBSiteRepo)
 
   if err := siteRepo.CreateTable(); err != nil {
     t.Fatalf("CreateTable failed: %v", err)
   }
-  if err := siteRepo.Populate(); err != nil {
+  if err := populateSite(dbr); err != nil {
     t.Fatalf("Populate failed: %v", err)
   }
 
@@ -90,7 +91,7 @@ func TestSiteHappyPath(t *testing.T) {
     t.Errorf("Still found S4 after deleting it")
   }
 
-  e := ixport.NewExporter(dbr.db)
+  e := ixport.NewExporter(dbr.DB())
   buf := bytes.NewBufferString("")
   if err = siteRepo.Export(e, buf); err != nil {
     t.Errorf("Error exporting")
@@ -108,7 +109,7 @@ func TestSiteHappyPath(t *testing.T) {
 }
 
 // For testing, put some data into our table
-func (r *dbSiteRepo) Populate() error {
+func populateSite(dbr *dbrepo.Repos) error {
   columns := "INSERT into site(id, name) values ("
   values := [] string {
     "'S1', 'Site One'",
@@ -117,7 +118,7 @@ func (r *dbSiteRepo) Populate() error {
   }
   for _, vv := range values {
     sql := columns + vv + ");"
-    _, err := r.db.Exec(sql)
+    _, err := dbr.DB().Exec(sql)
     if err != nil {
       return err
     }

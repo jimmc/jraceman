@@ -1,4 +1,4 @@
-package dbrepo
+package dbrepo_test
 
 import (
   "bytes"
@@ -7,11 +7,13 @@ import (
   "strings"
   "testing"
 
+  "github.com/jimmc/jracemango/dbrepo"
+
   _ "github.com/mattn/go-sqlite3"
 )
 
-func EmptyRepos() (*Repos, error) {
-  return Open("sqlite3::memory:")
+func EmptyRepos() (*dbrepo.Repos, error) {
+  return dbrepo.Open("sqlite3::memory:")
 }
 
 func TestOpenNormal(t *testing.T) {
@@ -26,13 +28,13 @@ func TestOpenNormal(t *testing.T) {
 }
 
 func TestOpenNoType(t *testing.T) {
-  dbr, err := Open("foo")
+  dbr, err := dbrepo.Open("foo")
   if err == nil {
     dbr.Close()
     t.Errorf("Expected error opening database")
   }
 
-  dbr, err = Open("badtype:foo")
+  dbr, err = dbrepo.Open("badtype:foo")
   if err == nil {
     dbr.Close()
     t.Errorf("Expected error opening database")
@@ -59,7 +61,7 @@ func TestCreateTablesSiteError(t *testing.T) {
   defer dbr.Close()
 
   // Create the site table so that we get an error when we try that again.
-  if err := dbr.dbSite.CreateTable(); err != nil {
+  if err := dbr.Site().(*dbrepo.DBSiteRepo).CreateTable(); err != nil {
     t.Fatalf("Error creating site table: %v", err)
   }
   err = dbr.CreateTables()
@@ -79,7 +81,7 @@ func TestCreateTablesAreaError(t *testing.T) {
   defer dbr.Close()
 
   // Create the site table so that we get an error when we try that again.
-  if err := dbr.dbArea.CreateTable(); err != nil {
+  if err := dbr.Area().(*dbrepo.DBAreaRepo).CreateTable(); err != nil {
     t.Fatalf("Error creating area table: %v", err)
   }
   err = dbr.CreateTables()

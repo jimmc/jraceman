@@ -14,8 +14,12 @@ import (
 // Repos implements the domain.Repos interface.
 type Repos struct {
   db *sql.DB
-  dbArea *dbAreaRepo
-  dbSite *dbSiteRepo
+  dbArea *DBAreaRepo
+  dbSite *DBSiteRepo
+}
+
+func (r *Repos) DB() *sql.DB {
+  return r.db
 }
 
 func (r *Repos) Area() domain.AreaRepo {
@@ -52,8 +56,8 @@ func Open(repoPath string) (*Repos, error) {
 
   r := &Repos{
     db: db,
-    dbArea: &dbAreaRepo{db},
-    dbSite: &dbSiteRepo{db},
+    dbArea: &DBAreaRepo{db},
+    dbSite: &DBSiteRepo{db},
   }
 
   return r, err

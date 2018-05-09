@@ -10,15 +10,15 @@ import (
   "github.com/jimmc/jracemango/domain"
 )
 
-type dbSiteRepo struct {
+type DBSiteRepo struct {
   db *sql.DB
 }
 
-func (r *dbSiteRepo) CreateTable() error {
+func (r *DBSiteRepo) CreateTable() error {
   return structsql.CreateTable(r.db, "site", domain.Site{})
 }
 
-func (r *dbSiteRepo) FindByID(ID string) (*domain.Site, error) {
+func (r *DBSiteRepo) FindByID(ID string) (*domain.Site, error) {
   site := &domain.Site{}
   sql, targets := structsql.FindByIDSql("site", site)
   if err := r.db.QueryRow(sql, ID).Scan(targets...); err != nil {
@@ -27,12 +27,12 @@ func (r *dbSiteRepo) FindByID(ID string) (*domain.Site, error) {
   return site, nil
 }
 
-func (r *dbSiteRepo) Save(site *domain.Site) error {
+func (r *DBSiteRepo) Save(site *domain.Site) error {
   // TODO - generate an ID if blank
   return structsql.Insert(r.db, "site", site, site.ID)
 }
 
-func (r *dbSiteRepo) List(offset, limit int) ([]*domain.Site, error) {
+func (r *DBSiteRepo) List(offset, limit int) ([]*domain.Site, error) {
   site := &domain.Site{}
   sites := make([]*domain.Site, 0)
   sql, targets := structsql.ListSql("site", site, offset, limit)
@@ -43,14 +43,14 @@ func (r *dbSiteRepo) List(offset, limit int) ([]*domain.Site, error) {
   return sites, err
 }
 
-func (r *dbSiteRepo) DeleteByID(ID string) error {
+func (r *DBSiteRepo) DeleteByID(ID string) error {
   return structsql.DeleteByID(r.db, "site", ID)
 }
 
-func (r *dbSiteRepo) UpdateByID(ID string, oldSite, newSite *domain.Site, diffs domain.Diffs) error {
+func (r *DBSiteRepo) UpdateByID(ID string, oldSite, newSite *domain.Site, diffs domain.Diffs) error {
   return structsql.UpdateByID(r.db, "site", diffs.Modified(), ID)
 }
 
-func (r *dbSiteRepo) Export(e *ixport.Exporter, w io.Writer) error {
+func (r *DBSiteRepo) Export(e *ixport.Exporter, w io.Writer) error {
   return e.ExportTableFromStruct(w, "site", &domain.Site{})
 }

@@ -1,8 +1,10 @@
-package structsql
+package structsql_test
 
 import (
   "reflect"
   "testing"
+
+  "github.com/jimmc/jracemango/dbrepo/structsql"
 )
 
 func TestModsToSql(t *testing.T) {
@@ -11,7 +13,7 @@ func TestModsToSql(t *testing.T) {
     "Required": "qqq",
     "Opt2": nil,
   }
-  sql, values := ModsToSql("foo", mods, "123")
+  sql, values := structsql.ModsToSql("foo", mods, "123")
   if got, want := sql, "update foo set num = ?, opt2 = NULL, required = ? where id = ?;"; got != want {
     t.Errorf("Update sql: got %v, want %v", got, want)
   }
