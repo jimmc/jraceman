@@ -5,11 +5,11 @@ import (
   "testing"
 
   "github.com/jimmc/jracemango/dbrepo"
+  "github.com/jimmc/jracemango/dbrepo/dbtesting"
   "github.com/jimmc/jracemango/dbrepo/ixport"
+  "github.com/jimmc/jracemango/dbrepo/strsql"
   "github.com/jimmc/jracemango/dbrepo/structsql"
   "github.com/jimmc/jracemango/domain"
-
-  _ "github.com/mattn/go-sqlite3"
 )
 
 type areaDiffs struct {}
@@ -27,9 +27,9 @@ func TestAreaCreateTable(t *testing.T) {
 }
 
 func TestAreaHappyPath(t *testing.T) {
-  dbr, err := dbrepo.Open("sqlite3::memory:")
+  dbr, err := dbtesting.ReposEmpty()
   if err != nil {
-    t.Fatalf("Error opening in-memory database: %v", err)
+    t.Fatalf("Error opening test database: %v", err)
   }
   defer dbr.Close()
   areaRepo := dbr.Area().(*dbrepo.DBAreaRepo)
@@ -111,18 +111,11 @@ func TestAreaHappyPath(t *testing.T) {
 
 // For testing, put some data into our table
 func populateArea(dbr *dbrepo.Repos) error {
-  columns := "INSERT into area(id, name, siteid, lanes, extralanes) values ("
-  values := [] string {
-    "'A1', 'Area One', 'S1', 9, 0",
-    "'A2', 'Area Two', 'S1', 9, 2",
-    "'A3', 'Area Three', 'S2', 100, 0",
-  }
-  for _, vv := range values {
-    sql := columns + vv + ");"
-    _, err := dbr.DB().Exec(sql)
-    if err != nil {
-      return err
-    }
-  }
-  return nil
+  insertSql := `
+INSERT into area(id, name, siteid, lanes, extralanes) values
+('A1', 'Area One', 'S1', 9, 0),
+('A2', 'Area Two', 'S1', 9, 2),
+('A3', 'Area Three', 'S2', 100, 0)
+`
+  return strsql.ExecMulti(dbr.DB(), insertSql)
 }

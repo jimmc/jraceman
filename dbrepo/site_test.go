@@ -5,11 +5,11 @@ import (
   "testing"
 
   "github.com/jimmc/jracemango/dbrepo"
+  "github.com/jimmc/jracemango/dbrepo/dbtesting"
   "github.com/jimmc/jracemango/dbrepo/ixport"
+  "github.com/jimmc/jracemango/dbrepo/strsql"
   "github.com/jimmc/jracemango/dbrepo/structsql"
   "github.com/jimmc/jracemango/domain"
-
-  _ "github.com/mattn/go-sqlite3"
 )
 
 type siteDiffs struct {}
@@ -27,9 +27,9 @@ func TestSiteCreateTable(t *testing.T) {
 }
 
 func TestSiteHappyPath(t *testing.T) {
-  dbr, err := dbrepo.Open("sqlite3::memory:")
+  dbr, err := dbtesting.ReposEmpty()
   if err != nil {
-    t.Fatalf("Error opening in-memory database: %v", err)
+    t.Fatalf("Error opening test database: %v", err)
   }
   defer dbr.Close()
   siteRepo := dbr.Site().(*dbrepo.DBSiteRepo)
@@ -110,18 +110,11 @@ func TestSiteHappyPath(t *testing.T) {
 
 // For testing, put some data into our table
 func populateSite(dbr *dbrepo.Repos) error {
-  columns := "INSERT into site(id, name) values ("
-  values := [] string {
-    "'S1', 'Site One'",
-    "'S2', 'Site Two'",
-    "'S3', 'Site Three'",
-  }
-  for _, vv := range values {
-    sql := columns + vv + ");"
-    _, err := dbr.DB().Exec(sql)
-    if err != nil {
-      return err
-    }
-  }
-  return nil
+  insertSql := `
+INSERT into site(id, name) values
+('S1', 'Site One'),
+('S2', 'Site Two'),
+('S3', 'Site Three')
+`
+  return strsql.ExecMulti(dbr.DB(), insertSql)
 }

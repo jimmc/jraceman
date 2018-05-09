@@ -8,18 +8,13 @@ import (
   "testing"
 
   "github.com/jimmc/jracemango/dbrepo"
-
-  _ "github.com/mattn/go-sqlite3"
+  "github.com/jimmc/jracemango/dbrepo/dbtesting"
 )
 
-func EmptyRepos() (*dbrepo.Repos, error) {
-  return dbrepo.Open("sqlite3::memory:")
-}
-
 func TestOpenNormal(t *testing.T) {
-  dbr, err := EmptyRepos()
+  dbr, err := dbtesting.ReposEmpty()
   if err != nil {
-    t.Errorf("Failed to open sqlite3 in-memory database: %v", err)
+    t.Errorf("Failed to open test database: %v", err)
   }
   dbr.Close()
 
@@ -43,9 +38,9 @@ func TestOpenNoType(t *testing.T) {
 }
 
 func TestCreateTables(t *testing.T) {
-  dbr, err := EmptyRepos()
+  dbr, err := dbtesting.ReposEmpty()
   if err != nil {
-    t.Errorf("Failed to open sqlite3 in-memory database: %v", err)
+    t.Errorf("Failed to open test database: %v", err)
   }
   defer dbr.Close()
   if err := dbr.CreateTables(); err != nil {
@@ -54,9 +49,9 @@ func TestCreateTables(t *testing.T) {
 }
 
 func TestCreateTablesSiteError(t *testing.T) {
-  dbr, err := EmptyRepos()
+  dbr, err := dbtesting.ReposEmpty()
   if err != nil {
-    t.Errorf("Failed to open sqlite3 in-memory database: %v", err)
+    t.Errorf("Failed to open test database: %v", err)
   }
   defer dbr.Close()
 
@@ -74,9 +69,9 @@ func TestCreateTablesSiteError(t *testing.T) {
 }
 
 func TestCreateTablesAreaError(t *testing.T) {
-  dbr, err := EmptyRepos()
+  dbr, err := dbtesting.ReposEmpty()
   if err != nil {
-    t.Errorf("Failed to open sqlite3 in-memory database: %v", err)
+    t.Errorf("Failed to open test database: %v", err)
   }
   defer dbr.Close()
 
@@ -99,9 +94,9 @@ func TestImport(t *testing.T) {
     t.Fatalf("Error opening import file: %v", err)
   }
   defer infile.Close()
-  dbr, err := EmptyRepos()
+  dbr, err := dbtesting.ReposEmpty()
   if err != nil {
-    t.Errorf("Failed to open sqlite3 in-memory database: %v", err)
+    t.Errorf("Failed to open test database: %v", err)
   }
   defer dbr.Close()
   if err := dbr.CreateTables(); err != nil {
@@ -148,9 +143,9 @@ func TestExport(t *testing.T) {
     t.Fatalf("Error opening import file: %v", err)
   }
   defer infile.Close()
-  dbr, err := EmptyRepos()
+  dbr, err := dbtesting.ReposEmpty()
   if err != nil {
-    t.Errorf("Failed to open sqlite3 in-memory database: %v", err)
+    t.Errorf("Failed to open test database: %v", err)
   }
   defer dbr.Close()
   if err := dbr.CreateTables(); err != nil {

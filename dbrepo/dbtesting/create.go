@@ -4,11 +4,17 @@ package dbtesting
 import (
   "database/sql"
 
+  "github.com/jimmc/jracemango/dbrepo"
+
   _ "github.com/mattn/go-sqlite3"
 )
 
 func EmptyDb() (*sql.DB, error) {
   return sql.Open("sqlite3", ":memory:")
+}
+
+func ReposEmpty() (*dbrepo.Repos, error) {
+  return dbrepo.Open("sqlite3::memory:")
 }
 
 func CreateAndPopulateTestTable(db *sql.DB) error {
