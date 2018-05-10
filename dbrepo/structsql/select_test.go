@@ -29,3 +29,12 @@ func TestFindByIDSql(t *testing.T) {
     t.Errorf("Wrong number of targets: got %d, want %d", got, want)
   }
 }
+
+func TestListSql(t *testing.T) {
+  sql, _ := structsql.ListSql("foo", foo, 5, 10)
+  if got, want := sql,
+      "SELECT id,num,required,optional,opt2 from foo limit 10 offset 5"
+      got != want {
+    t.Errorf("ListSql: got %v, want %v", got, want)
+  }
+}

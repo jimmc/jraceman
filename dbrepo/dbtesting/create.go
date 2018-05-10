@@ -38,9 +38,9 @@ func DbWithSetupString(setupSql string) (*sql.DB, error) {
 
 func DbWithTestTable() (*sql.DB, error) {
   return DbWithSetupString(`
-CREATE table test(n int, s string);
+CREATE table test(id string, n int, s string);
 
-INSERT into test(n, s) values(1, 'a'), (2, 'b'), (3, 'c');
+INSERT into test(id, n, s) values('T1', 1, 'a'), ('T2', 2, 'b'), ('T3', 3, 'c');
 `)
 }
 
