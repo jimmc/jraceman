@@ -1,0 +1,3 @@
+CREATE table test(n int, s string not null, s2 string);
+
+INSERT into test(n, s, s2) values(1, 'a', 'x'), (2, 'b', 'x'), (3, 'c', null);

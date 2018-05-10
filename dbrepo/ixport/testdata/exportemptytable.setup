@@ -1,0 +1,1 @@
+CREATE table test(n int, s string not null, s2 string);

@@ -1,7 +1,6 @@
 package strsql_test
 
 import (
-  "database/sql"
   "reflect"
   "testing"
 
@@ -14,20 +13,12 @@ type testRow struct {
   s string;
 }
 
-func setupDatabase(db *sql.DB) error {
-  return dbtesting.CreateAndPopulateTestTable(db)
-}
-
 func TestCollectNone(t *testing.T) {
-  db, err := dbtesting.EmptyDb()
+  db, err := dbtesting.DbWithTestTable()
   if err != nil {
-    t.Fatalf("Error opening test database: %v", err)
+    t.Fatal(err.Error())
   }
   defer db.Close()
-
-  if err := setupDatabase(db); err != nil {
-    t.Fatalf("Error setting up database: %v", err)
-  }
 
   rows := make([]*testRow, 0)
   row := &testRow{}
@@ -58,15 +49,11 @@ func TestCollectNone(t *testing.T) {
 }
 
 func TestQueryAndCollectErrors(t *testing.T) {
-  db, err := dbtesting.EmptyDb()
+  db, err := dbtesting.DbWithTestTable()
   if err != nil {
-    t.Fatalf("Error opening test database: %v", err)
+    t.Fatal(err.Error())
   }
   defer db.Close()
-
-  if err := setupDatabase(db); err != nil {
-    t.Fatalf("Error setting up database: %v", err)
-  }
 
   // Test the first error return.
   if err := strsql.QueryAndCollect(db, "invalid sql", nil, nil); err == nil {

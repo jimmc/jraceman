@@ -1,8 +1,6 @@
 package dbrepo_test
 
 import (
-  "bytes"
-  "io/ioutil"
   "os"
   "strings"
   "testing"
@@ -173,15 +171,7 @@ func TestExport(t *testing.T) {
     t.Fatalf("Error exporting: %v", err)
   }
 
-  outcontent, err := ioutil.ReadFile(outfilename)
-  if err != nil {
-    t.Fatalf("Error reading back output file %s: %v", outfilename, err)
-  }
-  goldencontent, err := ioutil.ReadFile(goldenfilename)
-  if err != nil {
-    t.Fatalf("Error reading golden file %s: %v", goldenfilename, err)
-  }
-  if !bytes.Equal(outcontent, goldencontent) {
-    t.Errorf("Outfile %s does not match golden file %s", outfilename, goldenfilename)
+  if err := dbtesting.CompareOutToGolden(outfilename, goldenfilename); err != nil {
+    t.Error(err.Error())
   }
 }

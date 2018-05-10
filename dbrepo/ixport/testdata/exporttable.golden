@@ -1,0 +1,6 @@
+
+!table test
+!columns "n","s","s2"
+1,"a","x"
+2,"b","x"
+3,"c",null

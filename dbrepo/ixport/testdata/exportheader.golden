@@ -1,0 +1,4 @@
+#!jraceman -import
+!exportVersion 2
+!appInfo JRaceman v2.0.0
+!type database
