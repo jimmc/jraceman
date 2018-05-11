@@ -15,7 +15,7 @@ func TestQuotedScannerEmpty(t *testing.T) {
 }
 
 func TestQuotedScannerBasic(t *testing.T) {
-  q := ixport.NewQuotedScanner("123,true,,\"abc\",null,456")
+  q := ixport.NewQuotedScanner("123,true,,\"abc\",null,false,456")
 
   expectedTokens := []*ixport.QuotedToken{
     &ixport.QuotedToken{
@@ -67,8 +67,19 @@ func TestQuotedScannerBasic(t *testing.T) {
       Source: ",",
     },
     &ixport.QuotedToken{
-      Type: ixport.TokenInt,
+      Type: ixport.TokenBool,
       Pos: 21,
+      Source: "false",
+      Value: false,
+    },
+    &ixport.QuotedToken{
+      Type: ixport.TokenComma,
+      Pos: 26,
+      Source: ",",
+    },
+    &ixport.QuotedToken{
+      Type: ixport.TokenInt,
+      Pos: 27,
       Source: "456",
       Value: 456,
     },
@@ -79,7 +90,7 @@ func TestQuotedScannerBasic(t *testing.T) {
       t.Fatalf("Should have token #%d", n)
     }
     if got, want := q.Token(), xt; !reflect.DeepEqual(got, want) {
-      t.Fatalf("Token #%d: got %v, want %v", n, got, want)
+      t.Fatalf("Token #%d: got %+v, want %+v", n, got, want)
     }
   }
 

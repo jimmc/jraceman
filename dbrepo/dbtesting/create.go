@@ -36,11 +36,21 @@ func DbWithSetupString(setupSql string) (*sql.DB, error) {
   return db, nil
 }
 
+// Struct TestRecord matches the format of the test table
+// created by DbWithTestTable.
+type TestRecord struct {
+  ID string;
+  N int;
+  S string;
+  S2 *string;
+}
+
 func DbWithTestTable() (*sql.DB, error) {
   return DbWithSetupString(`
-CREATE table test(id string, n int, s string);
+CREATE table test(id string, n int, s string, s2 string);
 
-INSERT into test(id, n, s) values('T1', 1, 'a'), ('T2', 2, 'b'), ('T3', 3, 'c');
+INSERT into test(id, n, s, s2)
+values('T1', 1, 'a', 'A'), ('T2', 2, 'b', null), ('T3', 3, 'c', 'C');
 `)
 }
 
