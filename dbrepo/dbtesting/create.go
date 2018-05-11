@@ -15,6 +15,14 @@ func EmptyDb() (*sql.DB, error) {
   return sql.Open("sqlite3", ":memory:")
 }
 
+func LoadSetupFile(db *sql.DB, filename string) error {
+  setupSql, err := ioutil.ReadFile(filename)
+  if err != nil {
+    return err
+  }
+  return strsql.ExecMulti(db, string(setupSql))
+}
+
 func DbWithSetupFile(filename string) (*sql.DB, error) {
   setupString, err := ioutil.ReadFile(filename)
   if err != nil {
@@ -56,4 +64,15 @@ values('T1', 1, 'a', 'A'), ('T2', 2, 'b', null), ('T3', 3, 'c', 'C');
 
 func ReposEmpty() (*dbrepo.Repos, error) {
   return dbrepo.Open("sqlite3::memory:")
+}
+
+func ReposWithSetupFile(filename string) (*dbrepo.Repos, error) {
+  dbr, err := ReposEmpty()
+  if err != nil {
+    return nil, err
+  }
+  if err := LoadSetupFile(dbr.DB(), filename); err != nil {
+    return nil, err
+  }
+  return dbr, nil
 }
