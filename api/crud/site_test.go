@@ -1,23 +1,27 @@
 package crud_test
 
 import (
-  "encoding/json"
+  "errors"
+  "fmt"
+  "io/ioutil"
   "net/http"
   "net/http/httptest"
-  "reflect"
+  "os"
   "testing"
 
   "github.com/jimmc/jracemango/api/crud"
   "github.com/jimmc/jracemango/dbrepo/dbtesting"
-  "github.com/jimmc/jracemango/domain"
 )
 
 // List, Get, Create, Update, Delete, Patch
 
-func TestList(t *testing.T) {
-  repos,err := dbtesting.ReposWithSetupFile("testdata/site.setup")
+func setupToGolden(basename string, callback func() (*http.Request, error)) error {
+  setupfilename := "testdata/" + basename + ".setup"
+  outfilename := "testdata/" + basename + ".out"
+  goldenfilename := "testdata/" + basename + ".golden"
+  repos,err := dbtesting.ReposWithSetupFile(setupfilename)
   if err!= nil {
-    t.Fatal(err.Error())
+    return err
   }
   defer repos.Close()
   config := &crud.Config{
@@ -26,47 +30,37 @@ func TestList(t *testing.T) {
   }
   handler := crud.NewHandler(config)
 
-  req, err := http.NewRequest("GET", "/api/crud/site/", nil)
+  req, err := callback()
   if err != nil {
-    t.Fatalf("error creating list request: %v", err)
+    return err
   }
 
   rr := httptest.NewRecorder()
   handler.ServeHTTP(rr, req)
 
   if got, want := rr.Code, http.StatusOK; got != want {
-    t.Errorf("list call status: got %d, want %d", got, want)
+    return fmt.Errorf("response status: got %d, want %d", got, want)
   }
 
-  body := rr.Body.String()
-  if body == "" {
-    t.Fatalf("list response body should not be empty")
-  }
-  var dat []domain.Site
-  if err = json.Unmarshal(rr.Body.Bytes(), &dat); err != nil {
-    t.Fatalf("error unmarshaling list body: %v", err)
+  body := rr.Body.Bytes()
+  if len(body) == 0 {
+    return errors.New("response body should not be empty")
   }
 
-  anytown := "Anytown"
-  somewhere := "Somewhere"
-  phone1 := "800-555-1212"
-  phone2 := "888-555-1234"
-  expectedData := []domain.Site{
-    {
-      ID: "S1",
-      Name: "Site One",
-      City: &anytown,
-      Phone: &phone1,
-    },
-    {
-      ID: "S2",
-      Name: "Site Two",
-      City: &somewhere,
-      Phone: &phone2,
-    },
+  os.Remove(outfilename)
+  if err := ioutil.WriteFile(outfilename, body, 0644); err != nil {
+    return err
   }
 
-  if got, want := dat, expectedData; !reflect.DeepEqual(got, want) {
-    t.Fatalf("Wrong data, got %+v, want %+v", got, want)
+  if err := dbtesting.CompareOutToGolden(outfilename, goldenfilename); err != nil {
+    return err
+  }
+  return nil
+}
+
+func TestList(t *testing.T) {
+  if err := setupToGolden("site-list",
+      func () (*http.Request, error) { return http.NewRequest("GET", "/api/crud/site/", nil) }); err != nil {
+    t.Error(err.Error())
   }
 }
