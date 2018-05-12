@@ -56,7 +56,7 @@ func SetupToGolden(repos *dbrepo.Repos, handler http.Handler, basename string,
   handler.ServeHTTP(rr, req)
 
   if got, want := rr.Code, http.StatusOK; got != want {
-    return fmt.Errorf("response status: got %d, want %d", got, want)
+    return fmt.Errorf("response status: got %d, want %d\nBody: %v", got, want, rr.Body.String())
   }
 
   body := rr.Body.Bytes()

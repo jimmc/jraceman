@@ -1,0 +1,12 @@
+{
+  "ID": "S2",
+  "Name": "Site Two",
+  "Street": null,
+  "Street2": null,
+  "City": "Somewhere",
+  "State": null,
+  "Zip": null,
+  "Country": null,
+  "Phone": "888-555-1234",
+  "Fax": null
+}
