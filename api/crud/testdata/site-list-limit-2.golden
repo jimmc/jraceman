@@ -1,0 +1,26 @@
+[
+  {
+    "ID": "S3",
+    "Name": "Site Three",
+    "Street": null,
+    "Street2": null,
+    "City": "Nowhere",
+    "State": null,
+    "Zip": null,
+    "Country": null,
+    "Phone": "888-555-9999",
+    "Fax": null
+  },
+  {
+    "ID": "S4",
+    "Name": "Site Four",
+    "Street": null,
+    "Street2": null,
+    "City": "Middleburg",
+    "State": null,
+    "Zip": null,
+    "Country": null,
+    "Phone": "800-555-1111",
+    "Fax": null
+  }
+]

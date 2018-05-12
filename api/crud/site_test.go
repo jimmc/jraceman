@@ -10,25 +10,45 @@ import (
   "testing"
 
   "github.com/jimmc/jracemango/api/crud"
+  "github.com/jimmc/jracemango/dbrepo"
   "github.com/jimmc/jracemango/dbrepo/dbtesting"
 )
 
 // List, Get, Create, Update, Delete, Patch
 
-func setupToGolden(basename string, callback func() (*http.Request, error)) error {
-  setupfilename := "testdata/" + basename + ".setup"
-  outfilename := "testdata/" + basename + ".out"
-  goldenfilename := "testdata/" + basename + ".golden"
-  repos,err := dbtesting.ReposWithSetupFile(setupfilename)
-  if err!= nil {
+func startToGolden(basename string, callback func() (*http.Request, error)) error {
+  repos, handler, err := startToSetup()
+  if err != nil{
     return err
   }
   defer repos.Close()
+
+  return setupToGolden(repos, handler, basename, callback)
+}
+
+// startToSetup initializes the database and the http handler.
+func startToSetup() (*dbrepo.Repos, http.Handler, error) {
+  repos, err := dbtesting.ReposEmpty()
+  if err != nil {
+    return nil, nil, err
+  }
   config := &crud.Config{
     Prefix: "/api/crud/",
     DomainRepos: repos,
   }
   handler := crud.NewHandler(config)
+  return repos, handler, nil
+}
+
+func setupToGolden(repos *dbrepo.Repos, handler http.Handler, basename string,
+    callback func() (*http.Request, error)) error {
+  setupfilename := "testdata/" + basename + ".setup"
+  outfilename := "testdata/" + basename + ".out"
+  goldenfilename := "testdata/" + basename + ".golden"
+
+  if err := dbtesting.LoadSetupFile(repos.DB(), setupfilename); err != nil {
+    return err
+  }
 
   req, err := callback()
   if err != nil {
@@ -58,9 +78,34 @@ func setupToGolden(basename string, callback func() (*http.Request, error)) erro
   return nil
 }
 
+func siteListRequest() (*http.Request, error) {
+  return http.NewRequest("GET", "/api/crud/site/", nil)
+}
+func siteListRequestLimited() (*http.Request, error) {
+  return http.NewRequest("GET", "/api/crud/site/?limit=1&offset=1", nil)
+}
+func siteListRequestLimited2() (*http.Request, error) {
+  return http.NewRequest("GET", "/api/crud/site/?limit=2&offset=2", nil)
+}
+
 func TestList(t *testing.T) {
-  if err := setupToGolden("site-list",
-      func () (*http.Request, error) { return http.NewRequest("GET", "/api/crud/site/", nil) }); err != nil {
+  if err := startToGolden("site-list", siteListRequest);
+       err != nil {
     t.Error(err.Error())
+  }
+}
+
+func TestListLimit(t *testing.T) {
+  repos, handler, err := startToSetup()
+  if err != nil{
+    t.Fatal(err.Error())
+  }
+  defer repos.Close()
+
+  if err := setupToGolden(repos, handler, "site-list-limit-1", siteListRequestLimited); err != nil {
+    t.Fatal(err.Error())
+  }
+  if err := setupToGolden(repos, handler, "site-list-limit-2", siteListRequestLimited2); err != nil {
+    t.Fatal(err.Error())
   }
 }

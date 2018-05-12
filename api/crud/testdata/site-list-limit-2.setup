@@ -1,0 +1,3 @@
+INSERT into site(id, name, city, phone) values
+("S4", "Site Four", "Middleburg", "800-555-1111"),
+("S5", "Site Five", "Tulies", "888-555-2222");
