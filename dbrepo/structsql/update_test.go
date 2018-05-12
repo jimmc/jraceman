@@ -4,7 +4,7 @@ import (
   "reflect"
   "testing"
 
-  "github.com/jimmc/jracemango/dbrepo/dbtesting"
+  "github.com/jimmc/jracemango/dbrepo/dbtest"
   "github.com/jimmc/jracemango/dbrepo/structsql"
 )
 
@@ -35,7 +35,7 @@ type testUpdateEntity struct {
 }
 
 func TestUpdateById(t *testing.T) {
-  db, err := dbtesting.DbWithTestTable()
+  db, err := dbtest.DbWithTestTable()
   if err != nil {
     t.Fatal(err.Error())
   }

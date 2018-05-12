@@ -4,7 +4,7 @@ import (
   "strings"
   "testing"
 
-  "github.com/jimmc/jracemango/dbrepo/dbtesting"
+  "github.com/jimmc/jracemango/dbrepo/dbtest"
   "github.com/jimmc/jracemango/dbrepo/structsql"
 )
 
@@ -15,11 +15,11 @@ func TestDeleteByIDSql(t *testing.T) {
 }
 
 func TestDeleteByID(t *testing.T) {
-  db, err := dbtesting.DbWithTestTable()
+  db, err := dbtest.DbWithTestTable()
   if err != nil {
     t.Fatalf(err.Error())
   }
-  readRecord := dbtesting.TestRecord{}
+  readRecord := dbtest.TestRecord{}
   if err := db.QueryRow(
       "SELECT n, s from test where id=?;", "T1").Scan(
       &readRecord.N, &readRecord.S); err != nil {

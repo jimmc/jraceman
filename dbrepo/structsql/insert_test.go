@@ -3,7 +3,7 @@ package structsql_test
 import (
   "testing"
 
-  "github.com/jimmc/jracemango/dbrepo/dbtesting"
+  "github.com/jimmc/jracemango/dbrepo/dbtest"
   "github.com/jimmc/jracemango/dbrepo/structsql"
 )
 
@@ -20,11 +20,11 @@ func TestInsertSql(t *testing.T) {
 }
 
 func TestInsert(t *testing.T) {
-  db, err := dbtesting.DbWithTestTable()
+  db, err := dbtest.DbWithTestTable()
   if err != nil {
     t.Fatal(err.Error())
   }
-  testRecord := dbtesting.TestRecord{
+  testRecord := dbtest.TestRecord{
     ID: "T25",
     N: 123,
     S: "xyz",
@@ -32,7 +32,7 @@ func TestInsert(t *testing.T) {
   if err = structsql.Insert(db, "test", &testRecord, testRecord.ID); err != nil {
     t.Fatalf("Inserting: %v", err)
   }
-  readRecord := dbtesting.TestRecord{}
+  readRecord := dbtest.TestRecord{}
   if err = db.QueryRow(
       "SELECT n, s from test where id=?;", testRecord.ID).Scan(
       &readRecord.N, &readRecord.S); err != nil {

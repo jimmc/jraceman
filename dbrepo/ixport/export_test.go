@@ -6,12 +6,12 @@ import (
   "os"
   "testing"
 
-  "github.com/jimmc/jracemango/dbrepo/dbtesting"
+  "github.com/jimmc/jracemango/dbrepo/dbtest"
   "github.com/jimmc/jracemango/dbrepo/ixport"
 )
 
 func TestExportHeader(t *testing.T) {
-  db, err := dbtesting.EmptyDb()
+  db, err := dbtest.EmptyDb()
   if err != nil {
     t.Fatalf("Error creating test database: %v", err)
   }
@@ -29,7 +29,7 @@ func TestExportHeader(t *testing.T) {
   e.ExportHeader(outfile)
 
   outfile.Close()
-  if err := dbtesting.CompareOutToGolden(outfilename, goldenfilename); err != nil {
+  if err := dbtest.CompareOutToGolden(outfilename, goldenfilename); err != nil {
     t.Error(err.Error())
   }
 }
@@ -45,7 +45,7 @@ func TestExportTable(t *testing.T) {
     e := ixport.NewExporter(db)
     return e.ExportTableFromStruct(outfile, "test", &testEntity{})
   }
-  if err := dbtesting.FromSetupToGolden("exporttable", callback); err != nil {
+  if err := dbtest.FromSetupToGolden("exporttable", callback); err != nil {
     t.Error(err.Error())
   }
 }
@@ -55,7 +55,7 @@ func TestExportEmptyTable(t *testing.T) {
     e := ixport.NewExporter(db)
     return e.ExportTableFromStruct(outfile, "test", &testEntity{})
   }
-  if err := dbtesting.FromSetupToGolden("exportemptytable", callback); err != nil {
+  if err := dbtest.FromSetupToGolden("exportemptytable", callback); err != nil {
     t.Error(err.Error())
   }
 }

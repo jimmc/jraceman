@@ -6,11 +6,11 @@ import (
   "testing"
 
   "github.com/jimmc/jracemango/dbrepo"
-  "github.com/jimmc/jracemango/dbrepo/dbtesting"
+  "github.com/jimmc/jracemango/dbrepo/dbtest"
 )
 
 func TestOpenNormal(t *testing.T) {
-  dbr, err := dbtesting.ReposEmpty()
+  dbr, err := dbtest.ReposEmpty()
   if err != nil {
     t.Errorf("Failed to open test database: %v", err)
   }
@@ -36,7 +36,7 @@ func TestOpenNoType(t *testing.T) {
 }
 
 func TestCreateTables(t *testing.T) {
-  dbr, err := dbtesting.ReposEmpty()
+  dbr, err := dbtest.ReposEmpty()
   if err != nil {
     t.Errorf("Failed to open test database: %v", err)
   }
@@ -47,7 +47,7 @@ func TestCreateTables(t *testing.T) {
 }
 
 func TestCreateTablesSiteError(t *testing.T) {
-  dbr, err := dbtesting.ReposEmpty()
+  dbr, err := dbtest.ReposEmpty()
   if err != nil {
     t.Errorf("Failed to open test database: %v", err)
   }
@@ -67,7 +67,7 @@ func TestCreateTablesSiteError(t *testing.T) {
 }
 
 func TestCreateTablesAreaError(t *testing.T) {
-  dbr, err := dbtesting.ReposEmpty()
+  dbr, err := dbtest.ReposEmpty()
   if err != nil {
     t.Errorf("Failed to open test database: %v", err)
   }
@@ -92,7 +92,7 @@ func TestImport(t *testing.T) {
     t.Fatalf("Error opening import file: %v", err)
   }
   defer infile.Close()
-  dbr, err := dbtesting.ReposEmpty()
+  dbr, err := dbtest.ReposEmpty()
   if err != nil {
     t.Errorf("Failed to open test database: %v", err)
   }
@@ -141,7 +141,7 @@ func TestExport(t *testing.T) {
     t.Fatalf("Error opening import file: %v", err)
   }
   defer infile.Close()
-  dbr, err := dbtesting.ReposEmpty()
+  dbr, err := dbtest.ReposEmpty()
   if err != nil {
     t.Errorf("Failed to open test database: %v", err)
   }
@@ -171,7 +171,7 @@ func TestExport(t *testing.T) {
     t.Fatalf("Error exporting: %v", err)
   }
 
-  if err := dbtesting.CompareOutToGolden(outfilename, goldenfilename); err != nil {
+  if err := dbtest.CompareOutToGolden(outfilename, goldenfilename); err != nil {
     t.Error(err.Error())
   }
 }

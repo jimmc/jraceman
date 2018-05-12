@@ -4,7 +4,7 @@ import (
   "reflect"
   "testing"
 
-  "github.com/jimmc/jracemango/dbrepo/dbtesting"
+  "github.com/jimmc/jracemango/dbrepo/dbtest"
   "github.com/jimmc/jracemango/dbrepo/structsql"
 )
 
@@ -42,7 +42,7 @@ func TestColumnNames(t *testing.T) {
 }
 
 func TestCreateTable(t *testing.T) {
-  db, err := dbtesting.EmptyDb()
+  db, err := dbtest.EmptyDb()
   if err != nil {
     t.Fatal(err.Error())
   }

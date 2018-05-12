@@ -11,7 +11,7 @@ import (
 
   "github.com/jimmc/jracemango/api/crud"
   "github.com/jimmc/jracemango/dbrepo"
-  "github.com/jimmc/jracemango/dbrepo/dbtesting"
+  "github.com/jimmc/jracemango/dbrepo/dbtest"
 )
 
 // List, Get, Create, Update, Delete, Patch
@@ -28,7 +28,7 @@ func startToGolden(basename string, callback func() (*http.Request, error)) erro
 
 // startToSetup initializes the database and the http handler.
 func startToSetup() (*dbrepo.Repos, http.Handler, error) {
-  repos, err := dbtesting.ReposEmpty()
+  repos, err := dbtest.ReposEmpty()
   if err != nil {
     return nil, nil, err
   }
@@ -46,7 +46,7 @@ func setupToGolden(repos *dbrepo.Repos, handler http.Handler, basename string,
   outfilename := "testdata/" + basename + ".out"
   goldenfilename := "testdata/" + basename + ".golden"
 
-  if err := dbtesting.LoadSetupFile(repos.DB(), setupfilename); err != nil {
+  if err := dbtest.LoadSetupFile(repos.DB(), setupfilename); err != nil {
     return err
   }
 
@@ -72,7 +72,7 @@ func setupToGolden(repos *dbrepo.Repos, handler http.Handler, basename string,
     return err
   }
 
-  if err := dbtesting.CompareOutToGolden(outfilename, goldenfilename); err != nil {
+  if err := dbtest.CompareOutToGolden(outfilename, goldenfilename); err != nil {
     return err
   }
   return nil

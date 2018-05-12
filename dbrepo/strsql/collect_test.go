@@ -4,7 +4,7 @@ import (
   "reflect"
   "testing"
 
-  "github.com/jimmc/jracemango/dbrepo/dbtesting"
+  "github.com/jimmc/jracemango/dbrepo/dbtest"
   "github.com/jimmc/jracemango/dbrepo/strsql"
 )
 
@@ -14,7 +14,7 @@ type testRow struct {
 }
 
 func TestCollectNone(t *testing.T) {
-  db, err := dbtesting.DbWithTestTable()
+  db, err := dbtest.DbWithTestTable()
   if err != nil {
     t.Fatal(err.Error())
   }
@@ -49,7 +49,7 @@ func TestCollectNone(t *testing.T) {
 }
 
 func TestQueryAndCollectErrors(t *testing.T) {
-  db, err := dbtesting.DbWithTestTable()
+  db, err := dbtest.DbWithTestTable()
   if err != nil {
     t.Fatal(err.Error())
   }

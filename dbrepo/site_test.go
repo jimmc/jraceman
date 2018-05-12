@@ -5,7 +5,7 @@ import (
   "testing"
 
   "github.com/jimmc/jracemango/dbrepo"
-  "github.com/jimmc/jracemango/dbrepo/dbtesting"
+  "github.com/jimmc/jracemango/dbrepo/dbtest"
   "github.com/jimmc/jracemango/dbrepo/ixport"
   "github.com/jimmc/jracemango/dbrepo/strsql"
   "github.com/jimmc/jracemango/dbrepo/structsql"
@@ -27,7 +27,7 @@ func TestSiteCreateTable(t *testing.T) {
 }
 
 func TestSiteHappyPath(t *testing.T) {
-  dbr, err := dbtesting.ReposEmpty()
+  dbr, err := dbtest.ReposEmpty()
   if err != nil {
     t.Fatalf("Error opening test database: %v", err)
   }
