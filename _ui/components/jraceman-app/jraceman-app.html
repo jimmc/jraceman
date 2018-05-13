@@ -1,5 +1,9 @@
+<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tab.html">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
 <link rel="import" href="../../bower_components/polymer-decorators/polymer-decorators.html">
 <link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/vaadin-split-layout/vaadin-split-layout.html">
 
 <dom-module id="jraceman-app">
   <template>
@@ -10,8 +14,58 @@
       [hidden] {
         display: none !important;
       }
+      #main {
+        height: 100%;
+      }
+      #top {
+        height: 50%;
+      }
+      #bottom {
+        height: 50%;
+      }
     </style>
-    This is the JRaceman main page.
+    <vaadin-split-layout id="main" orientation="vertical" vertical>
+      <div id="top">
+        <paper-tabs selected="{{selectedTopTab}}">
+          <paper-tab name="sportSetup">Sport Setup</paper-tab>
+          <paper-tab name="planSetup">Plan Setup</paper-tab>
+          <paper-tab name="siteSetup">Site Setup</paper-tab>
+          <paper-tab name="teamSetup">Team Setup</paper-tab>
+          <paper-tab name="meetSetup">Meet Setup</paper-tab>
+          <paper-tab name="byEvent">By Event</paper-tab>
+          <paper-tab name="reports">Reports</paper-tab>
+          <paper-tab name="database">Database</paper-tab>
+          <paper-tab name="debug">Debug</paper-tab>
+        </paper-tabs>
+
+        <iron-pages selected="{{selectedTopTab}}">
+          <div name="sportSetup">Sport Setup is not yet implemented</div>
+          <div name="planSetup">Plan Setup is not yet implemented</div>
+          <div name="siteSetup">Site Setup is not yet implemented</div>
+          <div name="teamSetup">Team Setup is not yet implemented</div>
+          <div name="meetSetup">Meet Setup is not yet implemented</div>
+          <div name="byEvent">By Event is not yet implemented</div>
+          <div name="reports">Reports is not yet implemented</div>
+          <div name="database">Database is not yet implemented</div>
+          <div name="debug">Debug is not yet implemented</div>
+        </iron-pages>
+      </div>
+      <div id="bottom">
+        <paper-tabs selected="{{selectedBottomTab}}">
+          <paper-tab name="messages">Messages</paper-tab>
+          <paper-tab name="queryResults">Query Results</paper-tab>
+          <paper-tab name="report">Report</paper-tab>
+          <paper-tab name="help">Help</paper-tab>
+        </paper-tabs>
+
+        <iron-pages selected="{{selectedBottomTab}}">
+          <div name="messages">Messages is not yet implemented</div>
+          <div name="queryResults">Query Results is not yet implemented</div>
+          <div name="report">Report is not yet implemented</div>
+          <div name="help">Help is not yet implemented</div>
+        </iron-pages>
+      </div>
+    </vaadin-split-layout>
   </template>
 </dom-module>
 
