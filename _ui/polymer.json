@@ -1,0 +1,6 @@
+{
+  "entrypoint": "index.html",
+  "fragments": [
+    "components/jraceman-app/jraceman-app.html"
+  ]
+}

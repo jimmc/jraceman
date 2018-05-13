@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "commonjs",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "strictNullChecks": true,
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "sourceMap": true,
+    "typeRoots": [
+      "types"
+    ]
+  },
+  "include": [
+    "**/*.ts",
+    "externs/polymer.d.ts"
+  ],
+  "exclude": [
+    "bower_components",
+  ],
+  "files": [
+    "bower_components/polymer-decorators/global.d.ts"
+  ]
+}

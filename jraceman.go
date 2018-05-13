@@ -33,7 +33,7 @@ func main() {
 
   // Configuration flags
   flag.IntVar(&config.port, "port", 8080, "port on which to listen for connections")
-  flag.StringVar(&config.uiRoot, "uiroot", "", "location of ui root (build/default)")
+  flag.StringVar(&config.uiRoot, "uiroot", "_ui/build/default", "location of ui root (build/default)")
   flag.StringVar(&config.db, "db", "", "location of database, in the form driver:name")
 
   // Action flags
