@@ -4,6 +4,7 @@ import (
   "fmt"
   "net/http"
 
+  "github.com/jimmc/jracemango/api/apidebug"
   "github.com/jimmc/jracemango/api/crud"
   "github.com/jimmc/jracemango/domain"
 )
@@ -33,12 +34,20 @@ func NewHandler(c *Config) http.Handler {
   crudHandler := crud.NewHandler(crudConfig)
   mux.Handle(crudPrefix, crudHandler)
 
-  mux.HandleFunc(h.apiPrefix("foo"), h.foo)
+  debugPrefix := h.apiPrefix("debug")
+  debugConfig := &apidebug.Config{
+    Prefix: debugPrefix,
+    DomainRepos: c.DomainRepos,
+  }
+  debugHandler := apidebug.NewHandler(debugConfig)
+  mux.Handle(debugPrefix, debugHandler)
+
+  mux.HandleFunc(h.config.Prefix, h.blank)
   return mux
 }
 
-func (h *handler) foo(w http.ResponseWriter, r *http.Request) {
-  http.Error(w, "Foo not implemented", http.StatusForbidden)
+func (h *handler) blank(w http.ResponseWriter, r *http.Request) {
+  http.Error(w, "Try /api/crud or /api/debug", http.StatusForbidden)
 }
 
 // ApiPrefix composes our prefix with the next path component so that we can
