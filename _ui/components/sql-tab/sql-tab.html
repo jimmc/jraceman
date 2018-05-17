@@ -1,0 +1,26 @@
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-input/paper-textarea.html">
+<link rel="import" href="../../bower_components/polymer-decorators/polymer-decorators.html">
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="sql-tab">
+  <template>
+    <style>
+      :host {
+        height: 100%;
+      }
+      [hidden] {
+        display: none !important;
+      }
+    </style>
+    <div>
+      <paper-textarea id="sqlText" cols="60" autofocus="true"
+	  placeholder="Enter SQL text" on-keydown="checkEnter">
+      </paper-textarea>
+      <paper-button on-click="execute">Execute</paper-button>
+      <paper-button on-click="clear">Clear</paper-button>
+    </div>
+  </template>
+</dom-module>
+
+<script src="sql-tab.js"></script>

@@ -1,0 +1,32 @@
+<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tab.html">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower_components/polymer-decorators/polymer-decorators.html">
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../components/sql-tab/sql-tab.html">
+
+<dom-module id="debug-tab">
+  <template>
+    <style>
+      :host {
+        height: 100%;
+      }
+      [hidden] {
+        display: none !important;
+      }
+    </style>
+    <div>
+      <paper-tabs selected="{{selectedTopTab}}">
+        <paper-tab name="sql">SQL</paper-tab>
+        <paper-tab name="editId">Edit Id</paper-tab>
+      </paper-tabs>
+
+      <iron-pages selected="{{selectedTopTab}}">
+        <sql-tab name="sql"></sql-tab>
+        <div name="editId">Edit ID is not yet implemented</div>
+      </iron-pages>
+    </div>
+  </template>
+</dom-module>
+
+<script src="debug-tab.js"></script>
