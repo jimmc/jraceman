@@ -23,3 +23,56 @@ func QueryAndCollect(db *sql.DB, sql string, targets []interface{}, collect func
   }
   return rows.Err()
 }
+
+// QueryStarAndCollect issues a Query for the given arbitrary sql and returns the results.
+// It is intended for cases where the type and column count of the result is unknown,
+// such as "SELECT * from sometable".
+func QueryStarAndCollect(db *sql.DB, sql string) ([][]interface{}, error) {
+  rows, err := db.Query(sql)
+  if err != nil {
+    return nil, err
+  }
+  defer rows.Close()
+  columnTypes, err := rows.ColumnTypes()
+  if err != nil {
+    return nil, err
+  }
+  data := make([][]interface{}, 0)
+  rowTargets := make([]interface{}, len(columnTypes))
+    // Each field of rowTargets gets pointed to each field of rowData
+    // before each row scan.
+  for rows.Next() {
+    rowData := make([]interface{}, len(columnTypes))
+    for c := range rowTargets {
+      rowTargets[c] = &rowData[c]
+    }
+    err := rows.Scan(rowTargets...)
+    if err != nil {
+      return nil, err
+    }
+    for c, col := range columnTypes {
+      colDbTypeName := col.DatabaseTypeName()
+      if isStringType(colDbTypeName) {
+        fieldBytes, ok := rowData[c].([]byte)
+        if ok {
+          rowData[c] = string(fieldBytes)
+        }
+      }
+    }
+    data = append(data, rowData)
+  }
+  if err := rows.Err(); err != nil {
+    return nil, err
+  }
+  return data, nil
+}
+
+func isStringType(ctype string) bool {
+  stringTypes := []string{"string", "text", "varchar"}
+  for _, t := range stringTypes {
+    if ctype == t {
+      return true
+    }
+  }
+  return false
+}

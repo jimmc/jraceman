@@ -65,3 +65,35 @@ func TestQueryAndCollectErrors(t *testing.T) {
     t.Errorf("Expected error for sql for empty table")
   }
 }
+
+func TestQueryStarAndCollect(t *testing.T) {
+  db, err := dbtest.DbWithTestTable()
+  if err != nil {
+    t.Fatal(err.Error())
+  }
+  defer db.Close()
+
+  var expectedResult [][]interface{} = make([][]interface{}, 3)
+  expectedResult[0] = make([]interface{}, 2)
+  expectedResult[1] = make([]interface{}, 2)
+  expectedResult[2] = make([]interface{}, 2)
+  expectedResult[0][0] = int64(1)
+  expectedResult[0][1] = "a"
+  expectedResult[1][0] = int64(2)
+  expectedResult[1][1] = "b"
+  expectedResult[2][0] = int64(3)
+  expectedResult[2][1] = "c"
+
+  query := "SELECT n, s from test order by n;"
+  rows, err := strsql.QueryStarAndCollect(db, query)
+  if err != nil {
+    t.Fatalf("Error collecting rows: %v", err)
+  }
+
+  if got, want := len(rows), 3; got != want {
+    t.Fatalf("Wrong number of rows, got %d, want %d", got, want)
+  }
+  if got, want := rows, expectedResult; !reflect.DeepEqual(got, want) {
+    t.Errorf("Results array, got %v, want %v", got, want)
+  }
+}
