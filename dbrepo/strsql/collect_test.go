@@ -73,27 +73,44 @@ func TestQueryStarAndCollect(t *testing.T) {
   }
   defer db.Close()
 
-  var expectedResult [][]interface{} = make([][]interface{}, 3)
-  expectedResult[0] = make([]interface{}, 2)
-  expectedResult[1] = make([]interface{}, 2)
-  expectedResult[2] = make([]interface{}, 2)
-  expectedResult[0][0] = int64(1)
-  expectedResult[0][1] = "a"
-  expectedResult[1][0] = int64(2)
-  expectedResult[1][1] = "b"
-  expectedResult[2][0] = int64(3)
-  expectedResult[2][1] = "c"
+  var expectedRowsResult [][]interface{} = make([][]interface{}, 3)
+  expectedRowsResult[0] = make([]interface{}, 2)
+  expectedRowsResult[1] = make([]interface{}, 2)
+  expectedRowsResult[2] = make([]interface{}, 2)
+  expectedRowsResult[0][0] = int64(1)
+  expectedRowsResult[0][1] = "a"
+  expectedRowsResult[1][0] = int64(2)
+  expectedRowsResult[1][1] = "b"
+  expectedRowsResult[2][0] = int64(3)
+  expectedRowsResult[2][1] = "c"
+
+  expectedColumnsResult := []*strsql.ColumnInfo{
+    &strsql.ColumnInfo{
+      Name: "n",
+      Type: "int",
+    },
+    &strsql.ColumnInfo{
+      Name: "s",
+      Type: "string",
+    },
+  }
 
   query := "SELECT n, s from test order by n;"
-  rows, err := strsql.QueryStarAndCollect(db, query)
+  results, err := strsql.QueryStarAndCollect(db, query)
   if err != nil {
     t.Fatalf("Error collecting rows: %v", err)
   }
 
-  if got, want := len(rows), 3; got != want {
+  if got, want := len(results.Columns), 2; got != want {
+    t.Fatalf("Wrong number of columns, got %d, want %d", got, want)
+  }
+  if got, want := len(results.Rows), 3; got != want {
     t.Fatalf("Wrong number of rows, got %d, want %d", got, want)
   }
-  if got, want := rows, expectedResult; !reflect.DeepEqual(got, want) {
-    t.Errorf("Results array, got %v, want %v", got, want)
+  if got, want := results.Columns, expectedColumnsResult; !reflect.DeepEqual(got, want) {
+    t.Errorf("Results columns, got %v, want %v", got, want)
+  }
+  if got, want := results.Rows, expectedRowsResult; !reflect.DeepEqual(got, want) {
+    t.Errorf("Results rows, got %v, want %v", got, want)
   }
 }

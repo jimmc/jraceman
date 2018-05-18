@@ -4,6 +4,18 @@ import (
   "database/sql"
 )
 
+// QueryResults provides generic results for an SQL query.
+type QueryResults struct {
+  Columns []*ColumnInfo
+  Rows [][]interface{}
+}
+
+// ColumnInfo provides information about one of the columns in the results of a query.
+type ColumnInfo struct {
+  Name string
+  Type string
+}
+
 // QueryAndCollect issues a Query for the given sql, then interates through
 // the returned rows. For each row, it retrieves the data into targets, then
 // calls the collect function. The assumption is that the targets store the
@@ -27,7 +39,7 @@ func QueryAndCollect(db *sql.DB, sql string, targets []interface{}, collect func
 // QueryStarAndCollect issues a Query for the given arbitrary sql and returns the results.
 // It is intended for cases where the type and column count of the result is unknown,
 // such as "SELECT * from sometable".
-func QueryStarAndCollect(db *sql.DB, sql string) ([][]interface{}, error) {
+func QueryStarAndCollect(db *sql.DB, sql string) (*QueryResults, error) {
   rows, err := db.Query(sql)
   if err != nil {
     return nil, err
@@ -36,6 +48,17 @@ func QueryStarAndCollect(db *sql.DB, sql string) ([][]interface{}, error) {
   columnTypes, err := rows.ColumnTypes()
   if err != nil {
     return nil, err
+  }
+  columnInfo := make([]*ColumnInfo, len(columnTypes))
+  for c, col := range columnTypes {
+    dbType := col.DatabaseTypeName()
+    if isStringType(dbType) {
+      dbType = "string"
+    }
+    columnInfo[c] = &ColumnInfo{
+      Name: col.Name(),
+      Type: dbType,
+    }
   }
   data := make([][]interface{}, 0)
   rowTargets := make([]interface{}, len(columnTypes))
@@ -64,7 +87,11 @@ func QueryStarAndCollect(db *sql.DB, sql string) ([][]interface{}, error) {
   if err := rows.Err(); err != nil {
     return nil, err
   }
-  return data, nil
+  results := &QueryResults{
+    Columns: columnInfo,
+    Rows: data,
+  }
+  return results, nil
 }
 
 func isStringType(ctype string) bool {
