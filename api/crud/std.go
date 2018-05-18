@@ -9,6 +9,7 @@ import (
   "strings"
 
   "github.com/jimmc/jracemango/domain"
+  apihttp "github.com/jimmc/jracemango/api/http"
 )
 
 // Std defines the type-specific methods that are needed by the generic
@@ -81,7 +82,7 @@ func (h *handler) stdCreate(w http.ResponseWriter, r *http.Request, st std) {
     http.Error(w, msg, http.StatusBadRequest)
     return
   }
-  h.stdOkResponse(w)
+  apihttp.OkResponse(w)
 }
 
 func (h *handler) stdList(w http.ResponseWriter, r *http.Request, st std) {
@@ -110,13 +111,7 @@ func (h *handler) stdList(w http.ResponseWriter, r *http.Request, st std) {
   }
 
   // TODO - add offset and limit info to the result?
-  b, err := json.MarshalIndent(result, "", "  ")
-  if err != nil {
-    http.Error(w, fmt.Sprintf("Failed to marshall json results: %v", err), http.StatusInternalServerError)
-    return
-  }
-  w.WriteHeader(http.StatusOK)
-  w.Write(b)
+  apihttp.MarshalAndReply(w, result)
 }
 
 func (h *handler) stdGet(w http.ResponseWriter, r *http.Request, st std, entityID string) {
@@ -126,13 +121,7 @@ func (h *handler) stdGet(w http.ResponseWriter, r *http.Request, st std, entityI
     return
   }
 
-  b, err := json.MarshalIndent(result, "", "  ")
-  if err != nil {
-    http.Error(w, fmt.Sprintf("Failed to marshall json results: %v", err), http.StatusInternalServerError)
-    return
-  }
-  w.WriteHeader(http.StatusOK)
-  w.Write(b)
+  apihttp.MarshalAndReply(w, result)
 }
 
 func (h *handler) stdUpdate(w http.ResponseWriter, r *http.Request, st std, entityID string) {
@@ -163,7 +152,7 @@ func (h *handler) stdUpdate(w http.ResponseWriter, r *http.Request, st std, enti
     http.Error(w, msg, http.StatusBadRequest)
     return
   }
-  h.stdOkResponse(w)
+  apihttp.OkResponse(w)
 }
 
 func (h *handler) stdPatch(w http.ResponseWriter, r *http.Request, st std, entityID string) {
@@ -200,7 +189,7 @@ func (h *handler) stdPatch(w http.ResponseWriter, r *http.Request, st std, entit
     http.Error(w, msg, http.StatusBadRequest)
     return
   }
-  h.stdOkResponse(w)
+  apihttp.OkResponse(w)
 }
 
 func (h *handler) stdDelete(w http.ResponseWriter, r *http.Request, st std, entityID string) {
@@ -209,13 +198,7 @@ func (h *handler) stdDelete(w http.ResponseWriter, r *http.Request, st std, enti
     http.Error(w, msg, http.StatusBadRequest)
     return
   }
-  h.stdOkResponse(w)
-}
-
-func (h *handler) stdOkResponse(w http.ResponseWriter) {
-  res := `{"status": "ok"}`
-  w.WriteHeader(http.StatusOK)
-  w.Write([]byte(res))
+  apihttp.OkResponse(w)
 }
 
 func intQueryParam(r *http.Request, paramName string, dflt int) (int, error) {

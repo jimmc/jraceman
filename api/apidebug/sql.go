@@ -1,12 +1,12 @@
 package apidebug
 
 import (
-  "encoding/json"
   "fmt"
   "io/ioutil"
   "net/http"
   "strings"
 
+  apihttp "github.com/jimmc/jracemango/api/http"
   "github.com/jimmc/jracemango/dbrepo"
   "github.com/jimmc/jracemango/dbrepo/strsql"
 )
@@ -41,19 +41,11 @@ func (h *handler) executeSql(w http.ResponseWriter, r *http.Request, sqlStr stri
     return
   }
   db := dbrepos.DB()
-  rows, err := strsql.QueryStarAndCollect(db, sqlStr)
+  result, err := strsql.QueryStarAndCollect(db, sqlStr)
   if err != nil {
     http.Error(w, fmt.Sprintf("Error executing sql: %v", err), http.StatusBadRequest)
     return
   }
 
-  // TODO - the rest of this function can probably be refactored into
-  // a common helper function.
-  b, err := json.MarshalIndent(rows, "", "  ")
-  if err != nil {
-    http.Error(w, fmt.Sprintf("Failed to marshall json results: %v", err), http.StatusInternalServerError)
-    return
-  }
-  w.WriteHeader(http.StatusOK)
-  w.Write(b)
+  apihttp.MarshalAndReply(w, result)
 }
