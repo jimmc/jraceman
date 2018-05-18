@@ -1,5 +1,5 @@
-// Package dbtest contains test helper functions dealing with a database.
-package dbtest
+// Package test contains test helper functions dealing with a database.
+package test
 
 import (
   "database/sql"

@@ -5,7 +5,7 @@ import (
   "os"
   "testing"
 
-  "github.com/jimmc/jracemango/api/apitest"
+  apitest "github.com/jimmc/jracemango/api/test"
 )
 
 // TODO: Update, Delete, Patch

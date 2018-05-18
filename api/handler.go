@@ -5,7 +5,7 @@ import (
   "net/http"
 
   "github.com/jimmc/jracemango/api/crud"
-  "github.com/jimmc/jracemango/api/apidebug"
+  apidebug "github.com/jimmc/jracemango/api/debug"
   "github.com/jimmc/jracemango/domain"
 )
 

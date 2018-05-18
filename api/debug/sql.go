@@ -1,4 +1,4 @@
-package apidebug
+package debug
 
 import (
   "fmt"

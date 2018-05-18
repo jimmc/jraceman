@@ -5,7 +5,7 @@ import (
   "testing"
 
   "github.com/jimmc/jracemango/dbrepo"
-  "github.com/jimmc/jracemango/dbrepo/dbtest"
+  dbtest "github.com/jimmc/jracemango/dbrepo/test"
   "github.com/jimmc/jracemango/dbrepo/ixport"
   "github.com/jimmc/jracemango/dbrepo/strsql"
   "github.com/jimmc/jracemango/dbrepo/structsql"

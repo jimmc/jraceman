@@ -1,4 +1,4 @@
-package apitest
+package test
 
 import (
   "errors"
@@ -10,7 +10,7 @@ import (
 
   "github.com/jimmc/jracemango/api/crud"
   "github.com/jimmc/jracemango/dbrepo"
-  "github.com/jimmc/jracemango/dbrepo/dbtest"
+  dbtest "github.com/jimmc/jracemango/dbrepo/test"
 )
 
 func StartToGolden(basename string, callback func() (*http.Request, error)) error {

@@ -6,7 +6,7 @@ import (
   "testing"
 
   "github.com/jimmc/jracemango/dbrepo"
-  "github.com/jimmc/jracemango/dbrepo/dbtest"
+  dbtest "github.com/jimmc/jracemango/dbrepo/test"
 )
 
 func TestOpenNormal(t *testing.T) {

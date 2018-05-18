@@ -3,7 +3,7 @@ package structsql_test
 import (
   "testing"
 
-  "github.com/jimmc/jracemango/dbrepo/dbtest"
+  dbtest "github.com/jimmc/jracemango/dbrepo/test"
   "github.com/jimmc/jracemango/dbrepo/structsql"
 )
 
