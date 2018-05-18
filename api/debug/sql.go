@@ -2,7 +2,7 @@ package debug
 
 import (
   "fmt"
-  "io/ioutil"
+  "log"
   "net/http"
   "strings"
 
@@ -17,12 +17,8 @@ func (h *handler) sql(w http.ResponseWriter, r *http.Request) {
       sqlStr := r.URL.Query().Get("q")
       h.executeSql(w, r, sqlStr)
     case http.MethodPost:
-      sqlBytes, err := ioutil.ReadAll(r.Body)
-      if err != nil {
-        http.Error(w, "Bad POST body", http.StatusBadRequest)
-        return
-      }
-      sqlStr := string(sqlBytes)
+      // When using a POST, we expect the query as a form-data parameter.
+      sqlStr := r.FormValue("q")
       h.executeSql(w, r, sqlStr)
     default:
       http.Error(w, "Method must be GET or POST", http.StatusMethodNotAllowed)
@@ -35,6 +31,7 @@ func (h *handler) executeSql(w http.ResponseWriter, r *http.Request, sqlStr stri
     http.Error(w, "No sql specified", http.StatusBadRequest)
     return
   }
+  log.Printf("Executing sql: %v", sqlStr)
   dbrepos, ok := h.config.DomainRepos.(*dbrepo.Repos)
   if !ok {
     http.Error(w, "Bad database repo", http.StatusInternalServerError)

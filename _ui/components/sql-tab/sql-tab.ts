@@ -14,8 +14,17 @@ class SqlTab extends Polymer.Element {
   }
 
   // Executes the SQL text.
-  execute() {
+  async execute() {
     const sql = this.$.sqlText.value;
     console.log("Execute: " + sql);     // TODO
+    const path = '/api/debug/sql/';
+    const formData = new FormData();
+    formData.append("q", sql);
+    const options = {
+      method: 'POST',
+      params: formData
+    };
+    const result = await ApiManager.xhrJson(path, options);
+    console.log("SQL Result:", result)
   }
 }
