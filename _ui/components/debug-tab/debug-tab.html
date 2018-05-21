@@ -14,14 +14,25 @@
       [hidden] {
         display: none !important;
       }
+      #main {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+      }
+      #main paper-tabs {
+        flex: initial
+      }
+      #main iron-pages {
+        flex: auto;
+      }
     </style>
-    <div>
-      <paper-tabs selected="{{selectedTopTab}}">
+    <div id="main">
+      <paper-tabs selected="{{selectedTab}}">
         <paper-tab name="sql">SQL</paper-tab>
         <paper-tab name="editId">Edit Id</paper-tab>
       </paper-tabs>
 
-      <iron-pages selected="{{selectedTopTab}}">
+      <iron-pages selected="{{selectedTab}}">
         <sql-tab name="sql"></sql-tab>
         <div name="editId">Edit ID is not yet implemented</div>
       </iron-pages>

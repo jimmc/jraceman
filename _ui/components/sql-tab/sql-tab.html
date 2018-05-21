@@ -13,13 +13,26 @@
       [hidden] {
         display: none !important;
       }
+      #main {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+      }
+      #sqlText {
+        flex: auto;
+      }
+      #buttons {
+        flex: none;
+      }
     </style>
-    <div>
+    <div id="main">
       <paper-textarea id="sqlText" cols="60" autofocus="true"
 	  placeholder="Enter SQL text" on-keydown="checkEnter">
       </paper-textarea>
-      <paper-button on-click="execute">Execute</paper-button>
-      <paper-button on-click="clear">Clear</paper-button>
+      <div id="buttons">
+        <paper-button on-click="execute">Execute</paper-button>
+        <paper-button on-click="clear">Clear</paper-button>
+      </div>
     </div>
   </template>
 </dom-module>

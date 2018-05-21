@@ -20,10 +20,28 @@
       }
       #top {
         height: 50%;
+        display: flex;
+        flex-direction: column;
+      }
+      #top paper-tabs {
+        flex: initial;
+      }
+      #top iron-pages {
+        flex: auto;
+      }
+      .tabContent {
+        height: 100%;
       }
       #bottom {
         height: 50%;
       }
+      #bottom paper-tabs {
+        flex: initial;
+      }
+      #bottom iron-pages {
+        flex: auto;
+      }
+
     </style>
     <vaadin-split-layout id="main" orientation="vertical" vertical>
       <div id="top">
@@ -40,15 +58,15 @@
         </paper-tabs>
 
         <iron-pages selected="{{selectedTopTab}}">
-          <div name="sportSetup">Sport Setup is not yet implemented</div>
-          <div name="planSetup">Plan Setup is not yet implemented</div>
-          <div name="siteSetup">Site Setup is not yet implemented</div>
-          <div name="teamSetup">Team Setup is not yet implemented</div>
-          <div name="meetSetup">Meet Setup is not yet implemented</div>
-          <div name="byEvent">By Event is not yet implemented</div>
-          <div name="reports">Reports is not yet implemented</div>
-          <div name="database">Database is not yet implemented</div>
-          <debug-tab name="debug"></debug-tab>
+          <div class="tabContent" name="sportSetup">Sport Setup is not yet implemented</div>
+          <div class="tabContent" name="planSetup">Plan Setup is not yet implemented</div>
+          <div class="tabContent" name="siteSetup">Site Setup is not yet implemented</div>
+          <div class="tabContent" name="teamSetup">Team Setup is not yet implemented</div>
+          <div class="tabContent" name="meetSetup">Meet Setup is not yet implemented</div>
+          <div class="tabContent" name="byEvent">By Event is not yet implemented</div>
+          <div class="tabContent" name="reports">Reports is not yet implemented</div>
+          <div class="tabContent" name="database">Database is not yet implemented</div>
+          <debug-tab class="tabContent" name="debug"></debug-tab>
         </iron-pages>
       </div>
       <div id="bottom">
