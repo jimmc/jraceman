@@ -5,6 +5,7 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/vaadin-split-layout/vaadin-split-layout.html">
 <link rel="import" href="../../components/debug-tab/debug-tab.html">
+<link rel="import" href="../../components/client-messages/client-messages.html">
 
 <dom-module id="jraceman-app">
   <template>
@@ -78,7 +79,7 @@
         </paper-tabs>
 
         <iron-pages selected="{{selectedBottomTab}}">
-          <div name="messages">Messages is not yet implemented</div>
+          <client-messages name="messages"></client-messages>
           <div name="queryResults">Query Results is not yet implemented</div>
           <div name="report">Report is not yet implemented</div>
           <div name="help">Help is not yet implemented</div>

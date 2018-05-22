@@ -8,4 +8,9 @@ class JRacemanApp extends Polymer.Element {
 
   @Polymer.decorators.property({type: Number})
   selectedBottomTab: number = 0;
+
+  ready() {
+    super.ready();
+    ClientMessages.append("top", "JRaceman client started");
+  }
 }
