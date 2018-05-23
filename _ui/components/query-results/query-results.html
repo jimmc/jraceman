@@ -1,0 +1,35 @@
+<link rel="import" href="../../bower_components/polymer-decorators/polymer-decorators.html">
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../bower_components/vaadin-grid/vaadin-grid-column.html">
+<link rel="import" href="../../bower_components/vaadin-grid/vaadin-grid-sorter.html">
+
+<dom-module id="query-results">
+  <template>
+    <style>
+      :host {
+        height: 100%;
+      }
+      [hidden] {
+        display: none !important;
+      }
+      #main {
+        height: 100%;
+      }
+    </style>
+    <div id="main">
+      <vaadin-grid items=[[queryResults.Rows]]>
+        <template is="dom-repeat" items=[[queryResults.Columns]] as="col" items-index-as="colIndex">
+          <vaadin-grid-column>
+            <template class="header">
+              <vaadin-grid-sorter path="[[colString(colIndex)]]">[[col.Name]]</vaadin-grid-sorter>
+            </template>
+            <template>[[data(item, colIndex)]]</template>
+          </vaadin-grid-column>
+        </template>
+      </vaadin-grid>
+    </div>
+  </template>
+</dom-module>
+
+<script src="query-results.js"></script>

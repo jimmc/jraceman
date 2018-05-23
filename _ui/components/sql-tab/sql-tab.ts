@@ -1,6 +1,9 @@
 @Polymer.decorators.customElement('sql-tab')
 class SqlTab extends Polymer.Element {
 
+  @Polymer.decorators.property({type: Object, notify: true})
+  queryResults: object;
+
   checkEnter(e: any) {
     if (e.key == 'Enter' && e.shiftKey) {
       e.stopPropagation();
@@ -25,6 +28,6 @@ class SqlTab extends Polymer.Element {
       params: formData
     };
     const result = await ApiManager.xhrJson(path, options);
-    console.log("SQL Result:", result)
+    this.queryResults = result;
   }
 }

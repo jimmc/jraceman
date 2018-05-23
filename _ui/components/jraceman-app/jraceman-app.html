@@ -6,6 +6,7 @@
 <link rel="import" href="../../bower_components/vaadin-split-layout/vaadin-split-layout.html">
 <link rel="import" href="../../components/debug-tab/debug-tab.html">
 <link rel="import" href="../../components/client-messages/client-messages.html">
+<link rel="import" href="../../components/query-results/query-results.html">
 
 <dom-module id="jraceman-app">
   <template>
@@ -62,7 +63,7 @@
           <paper-tab name="debug">Debug</paper-tab>
         </paper-tabs>
 
-        <iron-pages selected="{{selectedTopTab}}">
+        <iron-pages selected="[[selectedTopTab]]">
           <div class="tabContent" name="sportSetup">Sport Setup is not yet implemented</div>
           <div class="tabContent" name="planSetup">Plan Setup is not yet implemented</div>
           <div class="tabContent" name="siteSetup">Site Setup is not yet implemented</div>
@@ -71,7 +72,7 @@
           <div class="tabContent" name="byEvent">By Event is not yet implemented</div>
           <div class="tabContent" name="reports">Reports is not yet implemented</div>
           <div class="tabContent" name="database">Database is not yet implemented</div>
-          <debug-tab class="tabContent" name="debug"></debug-tab>
+          <debug-tab class="tabContent" name="debug" query-results={{queryResults}}></debug-tab>
         </iron-pages>
       </div>
       <div id="bottom">
@@ -82,9 +83,9 @@
           <paper-tab name="help">Help</paper-tab>
         </paper-tabs>
 
-        <iron-pages selected="{{selectedBottomTab}}">
+        <iron-pages selected="[[selectedBottomTab]]">
           <client-messages name="messages"></client-messages>
-          <div name="queryResults">Query Results is not yet implemented</div>
+          <query-results name="queryResults" query-results=[[queryResults]]></query-results>
           <div name="report">Report is not yet implemented</div>
           <div name="help">Help is not yet implemented</div>
         </iron-pages>
