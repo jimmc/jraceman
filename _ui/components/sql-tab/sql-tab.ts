@@ -27,7 +27,13 @@ class SqlTab extends Polymer.Element {
       method: 'POST',
       params: formData
     };
-    const result = await ApiManager.xhrJson(path, options);
-    this.queryResults = result;
+    try {
+      const result = await ApiManager.xhrJson(path, options)
+      this.queryResults = result;
+    } catch(e) {
+      this.queryResults = {
+        Error: e.responseText
+      }
+    }
   }
 }

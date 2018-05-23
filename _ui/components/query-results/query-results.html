@@ -16,8 +16,12 @@
       #main {
         height: 100%;
       }
+      vaadin-grid {
+        height: 100%;
+      }
     </style>
     <div id="main">
+      [[queryResults.Error]]
       <vaadin-grid items=[[queryResults.Rows]]>
         <template is="dom-repeat" items=[[queryResults.Columns]] as="col" items-index-as="colIndex">
           <vaadin-grid-column>
