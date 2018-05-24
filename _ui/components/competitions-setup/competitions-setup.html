@@ -1,0 +1,30 @@
+<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tab.html">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower_components/polymer-decorators/polymer-decorators.html">
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../components/jraceman-style/jraceman-style.html">
+
+<dom-module id="competitions-setup">
+  <template>
+    <style include="jraceman-style">
+      :host {
+        height: 100%;
+      }
+      #main {
+        height: 100%;
+      }
+    </style>
+    <div id="main" class="tab-container">
+      <paper-tabs selected="{{selectedTab}}">
+        <paper-tab name="query">Query</paper-tab>
+      </paper-tabs>
+
+      <iron-pages selected="{{selectedTab}}">
+        <div name="query">Competitions-Query is not yet implemented</div>
+      </iron-pages>
+    </div>
+  </template>
+</dom-module>
+
+<script src="competitions-setup.js"></script>

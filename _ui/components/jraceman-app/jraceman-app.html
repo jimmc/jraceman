@@ -8,6 +8,7 @@
 <link rel="import" href="../../components/debug-tab/debug-tab.html">
 <link rel="import" href="../../components/jraceman-style/jraceman-style.html">
 <link rel="import" href="../../components/query-results/query-results.html">
+<link rel="import" href="../../components/sport-setup/sport-setup.html">
 
 <dom-module id="jraceman-app">
   <template>
@@ -40,7 +41,7 @@
         </paper-tabs>
 
         <iron-pages selected="[[selectedTopTab]]">
-          <div class="tabContent" name="sportSetup">Sport Setup is not yet implemented</div>
+          <sport-setup class="tabContent" name="sportSetup"></sport-setup>
           <div class="tabContent" name="planSetup">Plan Setup is not yet implemented</div>
           <div class="tabContent" name="siteSetup">Site Setup is not yet implemented</div>
           <div class="tabContent" name="teamSetup">Team Setup is not yet implemented</div>
