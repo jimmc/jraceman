@@ -4,8 +4,9 @@
 <link rel="import" href="../../bower_components/polymer-decorators/polymer-decorators.html">
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../components/jraceman-style/jraceman-style.html">
+<link rel="import" href="../../components/table-query/table-query.html">
 
-<dom-module id="competitions-setup">
+<dom-module id="competition-setup">
   <template>
     <style include="jraceman-style">
       :host {
@@ -21,10 +22,10 @@
       </paper-tabs>
 
       <iron-pages selected="{{selectedTab}}">
-        <div name="query">Competitions-Query is not yet implemented</div>
+        <table-query name="query" table-desc=[[tableDesc]]></table-query>
       </iron-pages>
     </div>
   </template>
 </dom-module>
 
-<script src="competitions-setup.js"></script>
+<script src="competition-setup.js"></script>

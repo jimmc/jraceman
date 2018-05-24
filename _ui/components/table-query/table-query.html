@@ -1,0 +1,37 @@
+<link rel="import" href="../../bower_components/iron-form/iron-form.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/polymer-decorators/polymer-decorators.html">
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../components/jraceman-style/jraceman-style.html">
+
+<dom-module id="table-query">
+  <template>
+    <style include="jraceman-style">
+      :host {
+        height: 100%;
+      }
+      #main {
+        height: 100%;
+      }
+    </style>
+    <div id="main">
+      <iron-form>
+        <form>
+          <paper-button raised on-click="search">Search</paper-button>
+          <paper-button raised on-click="clearForm">Clear</paper-button>
+          <table>
+            <template is="dom-repeat" items=[[tableDesc.Columns]] as="col" items-index-as="colIndex">
+              <tr>
+                <td>[[col.Label]]</td>
+                <td>op-here</td>
+                <td><input type=text id="fff[[col.Name]]" name=[[col.Name]] label=[[col.Name]]></input></td>
+              </tr>
+            </template>
+          </table>
+        </form>
+      </iron-form>
+    </div>
+  </template>
+</dom-module>
+
+<script src="table-query.js"></script>
