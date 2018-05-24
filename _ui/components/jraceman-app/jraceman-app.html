@@ -4,53 +4,29 @@
 <link rel="import" href="../../bower_components/polymer-decorators/polymer-decorators.html">
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/vaadin-split-layout/vaadin-split-layout.html">
-<link rel="import" href="../../components/debug-tab/debug-tab.html">
 <link rel="import" href="../../components/client-messages/client-messages.html">
+<link rel="import" href="../../components/debug-tab/debug-tab.html">
+<link rel="import" href="../../components/jraceman-style/jraceman-style.html">
 <link rel="import" href="../../components/query-results/query-results.html">
 
 <dom-module id="jraceman-app">
   <template>
-    <style>
+    <style include="jraceman-style">
       :host {
         height: 100%;
-      }
-      [hidden] {
-        display: none !important;
       }
       #main {
         height: 100%;
       }
       #top {
         height: 50%;
-        display: flex;
-        flex-direction: column;
-      }
-      #top paper-tabs {
-        flex: initial;
-      }
-      #top iron-pages {
-        flex: auto;
-        height: inherit;
-      }
-      .tabContent {
-        height: 100%;
       }
       #bottom {
         height: 50%;
-        display: flex;
-        flex-direction: column;
       }
-      #bottom paper-tabs {
-        flex: initial;
-      }
-      #bottom iron-pages {
-        flex: auto;
-        height: inherit;
-      }
-
     </style>
     <vaadin-split-layout id="main" orientation="vertical" vertical>
-      <div id="top">
+      <div id="top" class="tab-container">
         <paper-tabs selected="{{selectedTopTab}}">
           <paper-tab name="sportSetup">Sport Setup</paper-tab>
           <paper-tab name="planSetup">Plan Setup</paper-tab>
@@ -75,7 +51,7 @@
           <debug-tab class="tabContent" name="debug" query-results={{queryResults}}></debug-tab>
         </iron-pages>
       </div>
-      <div id="bottom">
+      <div id="bottom" class="tab-container">
         <paper-tabs selected="{{selectedBottomTab}}">
           <paper-tab name="messages">Messages</paper-tab>
           <paper-tab name="queryResults">Query Results</paper-tab>
