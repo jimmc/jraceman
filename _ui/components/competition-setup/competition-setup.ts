@@ -17,6 +17,11 @@ class CompetitionSetup extends Polymer.Element {
         Name: "name",
         Label: "Name",
         Type: "string"
+      },
+      {
+        Name: "num",
+        Label: "Num",
+        Type: "int"
       }
     ]
   };

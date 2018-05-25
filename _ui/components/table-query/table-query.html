@@ -1,5 +1,9 @@
 <link rel="import" href="../../bower_components/iron-form/iron-form.html">
+<link rel="import" href="../../bower_components/neon-animation/web-animations.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
 <link rel="import" href="../../bower_components/polymer-decorators/polymer-decorators.html">
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../components/jraceman-style/jraceman-style.html">
@@ -23,8 +27,20 @@
             <template is="dom-repeat" items=[[tableDesc.Columns]] as="col" items-index-as="colIndex">
               <tr>
                 <td>[[col.Label]]</td>
-                <td>op-here</td>
-                <td><input type=text id="fff[[col.Name]]" name=[[col.Name]] label=[[col.Name]]></input></td>
+                <td>
+                <paper-dropdown-menu id="op_[[col.Name]]" label="Op">
+		  <paper-listbox slot="dropdown-content" class="dropdown-content">
+		    <paper-item>=</paper-item>
+		    <paper-item>!=</paper-item>
+		    <paper-item>&gt;</paper-item>
+		    <paper-item>&gt;=</paper-item>
+		    <paper-item>&lt;</paper-item>
+		    <paper-item>&lt;=</paper-item>
+		    <paper-item hidden="[[!isStringColumn(col.Type)]]">LIKE</paper-item>
+		  </paper-listbox>
+		</paper-dropdown-menu>
+                </td>
+                <td><input type=text id="val_[[col.Name]]" name=[[col.Name]] label=[[col.Name]]></input></td>
               </tr>
             </template>
           </table>

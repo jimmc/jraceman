@@ -23,9 +23,14 @@ class TableQuery extends Polymer.Element {
     console.log("in TableQuery.search()");
     for (let col of this.tableDesc['Columns']) {
       const name = col.Name;
-      const formVal = this.$.main.querySelector("#fff"+name).value;
-      console.log(name, formVal)
-      // TODO - get the operator also, send an API request
+      const colVal = this.$.main.querySelector("#val_"+name).value;
+      const colOp = this.$.main.querySelector("#op_"+name).selectedItemLabel;
+      console.log(name, colOp, colVal)
     }
+    // TODO - send an API request
+  }
+
+  isStringColumn(colType: string) {
+    return colType == "string";
   }
 }
