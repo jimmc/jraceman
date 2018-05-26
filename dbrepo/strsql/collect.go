@@ -39,8 +39,8 @@ func QueryAndCollect(db *sql.DB, sql string, targets []interface{}, collect func
 // QueryStarAndCollect issues a Query for the given arbitrary sql and returns the results.
 // It is intended for cases where the type and column count of the result is unknown,
 // such as "SELECT * from sometable".
-func QueryStarAndCollect(db *sql.DB, sql string) (*QueryResults, error) {
-  rows, err := db.Query(sql)
+func QueryStarAndCollect(db *sql.DB, sql string, queryValues ...interface{}) (*QueryResults, error) {
+  rows, err := db.Query(sql, queryValues...)
   if err != nil {
     return nil, err
   }

@@ -30,13 +30,13 @@
                 <td>
                 <paper-dropdown-menu id="op_[[col.Name]]" label="Op">
 		  <paper-listbox slot="dropdown-content" class="dropdown-content">
-		    <paper-item>=</paper-item>
-		    <paper-item>!=</paper-item>
-		    <paper-item>&gt;</paper-item>
-		    <paper-item>&gt;=</paper-item>
-		    <paper-item>&lt;</paper-item>
-		    <paper-item>&lt;=</paper-item>
-		    <paper-item hidden="[[!isStringColumn(col.Type)]]">LIKE</paper-item>
+		    <paper-item name="eq">=</paper-item>
+		    <paper-item name="ne">!=</paper-item>
+		    <paper-item name="gt">&gt;</paper-item>
+		    <paper-item name="ge">&gt;=</paper-item>
+		    <paper-item name="lt">&lt;</paper-item>
+		    <paper-item name="le">&lt;=</paper-item>
+		    <paper-item name="like" hidden="[[!isStringColumn(col.Type)]]">LIKE</paper-item>
 		  </paper-listbox>
 		</paper-dropdown-menu>
                 </td>

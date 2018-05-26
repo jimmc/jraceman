@@ -24,7 +24,8 @@ class TableQuery extends Polymer.Element {
     for (let col of this.tableDesc['Columns']) {
       const name = col.Name;
       const colVal = this.$.main.querySelector("#val_"+name).value;
-      const colOp = this.$.main.querySelector("#op_"+name).selectedItemLabel;
+      const opItem = this.$.main.querySelector("#op_"+name).selectedItem;
+      const colOp = opItem && opItem.getAttribute('name');
       console.log(name, colOp, colVal)
     }
     // TODO - send an API request
