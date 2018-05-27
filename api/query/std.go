@@ -10,6 +10,7 @@ import (
   apihttp "github.com/jimmc/jracemango/api/http"
   "github.com/jimmc/jracemango/dbrepo"
   "github.com/jimmc/jracemango/dbrepo/strsql"
+  "github.com/jimmc/jracemango/dbrepo/structsql"
 )
 
 // QueryParam defines one column comparison for an SQL query.
@@ -17,6 +18,11 @@ type queryParam struct {
   Name string
   Op string
   Value string
+}
+
+// GetColumnResults provides info about the available columns for a query.
+type GetColumnResults struct {
+  Columns []structsql.ColumnInfo
 }
 
 func (qp *queryParam) CleanName() string {
@@ -55,18 +61,30 @@ type std interface {
 func (h *handler) stdquery(w http.ResponseWriter, r *http.Request, st std) {
   // TODO - check authorization
   entityType := st.EntityTypeName()
-  entityID := strings.TrimPrefix(r.URL.Path, h.queryPrefix(entityType))
-  log.Printf("%s %s '%s'", r.Method, entityType, entityID);
+  pathPrefix := h.queryPrefix(entityType)
+  morePath := strings.TrimPrefix(r.URL.Path, pathPrefix)
+  if morePath != "" {
+    http.Error(w, "Additional path elements may not be specified after "+ pathPrefix, http.StatusBadRequest)
+    return
+  }
+  log.Printf("%s %s", r.Method, entityType);
   switch r.Method {
+    case http.MethodGet:
+      h.stdGetColumns(w, r, st)
     case http.MethodPost:
-      if entityID != "" {
-        http.Error(w, "Entity ID may not be specified on a POST", http.StatusBadRequest)
-      } else {
-        h.stdList(w, r, st)
-      }
+      h.stdList(w, r, st)
     default:
       http.Error(w, "Method must be POST", http.StatusMethodNotAllowed)
   }
+}
+
+func (h *handler) stdGetColumns(w http.ResponseWriter, r *http.Request, st std) {
+  entity := st.NewEntity()
+  columnInfos := structsql.ColumnInfos(entity)
+  result := &GetColumnResults{
+    Columns: columnInfos,
+  }
+  apihttp.MarshalAndReply(w, result)
 }
 
 func (h *handler) stdList(w http.ResponseWriter, r *http.Request, st std) {
