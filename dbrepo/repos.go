@@ -15,6 +15,7 @@ import (
 type Repos struct {
   db *sql.DB
   dbArea *DBAreaRepo
+  dbCompetition *DBCompetitionRepo
   dbSite *DBSiteRepo
 }
 
@@ -24,6 +25,10 @@ func (r *Repos) DB() *sql.DB {
 
 func (r *Repos) Area() domain.AreaRepo {
   return r.dbArea
+}
+
+func (r *Repos) Competition() domain.CompetitionRepo {
+  return r.dbCompetition
 }
 
 func (r *Repos) Site() domain.SiteRepo {
@@ -57,6 +62,7 @@ func Open(repoPath string) (*Repos, error) {
   r := &Repos{
     db: db,
     dbArea: &DBAreaRepo{db},
+    dbCompetition: &DBCompetitionRepo{db},
     dbSite: &DBSiteRepo{db},
   }
 
@@ -76,6 +82,10 @@ func (r *Repos) Close() {
 // This method is not idempotent, it will fail if any of the
 // tables already exist.
 func (r *Repos) CreateTables() error {
+  if err := r.dbCompetition.CreateTable(); err != nil {
+    return fmt.Errorf("error creating Competition table: %v", err)
+  }
+
   if err := r.dbSite.CreateTable(); err != nil {
     return fmt.Errorf("error creating Site table: %v", err)
   }
@@ -105,6 +115,10 @@ func (r *Repos) Export(w io.Writer) error {
 
   // The order of output of the tables is important: tables with
   // foreign keys should be after the tables the point to.
+
+  if err := r.dbCompetition.Export(e, w); err != nil {
+    return err
+  }
 
   if err := r.dbSite.Export(e, w); err != nil {
     return err

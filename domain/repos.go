@@ -5,5 +5,6 @@ package domain
 // access the repos for the other types.
 type Repos interface {
   Area() AreaRepo
+  Competition() CompetitionRepo
   Site() SiteRepo
 }
