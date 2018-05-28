@@ -33,7 +33,10 @@ class ApiManager {
       const method = (options && options.method) || "GET";
       request.open(method, url);
       const params = (options && options.params) || {};
-      request.send(params);
+      if (params) {
+        request.setRequestHeader("Content-Type", "application/json");
+        request.send(JSON.stringify(params));
+      }
     })
   }
 }
