@@ -21,8 +21,9 @@ class SqlTab extends Polymer.Element {
     const sql = this.$.sqlText.value;
     console.log("Execute: " + sql);     // TODO
     const path = '/api/debug/sql/';
-    const formData = new FormData();
-    formData.append("q", sql);
+    const formData = {
+      q: sql
+    };
     const options = {
       method: 'POST',
       params: formData

@@ -15,6 +15,9 @@ class TableQuery extends Polymer.Element {
   @Polymer.decorators.property({type: Object})
   tableDesc: TableDesc;
 
+  @Polymer.decorators.property({type: Object, notify: true})
+  queryResults: object;
+
   clearForm() {
     console.log("in TableQuery.clear()");
   }
@@ -42,8 +45,15 @@ class TableQuery extends Polymer.Element {
       params: params,
     }
     const queryPath = '/api/query/' + this.tableDesc.Table + '/';
-    const result = await ApiManager.xhrJson(queryPath, options);
-    console.log(result);
+    try {
+      const result = await ApiManager.xhrJson(queryPath, options);
+      console.log(result);
+      this.queryResults = result;
+    } catch(e) {
+      this.queryResults = {
+        Error: e.responseText
+      }
+    }
   }
 
   isStringColumn(colType: string) {

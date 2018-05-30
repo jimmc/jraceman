@@ -11,6 +11,9 @@ class CompetitionSetup extends Polymer.Element {
     // Columns get based on an API call.
   };
 
+  @Polymer.decorators.property({type: Object, notify: true})
+  queryResults: object;
+
   ready() {
     super.ready();
     this.loadColumns();
