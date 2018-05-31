@@ -47,6 +47,9 @@ class TableQuery extends Polymer.Element {
     const queryPath = '/api/query/' + this.tableDesc.Table + '/';
     try {
       const result = await ApiManager.xhrJson(queryPath, options);
+      if (result && !result.Table) {
+        result.Table = this.tableDesc.Table;
+      }
       console.log(result);
       this.queryResults = result;
     } catch(e) {

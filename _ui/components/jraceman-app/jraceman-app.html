@@ -55,14 +55,15 @@
       <div id="bottom" class="tab-container">
         <paper-tabs selected="{{selectedBottomTab}}">
           <paper-tab name="messages">Messages</paper-tab>
-          <paper-tab name="queryResults">Query Results</paper-tab>
+          <paper-tab name="queryResults">Query Results[[queryResultsMoreLabel]]</paper-tab>
           <paper-tab name="report">Report</paper-tab>
           <paper-tab name="help">Help</paper-tab>
         </paper-tabs>
 
         <iron-pages selected="[[selectedBottomTab]]">
           <client-messages name="messages"></client-messages>
-          <query-results name="queryResults" query-results=[[queryResults]]></query-results>
+          <query-results name="queryResults" query-results=[[queryResults]]
+              query-results-more-label={{queryResultsMoreLabel}}></query-results>
           <div name="report">Report is not yet implemented</div>
           <div name="help">Help is not yet implemented</div>
         </iron-pages>
