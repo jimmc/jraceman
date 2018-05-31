@@ -23,6 +23,7 @@ func NewHandler(c *Config) http.Handler {
   mux := http.NewServeMux()
   mux.HandleFunc(h.queryPrefix("area"), h.area)
   mux.HandleFunc(h.queryPrefix("competition"), h.competition)
+  mux.HandleFunc(h.queryPrefix("site"), h.site)
   return mux
 }
 

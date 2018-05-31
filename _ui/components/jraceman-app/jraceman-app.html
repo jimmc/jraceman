@@ -9,6 +9,7 @@
 <link rel="import" href="../../components/jraceman-style/jraceman-style.html">
 <link rel="import" href="../../components/query-results/query-results.html">
 <link rel="import" href="../../components/sport-setup/sport-setup.html">
+<link rel="import" href="../../components/venue-setup/venue-setup.html">
 
 <dom-module id="jraceman-app">
   <template>
@@ -31,7 +32,7 @@
         <paper-tabs selected="{{selectedTopTab}}">
           <paper-tab name="sportSetup">Sport Setup</paper-tab>
           <paper-tab name="planSetup">Plan Setup</paper-tab>
-          <paper-tab name="siteSetup">Site Setup</paper-tab>
+          <paper-tab name="venueSetup">Venue Setup</paper-tab>
           <paper-tab name="teamSetup">Team Setup</paper-tab>
           <paper-tab name="meetSetup">Meet Setup</paper-tab>
           <paper-tab name="byEvent">By Event</paper-tab>
@@ -43,7 +44,7 @@
         <iron-pages selected="[[selectedTopTab]]">
           <sport-setup class="tabContent" name="sportSetup" query-results={{queryResults}}></sport-setup>
           <div class="tabContent" name="planSetup">Plan Setup is not yet implemented</div>
-          <div class="tabContent" name="siteSetup">Site Setup is not yet implemented</div>
+          <venue-setup class="tabContent" name="venueSetup" query-results={{queryResults}}></venue-setup>
           <div class="tabContent" name="teamSetup">Team Setup is not yet implemented</div>
           <div class="tabContent" name="meetSetup">Meet Setup is not yet implemented</div>
           <div class="tabContent" name="byEvent">By Event is not yet implemented</div>
