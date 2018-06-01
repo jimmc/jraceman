@@ -62,4 +62,17 @@ class TableQuery extends Polymer.Element {
   isStringColumn(colType: string) {
     return colType == "string";
   }
+
+  static tableDescToCols(tableDesc: TableDesc): ColumnDesc[] {
+    const cols = tableDesc.Columns;
+    for (let c=0; c<cols.length; c++) {
+      const name = cols[c].Name;
+      if (name == 'id') {
+        cols[c].Label = name.toUpperCase();
+      } else {
+        cols[c].Label = name[0].toUpperCase() + name.substr(1);
+      }
+    }
+    return cols;
+  }
 }

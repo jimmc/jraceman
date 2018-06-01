@@ -7,8 +7,7 @@ class CompetitionSetup extends Polymer.Element {
   @Polymer.decorators.property({type: Object})
   tableDesc: TableDesc = {
     Table: "competition",
-    Columns: []
-    // Columns get based on an API call.
+    Columns: []         // Columns get set from an API call.
   };
 
   @Polymer.decorators.property({type: Object, notify: true})
@@ -20,16 +19,8 @@ class CompetitionSetup extends Polymer.Element {
   }
 
   async loadColumns() {
-    const result = await ApiManager.xhrJson('/api/query/competition/')
-    const cols = result.Columns;
-    for (let c=0; c<cols.length; c++) {
-      const name = cols[c].Name;
-      if (name == 'id') {
-        cols[c].Label = name.toUpperCase();
-      } else {
-        cols[c].Label = name[0].toUpperCase() + name.substr(1);
-      }
-    }
+    const result: TableDesc = await ApiManager.xhrJson('/api/query/competition/')
+    const cols = TableQuery.tableDescToCols(result);
     this.set('tableDesc.Columns', cols);
   }
 }
