@@ -4,6 +4,7 @@
 <link rel="import" href="../../bower_components/polymer-decorators/polymer-decorators.html">
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../components/jraceman-style/jraceman-style.html">
+<link rel="import" href="../../components/table-edit/table-edit.html">
 <link rel="import" href="../../components/table-query/table-query.html">
 
 <dom-module id="site-setup">
@@ -19,10 +20,12 @@
     <div id="main" class="tab-container">
       <paper-tabs selected="{{selectedTab}}">
         <paper-tab name="query">Query</paper-tab>
+        <paper-tab name="edit">Edit</paper-tab>
       </paper-tabs>
 
       <iron-pages selected="{{selectedTab}}">
         <table-query name="query" table-desc=[[tableDesc]] query-results={{queryResults}}></table-query>
+        <table-edit name="edit" table-desc=[[tableDesc]]></table-edit>
       </iron-pages>
     </div>
   </template>
