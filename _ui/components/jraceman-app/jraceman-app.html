@@ -44,7 +44,8 @@
         <iron-pages selected="[[selectedTopTab]]">
           <sport-setup class="tabContent" name="sportSetup" query-results={{queryResults}}></sport-setup>
           <div class="tabContent" name="planSetup">Plan Setup is not yet implemented</div>
-          <venue-setup class="tabContent" name="venueSetup" query-results={{queryResults}}></venue-setup>
+          <venue-setup class="tabContent" name="venueSetup"
+              query-results={{queryResults}} selected-result=[[selectedResult]]></venue-setup>
           <div class="tabContent" name="teamSetup">Team Setup is not yet implemented</div>
           <div class="tabContent" name="meetSetup">Meet Setup is not yet implemented</div>
           <div class="tabContent" name="byEvent">By Event is not yet implemented</div>
@@ -64,7 +65,8 @@
         <iron-pages selected="[[selectedBottomTab]]">
           <client-messages name="messages"></client-messages>
           <query-results name="queryResults" query-results=[[queryResults]]
-              query-results-more-label={{queryResultsMoreLabel}}></query-results>
+              query-results-more-label={{queryResultsMoreLabel}}
+              selected-result={{selectedResult}}></query-results>
           <div name="report">Report is not yet implemented</div>
           <div name="help">Help is not yet implemented</div>
         </iron-pages>

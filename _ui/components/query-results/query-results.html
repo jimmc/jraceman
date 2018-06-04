@@ -20,13 +20,13 @@
     </style>
     <div id="main">
       [[queryResults.Error]]
-      <vaadin-grid items=[[queryResults.Rows]]>
+      <vaadin-grid id="grid" items=[[queryResults.Rows]] active-item="{{activeItem}}">
         <template is="dom-repeat" items=[[queryResults.Columns]] as="col" items-index-as="colIndex">
           <vaadin-grid-column>
             <template class="header">
               <vaadin-grid-sorter path="[[colString(colIndex)]]">[[col.Name]]</vaadin-grid-sorter>
             </template>
-            <template>[[data(item, colIndex)]]</template>
+            <template><span on-dblclick="dblclick">[[data(item, colIndex)]]</span></template>
           </vaadin-grid-column>
         </template>
       </vaadin-grid>

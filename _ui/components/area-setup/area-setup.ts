@@ -13,6 +13,9 @@ class AreaSetup extends Polymer.Element {
   @Polymer.decorators.property({type: Object, notify: true})
   queryResults: object;
 
+  @Polymer.decorators.property({type: Object})
+  selectedResult: SelectedResult;
+
   ready() {
     super.ready();
     this.loadColumns();
@@ -22,5 +25,13 @@ class AreaSetup extends Polymer.Element {
     const result: TableDesc = await ApiManager.xhrJson('/api/query/area/')
     const cols = TableQuery.tableDescToCols(result);
     this.set('tableDesc.Columns', cols);
+  }
+
+  @Polymer.decorators.observe('selectedResult')
+  selectedResultChanged() {
+    if (!this.selectedResult || this.selectedResult.Table != this.tableDesc.Table) {
+      return;   // Not our record
+    }
+    console.log("TODO: area-setup edit ", this.selectedResult.ID);
   }
 }
