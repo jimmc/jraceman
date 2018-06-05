@@ -26,12 +26,4 @@ class SiteSetup extends Polymer.Element {
     const cols = TableQuery.tableDescToCols(result);
     this.set('tableDesc.Columns', cols);
   }
-
-  @Polymer.decorators.observe('selectedResult')
-  selectedResultChanged() {
-    if (!this.selectedResult || this.selectedResult.Table != this.tableDesc.Table) {
-      return;   // Not our record
-    }
-    console.log("TODO: site-setup edit ", this.selectedResult.ID);
-  }
 }
