@@ -18,15 +18,17 @@
       }
     </style>
     <div id="main" class="tab-container">
-      <paper-tabs selected="{{selectedTab}}">
+      <paper-tabs id="tabs" selected="{{selectedTab}}">
         <paper-tab name="site">Sites</paper-tab>
         <paper-tab name="area">Areas</paper-tab>
         <paper-tab name="laneorder">Lane Order</paper-tab>
       </paper-tabs>
 
       <iron-pages selected="{{selectedTab}}">
-        <site-setup name="site" query-results="{{queryResults}}" selected-result=[[selectedResult]]></site-setup>
-        <area-setup name="area" query-results="{{queryResults}}" selected-result=[[selectedResult]]></area-setup>
+        <site-setup name="site" query-results="{{queryResults}}" selected-result=[[selectedResult]]
+            select-up=[[requestSelect]]></site-setup>
+        <area-setup name="area" query-results="{{queryResults}}" selected-result=[[selectedResult]]
+            select-up=[[requestSelect]]></area-setup>
         <div class="tabContent" name="laneorderSetup">Lane Order Setup is not yet implemented</div>
       </iron-pages>
     </div>

@@ -18,6 +18,9 @@ class TableEdit extends Polymer.Element {
   @Polymer.decorators.property({type: Object})
   selectedResult: SelectedResult;
 
+  @Polymer.decorators.property({type: Object})
+  selectUp: (tabName: string|null)=>void;
+
   // If we are editing a new record, this value is blank.
   @Polymer.decorators.property({type: String})
   recordId: string = '';
@@ -46,26 +49,32 @@ class TableEdit extends Polymer.Element {
       params: params,
     }
     const queryPath = '/api/query/' + this.tableDesc.Table + '/';
+    let result
     try {
-      const result = await ApiManager.xhrJson(queryPath, options);
-      if (result && !result.Table) {
-        result.Table = this.tableDesc.Table;
-      }
-      console.log(result);
-      if (result.Rows.length != 1) {
-        throw 'Expected exactly one row';  // TODO - more graceful error handling
-      }
-      const row = result.Rows[0];
-      this.clear();
-      // Populate the form
-      let c = 0;
-      for (let col of result.Columns) {
-        const name = col.Name;
-        this.$.main.querySelector("#val_"+name).value = row[c];
-        c++;
-      }
+      result = await ApiManager.xhrJson(queryPath, options);
     } catch(e) {
       console.error("Error from /api/query:", e.responseText);
+      return
+    }
+    if (result && !result.Table) {
+      result.Table = this.tableDesc.Table;
+    }
+    console.log(result);
+    if (result.Rows.length != 1) {
+      throw 'Expected exactly one row';  // TODO - more graceful error handling
+    }
+    const row = result.Rows[0];
+    this.clear();
+    // Populate the form
+    let c = 0;
+    for (let col of result.Columns) {
+      const name = col.Name;
+      this.$.main.querySelector("#val_"+name).value = row[c];
+      c++;
+    }
+    // Make this tab visible
+    if (this.selectUp) {
+      this.selectUp(this.getAttribute("name"));
     }
   }
 

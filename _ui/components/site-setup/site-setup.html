@@ -18,14 +18,15 @@
       }
     </style>
     <div id="main" class="tab-container">
-      <paper-tabs selected="{{selectedTab}}">
+      <paper-tabs id="tabs" selected="{{selectedTab}}">
         <paper-tab name="query">Query</paper-tab>
         <paper-tab name="edit">Edit</paper-tab>
       </paper-tabs>
 
       <iron-pages selected="{{selectedTab}}">
         <table-query name="query" table-desc=[[tableDesc]] query-results={{queryResults}}></table-query>
-        <table-edit name="edit" table-desc=[[tableDesc]] selected-result=[[selectedResult]]></table-edit>
+        <table-edit name="edit" table-desc=[[tableDesc]] selected-result=[[selectedResult]]
+            select-up=[[requestSelect]]></table-edit>
       </iron-pages>
     </div>
   </template>

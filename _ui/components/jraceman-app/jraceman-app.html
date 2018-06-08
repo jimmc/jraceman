@@ -29,7 +29,7 @@
     </style>
     <vaadin-split-layout id="main" orientation="vertical" vertical>
       <div id="top" class="tab-container">
-        <paper-tabs selected="{{selectedTopTab}}">
+        <paper-tabs id="toptabs" selected="{{selectedTopTab}}">
           <paper-tab name="sportSetup">Sport Setup</paper-tab>
           <paper-tab name="planSetup">Plan Setup</paper-tab>
           <paper-tab name="venueSetup">Venue Setup</paper-tab>
@@ -45,7 +45,8 @@
           <sport-setup class="tabContent" name="sportSetup" query-results={{queryResults}}></sport-setup>
           <div class="tabContent" name="planSetup">Plan Setup is not yet implemented</div>
           <venue-setup class="tabContent" name="venueSetup"
-              query-results={{queryResults}} selected-result=[[selectedResult]]></venue-setup>
+              query-results={{queryResults}} selected-result=[[selectedResult]]
+              select-up=[[requestSelect]]></venue-setup>
           <div class="tabContent" name="teamSetup">Team Setup is not yet implemented</div>
           <div class="tabContent" name="meetSetup">Meet Setup is not yet implemented</div>
           <div class="tabContent" name="byEvent">By Event is not yet implemented</div>
