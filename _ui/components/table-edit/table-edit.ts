@@ -10,16 +10,13 @@ interface TableDesc {
 }
 
 @Polymer.decorators.customElement('table-edit')
-class TableEdit extends Polymer.Element {
+class TableEdit extends LeafTab {
 
   @Polymer.decorators.property({type: Object})
   tableDesc: TableDesc;
 
   @Polymer.decorators.property({type: Object})
   selectedResult: SelectedResult;
-
-  @Polymer.decorators.property({type: Object})
-  selectUp: (tabName: string|null)=>void;
 
   // If we are editing a new record, this value is blank.
   @Polymer.decorators.property({type: String})
@@ -73,9 +70,7 @@ class TableEdit extends Polymer.Element {
       c++;
     }
     // Make this tab visible
-    if (this.selectUp) {
-      this.selectUp(this.getAttribute("name"));
-    }
+    this.selectThisTab();
   }
 
   clear() {
