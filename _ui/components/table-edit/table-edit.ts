@@ -67,6 +67,9 @@ class TableEdit extends LeafTab {
     for (let col of result.Columns) {
       const name = col.Name;
       this.$.main.querySelector("#val_"+name).value = row[c];
+      if (name === "id") {
+        this.recordId = row[c];
+      }
       c++;
     }
     // Make this tab visible
@@ -82,25 +85,24 @@ class TableEdit extends LeafTab {
 
   async save() {
     console.log("in TableQuery.save()");
-    let params = [];
+    let fields: any = {};
     for (let col of this.tableDesc['Columns']) {
       const name = col.Name;
       const colVal = this.$.main.querySelector("#val_"+name).value;
       console.log(name, colVal)
       if (colVal) {
-        const colParams = {
-          name: name,
-          value: colVal,
-        };
-        params.push(colParams);
+        // For queries, we specify each field with name and value tags,
+        // but when calling the CRUD api we use the name as the field
+        // name and the value as the field value for that name.
+        fields[name] = colVal;
       }
     }
+    const queryPath = '/api/crud/' + this.tableDesc.Table + '/' + this.recordId;
+    const method = this.recordId ? "PUT" : "POST";
     const options: XhrOptions = {
-      method: "POST",
-      params: params,
+      method: method,
+      params: fields,
     }
-    const queryPath = '/api/edit/' + this.tableDesc.Table + '/';
-    /*
     try {
       const result = await ApiManager.xhrJson(queryPath, options);
       if (result && !result.Table) {
@@ -108,9 +110,8 @@ class TableEdit extends LeafTab {
       }
       console.log(result);
     } catch(e) {
-      // Error: e.responseText
+      console.error("Error: " + e.responseText);
     }
-    */
   }
 
   isNewRecord() {
