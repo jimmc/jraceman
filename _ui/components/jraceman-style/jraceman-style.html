@@ -1,6 +1,14 @@
 <link rel="import" href="../../bower_components/polymer-decorators/polymer-decorators.html">
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
+<custom-style>
+  <style>
+    html {
+      --jraceman-background-color: #aaa;
+    }
+  </style>
+</custom-style>
+
 <dom-module id="jraceman-style">
   <template>
     <style>
@@ -9,6 +17,7 @@
       [hidden] {
         display: none !important;
       }
+
       .tab-container {
         display: flex;
         flex-direction: column;
@@ -22,6 +31,20 @@
       }
       .tabContent {
         height: 100%;
+      }
+
+      paper-tabs {
+	--paper-tabs-selection-bar: {
+          z-index: 100;
+        }
+	--paper-tabs-selection-bar-color: blue;
+      }
+      paper-tab {
+	background-color: #999;
+      }
+      paper-tab.iron-selected {
+	color: var(--paper-tabs-selection-bar-color);
+	background-color: var(--jraceman-background-color);
       }
     </style>
   </template>
