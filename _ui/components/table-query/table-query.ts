@@ -21,8 +21,12 @@ class TableQuery extends Polymer.Element {
   @Polymer.decorators.property({type: String})
   selectedOp: string;
 
-  clearForm() {
-    console.log("in TableQuery.clear()");
+  clear() {
+    for (let col of this.tableDesc['Columns']) {
+      const name = col.Name;
+      this.$.main.querySelector("#val_"+name).value = '';
+      this.$.main.querySelector("#op_"+name).value = 'eq';
+    }
   }
 
   async search() {

@@ -81,6 +81,7 @@ class TableEdit extends LeafTab {
       const name = col.Name;
       this.$.main.querySelector("#val_"+name).value = '';
     }
+    this.recordId = '';
   }
 
   async save() {
