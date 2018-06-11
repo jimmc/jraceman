@@ -28,17 +28,16 @@
               <tr>
                 <td>[[col.Label]]</td>
                 <td>
-                <paper-dropdown-menu id="op_[[col.Name]]" label="Op">
-		  <paper-listbox slot="dropdown-content" class="dropdown-content">
-		    <paper-item name="eq">=</paper-item>
-		    <paper-item name="ne">!=</paper-item>
-		    <paper-item name="gt">&gt;</paper-item>
-		    <paper-item name="ge">&gt;=</paper-item>
-		    <paper-item name="lt">&lt;</paper-item>
-		    <paper-item name="le">&lt;=</paper-item>
-		    <paper-item name="like" hidden="[[!isStringColumn(col.Type)]]">LIKE</paper-item>
-		  </paper-listbox>
-		</paper-dropdown-menu>
+                  <!-- Initially used paper-dropdown-menu, but it was too big and ugly. -->
+                  <select id="op_[[col.Name]]">
+                    <option value="eq">=</option>
+                    <option value="ne">!=</option>
+                    <option value="gt">&gt;</option>
+                    <option value="ge">&gt;=</option>
+                    <option value="lt">&lt;</option>
+                    <option value="le">&lt;=</option>
+                    <option value="like" hidden="[[!isStringColumn(col.Type)]]">LIKE</option>
+                  </select>
                 </td>
                 <td><input type=text id="val_[[col.Name]]" name=[[col.Name]] label=[[col.Name]]></input></td>
               </tr>

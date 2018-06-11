@@ -18,6 +18,9 @@ class TableQuery extends Polymer.Element {
   @Polymer.decorators.property({type: Object, notify: true})
   queryResults: object;
 
+  @Polymer.decorators.property({type: String})
+  selectedOp: string;
+
   clearForm() {
     console.log("in TableQuery.clear()");
   }
@@ -28,8 +31,7 @@ class TableQuery extends Polymer.Element {
     for (let col of this.tableDesc['Columns']) {
       const name = col.Name;
       const colVal = this.$.main.querySelector("#val_"+name).value;
-      const opItem = this.$.main.querySelector("#op_"+name).selectedItem;
-      const colOp = opItem && opItem.getAttribute('name');
+      const colOp = this.$.main.querySelector("#op_"+name).value;
       console.log(name, colOp, colVal)
       if (colVal && colOp) {
         const colParams = {
