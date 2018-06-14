@@ -2,5 +2,10 @@
   "entrypoint": "index.html",
   "fragments": [
     "components/jraceman-app/jraceman-app.html"
-  ]
+  ],
+  "lint": {
+    "rules": [
+      "polymer-2"
+    ]
+  }
 }
