@@ -42,7 +42,9 @@
         </paper-tabs>
 
         <iron-pages selected="[[selectedTopTab]]">
-          <sport-setup class="tabContent" name="sportSetup" query-results={{queryResults}}></sport-setup>
+          <sport-setup class="tabContent" name="sportSetup"
+              query-results={{queryResults}} selected-result=[[selectedResult]]
+              select-up=[[requestSelect]]></sport-setup>
           <div class="tabContent" name="planSetup">Plan Setup is not yet implemented</div>
           <venue-setup class="tabContent" name="venueSetup"
               query-results={{queryResults}} selected-result=[[selectedResult]]

@@ -5,6 +5,7 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../components/competition-setup/competition-setup.html">
 <link rel="import" href="../../components/jraceman-style/jraceman-style.html">
+<link rel="import" href="../../components/mid-tab/mid-tab.html">
 
 <dom-module id="sport-setup">
   <template>
@@ -17,12 +18,13 @@
       }
     </style>
     <div id="main" class="tab-container">
-      <paper-tabs selected="{{selectedTab}}">
+      <paper-tabs id="tabs" selected="{{selectedTab}}">
         <paper-tab name="competition">Competitions</paper-tab>
       </paper-tabs>
 
       <iron-pages selected="{{selectedTab}}">
-        <competition-setup name="competition" query-results="{{queryResults}}"></competition-setup>
+        <competition-setup name="competition" query-results="{{queryResults}}" selected-result=[[selectedResult]]
+            select-up=[[requestSelect]]></competition-setup>
       </iron-pages>
     </div>
   </template>

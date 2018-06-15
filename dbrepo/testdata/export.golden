@@ -3,6 +3,10 @@
 !appInfo JRaceman v2.0.0
 !type database
 
+!table competition
+!columns "id","name","groupsize","maxalternates","duration"
+#no rows
+
 !table site
 !columns "id","name","street","street2","city","state","zip","country","phone","fax"
 "S1","Site One",null,null,"Anytown",null,null,null,null,null

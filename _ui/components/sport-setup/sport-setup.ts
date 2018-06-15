@@ -1,8 +1,5 @@
 @Polymer.decorators.customElement('sport-setup')
-class SportSetup extends Polymer.Element {
-
-  @Polymer.decorators.property({type: Number})
-  selectedTab: number = 0;
+class SportSetup extends MidTab {
 
   @Polymer.decorators.property({type: Object, notify: true})
   queryResults: object;

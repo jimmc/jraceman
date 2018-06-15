@@ -14,6 +14,7 @@ type CompetitionRepo interface {
 type Competition struct {
   ID string
   Name string
-  GroupSize int
-  MaxAlternates int
+  GroupSize *int
+  MaxAlternates *int
+  Duration *int         // duration in seconds
 }
