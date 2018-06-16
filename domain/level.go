@@ -2,17 +2,20 @@ package domain
 
 // LevelRepo describes how Level records are loaded and saved.
 type LevelRepo interface {
-  FindByID(ID string) (Level, error)
-  Save(Level) error
+  FindByID(ID string) (*Level, error)
+  List(offset, limit int) ([]*Level, error)
+  Save(*Level) error
+  UpdateByID(ID string, oldLevel, newLevel *Level, diffs Diffs) error
+  DeleteByID(ID string) error
 }
 
-// Level describes an age bracket for an event.
+// Level describes an age level, used in age-based events.
 type Level struct {
   ID string
   Name string
-  MinAge int
-  MaxAge int
-  MinEntryAge int
-  MaxEntryAge int
-  UseGroupAverage bool
+  MinEntryAge *int
+  MinAge *int
+  MaxAge *int
+  MaxEntryAge *int
+  UseGroupAverage *bool
 }

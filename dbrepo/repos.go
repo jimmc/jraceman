@@ -16,6 +16,7 @@ type Repos struct {
   db *sql.DB
   dbArea *DBAreaRepo
   dbCompetition *DBCompetitionRepo
+  dbLevel *DBLevelRepo
   dbSite *DBSiteRepo
 }
 
@@ -29,6 +30,10 @@ func (r *Repos) Area() domain.AreaRepo {
 
 func (r *Repos) Competition() domain.CompetitionRepo {
   return r.dbCompetition
+}
+
+func (r *Repos) Level() domain.LevelRepo {
+  return r.dbLevel
 }
 
 func (r *Repos) Site() domain.SiteRepo {
@@ -63,6 +68,7 @@ func Open(repoPath string) (*Repos, error) {
     db: db,
     dbArea: &DBAreaRepo{db},
     dbCompetition: &DBCompetitionRepo{db},
+    dbLevel: &DBLevelRepo{db},
     dbSite: &DBSiteRepo{db},
   }
 
@@ -84,6 +90,10 @@ func (r *Repos) Close() {
 func (r *Repos) CreateTables() error {
   if err := r.dbCompetition.CreateTable(); err != nil {
     return fmt.Errorf("error creating Competition table: %v", err)
+  }
+
+  if err := r.dbLevel.CreateTable(); err != nil {
+    return fmt.Errorf("error creating Level table: %v", err)
   }
 
   if err := r.dbSite.CreateTable(); err != nil {
@@ -117,6 +127,10 @@ func (r *Repos) Export(w io.Writer) error {
   // foreign keys should be after the tables the point to.
 
   if err := r.dbCompetition.Export(e, w); err != nil {
+    return err
+  }
+
+  if err := r.dbLevel.Export(e, w); err != nil {
     return err
   }
 
