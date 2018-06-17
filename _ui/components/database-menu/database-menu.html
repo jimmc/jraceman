@@ -1,0 +1,31 @@
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../../bower_components/polymer-decorators/polymer-decorators.html">
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../components/client-messages/client-messages.html">
+<link rel="import" href="../../components/jraceman-style/jraceman-style.html">
+
+<dom-module id="database-menu">
+  <template>
+    <style include="jraceman-style">
+    </style>
+
+    <paper-menu-button class="tab-menu-button" vertical-offset=55>
+      <paper-icon-button icon="menu" slot="dropdown-trigger"></paper-icon-button>
+      <div slot="dropdown-content">
+        <paper-listbox class="tab-menu">
+          <paper-item class="tab-menu-item" on-click="exportClicked">Export JRaceman data file</paper-item>
+          <paper-item class="tab-menu-item" on-click="importClicked">Import JRaceman data file</paper-item>
+          <paper-item class="tab-menu-item" on-click="loadSqlClicked">Load SQL file</paper-item>
+          <paper-item class="tab-menu-item" on-click="checkUpgradeClicked">Check Upgrade</paper-item>
+          <paper-item class="tab-menu-item" on-click="upgradeClicked">Upgrade</paper-item>
+        </paper-listbox>
+      </div>
+    </paper-menu-button>
+  </template>
+</dom-module>
+
+<script src="database-menu.js"></script>
