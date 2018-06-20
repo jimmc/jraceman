@@ -5,6 +5,7 @@ import (
   "net/http"
 
   "github.com/jimmc/jracemango/api/crud"
+  apidb "github.com/jimmc/jracemango/api/database"
   apidebug "github.com/jimmc/jracemango/api/debug"
   "github.com/jimmc/jracemango/api/query"
   "github.com/jimmc/jracemango/domain"
@@ -35,6 +36,14 @@ func NewHandler(c *Config) http.Handler {
   crudHandler := crud.NewHandler(crudConfig)
   mux.Handle(crudPrefix, crudHandler)
 
+  dbPrefix := h.apiPrefix("database")
+  dbConfig := &apidb.Config{
+    Prefix: dbPrefix,
+    DomainRepos: c.DomainRepos,
+  }
+  dbHandler := apidb.NewHandler(dbConfig)
+  mux.Handle(dbPrefix, dbHandler)
+
   debugPrefix := h.apiPrefix("debug")
   debugConfig := &apidebug.Config{
     Prefix: debugPrefix,
@@ -56,7 +65,7 @@ func NewHandler(c *Config) http.Handler {
 }
 
 func (h *handler) blank(w http.ResponseWriter, r *http.Request) {
-  http.Error(w, "Try one of /api/crud, /api/debug, /api/query", http.StatusForbidden)
+  http.Error(w, "Try one of /api/crud, /api/database, /api/debug, /api/query", http.StatusForbidden)
 }
 
 // ApiPrefix composes our prefix with the next path component so that we can

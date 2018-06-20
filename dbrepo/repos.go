@@ -20,6 +20,25 @@ type Repos struct {
   dbSite *DBSiteRepo
 }
 
+type SectionRepo interface {
+  CreateTable() error
+  // UpgradeTable(dryrun bool) (status, message string)
+}
+
+type SectionEntry struct {
+  Name string
+  Section SectionRepo
+}
+
+func (r *Repos) SectionEntries() []SectionEntry {
+  return []SectionEntry{
+    {"area", r.dbArea},
+    {"competition", r.dbCompetition},
+    {"level", r.dbLevel},
+    {"site", r.dbSite},
+  }
+}
+
 func (r *Repos) DB() *sql.DB {
   return r.db
 }
@@ -105,6 +124,15 @@ func (r *Repos) CreateTables() error {
   }
 
   return nil
+}
+
+func (r *Repos) SectionNames() []string {
+  sectionEntries := r.SectionEntries();
+  sectionNames := make([]string, len(sectionEntries))
+  for i, entry := range sectionEntries {
+    sectionNames[i] = entry.Name
+  }
+  return sectionNames
 }
 
 // Import reads in the specified text file and loads our tables.

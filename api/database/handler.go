@@ -1,4 +1,4 @@
-package debug
+package database
 
 import (
   "fmt"
@@ -21,13 +21,13 @@ type Config struct {
 func NewHandler(c *Config) http.Handler {
   h := handler{config: c}
   mux := http.NewServeMux()
-  mux.HandleFunc(h.apiPrefix("sql"), h.sql)
+  mux.HandleFunc(h.apiPrefix("upgrade"), h.upgrade)
   mux.HandleFunc(h.config.Prefix, h.blank)
   return mux
 }
 
 func (h *handler) blank(w http.ResponseWriter, r *http.Request) {
-  http.Error(w, "Try /api/debug/sql", http.StatusForbidden)
+  http.Error(w, "Try /api/database/upgrade", http.StatusForbidden)
 }
 
 func (h *handler) apiPrefix(s string) string {
