@@ -3,7 +3,6 @@ package structsql
 import (
   "database/sql"
   "fmt"
-  "log"
   "strings"
 
   "github.com/jimmc/jracemango/dbrepo/strsql"
@@ -35,20 +34,6 @@ func TableColumns(db *sql.DB, tableName string) ([]ColumnInfo, error) {
   if err != nil {
     return nil, fmt.Errorf("error getting column info for table %s: %v", tableName, err)
   }
-  log.Printf("colinfo query results table %s: %v", tableName, results)
-  // The SQLite pragma command seems not to return a data type for the pragma columns,
-  // so we manually do some conversions for the columns we know are strings.
-  for r, row := range results.Rows {
-    for c, col := range results.Columns {
-      if col.Name == "name" || col.Name == "type" {
-        fieldBytes, ok := row[c].([]byte)
-        if ok {
-          results.Rows[r][c] = string(fieldBytes)
-        }
-      }
-    }
-  }
-  log.Printf("colinfo query results stringified: %v", results)
   // Now convert from a query result to []ColumnInfo
   colInfos := make([]ColumnInfo, len(results.Rows))
   for r, row := range results.Rows {
@@ -77,6 +62,5 @@ func TableColumns(db *sql.DB, tableName string) ([]ColumnInfo, error) {
       FKTable: fkReference,
     }
   }
-  log.Printf("colinfos returned: %v", colInfos)
   return colInfos, nil
 }

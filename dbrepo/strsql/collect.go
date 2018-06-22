@@ -75,7 +75,9 @@ func QueryStarAndCollect(db *sql.DB, sql string, queryValues ...interface{}) (*Q
     }
     for c, col := range columnTypes {
       colDbTypeName := col.DatabaseTypeName()
-      if isStringType(colDbTypeName) {
+      // sqlite returns blank type names on pragma commands,
+      // so try to convert those to strings when that works.
+      if isStringType(colDbTypeName) || colDbTypeName == "" {
         fieldBytes, ok := rowData[c].([]byte)
         if ok {
           rowData[c] = string(fieldBytes)
