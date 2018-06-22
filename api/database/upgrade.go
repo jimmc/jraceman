@@ -1,6 +1,7 @@
 package database
 
 import (
+  "fmt"
   "net/http"
   "strings"
 
@@ -37,26 +38,27 @@ func (h *handler) upgradeList(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) upgradeSection(w http.ResponseWriter, r *http.Request, sectionName string) {
-  /*
   dryrunStr := r.URL.Query().Get("dryrun")
-  dryrun := (dryRunStr == "true")
+  dryrun := (dryrunStr == "true")
   dbrepos, ok := h.config.DomainRepos.(*dbrepo.Repos)
   if !ok {
     http.Error(w, "Bad database repo", http.StatusInternalServerError)
     return
   }
-  */
 
-  // TODO - call a (new) method in dbrepos to upgrade the specified section.
-  /*
-  db := dbrepos.DB()
-  result, err := strsql.QueryStarAndCollect(db, sqlStr)
+  nop, message, err := dbrepos.UpgradeSection(sectionName, dryrun)
   if err != nil {
-    http.Error(w, fmt.Sprintf("Error executing sql: %v", err), http.StatusBadRequest)
+    http.Error(w, fmt.Sprintf("error upgrading section %s: %v", sectionName, err), http.StatusBadRequest)
     return
   }
-  */
-  result := "NYI"
+  type upgradeResult struct {
+    Nop bool
+    Message string
+  }
+  result := upgradeResult{
+    Nop: nop,
+    Message: message,
+  }
 
   apihttp.MarshalAndReply(w, result)
 }

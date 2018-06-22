@@ -1,7 +1,6 @@
 package structsql_test
 
 import (
-  "reflect"
   "testing"
 
   dbtest "github.com/jimmc/jracemango/dbrepo/test"
@@ -30,14 +29,6 @@ func TestCreateTableSql(t *testing.T) {
       "required string not null, optional string, barid string references bar(id));";
       got != want {
     t.Errorf("CreateTableSql: got %v, want %v", got, want)
-  }
-}
-
-func TestColumnNames(t *testing.T) {
-  columnNames := structsql.ColumnNames(foo)
-  expectedNames:= []string{"id", "num", "required", "optional", "barid"}
-  if got, want := columnNames, expectedNames; !reflect.DeepEqual(got, want) {
-    t.Errorf("Column names: got %v, want %v", got, want)
   }
 }
 

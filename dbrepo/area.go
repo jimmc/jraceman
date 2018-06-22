@@ -18,6 +18,10 @@ func (r *DBAreaRepo) CreateTable() error {
   return structsql.CreateTable(r.db, "area", domain.Area{})
 }
 
+func (r *DBAreaRepo) UpgradeTable(dryrun bool) (bool, string, error) {
+  return structsql.UpgradeTable(r.db, "area", domain.Area{}, dryrun)
+}
+
 func (r *DBAreaRepo) FindByID(ID string) (*domain.Area, error) {
   area := &domain.Area{}
   sql, targets := structsql.FindByIDSql("area", area)

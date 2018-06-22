@@ -18,6 +18,10 @@ func (r *DBCompetitionRepo) CreateTable() error {
   return structsql.CreateTable(r.db, "competition", domain.Competition{})
 }
 
+func (r *DBCompetitionRepo) UpgradeTable(dryrun bool) (bool, string, error) {
+  return structsql.UpgradeTable(r.db, "competition", domain.Competition{}, dryrun)
+}
+
 func (r *DBCompetitionRepo) FindByID(ID string) (*domain.Competition, error) {
   competition := &domain.Competition{}
   sql, targets := structsql.FindByIDSql("competition", competition)

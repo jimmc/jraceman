@@ -18,6 +18,10 @@ func (r *DBLevelRepo) CreateTable() error {
   return structsql.CreateTable(r.db, "level", domain.Level{})
 }
 
+func (r *DBLevelRepo) UpgradeTable(dryrun bool) (bool, string, error) {
+  return structsql.UpgradeTable(r.db, "level", domain.Level{}, dryrun)
+}
+
 func (r *DBLevelRepo) FindByID(ID string) (*domain.Level, error) {
   level := &domain.Level{}
   sql, targets := structsql.FindByIDSql("level", level)

@@ -22,7 +22,7 @@ type Repos struct {
 
 type SectionRepo interface {
   CreateTable() error
-  // UpgradeTable(dryrun bool) (status, message string)
+  UpgradeTable(dryrun bool) (bool, string, error)
 }
 
 type SectionEntry struct {
@@ -133,6 +133,22 @@ func (r *Repos) SectionNames() []string {
     sectionNames[i] = entry.Name
   }
   return sectionNames
+}
+
+// UpgradeSection performs a database upgrade on the named section.
+// Section names are defined in SectionEntries().
+// If dryrun is true, then upgrade is not performed.
+func (r *Repos) UpgradeSection(sectionName string, dryrun bool) (bool, string, error) {
+  // We don't call this method very often, and we don't expect more
+  // than perhaps 30 sections, so we just do a linear search.
+  sectionEntries := r.SectionEntries();
+  for _, entry := range sectionEntries {
+    if entry.Name != sectionName {
+      continue;
+    }
+    return entry.Section.UpgradeTable(dryrun)
+  }
+  return false, "", fmt.Errorf("no such section %s", sectionName)
 }
 
 // Import reads in the specified text file and loads our tables.

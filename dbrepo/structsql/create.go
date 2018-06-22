@@ -3,7 +3,6 @@ package structsql
 import (
   "database/sql"
   "log"
-  "reflect"
   "strings"
 )
 
@@ -28,28 +27,18 @@ func CreateTable(db *sql.DB, tableName string, entity interface{}) error {
 //   * Field names ending in ID are declared as foreign key references to the
 //     id field of a table whose name matches the first part of the field name
 func CreateTableSql(tableName string, entity interface{}) string {
-  val := reflect.Indirect(reflect.ValueOf(entity))
-  typ := val.Type()
-  numFields := typ.NumField()
-  columnSpecs := make([]string, numFields)
-  for i := 0; i < numFields; i++ {
-    field := typ.Field(i)
-    columnName := strings.ToLower(field.Name)
-    goTypeName := field.Type.String()     // string, *string, int
-    isPointer := strings.HasPrefix(goTypeName, "*")
-    isForeignKey := strings.HasSuffix(field.Name, "ID")
-    goTypeName = strings.TrimPrefix(goTypeName, "*")
-    columnType := goTypeName            // TODO - convert as required
-    columnSpec := columnName + " " + columnType
-    if columnName == "id" {
+  columnInfos := ColumnInfos(entity);
+  columnSpecs := make([]string, len(columnInfos))
+  for i, colInfo := range columnInfos {
+    columnSpec := colInfo.Name + " " + colInfo.Type
+    if colInfo.Name == "id" {
       columnSpec = columnSpec + " primary key"
     } else {
-      if !isPointer {
+      if colInfo.Required {
         columnSpec = columnSpec + " not null"
       }
-      if isForeignKey {
-        referenceTable := strings.TrimSuffix(columnName, "id")
-        columnSpec = columnSpec + " references " + referenceTable + "(id)"
+      if colInfo.IsForeignKey {
+        columnSpec = columnSpec + " references " + colInfo.FKTable + "(id)"
       }
     }
     columnSpecs[i] = columnSpec
@@ -58,4 +47,3 @@ func CreateTableSql(tableName string, entity interface{}) string {
   log.Printf("CreateTableSql: %v\n", sql)
   return sql
 }
-
