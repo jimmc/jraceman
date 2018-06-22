@@ -30,18 +30,7 @@ func CreateTableSql(tableName string, entity interface{}) string {
   columnInfos := ColumnInfos(entity);
   columnSpecs := make([]string, len(columnInfos))
   for i, colInfo := range columnInfos {
-    columnSpec := colInfo.Name + " " + colInfo.Type
-    if colInfo.Name == "id" {
-      columnSpec = columnSpec + " primary key"
-    } else {
-      if colInfo.Required {
-        columnSpec = columnSpec + " not null"
-      }
-      if colInfo.IsForeignKey {
-        columnSpec = columnSpec + " references " + colInfo.FKTable + "(id)"
-      }
-    }
-    columnSpecs[i] = columnSpec
+    columnSpecs[i] = ColumnSpec(colInfo)
   }
   sql := "CREATE TABLE " + tableName + "(" + strings.Join(columnSpecs, ", ") + ");"
   log.Printf("CreateTableSql: %v\n", sql)

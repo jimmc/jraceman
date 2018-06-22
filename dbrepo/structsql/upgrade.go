@@ -61,17 +61,7 @@ func UpgradeTableSql(tableName string, entity interface{}, tableColumns []Column
   // Create ALTER TABLE ADD COLUMN command for each column in diffs.Add.
   alterSql := ""
   for _, colInfo := range diffs.Add {
-    columnSpec := colInfo.Name + " " + colInfo.Type
-    if colInfo.Name == "id" {
-      columnSpec = columnSpec + " primary key"
-    } else {
-      if colInfo.Required {
-        columnSpec = columnSpec + " not null"
-      }
-      if colInfo.IsForeignKey {
-        columnSpec = columnSpec + " references " + colInfo.FKTable + "(id)"
-      }
-    }
+    columnSpec := ColumnSpec(colInfo)
     alterColSql := "ALTER TABLE " + tableName + " ADD COLUMN " + columnSpec + "; "
     alterSql = alterSql + alterColSql;
   }

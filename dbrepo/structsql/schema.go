@@ -9,6 +9,23 @@ import (
   "github.com/jimmc/jracemango/dbrepo/strsql"
 )
 
+// ColumnSpec generates an sql column specification, suitable for use
+// in a CREATE TABLE or ALTER TABLE command, for the given ColumnInfo.
+func ColumnSpec(colInfo ColumnInfo) string {
+  columnSpec := colInfo.Name + " " + colInfo.Type
+  if colInfo.Name == "id" {
+    columnSpec = columnSpec + " primary key"
+  } else {
+    if colInfo.Required {
+      columnSpec = columnSpec + " not null"
+    }
+    if colInfo.IsForeignKey {
+      columnSpec = columnSpec + " references " + colInfo.FKTable + "(id)"
+    }
+  }
+  return columnSpec
+}
+
 // TableColumns collects details about the current columns in the database
 // for the specified table, and returns them in the same form as ColumnInfos.
 func TableColumns(db *sql.DB, tableName string) ([]ColumnInfo, error) {
