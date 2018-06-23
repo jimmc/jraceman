@@ -25,6 +25,20 @@ func ColumnSpec(colInfo ColumnInfo) string {
   return columnSpec
 }
 
+// TableExists returns true of the specified table exists in the database.
+func TableExists(db *sql.DB, tableName string) (bool, error) {
+  // TODO - this is specific to SQLite
+  colSql := `SELECT name FROM sqlite_master WHERE type='table' AND name=?;`
+  results, err := strsql.QueryStarAndCollect(db, colSql, tableName)
+  if err != nil {
+    return false, fmt.Errorf("error getting info for table %s: %v", tableName, err)
+  }
+  for _, _ = range results.Rows {
+    return true, nil    // If we have any results, the table exists.
+  }
+  return false, nil
+}
+
 // TableColumns collects details about the current columns in the database
 // for the specified table, and returns them in the same form as ColumnInfos.
 func TableColumns(db *sql.DB, tableName string) ([]ColumnInfo, error) {

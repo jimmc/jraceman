@@ -7,25 +7,41 @@ import (
 )
 
 // UpgradeTable upgrades a table from its current state to match
-// what CreateTable would create.
+// what CreateTable would create. If the table does not exist,
+// it creates the table.
 func UpgradeTable(db *sql.DB, tableName string, entity interface{}, dryrun bool) (bool, string, error) {
   tableColumns, err := TableColumns(db, tableName)
   if err != nil {
     return false, "", fmt.Errorf("error getting columns for table %s: %v", tableName, err)
   }
-  upgradeSql, err := UpgradeTableSql(tableName, entity, tableColumns)
+  tableSql, err := CreateOrUpgradeTableSql(db, tableName, entity, tableColumns)
   if err != nil {
     return false, "", err
   }
-  if upgradeSql == "" {
+  if tableSql == "" {
     // Table is up to date.
     return true, "", nil
   }
   if dryrun {
-    return false, upgradeSql, nil
+    return false, tableSql, nil
   }
-  _, err = db.Exec(upgradeSql)
-  return false, upgradeSql, err
+  _, err = db.Exec(tableSql)
+  return false, tableSql, err
+}
+
+// CreateOrUpgradeTableSql checks to see whether the table already exists,
+// and returns either a CREATE TABLE statement if it does not exist, or
+// the ALTER TABLE statements for column changes if it does exist.
+func CreateOrUpgradeTableSql(db *sql.DB, tableName string, entity interface{}, tableColumns []ColumnInfo) (string, error) {
+  exists, err := TableExists(db, tableName)
+  if err != nil {
+    return "", err
+  }
+  if exists {
+    return UpgradeTableSql(tableName, entity, tableColumns)
+  } else {
+    return CreateTableSql(tableName, entity), nil
+  }
 }
 
 // UpgradeTableSql generates an SQL a create or upgrade command using
@@ -40,7 +56,6 @@ func UpgradeTable(db *sql.DB, tableName string, entity interface{}, dryrun bool)
 // If the table exists, an ALTER TABLE statement is generated to add any
 // missing columns.
 func UpgradeTableSql(tableName string, entity interface{}, tableColumns []ColumnInfo) (string, error) {
-  // TODO - if the table does not exist, return the CREATE TABLE statement.
   columnInfos := ColumnInfos(entity)
   log.Printf("tableColumns for %s: %v", tableName, tableColumns)
   log.Printf("columnInfos for %s: %v", tableName, columnInfos)
