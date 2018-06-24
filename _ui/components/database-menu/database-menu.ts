@@ -2,22 +2,27 @@
 class DatabaseMenu extends Polymer.Element {
 
   exportClicked() {
+    this.$.listmenu.selected = null;  // Clear the highlight of this menu item.
     ClientMessages.append("database", "Export JRaceman is not yet implemented");
   }
 
   importClicked() {
+    this.$.listmenu.selected = null;
     ClientMessages.append("database", "Import JRaceman is not yet implemented");
   }
 
   loadSqlClicked() {
+    this.$.listmenu.selected = null;
     ClientMessages.append("database", "Load SQL is not yet implemented");
   }
 
   checkUpgradeClicked() {
+    this.$.listmenu.selected = null;
     this.doUpgrade(true)
   }
 
   upgradeClicked() {
+    this.$.listmenu.selected = null;
     this.doUpgrade(false)
   }
 
