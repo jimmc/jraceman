@@ -62,7 +62,7 @@ func TestCreateTablesSiteError(t *testing.T) {
     t.Fatalf("Expected error from CreateTables");
   }
   if !strings.Contains(err.Error(), "creating Site table") {
-    t.Errorf("Expected error about createing Site table")
+    t.Errorf("Expected error about creating Site table")
   }
 }
 
@@ -82,7 +82,7 @@ func TestCreateTablesAreaError(t *testing.T) {
     t.Fatalf("Expected error from CreateTables");
   }
   if !strings.Contains(err.Error(), "creating Area table") {
-    t.Errorf("Expected error about createing Area table")
+    t.Errorf("Expected error about creating Area table")
   }
 }
 

@@ -6,6 +6,7 @@ package domain
 type Repos interface {
   Area() AreaRepo
   Competition() CompetitionRepo
+  Gender() GenderRepo
   Level() LevelRepo
   Site() SiteRepo
 }

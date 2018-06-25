@@ -16,6 +16,7 @@ type Repos struct {
   db *sql.DB
   dbArea *DBAreaRepo
   dbCompetition *DBCompetitionRepo
+  dbGender *DBGenderRepo
   dbLevel *DBLevelRepo
   dbSite *DBSiteRepo
 }
@@ -34,6 +35,7 @@ func (r *Repos) SectionEntries() []SectionEntry {
   return []SectionEntry{
     {"area", r.dbArea},
     {"competition", r.dbCompetition},
+    {"gender", r.dbGender},
     {"level", r.dbLevel},
     {"site", r.dbSite},
   }
@@ -49,6 +51,10 @@ func (r *Repos) Area() domain.AreaRepo {
 
 func (r *Repos) Competition() domain.CompetitionRepo {
   return r.dbCompetition
+}
+
+func (r *Repos) Gender() domain.GenderRepo {
+  return r.dbGender
 }
 
 func (r *Repos) Level() domain.LevelRepo {
@@ -87,6 +93,7 @@ func Open(repoPath string) (*Repos, error) {
     db: db,
     dbArea: &DBAreaRepo{db},
     dbCompetition: &DBCompetitionRepo{db},
+    dbGender: &DBGenderRepo{db},
     dbLevel: &DBLevelRepo{db},
     dbSite: &DBSiteRepo{db},
   }
@@ -121,6 +128,10 @@ func (r *Repos) CreateTables() error {
 
   if err := r.dbArea.CreateTable(); err != nil {
     return fmt.Errorf("error creating Area table: %v", err)
+  }
+
+  if err := r.dbGender.CreateTable(); err != nil {
+    return fmt.Errorf("error creating Gender table: %v", err)
   }
 
   return nil
@@ -183,6 +194,10 @@ func (r *Repos) Export(w io.Writer) error {
   }
 
   if err := r.dbArea.Export(e, w); err != nil {
+    return err
+  }
+
+  if err := r.dbGender.Export(e, w); err != nil {
     return err
   }
 
