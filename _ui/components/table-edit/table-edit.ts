@@ -22,6 +22,9 @@ class TableEdit extends LeafTab {
   @Polymer.decorators.property({type: String})
   recordId: string = '';
 
+  @Polymer.decorators.property({type: String, notify: true})
+  editMoreLabel: string = '[New]';
+
   @Polymer.decorators.observe('selectedResult')
   async selectedResultChanged() {
     if (!this.selectedResult || this.selectedResult.Table != this.tableDesc.Table) {
@@ -72,6 +75,7 @@ class TableEdit extends LeafTab {
       }
       c++;
     }
+    this.editMoreLabel = '[' + (this.recordId || 'New') + ']';
     // Make this tab visible
     this.selectThisTab();
   }
@@ -109,6 +113,9 @@ class TableEdit extends LeafTab {
       if (result && !result.Table) {
         result.Table = this.tableDesc.Table;
       }
+      // TODO - once the server auto-assigns IDs, we need to pull the ID from the response.
+      this.recordId = fields['id']
+      this.editMoreLabel = '[' + (this.recordId || 'New') + ']';
       console.log(result);
     } catch(e) {
       console.error("Error: " + e.responseText);
