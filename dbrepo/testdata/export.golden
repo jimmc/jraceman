@@ -7,10 +7,6 @@
 !columns "id","name","groupsize","maxalternates","duration"
 #no rows
 
-!table level
-!columns "id","name","minentryage","minage","maxage","maxentryage","usegroupaverage"
-#no rows
-
 !table site
 !columns "id","name","street","street2","city","state","zip","country","phone","fax"
 "S1","Site One",null,null,"Anytown",null,null,null,null,null
@@ -21,3 +17,11 @@
 "A1","Main Course","S1",9,2
 "A2","Distance Course","S1",150,0
 "A3","Center Course","S2",9,0
+
+!table level
+!columns "id","name","minentryage","minage","maxage","maxentryage","usegroupaverage"
+#no rows
+
+!table gender
+!columns "id","name"
+#no rows

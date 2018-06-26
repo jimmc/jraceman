@@ -61,8 +61,8 @@ func TestCreateTablesSiteError(t *testing.T) {
   if err == nil {
     t.Fatalf("Expected error from CreateTables");
   }
-  if !strings.Contains(err.Error(), "creating Site table") {
-    t.Errorf("Expected error about creating Site table")
+  if !strings.Contains(err.Error(), "table site already exists") {
+    t.Errorf("Expected error about creating Site table, got: %v", err)
   }
 }
 
@@ -81,8 +81,8 @@ func TestCreateTablesAreaError(t *testing.T) {
   if err == nil {
     t.Fatalf("Expected error from CreateTables");
   }
-  if !strings.Contains(err.Error(), "creating Area table") {
-    t.Errorf("Expected error about creating Area table")
+  if !strings.Contains(err.Error(), "table area already exists") {
+    t.Errorf("Expected error about creating Area table, got: %v", err)
   }
 }
 

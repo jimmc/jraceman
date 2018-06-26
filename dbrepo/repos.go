@@ -21,23 +21,26 @@ type Repos struct {
   dbSite *DBSiteRepo
 }
 
-type SectionRepo interface {
+type TableRepo interface {
   CreateTable() error
   UpgradeTable(dryrun bool) (bool, string, error)
+  Export(e *ixport.Exporter, w io.Writer) error
 }
 
-type SectionEntry struct {
+type TableEntry struct {
   Name string
-  Section SectionRepo
+  Table TableRepo
 }
 
-func (r *Repos) SectionEntries() []SectionEntry {
-  return []SectionEntry{
-    {"area", r.dbArea},
+func (r *Repos) TableEntries() []TableEntry {
+  return []TableEntry{
+    // The tables in this list are ordered so that tables that are the target
+    // of foreign keys are created/updated before the tables that reference them.
     {"competition", r.dbCompetition},
-    {"gender", r.dbGender},
-    {"level", r.dbLevel},
     {"site", r.dbSite},
+    {"area", r.dbArea},
+    {"level", r.dbLevel},
+    {"gender", r.dbGender},
   }
 }
 
@@ -114,52 +117,37 @@ func (r *Repos) Close() {
 // This method is not idempotent, it will fail if any of the
 // tables already exist.
 func (r *Repos) CreateTables() error {
-  if err := r.dbCompetition.CreateTable(); err != nil {
-    return fmt.Errorf("error creating Competition table: %v", err)
+  for _, entry := range r.TableEntries() {
+    if err := entry.Table.CreateTable(); err != nil {
+      return fmt.Errorf("error creating table %s: %v", entry.Name, err)
+    }
   }
-
-  if err := r.dbLevel.CreateTable(); err != nil {
-    return fmt.Errorf("error creating Level table: %v", err)
-  }
-
-  if err := r.dbSite.CreateTable(); err != nil {
-    return fmt.Errorf("error creating Site table: %v", err)
-  }
-
-  if err := r.dbArea.CreateTable(); err != nil {
-    return fmt.Errorf("error creating Area table: %v", err)
-  }
-
-  if err := r.dbGender.CreateTable(); err != nil {
-    return fmt.Errorf("error creating Gender table: %v", err)
-  }
-
   return nil
 }
 
-func (r *Repos) SectionNames() []string {
-  sectionEntries := r.SectionEntries();
-  sectionNames := make([]string, len(sectionEntries))
-  for i, entry := range sectionEntries {
-    sectionNames[i] = entry.Name
+func (r *Repos) TableNames() []string {
+  tableEntries := r.TableEntries();
+  tableNames := make([]string, len(tableEntries))
+  for i, entry := range tableEntries {
+    tableNames[i] = entry.Name
   }
-  return sectionNames
+  return tableNames
 }
 
-// UpgradeSection performs a database upgrade on the named section.
-// Section names are defined in SectionEntries().
+// UpgradeTable performs a database upgrade on the named table.
+// Table names are defined in TableEntries().
 // If dryrun is true, then upgrade is not performed.
-func (r *Repos) UpgradeSection(sectionName string, dryrun bool) (bool, string, error) {
+func (r *Repos) UpgradeTable(tableName string, dryrun bool) (bool, string, error) {
   // We don't call this method very often, and we don't expect more
-  // than perhaps 30 sections, so we just do a linear search.
-  sectionEntries := r.SectionEntries();
-  for _, entry := range sectionEntries {
-    if entry.Name != sectionName {
+  // than perhaps 30 tables, so we just do a linear search.
+  tableEntries := r.TableEntries();
+  for _, entry := range tableEntries {
+    if entry.Name != tableName {
       continue;
     }
-    return entry.Section.UpgradeTable(dryrun)
+    return entry.Table.UpgradeTable(dryrun)
   }
-  return false, "", fmt.Errorf("no such section %s", sectionName)
+  return false, "", fmt.Errorf("no such table %s", tableName)
 }
 
 // Import reads in the specified text file and loads our tables.
@@ -178,28 +166,10 @@ func (r *Repos) Export(w io.Writer) error {
     return err
   }
 
-  // The order of output of the tables is important: tables with
-  // foreign keys should be after the tables the point to.
-
-  if err := r.dbCompetition.Export(e, w); err != nil {
-    return err
+  for _, entry := range r.TableEntries() {
+    if err := entry.Table.Export(e, w); err != nil {
+      return fmt.Errorf("error creating table %s: %v", entry.Name, err)
+    }
   }
-
-  if err := r.dbLevel.Export(e, w); err != nil {
-    return err
-  }
-
-  if err := r.dbSite.Export(e, w); err != nil {
-    return err
-  }
-
-  if err := r.dbArea.Export(e, w); err != nil {
-    return err
-  }
-
-  if err := r.dbGender.Export(e, w); err != nil {
-    return err
-  }
-
   return nil
 }

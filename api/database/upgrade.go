@@ -14,13 +14,13 @@ func (h *handler) upgrade(w http.ResponseWriter, r *http.Request) {
     case http.MethodGet:
       h.upgradeList(w, r);
     case http.MethodPost:
-      // When using a POST, we expect the section as the next path component.
-      sectionName := strings.TrimPrefix(r.URL.Path, h.apiPrefix("upgrade"))
-      if sectionName == "" {
-        http.Error(w, "Section name must be specified on a POST", http.StatusBadRequest)
+      // When using a POST, we expect the table as the next path component.
+      tableName := strings.TrimPrefix(r.URL.Path, h.apiPrefix("upgrade"))
+      if tableName == "" {
+        http.Error(w, "Table name must be specified on a POST", http.StatusBadRequest)
         return
       }
-      h.upgradeSection(w, r, sectionName)
+      h.upgradeTable(w, r, tableName)
     default:
       http.Error(w, "Method must be GET or POST", http.StatusMethodNotAllowed)
   }
@@ -32,12 +32,12 @@ func (h *handler) upgradeList(w http.ResponseWriter, r *http.Request) {
     http.Error(w, "Bad database repo", http.StatusInternalServerError)
     return
   }
-  sectionNames := dbrepos.SectionNames()
+  tableNames := dbrepos.TableNames()
 
-  apihttp.MarshalAndReply(w, sectionNames)
+  apihttp.MarshalAndReply(w, tableNames)
 }
 
-func (h *handler) upgradeSection(w http.ResponseWriter, r *http.Request, sectionName string) {
+func (h *handler) upgradeTable(w http.ResponseWriter, r *http.Request, tableName string) {
   dryrunStr := r.URL.Query().Get("dryrun")
   dryrun := (dryrunStr == "true")
   dbrepos, ok := h.config.DomainRepos.(*dbrepo.Repos)
@@ -46,9 +46,9 @@ func (h *handler) upgradeSection(w http.ResponseWriter, r *http.Request, section
     return
   }
 
-  nop, message, err := dbrepos.UpgradeSection(sectionName, dryrun)
+  nop, message, err := dbrepos.UpgradeTable(tableName, dryrun)
   if err != nil {
-    http.Error(w, fmt.Sprintf("error upgrading section %s: %v", sectionName, err), http.StatusBadRequest)
+    http.Error(w, fmt.Sprintf("error upgrading table %s: %v", tableName, err), http.StatusBadRequest)
     return
   }
   type upgradeResult struct {
