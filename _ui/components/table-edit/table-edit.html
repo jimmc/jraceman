@@ -22,10 +22,9 @@
     <div id="main">
       <iron-form>
         <form>
-          <paper-button raised on-click="edit">Edit</paper-button>
           <paper-button raised on-click="save">Save</paper-button>
-          <paper-button raised on-click="clear" hidden=[[!isNewRecord()]]>Clear</paper-button>
-          <paper-button raised on-click="reset" hidden=[[isNewRecord()]]>Reset</paper-button>
+          <paper-button raised on-click="reset" hidden=[[!recordId]]>Reset</paper-button>
+          <paper-button raised on-click="newRecord">New</paper-button>
           <table>
             <template is="dom-repeat" items=[[tableDesc.Columns]] as="col" items-index-as="colIndex">
               <tr>

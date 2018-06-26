@@ -25,6 +25,9 @@ class TableEdit extends LeafTab {
   @Polymer.decorators.property({type: String, notify: true})
   editMoreLabel: string = '[New]';
 
+  // databaseResult holds the result of the database query to load a record.
+  databaseResult: any;
+
   @Polymer.decorators.observe('selectedResult')
   async selectedResultChanged() {
     if (!this.selectedResult || this.selectedResult.Table != this.tableDesc.Table) {
@@ -63,11 +66,29 @@ class TableEdit extends LeafTab {
     if (result.Rows.length != 1) {
       throw 'Expected exactly one row';  // TODO - more graceful error handling
     }
-    const row = result.Rows[0];
+    this.databaseResult = result;
+    this.reset();
+    this.editMoreLabel = '[' + (this.recordId || 'New') + ']';
+    // Make this tab visible
+    this.selectThisTab();
+  }
+
+  // Clear clears a record back to empty.
+  clear() {
+    for (let col of this.tableDesc['Columns']) {
+      const name = col.Name;
+      this.$.main.querySelector("#val_"+name).value = '';
+    }
+  }
+
+  // Reset resets an existing record to the values that came from the database.
+  reset() {
+    // TODO - ask for confirmation if the form data has changed.
+    const row = this.databaseResult.Rows[0];
     this.clear();
     // Populate the form
     let c = 0;
-    for (let col of result.Columns) {
+    for (let col of this.databaseResult.Columns) {
       const name = col.Name;
       this.$.main.querySelector("#val_"+name).value = row[c];
       if (name === "id") {
@@ -75,17 +96,14 @@ class TableEdit extends LeafTab {
       }
       c++;
     }
-    this.editMoreLabel = '[' + (this.recordId || 'New') + ']';
-    // Make this tab visible
-    this.selectThisTab();
   }
 
-  clear() {
-    for (let col of this.tableDesc['Columns']) {
-      const name = col.Name;
-      this.$.main.querySelector("#val_"+name).value = '';
-    }
+  // Sets the form back to blank to allow entering a new record.
+  newRecord() {
+    // TODO - ask for confirmation if the form data has changed.
+    this.clear();
     this.recordId = '';
+    this.editMoreLabel = '[' + (this.recordId || 'New') + ']';
   }
 
   async save() {
@@ -120,10 +138,6 @@ class TableEdit extends LeafTab {
     } catch(e) {
       console.error("Error: " + e.responseText);
     }
-  }
-
-  isNewRecord() {
-    return this.recordId == '';
   }
 
   isStringColumn(colType: string) {
