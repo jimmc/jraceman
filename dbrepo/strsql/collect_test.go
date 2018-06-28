@@ -114,3 +114,96 @@ func TestQueryStarAndCollect(t *testing.T) {
     t.Errorf("Results rows, got %v, want %v", got, want)
   }
 }
+
+func TestQueryIntHappy(t *testing.T) {
+  db, err := dbtest.DbWithTestTable()
+  if err != nil {
+    t.Fatal(err.Error())
+  }
+  defer db.Close()
+
+  n, err := strsql.QueryInt(db, "select 1")
+  if err != nil {
+    t.Fatalf("QueryInt for constant: %v", err)
+  }
+  if got, want := n, 1; got != want {
+    t.Errorf("QueryInt for constant, got %d, want %d", got, want)
+  }
+
+  nval := 1
+  n, err = strsql.QueryInt(db, "select count(*) from test where n!=?", nval)
+  if err != nil {
+    t.Fatalf("QueryInt for count: %v", err)
+  }
+  if got, want := n, 2; got != want {
+    t.Errorf("QueryInt for count, got %d, want %d", got, want)
+  }
+}
+
+func TestQueryIntError(t *testing.T) {
+  db, err := dbtest.EmptyDb()
+  if err != nil {
+    t.Fatal(err.Error())
+  }
+  defer db.Close()
+
+  _, err = strsql.QueryInt(db, "select x from nosuchtable")
+  if err == nil {
+    t.Fatalf("Expected error from QueryInt")
+  }
+}
+
+func TestQueryStringHappy(t *testing.T) {
+  db, err := dbtest.DbWithTestTable()
+  if err != nil {
+    t.Fatal(err.Error())
+  }
+  defer db.Close()
+
+  s, err := strsql.QueryString(db, `select "abc"`)
+  if err != nil {
+    t.Fatalf("QueryString for constant: %v", err)
+  }
+  if got, want := s, "abc"; got != want {
+    t.Errorf("QueryString for constant, got %v, want %v", got, want)
+  }
+
+  idval := "T1"
+  s, err = strsql.QueryString(db, "select s from test where id=?", idval)
+  if err != nil {
+    t.Fatalf("QueryString for count: %v", err)
+  }
+  if got, want := s, "a"; got != want {
+    t.Errorf("QueryString for count, got %v, want %v", got, want)
+  }
+}
+
+func TestQueryStringError(t *testing.T) {
+  db, err := dbtest.EmptyDb()
+  if err != nil {
+    t.Fatal(err.Error())
+  }
+  defer db.Close()
+
+  _, err = strsql.QueryString(db, "select x from nosuchtable")
+  if err == nil {
+    t.Fatalf("Expected error from QueryString")
+  }
+}
+
+func TestQueryStringsHappy(t *testing.T) {
+  db, err := dbtest.DbWithTestTable()
+  if err != nil {
+    t.Fatal(err.Error())
+  }
+  defer db.Close()
+
+  idval := "T1"
+  ss, err := strsql.QueryStrings(db, "select s from test where id!=?", idval)
+  if err != nil {
+    t.Fatalf("QueryString for count: %v", err)
+  }
+  if got, want := ss, []string{"b", "c"}; !reflect.DeepEqual(got, want) {
+    t.Errorf("QueryString for count, got %v, want %v", got, want)
+  }
+}

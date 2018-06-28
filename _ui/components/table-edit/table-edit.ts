@@ -131,9 +131,13 @@ class TableEdit extends LeafTab {
       if (result && !result.Table) {
         result.Table = this.tableDesc.Table;
       }
-      // TODO - once the server auto-assigns IDs, we need to pull the ID from the response.
-      this.recordId = fields['id']
-      this.editMoreLabel = '[' + (this.recordId || 'New') + ']';
+      // Use the returned ID if it was set.
+      const returnedId = result['ID']
+      if (returnedId) {
+        this.recordId = result['ID'];
+        this.$.main.querySelector("#val_id").value = this.recordId;
+        this.editMoreLabel = '[' + (this.recordId || 'New') + ']';
+      }
       console.log(result);
     } catch(e) {
       console.error("Error: " + e.responseText);

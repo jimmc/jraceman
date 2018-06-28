@@ -18,7 +18,7 @@ func (sc *siteCrud) NewEntity() interface{} {
   return &domain.Site{}
 }
 
-func (sc *siteCrud) Save(entity interface{}) error {
+func (sc *siteCrud) Save(entity interface{}) (string, error) {
   var site *domain.Site = entity.(*domain.Site)
   return sc.h.config.DomainRepos.Site().Save(site)
 }

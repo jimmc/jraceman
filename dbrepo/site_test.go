@@ -58,8 +58,12 @@ func TestSiteHappyPath(t *testing.T) {
     ID: "S4",
     Name: "Site Four",
   }
-  if err := siteRepo.Save(newSite); err != nil {
+  id, err := siteRepo.Save(newSite)
+  if  err != nil {
     t.Errorf("Error saving new site record")
+  }
+  if got, want := id, "S4"; got != want {
+    t.Errorf("ID after save: got %v, want %v", got, want)
   }
 
   site, err = siteRepo.FindByID("S4")

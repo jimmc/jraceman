@@ -4,7 +4,7 @@ package domain
 type AreaRepo interface {
   FindByID(ID string) (*Area, error)
   List(offset, limit int) ([]*Area, error)
-  Save(*Area) error
+  Save(*Area) (string, error)
   UpdateByID(ID string, oldArea, newArea *Area, diffs Diffs) error
   DeleteByID(ID string) error
 }

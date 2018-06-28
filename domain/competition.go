@@ -4,7 +4,7 @@ package domain
 type CompetitionRepo interface {
   FindByID(ID string) (*Competition, error)
   List(offset, limit int) ([]*Competition, error)
-  Save(*Competition) error
+  Save(*Competition) (string, error)
   UpdateByID(ID string, oldCompetition, newCompetition *Competition, diffs Diffs) error
   DeleteByID(ID string) error
 }

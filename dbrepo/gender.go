@@ -31,9 +31,11 @@ func (r *DBGenderRepo) FindByID(ID string) (*domain.Gender, error) {
   return gender, nil
 }
 
-func (r *DBGenderRepo) Save(gender *domain.Gender) error {
-  // TODO - generate an ID if blank
-  return structsql.Insert(r.db, "gender", gender, gender.ID)
+func (r *DBGenderRepo) Save(gender *domain.Gender) (string, error) {
+  if gender.ID == "" {
+    gender.ID = structsql.UniqueID(r.db, "gender", "G1")
+  }
+  return gender.ID, structsql.Insert(r.db, "gender", gender, gender.ID)
 }
 
 func (r *DBGenderRepo) List(offset, limit int) ([]*domain.Gender, error) {

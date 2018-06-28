@@ -31,9 +31,11 @@ func (r *DBSiteRepo) FindByID(ID string) (*domain.Site, error) {
   return site, nil
 }
 
-func (r *DBSiteRepo) Save(site *domain.Site) error {
-  // TODO - generate an ID if blank
-  return structsql.Insert(r.db, "site", site, site.ID)
+func (r *DBSiteRepo) Save(site *domain.Site) (string, error) {
+  if (site.ID == "") {
+    site.ID = structsql.UniqueID(r.db, "site", "S1")
+  }
+  return site.ID, structsql.Insert(r.db, "site", site, site.ID)
 }
 
 func (r *DBSiteRepo) List(offset, limit int) ([]*domain.Site, error) {

@@ -31,9 +31,11 @@ func (r *DBCompetitionRepo) FindByID(ID string) (*domain.Competition, error) {
   return competition, nil
 }
 
-func (r *DBCompetitionRepo) Save(competition *domain.Competition) error {
-  // TODO - generate an ID if blank
-  return structsql.Insert(r.db, "competition", competition, competition.ID)
+func (r *DBCompetitionRepo) Save(competition *domain.Competition) (string, error) {
+  if (competition.ID == "") {
+    competition.ID = structsql.UniqueID(r.db, "competition", "C1")
+  }
+  return competition.ID, structsql.Insert(r.db, "competition", competition, competition.ID)
 }
 
 func (r *DBCompetitionRepo) List(offset, limit int) ([]*domain.Competition, error) {

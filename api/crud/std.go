@@ -18,7 +18,7 @@ type std interface {
   EntityTypeName() string   // such as "site"
   NewEntity() interface{}       // such as a new Site
   List(offset, limit int) ([]interface{}, error)
-  Save(entity interface{}) error        // function must cast entity to its type
+  Save(entity interface{}) (string, error)        // function must cast entity to its type
   FindByID(ID string) (interface{}, error)       // returns same type as NewEntity
   DeleteByID(ID string) error
   UpdateByID(ID string, newEntity, oldEntity interface{}, diffs domain.Diffs) error
@@ -77,12 +77,20 @@ func (h *handler) stdCreate(w http.ResponseWriter, r *http.Request, st std) {
     http.Error(w, msg, http.StatusBadRequest)
     return
   }
-  if err := st.Save(entity); err != nil {
+  id, err := st.Save(entity)
+  if err != nil {
     msg := fmt.Sprintf("Error saving data: %v", err)
     http.Error(w, msg, http.StatusBadRequest)
     return
   }
-  apihttp.OkResponse(w)
+  result := struct {
+    Status string
+    ID string
+  } {
+    Status: "ok",
+    ID: id,
+  }
+  apihttp.MarshalAndReply(w, result)
 }
 
 func (h *handler) stdList(w http.ResponseWriter, r *http.Request, st std) {

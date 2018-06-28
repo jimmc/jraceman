@@ -18,7 +18,7 @@ func (sc *areaCrud) NewEntity() interface{} {
   return &domain.Area{}
 }
 
-func (sc *areaCrud) Save(entity interface{}) error {
+func (sc *areaCrud) Save(entity interface{}) (string, error) {
   var area *domain.Area = entity.(*domain.Area)
   return sc.h.config.DomainRepos.Area().Save(area)
 }

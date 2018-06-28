@@ -4,7 +4,7 @@ package domain
 type LevelRepo interface {
   FindByID(ID string) (*Level, error)
   List(offset, limit int) ([]*Level, error)
-  Save(*Level) error
+  Save(*Level) (string, error)
   UpdateByID(ID string, oldLevel, newLevel *Level, diffs Diffs) error
   DeleteByID(ID string) error
 }

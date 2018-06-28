@@ -2,6 +2,7 @@ package strsql
 
 import (
   "database/sql"
+  "fmt"
 )
 
 // QueryResults provides generic results for an SQL query.
@@ -94,6 +95,75 @@ func QueryStarAndCollect(db *sql.DB, sql string, queryValues ...interface{}) (*Q
     Rows: data,
   }
   return results, nil
+}
+
+// QueryInt issues a Query for the given sql which is expected to have a single
+// integer as a return value, such as "SELECT count(*) FROM ... WHERE ..."
+func QueryInt(db *sql.DB, sql string, queryValues ...interface{}) (int, error) {
+  rows, err := db.Query(sql, queryValues...)
+  if err != nil {
+    return 0, err
+  }
+  defer rows.Close()
+  var n int
+  if rows.Next() {
+    err := rows.Scan(&n)
+    if err != nil {
+      return 0, err
+    }
+  } else {
+    return 0, fmt.Errorf("Expected query to return a row")
+  }
+  if err = rows.Err(); err != nil {
+    return 0, err
+  }
+  return n, nil
+}
+
+// QueryString issues a Query for the given sql which is expected to have a single
+// string from a single record as a return value.
+func QueryString(db *sql.DB, sql string, queryValues ...interface{}) (string, error) {
+  rows, err := db.Query(sql, queryValues...)
+  if err != nil {
+    return "", err
+  }
+  defer rows.Close()
+  var s string
+  if rows.Next() {
+    err := rows.Scan(&s)
+    if err != nil {
+      return "", err
+    }
+  } else {
+    return "", fmt.Errorf("Expected query to return a row")
+  }
+  if err = rows.Err(); err != nil {
+    return "", err
+  }
+  return s, nil
+}
+
+// QueryStrings issues a Query for the given sql and collects the first column of the
+// result, which it assumes is a string.
+func QueryStrings(db *sql.DB, sql string, queryValues ...interface{}) ([]string, error) {
+  rows, err := db.Query(sql, queryValues...)
+  if err != nil {
+    return nil, err
+  }
+  defer rows.Close()
+  ss := make([]string, 0)
+  var s string
+  for rows.Next() {
+    err := rows.Scan(&s)
+    if err != nil {
+      return nil, err
+    }
+    ss = append(ss, s)
+  }
+  if err = rows.Err(); err != nil {
+    return nil, err
+  }
+  return ss, nil
 }
 
 func isStringType(ctype string) bool {

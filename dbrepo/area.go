@@ -31,9 +31,11 @@ func (r *DBAreaRepo) FindByID(ID string) (*domain.Area, error) {
   return area, nil
 }
 
-func (r *DBAreaRepo) Save(area *domain.Area) error {
-  // TODO - generate an ID if blank
-  return structsql.Insert(r.db, "area", area, area.ID)
+func (r *DBAreaRepo) Save(area *domain.Area) (string, error) {
+  if (area.ID == "") {
+    area.ID = structsql.UniqueID(r.db, "area", "A1")
+  }
+  return area.ID, structsql.Insert(r.db, "area", area, area.ID)
 }
 
 func (r *DBAreaRepo) List(offset, limit int) ([]*domain.Area, error) {

@@ -4,7 +4,7 @@ package domain
 type GenderRepo interface {
   FindByID(ID string) (*Gender, error)
   List(offset, limit int) ([]*Gender, error)
-  Save(*Gender) error
+  Save(*Gender) (string, error)
   UpdateByID(ID string, oldGender, newGender *Gender, diffs Diffs) error
   DeleteByID(ID string) error
 }

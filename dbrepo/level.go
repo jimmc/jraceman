@@ -31,9 +31,11 @@ func (r *DBLevelRepo) FindByID(ID string) (*domain.Level, error) {
   return level, nil
 }
 
-func (r *DBLevelRepo) Save(level *domain.Level) error {
-  // TODO - generate an ID if blank
-  return structsql.Insert(r.db, "level", level, level.ID)
+func (r *DBLevelRepo) Save(level *domain.Level) (string, error) {
+  if level.ID== "" {
+    level.ID = structsql.UniqueID(r.db, "level", "L1")
+  }
+  return level.ID, structsql.Insert(r.db, "level", level, level.ID)
 }
 
 func (r *DBLevelRepo) List(offset, limit int) ([]*domain.Level, error) {

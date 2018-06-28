@@ -18,7 +18,7 @@ func (sc *competitionCrud) NewEntity() interface{} {
   return &domain.Competition{}
 }
 
-func (sc *competitionCrud) Save(entity interface{}) error {
+func (sc *competitionCrud) Save(entity interface{}) (string, error) {
   var competition *domain.Competition = entity.(*domain.Competition)
   return sc.h.config.DomainRepos.Competition().Save(competition)
 }

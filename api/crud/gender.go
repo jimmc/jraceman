@@ -18,7 +18,7 @@ func (sc *genderCrud) NewEntity() interface{} {
   return &domain.Gender{}
 }
 
-func (sc *genderCrud) Save(entity interface{}) error {
+func (sc *genderCrud) Save(entity interface{}) (string, error) {
   var gender *domain.Gender = entity.(*domain.Gender)
   return sc.h.config.DomainRepos.Gender().Save(gender)
 }

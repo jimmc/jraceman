@@ -59,8 +59,12 @@ func TestAreaHappyPath(t *testing.T) {
     Name: "Area Four",
     SiteID: "S1",
   }
-  if err := areaRepo.Save(newArea); err != nil {
+  id, err := areaRepo.Save(newArea)
+  if err != nil {
     t.Errorf("Error saving new area record")
+  }
+  if got, want := id, "A4"; got != want {
+    t.Errorf("ID after save: got %v, want %v", got, want)
   }
 
   area, err = areaRepo.FindByID("A4")

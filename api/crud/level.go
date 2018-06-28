@@ -18,7 +18,7 @@ func (sc *levelCrud) NewEntity() interface{} {
   return &domain.Level{}
 }
 
-func (sc *levelCrud) Save(entity interface{}) error {
+func (sc *levelCrud) Save(entity interface{}) (string, error) {
   var level *domain.Level = entity.(*domain.Level)
   return sc.h.config.DomainRepos.Level().Save(level)
 }
