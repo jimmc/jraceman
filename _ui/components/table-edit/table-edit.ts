@@ -114,10 +114,14 @@ class TableEdit extends LeafTab {
       const colVal = this.$.main.querySelector("#val_"+name).value;
       console.log(name, colVal)
       if (colVal) {
+        console.log("Type of field " + name + " is " + col.Type);
+        // For non-string fields, convert from the string in the form
+        // to the appropriate data type for the field.
+        const convertedColVal = this.convertToType(colVal, col.Type)
         // For queries, we specify each field with name and value tags,
         // but when calling the CRUD api we use the name as the field
         // name and the value as the field value for that name.
-        fields[name] = colVal;
+        fields[name] = convertedColVal;
       }
     }
     const queryPath = '/api/crud/' + this.tableDesc.Table + '/' + this.recordId;
@@ -146,6 +150,20 @@ class TableEdit extends LeafTab {
 
   isStringColumn(colType: string) {
     return colType == "string";
+  }
+
+  convertToType(val: string, typ: string): any {
+    switch (typ) {
+    case 'bool':
+      return val.toLowerCase()=='true' || val=='1';  // TODO - explicitly check for false values?
+    case 'int':
+      return parseInt(val);     // TODO - catch and handle parsing errors
+    case 'float':
+    case 'float32':
+      return parseFloat(val);   // TODO - catch and handle parsing errors
+    default:
+      return val;       // no conversion for strings or unknown types
+    }
   }
 
   static tableDescToCols(tableDesc: TableDesc): ColumnDesc[] {
