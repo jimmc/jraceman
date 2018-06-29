@@ -17,7 +17,3 @@ type Area struct {
   Lanes int
   ExtraLanes int
 }
-
-func (a *Area) Site() (*Site, error) {
-  return nil, nil       // TODO - need a SiteRepo
-}

@@ -4,6 +4,7 @@
 <link rel="import" href="../../bower_components/polymer-decorators/polymer-decorators.html">
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../components/competition-setup/competition-setup.html">
+<link rel="import" href="../../components/exception-setup/exception-setup.html">
 <link rel="import" href="../../components/gender-setup/gender-setup.html">
 <link rel="import" href="../../components/jraceman-style/jraceman-style.html">
 <link rel="import" href="../../components/level-setup/level-setup.html">
@@ -11,6 +12,7 @@
 <link rel="import" href="../../components/progression-setup/progression-setup.html">
 <link rel="import" href="../../components/scoringrule-setup/scoringrule-setup.html">
 <link rel="import" href="../../components/scoringsystem-setup/scoringsystem-setup.html">
+<link rel="import" href="../../components/stage-setup/stage-setup.html">
 
 <dom-module id="sport-setup">
   <template>
@@ -30,6 +32,8 @@
         <paper-tab name="progression">Progressions</paper-tab>
         <paper-tab name="scoringsystem">Scoring System</paper-tab>
         <paper-tab name="scoringrule">Scoring Rule</paper-tab>
+        <paper-tab name="stage">Stages</paper-tab>
+        <paper-tab name="exception">Exceptions</paper-tab>
       </paper-tabs>
 
       <iron-pages selected="{{selectedTab}}">
@@ -45,6 +49,10 @@
             select-up=[[requestSelect]]></scoringsystem-setup>
         <scoringrule-setup name="scoringrule" query-results="{{queryResults}}" selected-result=[[selectedResult]]
             select-up=[[requestSelect]]></scoringrule-setup>
+        <stage-setup name="stage" query-results="{{queryResults}}" selected-result=[[selectedResult]]
+            select-up=[[requestSelect]]></stage-setup>
+        <exception-setup name="exception" query-results="{{queryResults}}" selected-result=[[selectedResult]]
+            select-up=[[requestSelect]]></exception-setup>
       </iron-pages>
     </div>
   </template>

@@ -6,10 +6,12 @@ package domain
 type Repos interface {
   Area() AreaRepo
   Competition() CompetitionRepo
+  Exception() ExceptionRepo
   Gender() GenderRepo
   Level() LevelRepo
   Progression() ProgressionRepo
   ScoringRule() ScoringRuleRepo
   ScoringSystem() ScoringSystemRepo
   Site() SiteRepo
+  Stage() StageRepo
 }

@@ -16,12 +16,14 @@ type Repos struct {
   db *sql.DB
   dbArea *DBAreaRepo
   dbCompetition *DBCompetitionRepo
+  dbException *DBExceptionRepo
   dbGender *DBGenderRepo
   dbLevel *DBLevelRepo
   dbProgression *DBProgressionRepo
   dbScoringRule *DBScoringRuleRepo
   dbScoringSystem *DBScoringSystemRepo
   dbSite *DBSiteRepo
+  dbStage *DBStageRepo
 }
 
 type TableRepo interface {
@@ -42,7 +44,9 @@ func (r *Repos) TableEntries() []TableEntry {
     {"competition", r.dbCompetition},
     {"site", r.dbSite},
     {"area", r.dbArea},
+    {"exception", r.dbException},
     {"level", r.dbLevel},
+    {"stage", r.dbStage},
     {"gender", r.dbGender},
     {"progression", r.dbProgression},
     {"scoringsystem", r.dbScoringSystem},
@@ -54,37 +58,16 @@ func (r *Repos) DB() *sql.DB {
   return r.db
 }
 
-func (r *Repos) Area() domain.AreaRepo {
-  return r.dbArea
-}
-
-func (r *Repos) Competition() domain.CompetitionRepo {
-  return r.dbCompetition
-}
-
-func (r *Repos) Gender() domain.GenderRepo {
-  return r.dbGender
-}
-
-func (r *Repos) Level() domain.LevelRepo {
-  return r.dbLevel
-}
-
-func (r *Repos) Progression() domain.ProgressionRepo {
-  return r.dbProgression
-}
-
-func (r *Repos) ScoringRule() domain.ScoringRuleRepo {
-  return r.dbScoringRule
-}
-
-func (r *Repos) ScoringSystem() domain.ScoringSystemRepo {
-  return r.dbScoringSystem
-}
-
-func (r *Repos) Site() domain.SiteRepo {
-  return r.dbSite
-}
+func (r *Repos) Area() domain.AreaRepo { return r.dbArea }
+func (r *Repos) Competition() domain.CompetitionRepo { return r.dbCompetition }
+func (r *Repos) Exception() domain.ExceptionRepo { return r.dbException }
+func (r *Repos) Gender() domain.GenderRepo { return r.dbGender }
+func (r *Repos) Level() domain.LevelRepo { return r.dbLevel }
+func (r *Repos) Progression() domain.ProgressionRepo { return r.dbProgression }
+func (r *Repos) ScoringRule() domain.ScoringRuleRepo { return r.dbScoringRule }
+func (r *Repos) ScoringSystem() domain.ScoringSystemRepo { return r.dbScoringSystem }
+func (r *Repos) Site() domain.SiteRepo { return r.dbSite }
+func (r *Repos) Stage() domain.StageRepo { return r.dbStage }
 
 // Open opens a database repository.
 // The repoPath argument is of the form dbtype:dbinfo,
@@ -114,12 +97,14 @@ func Open(repoPath string) (*Repos, error) {
     db: db,
     dbArea: &DBAreaRepo{db},
     dbCompetition: &DBCompetitionRepo{db},
+    dbException: &DBExceptionRepo{db},
     dbGender: &DBGenderRepo{db},
     dbLevel: &DBLevelRepo{db},
     dbProgression: &DBProgressionRepo{db},
     dbScoringRule: &DBScoringRuleRepo{db},
     dbScoringSystem: &DBScoringSystemRepo{db},
     dbSite: &DBSiteRepo{db},
+    dbStage: &DBStageRepo{db},
   }
 
   return r, err

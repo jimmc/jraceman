@@ -18,8 +18,16 @@
 "A2","Distance Course","S1",150,0
 "A3","Center Course","S2",9,0
 
+!table exception
+!columns "id","name","shortname","resultallowedrequired"
+#no rows
+
 !table level
 !columns "id","name","minentryage","minage","maxage","maxentryage","usegroupaverage"
+#no rows
+
+!table stage
+!columns "id","name","number","isfinal"
 #no rows
 
 !table gender
