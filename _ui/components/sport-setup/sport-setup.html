@@ -9,6 +9,8 @@
 <link rel="import" href="../../components/level-setup/level-setup.html">
 <link rel="import" href="../../components/mid-tab/mid-tab.html">
 <link rel="import" href="../../components/progression-setup/progression-setup.html">
+<link rel="import" href="../../components/scoringrule-setup/scoringrule-setup.html">
+<link rel="import" href="../../components/scoringsystem-setup/scoringsystem-setup.html">
 
 <dom-module id="sport-setup">
   <template>
@@ -26,6 +28,8 @@
         <paper-tab name="level">Levels</paper-tab>
         <paper-tab name="gender">Genders</paper-tab>
         <paper-tab name="progression">Progressions</paper-tab>
+        <paper-tab name="scoringsystem">Scoring System</paper-tab>
+        <paper-tab name="scoringrule">Scoring Rule</paper-tab>
       </paper-tabs>
 
       <iron-pages selected="{{selectedTab}}">
@@ -37,6 +41,10 @@
             select-up=[[requestSelect]]></gender-setup>
         <progression-setup name="progression" query-results="{{queryResults}}" selected-result=[[selectedResult]]
             select-up=[[requestSelect]]></progression-setup>
+        <scoringsystem-setup name="scoringsystem" query-results="{{queryResults}}" selected-result=[[selectedResult]]
+            select-up=[[requestSelect]]></scoringsystem-setup>
+        <scoringrule-setup name="scoringrule" query-results="{{queryResults}}" selected-result=[[selectedResult]]
+            select-up=[[requestSelect]]></scoringrule-setup>
       </iron-pages>
     </div>
   </template>

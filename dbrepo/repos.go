@@ -19,6 +19,8 @@ type Repos struct {
   dbGender *DBGenderRepo
   dbLevel *DBLevelRepo
   dbProgression *DBProgressionRepo
+  dbScoringRule *DBScoringRuleRepo
+  dbScoringSystem *DBScoringSystemRepo
   dbSite *DBSiteRepo
 }
 
@@ -43,6 +45,8 @@ func (r *Repos) TableEntries() []TableEntry {
     {"level", r.dbLevel},
     {"gender", r.dbGender},
     {"progression", r.dbProgression},
+    {"scoringsystem", r.dbScoringSystem},
+    {"scoringrule", r.dbScoringRule},
   }
 }
 
@@ -68,6 +72,14 @@ func (r *Repos) Level() domain.LevelRepo {
 
 func (r *Repos) Progression() domain.ProgressionRepo {
   return r.dbProgression
+}
+
+func (r *Repos) ScoringRule() domain.ScoringRuleRepo {
+  return r.dbScoringRule
+}
+
+func (r *Repos) ScoringSystem() domain.ScoringSystemRepo {
+  return r.dbScoringSystem
 }
 
 func (r *Repos) Site() domain.SiteRepo {
@@ -105,6 +117,8 @@ func Open(repoPath string) (*Repos, error) {
     dbGender: &DBGenderRepo{db},
     dbLevel: &DBLevelRepo{db},
     dbProgression: &DBProgressionRepo{db},
+    dbScoringRule: &DBScoringRuleRepo{db},
+    dbScoringSystem: &DBScoringSystemRepo{db},
     dbSite: &DBSiteRepo{db},
   }
 

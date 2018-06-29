@@ -29,3 +29,11 @@
 !table progression
 !columns "id","name","class","parameters"
 #no rows
+
+!table scoringsystem
+!columns "id","name"
+#no rows
+
+!table scoringrule
+!columns "id","scoringsystemid","rule","value","points"
+#no rows
