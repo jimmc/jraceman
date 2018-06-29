@@ -25,3 +25,7 @@
 !table gender
 !columns "id","name"
 #no rows
+
+!table progression
+!columns "id","name","class","parameters"
+#no rows

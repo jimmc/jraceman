@@ -8,5 +8,6 @@ type Repos interface {
   Competition() CompetitionRepo
   Gender() GenderRepo
   Level() LevelRepo
+  Progression() ProgressionRepo
   Site() SiteRepo
 }

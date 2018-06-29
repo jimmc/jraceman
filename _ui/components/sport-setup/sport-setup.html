@@ -8,6 +8,7 @@
 <link rel="import" href="../../components/jraceman-style/jraceman-style.html">
 <link rel="import" href="../../components/level-setup/level-setup.html">
 <link rel="import" href="../../components/mid-tab/mid-tab.html">
+<link rel="import" href="../../components/progression-setup/progression-setup.html">
 
 <dom-module id="sport-setup">
   <template>
@@ -24,6 +25,7 @@
         <paper-tab name="competition">Competitions</paper-tab>
         <paper-tab name="level">Levels</paper-tab>
         <paper-tab name="gender">Genders</paper-tab>
+        <paper-tab name="progression">Progressions</paper-tab>
       </paper-tabs>
 
       <iron-pages selected="{{selectedTab}}">
@@ -33,6 +35,8 @@
             select-up=[[requestSelect]]></level-setup>
         <gender-setup name="gender" query-results="{{queryResults}}" selected-result=[[selectedResult]]
             select-up=[[requestSelect]]></gender-setup>
+        <progression-setup name="progression" query-results="{{queryResults}}" selected-result=[[selectedResult]]
+            select-up=[[requestSelect]]></progression-setup>
       </iron-pages>
     </div>
   </template>
