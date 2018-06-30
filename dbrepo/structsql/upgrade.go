@@ -10,11 +10,18 @@ import (
 // what CreateTable would create. If the table does not exist,
 // it creates the table.
 func UpgradeTable(db *sql.DB, tableName string, entity interface{}, dryrun bool) (bool, string, error) {
+  return UpgradeTableWithUpdater(db, tableName, entity, dryrun, nil)
+}
+
+// UpgradeTableWithUpdater upgrades a table from its current state to match
+// what CreateTableWithUpdater would create. If the table does not exist,
+// it creates the table.
+func UpgradeTableWithUpdater(db *sql.DB, tableName string, entity interface{}, dryrun bool, updater ColumnInfosUpdater) (bool, string, error) {
   tableColumns, err := TableColumns(db, tableName)
   if err != nil {
     return false, "", fmt.Errorf("error getting columns for table %s: %v", tableName, err)
   }
-  tableSql, err := CreateOrUpgradeTableSql(db, tableName, entity, tableColumns)
+  tableSql, err := CreateOrUpgradeTableSql(db, tableName, entity, tableColumns, updater)
   if err != nil {
     return false, "", err
   }
@@ -32,15 +39,20 @@ func UpgradeTable(db *sql.DB, tableName string, entity interface{}, dryrun bool)
 // CreateOrUpgradeTableSql checks to see whether the table already exists,
 // and returns either a CREATE TABLE statement if it does not exist, or
 // the ALTER TABLE statements for column changes if it does exist.
-func CreateOrUpgradeTableSql(db *sql.DB, tableName string, entity interface{}, tableColumns []ColumnInfo) (string, error) {
+func CreateOrUpgradeTableSql(db *sql.DB, tableName string, entity interface{}, tableColumns []ColumnInfo, updater ColumnInfosUpdater) (string, error) {
   exists, err := TableExists(db, tableName)
   if err != nil {
     return "", err
   }
+  columnInfos := ColumnInfos(entity)
+  if updater != nil {
+    tableColumns = updater.UpdateColumnInfos(tableColumns)
+    columnInfos = updater.UpdateColumnInfos(columnInfos)
+  }
   if exists {
-    return UpgradeTableSql(tableName, entity, tableColumns)
+    return UpgradeTableSql(tableName, columnInfos, tableColumns)
   } else {
-    return CreateTableSql(tableName, entity), nil
+    return CreateTableSqlFromColumnInfos(tableName, columnInfos), nil
   }
 }
 
@@ -55,8 +67,7 @@ func CreateOrUpgradeTableSql(db *sql.DB, tableName string, entity interface{}, t
 // If the table does not exist, a CREATE TABLE statement is generated.
 // If the table exists, an ALTER TABLE statement is generated to add any
 // missing columns.
-func UpgradeTableSql(tableName string, entity interface{}, tableColumns []ColumnInfo) (string, error) {
-  columnInfos := ColumnInfos(entity)
+func UpgradeTableSql(tableName string, columnInfos, tableColumns []ColumnInfo) (string, error) {
   log.Printf("tableColumns for %s: %v", tableName, tableColumns)
   log.Printf("columnInfos for %s: %v", tableName, columnInfos)
   diffs := DiffColumnInfos(tableColumns, columnInfos)

@@ -16,12 +16,18 @@ type Repos struct {
   db *sql.DB
   dbArea *DBAreaRepo
   dbCompetition *DBCompetitionRepo
+  dbComplan *DBComplanRepo
+  dbComplanRule *DBComplanRuleRepo
+  dbComplanStage *DBComplanStageRepo
   dbException *DBExceptionRepo
   dbGender *DBGenderRepo
   dbLevel *DBLevelRepo
   dbProgression *DBProgressionRepo
   dbScoringRule *DBScoringRuleRepo
   dbScoringSystem *DBScoringSystemRepo
+  dbSimplan *DBSimplanRepo
+  dbSimplanRule *DBSimplanRuleRepo
+  dbSimplanStage *DBSimplanStageRepo
   dbSite *DBSiteRepo
   dbStage *DBStageRepo
 }
@@ -42,12 +48,18 @@ func (r *Repos) TableEntries() []TableEntry {
     // The tables in this list are ordered so that tables that are the target
     // of foreign keys are created/updated before the tables that reference them.
     {"competition", r.dbCompetition},
+    {"complan", r.dbComplan},
+    {"complanstage", r.dbComplanStage},
+    {"complanrule", r.dbComplanRule},
     {"site", r.dbSite},
     {"area", r.dbArea},
     {"exception", r.dbException},
     {"level", r.dbLevel},
     {"stage", r.dbStage},
     {"gender", r.dbGender},
+    {"simplan", r.dbSimplan},
+    {"simplanstage", r.dbSimplanStage},
+    {"simplanrule", r.dbSimplanRule},
     {"progression", r.dbProgression},
     {"scoringsystem", r.dbScoringSystem},
     {"scoringrule", r.dbScoringRule},
@@ -60,12 +72,18 @@ func (r *Repos) DB() *sql.DB {
 
 func (r *Repos) Area() domain.AreaRepo { return r.dbArea }
 func (r *Repos) Competition() domain.CompetitionRepo { return r.dbCompetition }
+func (r *Repos) Complan() domain.ComplanRepo { return r.dbComplan }
+func (r *Repos) ComplanRule() domain.ComplanRuleRepo { return r.dbComplanRule }
+func (r *Repos) ComplanStage() domain.ComplanStageRepo { return r.dbComplanStage }
 func (r *Repos) Exception() domain.ExceptionRepo { return r.dbException }
 func (r *Repos) Gender() domain.GenderRepo { return r.dbGender }
 func (r *Repos) Level() domain.LevelRepo { return r.dbLevel }
 func (r *Repos) Progression() domain.ProgressionRepo { return r.dbProgression }
 func (r *Repos) ScoringRule() domain.ScoringRuleRepo { return r.dbScoringRule }
 func (r *Repos) ScoringSystem() domain.ScoringSystemRepo { return r.dbScoringSystem }
+func (r *Repos) Simplan() domain.SimplanRepo { return r.dbSimplan }
+func (r *Repos) SimplanRule() domain.SimplanRuleRepo { return r.dbSimplanRule }
+func (r *Repos) SimplanStage() domain.SimplanStageRepo { return r.dbSimplanStage }
 func (r *Repos) Site() domain.SiteRepo { return r.dbSite }
 func (r *Repos) Stage() domain.StageRepo { return r.dbStage }
 
@@ -97,12 +115,18 @@ func Open(repoPath string) (*Repos, error) {
     db: db,
     dbArea: &DBAreaRepo{db},
     dbCompetition: &DBCompetitionRepo{db},
+    dbComplan: &DBComplanRepo{db},
+    dbComplanRule: &DBComplanRuleRepo{db},
+    dbComplanStage: &DBComplanStageRepo{db},
     dbException: &DBExceptionRepo{db},
     dbGender: &DBGenderRepo{db},
     dbLevel: &DBLevelRepo{db},
     dbProgression: &DBProgressionRepo{db},
     dbScoringRule: &DBScoringRuleRepo{db},
     dbScoringSystem: &DBScoringSystemRepo{db},
+    dbSimplan: &DBSimplanRepo{db},
+    dbSimplanRule: &DBSimplanRuleRepo{db},
+    dbSimplanStage: &DBSimplanStageRepo{db},
     dbSite: &DBSiteRepo{db},
     dbStage: &DBStageRepo{db},
   }

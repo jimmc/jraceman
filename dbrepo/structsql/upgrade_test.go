@@ -13,7 +13,7 @@ func TestCreateOrUpdateTableSqlExists(t *testing.T) {
   if err != nil {
     t.Fatal(err.Error())
   }
-  tableSql, err := structsql.CreateOrUpgradeTableSql(db, "test", foo, []structsql.ColumnInfo{})
+  tableSql, err := structsql.CreateOrUpgradeTableSql(db, "test", foo, []structsql.ColumnInfo{}, nil)
   if err != nil {
     t.Fatalf("Error generating sql: %v", err)
   }
@@ -27,7 +27,7 @@ func TestCreateOrUpdateTableSqlNotExists(t *testing.T) {
   if err != nil {
     t.Fatal(err.Error())
   }
-  tableSql, err := structsql.CreateOrUpgradeTableSql(db, "foo", foo, []structsql.ColumnInfo{})
+  tableSql, err := structsql.CreateOrUpgradeTableSql(db, "foo", foo, []structsql.ColumnInfo{}, nil)
   if err != nil {
     t.Fatalf("Error generating sql: %v", err)
   }
@@ -48,7 +48,7 @@ func TestUpgradeTableSql(t *testing.T) {
   if err != nil {
     t.Fatal(err.Error())
   }
-  tableSql, err := structsql.CreateOrUpgradeTableSql(db, "foo", foo, tableColumns)
+  tableSql, err := structsql.CreateOrUpgradeTableSql(db, "foo", foo, tableColumns, nil)
   if err != nil {
     t.Fatalf("Error generating sql: %v", err)
   }

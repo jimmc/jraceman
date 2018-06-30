@@ -1,0 +1,53 @@
+<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tab.html">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower_components/polymer-decorators/polymer-decorators.html">
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../components/complan-setup/complan-setup.html">
+<link rel="import" href="../../components/complanrule-setup/complanrule-setup.html">
+<link rel="import" href="../../components/complanstage-setup/complanstage-setup.html">
+<link rel="import" href="../../components/jraceman-style/jraceman-style.html">
+<link rel="import" href="../../components/mid-tab/mid-tab.html">
+<link rel="import" href="../../components/simplan-setup/simplan-setup.html">
+<link rel="import" href="../../components/simplanrule-setup/simplanrule-setup.html">
+<link rel="import" href="../../components/simplanstage-setup/simplanstage-setup.html">
+
+<dom-module id="plan-setup">
+  <template>
+    <style include="jraceman-style">
+      :host {
+        height: 100%;
+      }
+      #main {
+        height: 100%;
+      }
+    </style>
+    <div id="main" class="tab-container">
+      <paper-tabs id="tabs" selected="{{selectedTab}}">
+        <paper-tab name="simplan">Simplans</paper-tab>
+        <paper-tab name="simplanrule">Simplan Rules</paper-tab>
+        <paper-tab name="simplanstage">Simplan Stages</paper-tab>
+        <paper-tab name="complan">Complans</paper-tab>
+        <paper-tab name="complanrule">Complan Rules</paper-tab>
+        <paper-tab name="complanstage">Complan Stages</paper-tab>
+      </paper-tabs>
+
+      <iron-pages selected="{{selectedTab}}">
+        <simplan-setup name="simplan" query-results="{{queryResults}}" selected-result=[[selectedResult]]
+            select-up=[[requestSelect]]></simplan-setup>
+        <simplanstage-setup name="simplanstage" query-results="{{queryResults}}" selected-result=[[selectedResult]]
+            select-up=[[requestSelect]]></simplanstage-setup>
+        <simplanrule-setup name="simplanrule" query-results="{{queryResults}}" selected-result=[[selectedResult]]
+            select-up=[[requestSelect]]></simplanrule-setup>
+        <complan-setup name="complan" query-results="{{queryResults}}" selected-result=[[selectedResult]]
+            select-up=[[requestSelect]]></complan-setup>
+        <complanstage-setup name="complanstage" query-results="{{queryResults}}" selected-result=[[selectedResult]]
+            select-up=[[requestSelect]]></complanstage-setup>
+        <complanrule-setup name="complanrule" query-results="{{queryResults}}" selected-result=[[selectedResult]]
+            select-up=[[requestSelect]]></complanrule-setup>
+      </iron-pages>
+    </div>
+  </template>
+</dom-module>
+
+<script src="plan-setup.js"></script>

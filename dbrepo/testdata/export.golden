@@ -7,6 +7,18 @@
 !columns "id","name","groupsize","maxalternates","duration"
 #no rows
 
+!table complan
+!columns "id","system","plan","minentries","maxentries","planorder"
+#no rows
+
+!table complanstage
+!columns "id","complanid","stageid","round","sectioncount","fillorder"
+#no rows
+
+!table complanrule
+!columns "id","complanid","fromround","fromsection","fromplace","toround","tosection","tolane"
+#no rows
+
 !table site
 !columns "id","name","street","street2","city","state","zip","country","phone","fax"
 "S1","Site One",null,null,"Anytown",null,null,null,null,null
@@ -32,6 +44,18 @@
 
 !table gender
 !columns "id","name"
+#no rows
+
+!table simplan
+!columns "id","system","plan","minentries","maxentries"
+#no rows
+
+!table simplanstage
+!columns "id","simplanid","stageid","sectioncount","fillorder"
+#no rows
+
+!table simplanrule
+!columns "id","simplanid","fromstageid","tostageid","thruplace","nextbesttimes"
 #no rows
 
 !table progression
