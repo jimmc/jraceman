@@ -15,6 +15,7 @@ import (
 type Repos struct {
   db *sql.DB
   dbArea *DBAreaRepo
+  dbChallenge *DBChallengeRepo
   dbCompetition *DBCompetitionRepo
   dbComplan *DBComplanRepo
   dbComplanRule *DBComplanRuleRepo
@@ -23,6 +24,7 @@ type Repos struct {
   dbGender *DBGenderRepo
   dbLaneOrder *DBLaneOrderRepo
   dbLevel *DBLevelRepo
+  dbPerson *DBPersonRepo
   dbProgression *DBProgressionRepo
   dbScoringRule *DBScoringRuleRepo
   dbScoringSystem *DBScoringSystemRepo
@@ -31,6 +33,7 @@ type Repos struct {
   dbSimplanStage *DBSimplanStageRepo
   dbSite *DBSiteRepo
   dbStage *DBStageRepo
+  dbTeam *DBTeamRepo
 }
 
 type TableRepo interface {
@@ -65,6 +68,9 @@ func (r *Repos) TableEntries() []TableEntry {
     {"scoringsystem", r.dbScoringSystem},
     {"scoringrule", r.dbScoringRule},
     {"laneorder", r.dbLaneOrder},
+    {"challenge", r.dbChallenge},
+    {"team", r.dbTeam},
+    {"person", r.dbPerson},
   }
 }
 
@@ -73,6 +79,7 @@ func (r *Repos) DB() *sql.DB {
 }
 
 func (r *Repos) Area() domain.AreaRepo { return r.dbArea }
+func (r *Repos) Challenge() domain.ChallengeRepo { return r.dbChallenge }
 func (r *Repos) Competition() domain.CompetitionRepo { return r.dbCompetition }
 func (r *Repos) Complan() domain.ComplanRepo { return r.dbComplan }
 func (r *Repos) ComplanRule() domain.ComplanRuleRepo { return r.dbComplanRule }
@@ -81,6 +88,7 @@ func (r *Repos) Exception() domain.ExceptionRepo { return r.dbException }
 func (r *Repos) Gender() domain.GenderRepo { return r.dbGender }
 func (r *Repos) LaneOrder() domain.LaneOrderRepo { return r.dbLaneOrder }
 func (r *Repos) Level() domain.LevelRepo { return r.dbLevel }
+func (r *Repos) Person() domain.PersonRepo { return r.dbPerson }
 func (r *Repos) Progression() domain.ProgressionRepo { return r.dbProgression }
 func (r *Repos) ScoringRule() domain.ScoringRuleRepo { return r.dbScoringRule }
 func (r *Repos) ScoringSystem() domain.ScoringSystemRepo { return r.dbScoringSystem }
@@ -89,6 +97,7 @@ func (r *Repos) SimplanRule() domain.SimplanRuleRepo { return r.dbSimplanRule }
 func (r *Repos) SimplanStage() domain.SimplanStageRepo { return r.dbSimplanStage }
 func (r *Repos) Site() domain.SiteRepo { return r.dbSite }
 func (r *Repos) Stage() domain.StageRepo { return r.dbStage }
+func (r *Repos) Team() domain.TeamRepo { return r.dbTeam }
 
 // Open opens a database repository.
 // The repoPath argument is of the form dbtype:dbinfo,
@@ -117,6 +126,7 @@ func Open(repoPath string) (*Repos, error) {
   r := &Repos{
     db: db,
     dbArea: &DBAreaRepo{db},
+    dbChallenge: &DBChallengeRepo{db},
     dbCompetition: &DBCompetitionRepo{db},
     dbComplan: &DBComplanRepo{db},
     dbComplanRule: &DBComplanRuleRepo{db},
@@ -125,6 +135,7 @@ func Open(repoPath string) (*Repos, error) {
     dbGender: &DBGenderRepo{db},
     dbLaneOrder: &DBLaneOrderRepo{db},
     dbLevel: &DBLevelRepo{db},
+    dbPerson: &DBPersonRepo{db},
     dbProgression: &DBProgressionRepo{db},
     dbScoringRule: &DBScoringRuleRepo{db},
     dbScoringSystem: &DBScoringSystemRepo{db},
@@ -133,6 +144,7 @@ func Open(repoPath string) (*Repos, error) {
     dbSimplanStage: &DBSimplanStageRepo{db},
     dbSite: &DBSiteRepo{db},
     dbStage: &DBStageRepo{db},
+    dbTeam: &DBTeamRepo{db},
   }
 
   return r, err

@@ -11,6 +11,7 @@
 <link rel="import" href="../../components/plan-setup/plan-setup.html">
 <link rel="import" href="../../components/query-results/query-results.html">
 <link rel="import" href="../../components/sport-setup/sport-setup.html">
+<link rel="import" href="../../components/team-setup/team-setup.html">
 <link rel="import" href="../../components/venue-setup/venue-setup.html">
 
 <dom-module id="jraceman-app">
@@ -56,7 +57,9 @@
           <venue-setup class="tabContent" name="venueSetup"
               query-results={{queryResults}} selected-result=[[selectedResult]]
               select-up=[[requestSelect]]></venue-setup>
-          <div class="tabContent" name="teamSetup">Team Setup is not yet implemented</div>
+          <team-setup class="tabContent" name="teamSetup"
+              query-results={{queryResults}} selected-result=[[selectedResult]]
+              select-up=[[requestSelect]]></team-setup>
           <div class="tabContent" name="meetSetup">Meet Setup is not yet implemented</div>
           <div class="tabContent" name="byEvent">By Event is not yet implemented</div>
           <div class="tabContent" name="reports">Reports is not yet implemented</div>

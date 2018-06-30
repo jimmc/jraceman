@@ -5,6 +5,7 @@ package domain
 // access the repos for the other types.
 type Repos interface {
   Area() AreaRepo
+  Challenge() ChallengeRepo
   Competition() CompetitionRepo
   Complan() ComplanRepo
   ComplanRule() ComplanRuleRepo
@@ -13,6 +14,7 @@ type Repos interface {
   Gender() GenderRepo
   LaneOrder() LaneOrderRepo
   Level() LevelRepo
+  Person() PersonRepo
   Progression() ProgressionRepo
   ScoringRule() ScoringRuleRepo
   ScoringSystem() ScoringSystemRepo
@@ -21,4 +23,5 @@ type Repos interface {
   SimplanStage() SimplanStageRepo
   Site() SiteRepo
   Stage() StageRepo
+  Team() TeamRepo
 }

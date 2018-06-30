@@ -22,6 +22,7 @@ func NewHandler(c *Config) http.Handler {
   h := handler{config: c}
   mux := http.NewServeMux()
   mux.HandleFunc(h.crudPrefix("area"), h.area)
+  mux.HandleFunc(h.crudPrefix("challenge"), h.challenge)
   mux.HandleFunc(h.crudPrefix("competition"), h.competition)
   mux.HandleFunc(h.crudPrefix("complan"), h.complan)
   mux.HandleFunc(h.crudPrefix("complanrule"), h.complanrule)
@@ -30,6 +31,7 @@ func NewHandler(c *Config) http.Handler {
   mux.HandleFunc(h.crudPrefix("gender"), h.gender)
   mux.HandleFunc(h.crudPrefix("laneorder"), h.laneorder)
   mux.HandleFunc(h.crudPrefix("level"), h.level)
+  mux.HandleFunc(h.crudPrefix("person"), h.person)
   mux.HandleFunc(h.crudPrefix("progression"), h.progression)
   mux.HandleFunc(h.crudPrefix("scoringrule"), h.scoringrule)
   mux.HandleFunc(h.crudPrefix("scoringsystem"), h.scoringsystem)
@@ -38,6 +40,7 @@ func NewHandler(c *Config) http.Handler {
   mux.HandleFunc(h.crudPrefix("simplanstage"), h.simplanstage)
   mux.HandleFunc(h.crudPrefix("site"), h.site)
   mux.HandleFunc(h.crudPrefix("stage"), h.stage)
+  mux.HandleFunc(h.crudPrefix("team"), h.team)
   return mux
 }
 

@@ -73,3 +73,15 @@
 !table laneorder
 !columns "id","areaid","lane","ordering"
 #no rows
+
+!table challenge
+!columns "id","name"
+#no rows
+
+!table team
+!columns "id","shortname","name","number","challengeid","nonscoring","street","street2","city","state","zip","country","phone","fax"
+#no rows
+
+!table person
+!columns "id","firstname","lastname","genderid","teamid","birthday","phone","email","membership","membershipexpiration"
+#no rows
