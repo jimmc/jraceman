@@ -11,6 +11,7 @@ type Repos interface {
   ComplanStage() ComplanStageRepo
   Exception() ExceptionRepo
   Gender() GenderRepo
+  LaneOrder() LaneOrderRepo
   Level() LevelRepo
   Progression() ProgressionRepo
   ScoringRule() ScoringRuleRepo

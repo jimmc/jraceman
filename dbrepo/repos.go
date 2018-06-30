@@ -21,6 +21,7 @@ type Repos struct {
   dbComplanStage *DBComplanStageRepo
   dbException *DBExceptionRepo
   dbGender *DBGenderRepo
+  dbLaneOrder *DBLaneOrderRepo
   dbLevel *DBLevelRepo
   dbProgression *DBProgressionRepo
   dbScoringRule *DBScoringRuleRepo
@@ -63,6 +64,7 @@ func (r *Repos) TableEntries() []TableEntry {
     {"progression", r.dbProgression},
     {"scoringsystem", r.dbScoringSystem},
     {"scoringrule", r.dbScoringRule},
+    {"laneorder", r.dbLaneOrder},
   }
 }
 
@@ -77,6 +79,7 @@ func (r *Repos) ComplanRule() domain.ComplanRuleRepo { return r.dbComplanRule }
 func (r *Repos) ComplanStage() domain.ComplanStageRepo { return r.dbComplanStage }
 func (r *Repos) Exception() domain.ExceptionRepo { return r.dbException }
 func (r *Repos) Gender() domain.GenderRepo { return r.dbGender }
+func (r *Repos) LaneOrder() domain.LaneOrderRepo { return r.dbLaneOrder }
 func (r *Repos) Level() domain.LevelRepo { return r.dbLevel }
 func (r *Repos) Progression() domain.ProgressionRepo { return r.dbProgression }
 func (r *Repos) ScoringRule() domain.ScoringRuleRepo { return r.dbScoringRule }
@@ -120,6 +123,7 @@ func Open(repoPath string) (*Repos, error) {
     dbComplanStage: &DBComplanStageRepo{db},
     dbException: &DBExceptionRepo{db},
     dbGender: &DBGenderRepo{db},
+    dbLaneOrder: &DBLaneOrderRepo{db},
     dbLevel: &DBLevelRepo{db},
     dbProgression: &DBProgressionRepo{db},
     dbScoringRule: &DBScoringRuleRepo{db},

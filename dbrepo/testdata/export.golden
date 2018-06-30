@@ -69,3 +69,7 @@
 !table scoringrule
 !columns "id","scoringsystemid","rule","value","points"
 #no rows
+
+!table laneorder
+!columns "id","areaid","lane","ordering"
+#no rows

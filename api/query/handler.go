@@ -28,6 +28,7 @@ func NewHandler(c *Config) http.Handler {
   mux.HandleFunc(h.queryPrefix("complanstage"), h.complanstage)
   mux.HandleFunc(h.queryPrefix("exception"), h.exception)
   mux.HandleFunc(h.queryPrefix("gender"), h.gender)
+  mux.HandleFunc(h.queryPrefix("laneorder"), h.laneorder)
   mux.HandleFunc(h.queryPrefix("level"), h.level)
   mux.HandleFunc(h.queryPrefix("progression"), h.progression)
   mux.HandleFunc(h.queryPrefix("scoringrule"), h.scoringrule)
