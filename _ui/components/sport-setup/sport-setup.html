@@ -3,16 +3,16 @@
 <link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
 <link rel="import" href="../../bower_components/polymer-decorators/polymer-decorators.html">
 <link rel="import" href="../../bower_components/polymer/polymer.html">
-<link rel="import" href="../../components/competition-setup/competition-setup.html">
-<link rel="import" href="../../components/exception-setup/exception-setup.html">
-<link rel="import" href="../../components/gender-setup/gender-setup.html">
+<link rel="import" href="../../components/competition-table/competition-table.html">
+<link rel="import" href="../../components/exception-table/exception-table.html">
+<link rel="import" href="../../components/gender-table/gender-table.html">
 <link rel="import" href="../../components/jraceman-style/jraceman-style.html">
-<link rel="import" href="../../components/level-setup/level-setup.html">
+<link rel="import" href="../../components/level-table/level-table.html">
 <link rel="import" href="../../components/mid-tab/mid-tab.html">
-<link rel="import" href="../../components/progression-setup/progression-setup.html">
-<link rel="import" href="../../components/scoringrule-setup/scoringrule-setup.html">
-<link rel="import" href="../../components/scoringsystem-setup/scoringsystem-setup.html">
-<link rel="import" href="../../components/stage-setup/stage-setup.html">
+<link rel="import" href="../../components/progression-table/progression-table.html">
+<link rel="import" href="../../components/scoringrule-table/scoringrule-table.html">
+<link rel="import" href="../../components/scoringsystem-table/scoringsystem-table.html">
+<link rel="import" href="../../components/stage-table/stage-table.html">
 
 <dom-module id="sport-setup">
   <template>
@@ -37,22 +37,22 @@
       </paper-tabs>
 
       <iron-pages selected="{{selectedTab}}">
-        <competition-setup name="competition" query-results="{{queryResults}}" selected-result=[[selectedResult]]
-            select-up=[[requestSelect]]></competition-setup>
-        <level-setup name="level" query-results="{{queryResults}}" selected-result=[[selectedResult]]
-            select-up=[[requestSelect]]></level-setup>
-        <gender-setup name="gender" query-results="{{queryResults}}" selected-result=[[selectedResult]]
-            select-up=[[requestSelect]]></gender-setup>
-        <progression-setup name="progression" query-results="{{queryResults}}" selected-result=[[selectedResult]]
-            select-up=[[requestSelect]]></progression-setup>
-        <scoringsystem-setup name="scoringsystem" query-results="{{queryResults}}" selected-result=[[selectedResult]]
-            select-up=[[requestSelect]]></scoringsystem-setup>
-        <scoringrule-setup name="scoringrule" query-results="{{queryResults}}" selected-result=[[selectedResult]]
-            select-up=[[requestSelect]]></scoringrule-setup>
-        <stage-setup name="stage" query-results="{{queryResults}}" selected-result=[[selectedResult]]
-            select-up=[[requestSelect]]></stage-setup>
-        <exception-setup name="exception" query-results="{{queryResults}}" selected-result=[[selectedResult]]
-            select-up=[[requestSelect]]></exception-setup>
+        <competition-table name="competition" query-results="{{queryResults}}" selected-result=[[selectedResult]]
+            select-up=[[requestSelect]]></competition-table>
+        <level-table name="level" query-results="{{queryResults}}" selected-result=[[selectedResult]]
+            select-up=[[requestSelect]]></level-table>
+        <gender-table name="gender" query-results="{{queryResults}}" selected-result=[[selectedResult]]
+            select-up=[[requestSelect]]></gender-table>
+        <progression-table name="progression" query-results="{{queryResults}}" selected-result=[[selectedResult]]
+            select-up=[[requestSelect]]></progression-table>
+        <scoringsystem-table name="scoringsystem" query-results="{{queryResults}}" selected-result=[[selectedResult]]
+            select-up=[[requestSelect]]></scoringsystem-table>
+        <scoringrule-table name="scoringrule" query-results="{{queryResults}}" selected-result=[[selectedResult]]
+            select-up=[[requestSelect]]></scoringrule-table>
+        <stage-table name="stage" query-results="{{queryResults}}" selected-result=[[selectedResult]]
+            select-up=[[requestSelect]]></stage-table>
+        <exception-table name="exception" query-results="{{queryResults}}" selected-result=[[selectedResult]]
+            select-up=[[requestSelect]]></exception-table>
       </iron-pages>
     </div>
   </template>

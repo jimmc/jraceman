@@ -3,14 +3,14 @@
 <link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
 <link rel="import" href="../../bower_components/polymer-decorators/polymer-decorators.html">
 <link rel="import" href="../../bower_components/polymer/polymer.html">
-<link rel="import" href="../../components/complan-setup/complan-setup.html">
-<link rel="import" href="../../components/complanrule-setup/complanrule-setup.html">
-<link rel="import" href="../../components/complanstage-setup/complanstage-setup.html">
+<link rel="import" href="../../components/complan-table/complan-table.html">
+<link rel="import" href="../../components/complanrule-table/complanrule-table.html">
+<link rel="import" href="../../components/complanstage-table/complanstage-table.html">
 <link rel="import" href="../../components/jraceman-style/jraceman-style.html">
 <link rel="import" href="../../components/mid-tab/mid-tab.html">
-<link rel="import" href="../../components/simplan-setup/simplan-setup.html">
-<link rel="import" href="../../components/simplanrule-setup/simplanrule-setup.html">
-<link rel="import" href="../../components/simplanstage-setup/simplanstage-setup.html">
+<link rel="import" href="../../components/simplan-table/simplan-table.html">
+<link rel="import" href="../../components/simplanrule-table/simplanrule-table.html">
+<link rel="import" href="../../components/simplanstage-table/simplanstage-table.html">
 
 <dom-module id="plan-setup">
   <template>
@@ -33,18 +33,18 @@
       </paper-tabs>
 
       <iron-pages selected="{{selectedTab}}">
-        <simplan-setup name="simplan" query-results="{{queryResults}}" selected-result=[[selectedResult]]
-            select-up=[[requestSelect]]></simplan-setup>
-        <simplanstage-setup name="simplanstage" query-results="{{queryResults}}" selected-result=[[selectedResult]]
-            select-up=[[requestSelect]]></simplanstage-setup>
-        <simplanrule-setup name="simplanrule" query-results="{{queryResults}}" selected-result=[[selectedResult]]
-            select-up=[[requestSelect]]></simplanrule-setup>
-        <complan-setup name="complan" query-results="{{queryResults}}" selected-result=[[selectedResult]]
-            select-up=[[requestSelect]]></complan-setup>
-        <complanstage-setup name="complanstage" query-results="{{queryResults}}" selected-result=[[selectedResult]]
-            select-up=[[requestSelect]]></complanstage-setup>
-        <complanrule-setup name="complanrule" query-results="{{queryResults}}" selected-result=[[selectedResult]]
-            select-up=[[requestSelect]]></complanrule-setup>
+        <simplan-table name="simplan" query-results="{{queryResults}}" selected-result=[[selectedResult]]
+            select-up=[[requestSelect]]></simplan-table>
+        <simplanstage-table name="simplanstage" query-results="{{queryResults}}" selected-result=[[selectedResult]]
+            select-up=[[requestSelect]]></simplanstage-table>
+        <simplanrule-table name="simplanrule" query-results="{{queryResults}}" selected-result=[[selectedResult]]
+            select-up=[[requestSelect]]></simplanrule-table>
+        <complan-table name="complan" query-results="{{queryResults}}" selected-result=[[selectedResult]]
+            select-up=[[requestSelect]]></complan-table>
+        <complanstage-table name="complanstage" query-results="{{queryResults}}" selected-result=[[selectedResult]]
+            select-up=[[requestSelect]]></complanstage-table>
+        <complanrule-table name="complanrule" query-results="{{queryResults}}" selected-result=[[selectedResult]]
+            select-up=[[requestSelect]]></complanrule-table>
       </iron-pages>
     </div>
   </template>

@@ -3,11 +3,11 @@
 <link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
 <link rel="import" href="../../bower_components/polymer-decorators/polymer-decorators.html">
 <link rel="import" href="../../bower_components/polymer/polymer.html">
-<link rel="import" href="../../components/area-setup/area-setup.html">
+<link rel="import" href="../../components/area-table/area-table.html">
 <link rel="import" href="../../components/jraceman-style/jraceman-style.html">
-<link rel="import" href="../../components/laneorder-setup/laneorder-setup.html">
+<link rel="import" href="../../components/laneorder-table/laneorder-table.html">
 <link rel="import" href="../../components/mid-tab/mid-tab.html">
-<link rel="import" href="../../components/site-setup/site-setup.html">
+<link rel="import" href="../../components/site-table/site-table.html">
 
 <dom-module id="venue-setup">
   <template>
@@ -27,12 +27,12 @@
       </paper-tabs>
 
       <iron-pages selected="{{selectedTab}}">
-        <site-setup name="site" query-results="{{queryResults}}" selected-result=[[selectedResult]]
-            select-up=[[requestSelect]]></site-setup>
-        <area-setup name="area" query-results="{{queryResults}}" selected-result=[[selectedResult]]
-            select-up=[[requestSelect]]></area-setup>
-        <laneorder-setup name="laneorder" query-results="{{queryResults}}" selected-result=[[selectedResult]]
-            select-up=[[requestSelect]]></laneorder-setup>
+        <site-table name="site" query-results="{{queryResults}}" selected-result=[[selectedResult]]
+            select-up=[[requestSelect]]></site-table>
+        <area-table name="area" query-results="{{queryResults}}" selected-result=[[selectedResult]]
+            select-up=[[requestSelect]]></area-table>
+        <laneorder-table name="laneorder" query-results="{{queryResults}}" selected-result=[[selectedResult]]
+            select-up=[[requestSelect]]></laneorder-table>
       </iron-pages>
     </div>
   </template>
