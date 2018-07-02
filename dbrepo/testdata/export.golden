@@ -85,3 +85,11 @@
 !table person
 !columns "id","firstname","lastname","genderid","teamid","birthday","phone","email","membership","membershipexpiration"
 #no rows
+
+!table seedingplan
+!columns "id","name","seedingorder"
+#no rows
+
+!table seedinglist
+!columns "id","seedingplanid","rank","personid"
+#no rows

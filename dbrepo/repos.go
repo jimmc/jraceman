@@ -26,6 +26,8 @@ type Repos struct {
   dbLevel *DBLevelRepo
   dbPerson *DBPersonRepo
   dbProgression *DBProgressionRepo
+  dbSeedingList *DBSeedingListRepo
+  dbSeedingPlan *DBSeedingPlanRepo
   dbScoringRule *DBScoringRuleRepo
   dbScoringSystem *DBScoringSystemRepo
   dbSimplan *DBSimplanRepo
@@ -71,6 +73,8 @@ func (r *Repos) TableEntries() []TableEntry {
     {"challenge", r.dbChallenge},
     {"team", r.dbTeam},
     {"person", r.dbPerson},
+    {"seedingplan", r.dbSeedingPlan},
+    {"seedinglist", r.dbSeedingList},
   }
 }
 
@@ -92,6 +96,8 @@ func (r *Repos) Person() domain.PersonRepo { return r.dbPerson }
 func (r *Repos) Progression() domain.ProgressionRepo { return r.dbProgression }
 func (r *Repos) ScoringRule() domain.ScoringRuleRepo { return r.dbScoringRule }
 func (r *Repos) ScoringSystem() domain.ScoringSystemRepo { return r.dbScoringSystem }
+func (r *Repos) SeedingList() domain.SeedingListRepo { return r.dbSeedingList }
+func (r *Repos) SeedingPlan() domain.SeedingPlanRepo { return r.dbSeedingPlan }
 func (r *Repos) Simplan() domain.SimplanRepo { return r.dbSimplan }
 func (r *Repos) SimplanRule() domain.SimplanRuleRepo { return r.dbSimplanRule }
 func (r *Repos) SimplanStage() domain.SimplanStageRepo { return r.dbSimplanStage }
@@ -139,6 +145,8 @@ func Open(repoPath string) (*Repos, error) {
     dbProgression: &DBProgressionRepo{db},
     dbScoringRule: &DBScoringRuleRepo{db},
     dbScoringSystem: &DBScoringSystemRepo{db},
+    dbSeedingList: &DBSeedingListRepo{db},
+    dbSeedingPlan: &DBSeedingPlanRepo{db},
     dbSimplan: &DBSimplanRepo{db},
     dbSimplanRule: &DBSimplanRuleRepo{db},
     dbSimplanStage: &DBSimplanStageRepo{db},

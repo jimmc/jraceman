@@ -18,6 +18,8 @@ type Repos interface {
   Progression() ProgressionRepo
   ScoringRule() ScoringRuleRepo
   ScoringSystem() ScoringSystemRepo
+  SeedingList() SeedingListRepo
+  SeedingPlan() SeedingPlanRepo
   Simplan() SimplanRepo
   SimplanRule() SimplanRuleRepo
   SimplanStage() SimplanStageRepo

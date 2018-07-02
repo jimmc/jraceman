@@ -35,6 +35,8 @@ func NewHandler(c *Config) http.Handler {
   mux.HandleFunc(h.crudPrefix("progression"), h.progression)
   mux.HandleFunc(h.crudPrefix("scoringrule"), h.scoringrule)
   mux.HandleFunc(h.crudPrefix("scoringsystem"), h.scoringsystem)
+  mux.HandleFunc(h.crudPrefix("seedinglist"), h.seedinglist)
+  mux.HandleFunc(h.crudPrefix("seedingplan"), h.seedingplan)
   mux.HandleFunc(h.crudPrefix("simplan"), h.simplan)
   mux.HandleFunc(h.crudPrefix("simplanrule"), h.simplanrule)
   mux.HandleFunc(h.crudPrefix("simplanstage"), h.simplanstage)
