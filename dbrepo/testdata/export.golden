@@ -97,3 +97,11 @@
 !table meet
 !columns "id","name","shortname","siteid","startdate","enddate","agedate","webreportsdirectory","transferdirectory","labelimageleft","labelimageright","scoringsystemid"
 #no rows
+
+!table registrationfee
+!columns "id","meetid","eventcount","amountcharged"
+#no rows
+
+!table registration
+!columns "id","meetid","personid","teamid","amountcharged","surcharge","discount","amountpaid","waiversigned","paymentnotes"
+#no rows

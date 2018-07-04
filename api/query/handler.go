@@ -34,6 +34,8 @@ func NewHandler(c *Config) http.Handler {
   mux.HandleFunc(h.queryPrefix("meet"), h.meet)
   mux.HandleFunc(h.queryPrefix("person"), h.person)
   mux.HandleFunc(h.queryPrefix("progression"), h.progression)
+  mux.HandleFunc(h.queryPrefix("registration"), h.registration)
+  mux.HandleFunc(h.queryPrefix("registrationfee"), h.registrationfee)
   mux.HandleFunc(h.queryPrefix("scoringrule"), h.scoringrule)
   mux.HandleFunc(h.queryPrefix("scoringsystem"), h.scoringsystem)
   mux.HandleFunc(h.queryPrefix("seedinglist"), h.seedinglist)

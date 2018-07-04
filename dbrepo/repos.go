@@ -27,6 +27,8 @@ type Repos struct {
   dbMeet *DBMeetRepo
   dbPerson *DBPersonRepo
   dbProgression *DBProgressionRepo
+  dbRegistration *DBRegistrationRepo
+  dbRegistrationFee *DBRegistrationFeeRepo
   dbSeedingList *DBSeedingListRepo
   dbSeedingPlan *DBSeedingPlanRepo
   dbScoringRule *DBScoringRuleRepo
@@ -77,6 +79,8 @@ func (r *Repos) TableEntries() []TableEntry {
     {"seedingplan", r.dbSeedingPlan},
     {"seedinglist", r.dbSeedingList},
     {"meet", r.dbMeet},
+    {"registrationfee", r.dbRegistrationFee},
+    {"registration", r.dbRegistration},
   }
 }
 
@@ -97,6 +101,8 @@ func (r *Repos) Level() domain.LevelRepo { return r.dbLevel }
 func (r *Repos) Meet() domain.MeetRepo { return r.dbMeet }
 func (r *Repos) Person() domain.PersonRepo { return r.dbPerson }
 func (r *Repos) Progression() domain.ProgressionRepo { return r.dbProgression }
+func (r *Repos) Registration() domain.RegistrationRepo { return r.dbRegistration }
+func (r *Repos) RegistrationFee() domain.RegistrationFeeRepo { return r.dbRegistrationFee }
 func (r *Repos) ScoringRule() domain.ScoringRuleRepo { return r.dbScoringRule }
 func (r *Repos) ScoringSystem() domain.ScoringSystemRepo { return r.dbScoringSystem }
 func (r *Repos) SeedingList() domain.SeedingListRepo { return r.dbSeedingList }
@@ -147,6 +153,8 @@ func Open(repoPath string) (*Repos, error) {
     dbMeet: &DBMeetRepo{db},
     dbPerson: &DBPersonRepo{db},
     dbProgression: &DBProgressionRepo{db},
+    dbRegistration: &DBRegistrationRepo{db},
+    dbRegistrationFee: &DBRegistrationFeeRepo{db},
     dbScoringRule: &DBScoringRuleRepo{db},
     dbScoringSystem: &DBScoringSystemRepo{db},
     dbSeedingList: &DBSeedingListRepo{db},

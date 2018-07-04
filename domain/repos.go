@@ -17,6 +17,8 @@ type Repos interface {
   Meet() MeetRepo
   Person() PersonRepo
   Progression() ProgressionRepo
+  Registration() RegistrationRepo
+  RegistrationFee() RegistrationFeeRepo
   ScoringRule() ScoringRuleRepo
   ScoringSystem() ScoringSystemRepo
   SeedingList() SeedingListRepo
