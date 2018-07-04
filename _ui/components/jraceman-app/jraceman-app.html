@@ -8,6 +8,7 @@
 <link rel="import" href="../../components/database-menu/database-menu.html">
 <link rel="import" href="../../components/debug-tab/debug-tab.html">
 <link rel="import" href="../../components/jraceman-style/jraceman-style.html">
+<link rel="import" href="../../components/meet-setup/meet-setup.html">
 <link rel="import" href="../../components/plan-setup/plan-setup.html">
 <link rel="import" href="../../components/query-results/query-results.html">
 <link rel="import" href="../../components/sport-setup/sport-setup.html">
@@ -60,7 +61,9 @@
           <team-setup class="tabContent" name="teamSetup"
               query-results={{queryResults}} selected-result=[[selectedResult]]
               select-up=[[requestSelect]]></team-setup>
-          <div class="tabContent" name="meetSetup">Meet Setup is not yet implemented</div>
+          <meet-setup class="tabContent" name="meetSetup"
+              query-results={{queryResults}} selected-result=[[selectedResult]]
+              select-up=[[requestSelect]]></meet-setup>
           <div class="tabContent" name="byEvent">By Event is not yet implemented</div>
           <div class="tabContent" name="reports">Reports is not yet implemented</div>
           <div class="tabContent" name="database">Database is not yet implemented</div>

@@ -14,6 +14,7 @@ type Repos interface {
   Gender() GenderRepo
   LaneOrder() LaneOrderRepo
   Level() LevelRepo
+  Meet() MeetRepo
   Person() PersonRepo
   Progression() ProgressionRepo
   ScoringRule() ScoringRuleRepo

@@ -15,7 +15,7 @@ type Person struct {
   FirstName string
   LastName string
   GenderID string
-  TeamId string
+  TeamID string
   Birthday string       // ISO8601 format, may be partial
   Phone string
   Email string

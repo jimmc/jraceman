@@ -93,3 +93,7 @@
 !table seedinglist
 !columns "id","seedingplanid","rank","personid"
 #no rows
+
+!table meet
+!columns "id","name","shortname","siteid","startdate","enddate","agedate","webreportsdirectory","transferdirectory","labelimageleft","labelimageright","scoringsystemid"
+#no rows

@@ -24,6 +24,7 @@ type Repos struct {
   dbGender *DBGenderRepo
   dbLaneOrder *DBLaneOrderRepo
   dbLevel *DBLevelRepo
+  dbMeet *DBMeetRepo
   dbPerson *DBPersonRepo
   dbProgression *DBProgressionRepo
   dbSeedingList *DBSeedingListRepo
@@ -75,6 +76,7 @@ func (r *Repos) TableEntries() []TableEntry {
     {"person", r.dbPerson},
     {"seedingplan", r.dbSeedingPlan},
     {"seedinglist", r.dbSeedingList},
+    {"meet", r.dbMeet},
   }
 }
 
@@ -92,6 +94,7 @@ func (r *Repos) Exception() domain.ExceptionRepo { return r.dbException }
 func (r *Repos) Gender() domain.GenderRepo { return r.dbGender }
 func (r *Repos) LaneOrder() domain.LaneOrderRepo { return r.dbLaneOrder }
 func (r *Repos) Level() domain.LevelRepo { return r.dbLevel }
+func (r *Repos) Meet() domain.MeetRepo { return r.dbMeet }
 func (r *Repos) Person() domain.PersonRepo { return r.dbPerson }
 func (r *Repos) Progression() domain.ProgressionRepo { return r.dbProgression }
 func (r *Repos) ScoringRule() domain.ScoringRuleRepo { return r.dbScoringRule }
@@ -141,6 +144,7 @@ func Open(repoPath string) (*Repos, error) {
     dbGender: &DBGenderRepo{db},
     dbLaneOrder: &DBLaneOrderRepo{db},
     dbLevel: &DBLevelRepo{db},
+    dbMeet: &DBMeetRepo{db},
     dbPerson: &DBPersonRepo{db},
     dbProgression: &DBProgressionRepo{db},
     dbScoringRule: &DBScoringRuleRepo{db},
