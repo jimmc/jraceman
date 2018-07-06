@@ -20,6 +20,8 @@ type Repos struct {
   dbComplan *DBComplanRepo
   dbComplanRule *DBComplanRuleRepo
   dbComplanStage *DBComplanStageRepo
+  dbEntry *DBEntryRepo
+  dbEvent *DBEventRepo
   dbException *DBExceptionRepo
   dbGender *DBGenderRepo
   dbLaneOrder *DBLaneOrderRepo
@@ -81,6 +83,8 @@ func (r *Repos) TableEntries() []TableEntry {
     {"meet", r.dbMeet},
     {"registrationfee", r.dbRegistrationFee},
     {"registration", r.dbRegistration},
+    {"event", r.dbEvent},
+    {"entry", r.dbEntry},
   }
 }
 
@@ -94,6 +98,8 @@ func (r *Repos) Competition() domain.CompetitionRepo { return r.dbCompetition }
 func (r *Repos) Complan() domain.ComplanRepo { return r.dbComplan }
 func (r *Repos) ComplanRule() domain.ComplanRuleRepo { return r.dbComplanRule }
 func (r *Repos) ComplanStage() domain.ComplanStageRepo { return r.dbComplanStage }
+func (r *Repos) Entry() domain.EntryRepo { return r.dbEntry }
+func (r *Repos) Event() domain.EventRepo { return r.dbEvent }
 func (r *Repos) Exception() domain.ExceptionRepo { return r.dbException }
 func (r *Repos) Gender() domain.GenderRepo { return r.dbGender }
 func (r *Repos) LaneOrder() domain.LaneOrderRepo { return r.dbLaneOrder }
@@ -146,6 +152,8 @@ func Open(repoPath string) (*Repos, error) {
     dbComplan: &DBComplanRepo{db},
     dbComplanRule: &DBComplanRuleRepo{db},
     dbComplanStage: &DBComplanStageRepo{db},
+    dbEntry: &DBEntryRepo{db},
+    dbEvent: &DBEventRepo{db},
     dbException: &DBExceptionRepo{db},
     dbGender: &DBGenderRepo{db},
     dbLaneOrder: &DBLaneOrderRepo{db},

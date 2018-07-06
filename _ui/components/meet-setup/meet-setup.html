@@ -3,6 +3,8 @@
 <link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
 <link rel="import" href="../../bower_components/polymer-decorators/polymer-decorators.html">
 <link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../components/entry-table/entry-table.html">
+<link rel="import" href="../../components/event-table/event-table.html">
 <link rel="import" href="../../components/jraceman-style/jraceman-style.html">
 <link rel="import" href="../../components/mid-tab/mid-tab.html">
 <link rel="import" href="../../components/meet-table/meet-table.html">
@@ -24,6 +26,8 @@
         <paper-tab name="meet">Meets</paper-tab>
         <paper-tab name="registrationfee">Registration Fees</paper-tab>
         <paper-tab name="registration">Registrations</paper-tab>
+        <paper-tab name="event">Events</paper-tab>
+        <paper-tab name="entry">Entries</paper-tab>
       </paper-tabs>
 
       <iron-pages selected="{{selectedTab}}">
@@ -33,6 +37,10 @@
             select-up=[[requestSelect]]></registrationfee-table>
         <registration-table name="registration" query-results="{{queryResults}}" selected-result=[[selectedResult]]
             select-up=[[requestSelect]]></registration-table>
+        <event-table name="event" query-results="{{queryResults}}" selected-result=[[selectedResult]]
+            select-up=[[requestSelect]]></event-table>
+        <entry-table name="entry" query-results="{{queryResults}}" selected-result=[[selectedResult]]
+            select-up=[[requestSelect]]></entry-table>
       </iron-pages>
     </div>
   </template>

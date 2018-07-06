@@ -105,3 +105,11 @@
 !table registration
 !columns "id","meetid","personid","teamid","amountcharged","surcharge","discount","amountpaid","waiversigned","paymentnotes"
 #no rows
+
+!table event
+!columns "id","meetid","number","name","competitionid","levelid","genderid","areaid","seedingplanid","progressionid","progressionstate","scoringsystemid","scratched","eventcomment"
+#no rows
+
+!table entry
+!columns "id","personid","eventid","groupname","alternate","scratched"
+#no rows

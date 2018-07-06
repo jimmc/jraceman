@@ -10,6 +10,8 @@ type Repos interface {
   Complan() ComplanRepo
   ComplanRule() ComplanRuleRepo
   ComplanStage() ComplanStageRepo
+  Entry() EntryRepo
+  Event() EventRepo
   Exception() ExceptionRepo
   Gender() GenderRepo
   LaneOrder() LaneOrderRepo
