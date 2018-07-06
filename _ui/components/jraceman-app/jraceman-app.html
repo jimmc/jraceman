@@ -6,6 +6,7 @@
 <link rel="import" href="../../bower_components/vaadin-split-layout/vaadin-split-layout.html">
 <link rel="import" href="../../components/client-messages/client-messages.html">
 <link rel="import" href="../../components/database-menu/database-menu.html">
+<link rel="import" href="../../components/database-tab/database-tab.html">
 <link rel="import" href="../../components/debug-tab/debug-tab.html">
 <link rel="import" href="../../components/jraceman-style/jraceman-style.html">
 <link rel="import" href="../../components/meet-setup/meet-setup.html">
@@ -66,7 +67,9 @@
               select-up=[[requestSelect]]></meet-setup>
           <div class="tabContent" name="byEvent">By Event is not yet implemented</div>
           <div class="tabContent" name="reports">Reports is not yet implemented</div>
-          <div class="tabContent" name="database">Database is not yet implemented</div>
+          <database-tab class="tabContent" name="database"
+              query-results={{queryResults}} selected-result=[[selectedResult]]
+              select-up=[[requestSelect]]></database-tab>
           <debug-tab class="tabContent" name="debug" query-results={{queryResults}}></debug-tab>
         </iron-pages>
       </div>

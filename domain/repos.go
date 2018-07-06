@@ -10,6 +10,7 @@ type Repos interface {
   Complan() ComplanRepo
   ComplanRule() ComplanRuleRepo
   ComplanStage() ComplanStageRepo
+  ContextOption() ContextOptionRepo
   Entry() EntryRepo
   Event() EventRepo
   Exception() ExceptionRepo

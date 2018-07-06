@@ -113,3 +113,7 @@
 !table entry
 !columns "id","personid","eventid","groupname","alternate","scratched"
 #no rows
+
+!table contextoption
+!columns "id","name","value","host","webcontext","meetid"
+#no rows

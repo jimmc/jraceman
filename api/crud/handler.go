@@ -27,6 +27,7 @@ func NewHandler(c *Config) http.Handler {
   mux.HandleFunc(h.crudPrefix("complan"), h.complan)
   mux.HandleFunc(h.crudPrefix("complanrule"), h.complanrule)
   mux.HandleFunc(h.crudPrefix("complanstage"), h.complanstage)
+  mux.HandleFunc(h.crudPrefix("contextoption"), h.contextoption)
   mux.HandleFunc(h.crudPrefix("entry"), h.entry)
   mux.HandleFunc(h.crudPrefix("event"), h.event)
   mux.HandleFunc(h.crudPrefix("exception"), h.exception)

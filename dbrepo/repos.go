@@ -20,6 +20,7 @@ type Repos struct {
   dbComplan *DBComplanRepo
   dbComplanRule *DBComplanRuleRepo
   dbComplanStage *DBComplanStageRepo
+  dbContextOption *DBContextOptionRepo
   dbEntry *DBEntryRepo
   dbEvent *DBEventRepo
   dbException *DBExceptionRepo
@@ -85,6 +86,7 @@ func (r *Repos) TableEntries() []TableEntry {
     {"registration", r.dbRegistration},
     {"event", r.dbEvent},
     {"entry", r.dbEntry},
+    {"contextoption", r.dbContextOption},
   }
 }
 
@@ -98,6 +100,7 @@ func (r *Repos) Competition() domain.CompetitionRepo { return r.dbCompetition }
 func (r *Repos) Complan() domain.ComplanRepo { return r.dbComplan }
 func (r *Repos) ComplanRule() domain.ComplanRuleRepo { return r.dbComplanRule }
 func (r *Repos) ComplanStage() domain.ComplanStageRepo { return r.dbComplanStage }
+func (r *Repos) ContextOption() domain.ContextOptionRepo { return r.dbContextOption }
 func (r *Repos) Entry() domain.EntryRepo { return r.dbEntry }
 func (r *Repos) Event() domain.EventRepo { return r.dbEvent }
 func (r *Repos) Exception() domain.ExceptionRepo { return r.dbException }
@@ -152,6 +155,7 @@ func Open(repoPath string) (*Repos, error) {
     dbComplan: &DBComplanRepo{db},
     dbComplanRule: &DBComplanRuleRepo{db},
     dbComplanStage: &DBComplanStageRepo{db},
+    dbContextOption: &DBContextOptionRepo{db},
     dbEntry: &DBEntryRepo{db},
     dbEvent: &DBEventRepo{db},
     dbException: &DBExceptionRepo{db},
