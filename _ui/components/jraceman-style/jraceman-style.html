@@ -49,6 +49,9 @@
            tab, which makes it (as far as I can figure) impossible to make my
            overflowing menu from within the tab be on top of the selection bar.
            So turn off the selection bar. */
+        /* This could be made to work by setting the z-index of the top-level
+           menu bar higher than the second-level menu bar, etc, but that's a bit
+           of a hassle. For now, leave the selection bar disabled. */
         --paper-tabs-selection-bar_-_z-index: -1;
       }
       paper-tab {
