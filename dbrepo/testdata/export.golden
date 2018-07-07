@@ -114,6 +114,14 @@
 !columns "id","personid","eventid","groupname","alternate","scratched"
 #no rows
 
+!table race
+!columns "id","eventid","stageid","round","section","areaid","number","scheduledstart","scheduledduration","actualstring","scratched","racecomment"
+#no rows
+
+!table lane
+!columns "id","entryid","raceid","lane","result","exceptionid","place","scoreplace","score"
+#no rows
+
 !table contextoption
 !columns "id","name","value","host","webcontext","meetid"
 #no rows

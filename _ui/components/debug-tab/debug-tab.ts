@@ -1,8 +1,5 @@
 @Polymer.decorators.customElement('debug-tab')
-class DebugTab extends Polymer.Element {
-
-  @Polymer.decorators.property({type: Number})
-  selectedTab: number = 0;
+class DebugTab extends MidTab {
 
   @Polymer.decorators.property({type: Object, notify: true})
   queryResults: object;

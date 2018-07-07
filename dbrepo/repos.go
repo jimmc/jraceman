@@ -25,11 +25,13 @@ type Repos struct {
   dbEvent *DBEventRepo
   dbException *DBExceptionRepo
   dbGender *DBGenderRepo
+  dbLane *DBLaneRepo
   dbLaneOrder *DBLaneOrderRepo
   dbLevel *DBLevelRepo
   dbMeet *DBMeetRepo
   dbPerson *DBPersonRepo
   dbProgression *DBProgressionRepo
+  dbRace *DBRaceRepo
   dbRegistration *DBRegistrationRepo
   dbRegistrationFee *DBRegistrationFeeRepo
   dbSeedingList *DBSeedingListRepo
@@ -86,6 +88,8 @@ func (r *Repos) TableEntries() []TableEntry {
     {"registration", r.dbRegistration},
     {"event", r.dbEvent},
     {"entry", r.dbEntry},
+    {"race", r.dbRace},
+    {"lane", r.dbLane},
     {"contextoption", r.dbContextOption},
   }
 }
@@ -105,11 +109,13 @@ func (r *Repos) Entry() domain.EntryRepo { return r.dbEntry }
 func (r *Repos) Event() domain.EventRepo { return r.dbEvent }
 func (r *Repos) Exception() domain.ExceptionRepo { return r.dbException }
 func (r *Repos) Gender() domain.GenderRepo { return r.dbGender }
+func (r *Repos) Lane() domain.LaneRepo { return r.dbLane }
 func (r *Repos) LaneOrder() domain.LaneOrderRepo { return r.dbLaneOrder }
 func (r *Repos) Level() domain.LevelRepo { return r.dbLevel }
 func (r *Repos) Meet() domain.MeetRepo { return r.dbMeet }
 func (r *Repos) Person() domain.PersonRepo { return r.dbPerson }
 func (r *Repos) Progression() domain.ProgressionRepo { return r.dbProgression }
+func (r *Repos) Race() domain.RaceRepo { return r.dbRace }
 func (r *Repos) Registration() domain.RegistrationRepo { return r.dbRegistration }
 func (r *Repos) RegistrationFee() domain.RegistrationFeeRepo { return r.dbRegistrationFee }
 func (r *Repos) ScoringRule() domain.ScoringRuleRepo { return r.dbScoringRule }
@@ -160,11 +166,13 @@ func Open(repoPath string) (*Repos, error) {
     dbEvent: &DBEventRepo{db},
     dbException: &DBExceptionRepo{db},
     dbGender: &DBGenderRepo{db},
+    dbLane: &DBLaneRepo{db},
     dbLaneOrder: &DBLaneOrderRepo{db},
     dbLevel: &DBLevelRepo{db},
     dbMeet: &DBMeetRepo{db},
     dbPerson: &DBPersonRepo{db},
     dbProgression: &DBProgressionRepo{db},
+    dbRace: &DBRaceRepo{db},
     dbRegistration: &DBRegistrationRepo{db},
     dbRegistrationFee: &DBRegistrationFeeRepo{db},
     dbScoringRule: &DBScoringRuleRepo{db},

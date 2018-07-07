@@ -15,11 +15,13 @@ type Repos interface {
   Event() EventRepo
   Exception() ExceptionRepo
   Gender() GenderRepo
+  Lane() LaneRepo
   LaneOrder() LaneOrderRepo
   Level() LevelRepo
   Meet() MeetRepo
   Person() PersonRepo
   Progression() ProgressionRepo
+  Race() RaceRepo
   Registration() RegistrationRepo
   RegistrationFee() RegistrationFeeRepo
   ScoringRule() ScoringRuleRepo
