@@ -60,7 +60,9 @@ func TableColumns(db *sql.DB, tableName string) ([]ColumnInfo, error) {
     // so just use the same rules as when we parse an entity.
     fk := false
     fkReference := ""
-    if name != "id" && strings.HasSuffix(name, "id") {
+    // TODO - might want to switch this to using the table definition that
+    // includes the foreign key stuff so we don't need this hack.
+    if name != "id" && strings.HasSuffix(name, "id") && !strings.HasSuffix(name, "paid") {
       fk = true
       fkReference = strings.TrimSuffix(name, "id")
     }

@@ -67,9 +67,12 @@ func TestTableColumns(t *testing.T) {
     structsql.ColumnInfo{Name:"id", Type:"string", Required:true, IsForeignKey:false, FKTable:""},
     structsql.ColumnInfo{Name:"n", Type:"int", Required:false, IsForeignKey:false, FKTable:""},
     structsql.ColumnInfo{Name:"s", Type:"string", Required:false, IsForeignKey:false, FKTable:""},
-    structsql.ColumnInfo{Name:"s2", Type:"string", Required:false, IsForeignKey:false, FKTable:""},
+    structsql.ColumnInfo{Name:"fooid", Type:"string", Required:false, IsForeignKey:true, FKTable:"foo"},
+    structsql.ColumnInfo{Name:"amtpaid", Type:"int", Required:false, IsForeignKey:false, FKTable:""},
   }
-  db, err := dbtest.DbWithTestTable()
+  db, err := dbtest.DbWithSetupString(`
+      CREATE table test(id string, n int, s string, fooid string references foo(id), amtpaid int);
+      `)
   if err != nil {
     t.Fatal(err.Error())
   }

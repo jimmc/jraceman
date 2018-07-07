@@ -78,7 +78,7 @@ func UpgradeTableSql(tableName string, columnInfos, tableColumns []ColumnInfo) (
     for i, cc := range diffs.Change {
       changedColNames[i] = cc[0].Name
     }
-    return "", fmt.Errorf("Don't know how to change table %s columns %v", tableName, changedColNames)
+    return "", fmt.Errorf("Don't know how to change table %s columns %v; diffs %#v", tableName, changedColNames, diffs.Change)
   }
   if len(diffs.Add) == 0 {
     // No changes needed.
