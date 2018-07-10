@@ -8,7 +8,7 @@ import (
 func DeleteByID(db *sql.DB, tableName, ID string) error {
   sql := DeleteByIDSql(tableName)
   res, err := db.Exec(sql, ID)
-  return RequireOneResult(res, err, "Deleted", "site", ID)
+  return RequireOneResult(res, err, "Deleted", tableName, ID)
 }
 
 // DeleteByIDSql generates an SQL DELETE statement.

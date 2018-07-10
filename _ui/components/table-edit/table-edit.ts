@@ -38,7 +38,7 @@ class TableEdit extends LeafTab {
     }
     console.log("table-edit edit", this.selectedResult.Table, this.selectedResult.ID);
     // Build a query expression to select that row based on the ID
-    const name = "id";
+    const name = this.tableDesc.Columns[0].Name         // Typically "id"
     const colOp = 'eq';
     const colVal = this.selectedResult.ID;
     const colParams = {
@@ -91,7 +91,7 @@ class TableEdit extends LeafTab {
     for (let col of this.databaseResult.Columns) {
       const name = col.Name;
       this.$.main.querySelector("#val_"+name).value = row[c];
-      if (name === "id") {
+      if (name === this.tableDesc.Columns[0].Name) {
         this.recordId = row[c];
       }
       c++;
@@ -136,9 +136,12 @@ class TableEdit extends LeafTab {
         result.Table = this.tableDesc.Table;
       }
       // Use the returned ID if it was set.
-      const returnedId = result['ID']
+      let returnedId = result['ID']
+      if (!returnedId) {
+        returnedId = result[this.tableDesc.Columns[0].Name];
+      }
       if (returnedId) {
-        this.recordId = result['ID'];
+        this.recordId = returnedId;
         this.$.main.querySelector("#val_id").value = this.recordId;
         this.editMoreLabel = '[' + (this.recordId || 'New') + ']';
       }

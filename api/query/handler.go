@@ -36,6 +36,7 @@ func NewHandler(c *Config) http.Handler {
   mux.HandleFunc(h.queryPrefix("laneorder"), h.laneorder)
   mux.HandleFunc(h.queryPrefix("level"), h.level)
   mux.HandleFunc(h.queryPrefix("meet"), h.meet)
+  mux.HandleFunc(h.queryPrefix("option"), h.option)
   mux.HandleFunc(h.queryPrefix("person"), h.person)
   mux.HandleFunc(h.queryPrefix("progression"), h.progression)
   mux.HandleFunc(h.queryPrefix("race"), h.race)

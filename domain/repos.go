@@ -19,6 +19,7 @@ type Repos interface {
   LaneOrder() LaneOrderRepo
   Level() LevelRepo
   Meet() MeetRepo
+  Option() OptionRepo
   Person() PersonRepo
   Progression() ProgressionRepo
   Race() RaceRepo

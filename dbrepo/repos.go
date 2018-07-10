@@ -29,6 +29,7 @@ type Repos struct {
   dbLaneOrder *DBLaneOrderRepo
   dbLevel *DBLevelRepo
   dbMeet *DBMeetRepo
+  dbOption *DBOptionRepo
   dbPerson *DBPersonRepo
   dbProgression *DBProgressionRepo
   dbRace *DBRaceRepo
@@ -61,6 +62,7 @@ func (r *Repos) TableEntries() []TableEntry {
   return []TableEntry{
     // The tables in this list are ordered so that tables that are the target
     // of foreign keys are created/updated before the tables that reference them.
+    {"option", r.dbOption},
     {"competition", r.dbCompetition},
     {"complan", r.dbComplan},
     {"complanstage", r.dbComplanStage},
@@ -113,6 +115,7 @@ func (r *Repos) Lane() domain.LaneRepo { return r.dbLane }
 func (r *Repos) LaneOrder() domain.LaneOrderRepo { return r.dbLaneOrder }
 func (r *Repos) Level() domain.LevelRepo { return r.dbLevel }
 func (r *Repos) Meet() domain.MeetRepo { return r.dbMeet }
+func (r *Repos) Option() domain.OptionRepo { return r.dbOption }
 func (r *Repos) Person() domain.PersonRepo { return r.dbPerson }
 func (r *Repos) Progression() domain.ProgressionRepo { return r.dbProgression }
 func (r *Repos) Race() domain.RaceRepo { return r.dbRace }
@@ -170,6 +173,7 @@ func Open(repoPath string) (*Repos, error) {
     dbLaneOrder: &DBLaneOrderRepo{db},
     dbLevel: &DBLevelRepo{db},
     dbMeet: &DBMeetRepo{db},
+    dbOption: &DBOptionRepo{db},
     dbPerson: &DBPersonRepo{db},
     dbProgression: &DBProgressionRepo{db},
     dbRace: &DBRaceRepo{db},

@@ -3,6 +3,10 @@
 !appInfo JRaceman v2.0.0
 !type database
 
+!table option
+!columns "name","value"
+#no rows
+
 !table competition
 !columns "id","name","groupsize","maxalternates","duration"
 #no rows

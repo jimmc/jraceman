@@ -73,7 +73,9 @@
           <database-tab class="tabContent" name="database"
               query-results={{queryResults}} selected-result=[[selectedResult]]
               select-up=[[requestSelect]]></database-tab>
-          <debug-tab class="tabContent" name="debug" query-results={{queryResults}}></debug-tab>
+          <debug-tab class="tabContent" name="debug"
+              query-results={{queryResults}} selected-result=[[selectedResult]]
+              select-up=[[requestSelect]]></debug-tab>
         </iron-pages>
       </div>
       <div id="bottom" class="tab-container">
