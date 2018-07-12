@@ -33,7 +33,7 @@ func (r *DBAreaRepo) FindByID(ID string) (*domain.Area, error) {
 
 func (r *DBAreaRepo) Save(area *domain.Area) (string, error) {
   if (area.ID == "") {
-    area.ID = structsql.UniqueID(r.db, "area", "A1")
+    area.ID = structsql.UniqueID(r.db, "area", area.SiteID + ".A1")
   }
   return area.ID, structsql.Insert(r.db, "area", area, area.ID)
 }

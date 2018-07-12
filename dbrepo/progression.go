@@ -33,7 +33,7 @@ func (r *DBProgressionRepo) FindByID(ID string) (*domain.Progression, error) {
 
 func (r *DBProgressionRepo) Save(progression *domain.Progression) (string, error) {
   if (progression.ID == "") {
-    progression.ID = structsql.UniqueID(r.db, "progression", "P1")
+    progression.ID = structsql.UniqueID(r.db, "progression", "Pr1")
   }
   return progression.ID, structsql.Insert(r.db, "progression", progression, progression.ID)
 }

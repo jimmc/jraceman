@@ -33,7 +33,8 @@ func (r *DBLaneRepo) FindByID(ID string) (*domain.Lane, error) {
 
 func (r *DBLaneRepo) Save(lane *domain.Lane) (string, error) {
   if (lane.ID == "") {
-    lane.ID = structsql.UniqueID(r.db, "lane", "A1")
+    baseID := lane.RaceID + "-" + lane.EntryID
+    lane.ID = structsql.UniqueID(r.db, "lane", baseID)
   }
   return lane.ID, structsql.Insert(r.db, "lane", lane, lane.ID)
 }

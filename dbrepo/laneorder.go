@@ -33,7 +33,7 @@ func (r *DBLaneOrderRepo) FindByID(ID string) (*domain.LaneOrder, error) {
 
 func (r *DBLaneOrderRepo) Save(laneorder *domain.LaneOrder) (string, error) {
   if (laneorder.ID == "") {
-    laneorder.ID = structsql.UniqueID(r.db, "laneorder", "LO1")
+    laneorder.ID = structsql.UniqueID(r.db, "laneorder", laneorder.AreaID + ".L1")
   }
   return laneorder.ID, structsql.Insert(r.db, "laneorder", laneorder, laneorder.ID)
 }

@@ -33,7 +33,11 @@ func (r *DBEntryRepo) FindByID(ID string) (*domain.Entry, error) {
 
 func (r *DBEntryRepo) Save(entry *domain.Entry) (string, error) {
   if (entry.ID == "") {
-    entry.ID = structsql.UniqueID(r.db, "entry", "EN1")
+    meetID := "Z"
+    if entry.EventID != "" {
+      // TODO - get the MeetID from this event
+    }
+    entry.ID = structsql.UniqueID(r.db, "entry", meetID + ".EN1")
   }
   return entry.ID, structsql.Insert(r.db, "entry", entry, entry.ID)
 }

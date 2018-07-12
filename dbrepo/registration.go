@@ -33,7 +33,8 @@ func (r *DBRegistrationRepo) FindByID(ID string) (*domain.Registration, error) {
 
 func (r *DBRegistrationRepo) Save(registration *domain.Registration) (string, error) {
   if (registration.ID == "") {
-    registration.ID = structsql.UniqueID(r.db, "registration", "Reg1")
+    baseID := registration.MeetID + "." + registration.PersonID
+    registration.ID = structsql.UniqueID(r.db, "registration", baseID)
   }
   return registration.ID, structsql.Insert(r.db, "registration", registration, registration.ID)
 }

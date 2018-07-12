@@ -3,6 +3,7 @@ package dbrepo
 import (
   "database/sql"
   "io"
+  "strconv"
 
   "github.com/jimmc/jracemango/dbrepo/ixport"
   "github.com/jimmc/jracemango/dbrepo/strsql"
@@ -33,7 +34,14 @@ func (r *DBRaceRepo) FindByID(ID string) (*domain.Race, error) {
 
 func (r *DBRaceRepo) Save(race *domain.Race) (string, error) {
   if (race.ID == "") {
-    race.ID = structsql.UniqueID(r.db, "race", "A1")
+    baseID := race.EventID
+    if race.StageID != nil {
+      baseID += "." + *race.StageID
+    }
+    if race.Section != nil {
+      baseID += "." + strconv.Itoa(*race.Section)
+    }
+    race.ID = structsql.UniqueID(r.db, "race", baseID)
   }
   return race.ID, structsql.Insert(r.db, "race", race, race.ID)
 }
