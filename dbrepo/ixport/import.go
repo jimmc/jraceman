@@ -5,6 +5,7 @@ import (
   "fmt"
   "io"
   "log"
+  "strconv"
   "strings"
 )
 
@@ -13,10 +14,14 @@ type Importer struct {
   lineno int
   tableName string
   columnNames []string
+  v1TableName string
+  v1ColumnNames []string
   idIndex int
   insertCount int
   updateCount int
   unchangedCount int
+  importVersion int
+  v1v2map map[string]*tableMapValue
 }
 
 type RowRepo interface {
@@ -26,9 +31,11 @@ type RowRepo interface {
 }
 
 func NewImporter(rowRepo RowRepo) *Importer {
-  return &Importer{
+  im := &Importer{
     rowRepo: rowRepo,
   }
+  im.initTableMaps()
+  return im
 }
 
 func (im *Importer) TableName() string {
@@ -50,7 +57,7 @@ func (im *Importer) Import(reader io.Reader) error {
     im.lineno++         // First line is line 1.
     line := scanner.Text()
     if err := im.ImportLine(line); err != nil {
-      return fmt.Errorf("error at line %d: %v", im.lineno, err)
+      return fmt.Errorf("line %d: %v", im.lineno, err)
     }
   }
   if err := scanner.Err(); err != nil {
@@ -109,7 +116,14 @@ func (im *Importer) importModeLine(line string) error {
 }
 
 func (im *Importer) setExportVersion(version string) error {
-  // TODO - what should we do with the version?
+  verNum, err := strconv.Atoi(version)
+  if err != nil {
+    return fmt.Errorf("Bad version format: %v", err)
+  }
+  if verNum < 1 || verNum > 2 {
+    return fmt.Errorf("Unknown version number %d, must be 1 or 2", verNum)
+  }
+  im.importVersion = verNum;
   return nil
 }
 
@@ -127,6 +141,7 @@ func (im *Importer) setTable(tableName string) error {
   im.tableName = tableName
   im.columnNames = []string{}
   im.idIndex = -1
+  log.Printf("Import: table %s\n", im.tableName)
   return nil
 }
 
@@ -145,6 +160,17 @@ func (im *Importer) setColumns(columns string) error {
     return fmt.Errorf("id column is required but missing on line %d", im.lineno)
   }
   im.columnNames = columnNames
+  if im.importVersion == 1 {
+    v2TableName, v2ColumnNames, err := im.translateNames1To2(im.tableName, im.columnNames)
+    if err != nil {
+      return err
+    }
+    im.v1TableName = im.tableName
+    im.v1ColumnNames = im.columnNames
+    im.tableName = v2TableName
+    im.columnNames = v2ColumnNames
+    log.Printf("Import: translate v1 table %s to v2 table %s\n", im.v1TableName, im.tableName)
+  }
   return nil
 }
 
@@ -162,9 +188,20 @@ func (im *Importer) importDataLine(line string) error {
   // TODO - look for strings of the form "{dt 'sss'}" (or d or t) as representing
   // timestamp (datetime), date or time.
 
-  if len(values) != len(im.columnNames) {
-    return fmt.Errorf("wrong number of fields on line %d, got %d for column count %d",
-        im.lineno, len(values), len(im.columnNames))
+  if im.importVersion == 1 {
+    if len(values) != len(im.v1ColumnNames) {
+      return fmt.Errorf("wrong number of fields on line %d, got %d for v1 column count %d",
+          im.lineno, len(values), len(im.v1ColumnNames))
+    }
+  } else {
+    if len(values) != len(im.columnNames) {
+      return fmt.Errorf("wrong number of fields on line %d, got %d for column count %d",
+          im.lineno, len(values), len(im.columnNames))
+    }
+  }
+
+  if im.importVersion == 1 {
+    values = im.translateValues1To2(values)
   }
 
   isNew := false
@@ -183,6 +220,9 @@ func (im *Importer) importDataLine(line string) error {
   if existingValues == nil {
     isNew = true
   } else {
+    if len(values) != len(existingValues) {
+      return fmt.Errorf("Wrong number of values to compare against existing: got %d, expected %d", len(values), len(existingValues))
+    }
     // The row exists, look to see if any of our fields represent changes.
     for i := 0; i < len(values); i++ {
       if values[i] != existingValues[i] {

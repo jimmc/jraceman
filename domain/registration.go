@@ -14,7 +14,6 @@ type Registration struct {
   ID string
   MeetID string
   PersonID string
-  TeamID string
   AmountCharged int
   Surcharge int
   Discount int

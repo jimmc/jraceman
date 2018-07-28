@@ -32,8 +32,8 @@ func (r *dbRowRepo) Read(table string, columns []string, ID string) ([]interface
     if err == sql.ErrNoRows {
       return nil, nil           // No data and no error
     } else {
-      return nil, fmt.Errorf("error retrieving existing row %s[%s]: %v",
-          table, ID, err)
+      return nil, fmt.Errorf("error retrieving existing row %s[%s]: %v; sql=%s",
+          table, ID, err, selSql)
     }
   }
   // Convert to the expected common data types

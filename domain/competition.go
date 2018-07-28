@@ -16,5 +16,5 @@ type Competition struct {
   Name string
   GroupSize *int
   MaxAlternates *int
-  Duration *int         // duration in seconds
+  ScheduledDuration *int         // duration in seconds
 }

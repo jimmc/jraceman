@@ -206,12 +206,12 @@ func TestImportLine(t *testing.T) {
   }
 }
 
-func TestImport(t *testing.T) {
+func TestImportv2(t *testing.T) {
   trr := &testRowRepo{}
   im := ixport.NewImporter(trr)
   source := `#!jraceman -import
-!exportVersion 1
-!appInfo JRaceman v1.1.6
+!exportVersion 2
+!appInfo JRaceman v2.0.0
 !type database
 
 !table thing

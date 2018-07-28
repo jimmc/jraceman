@@ -14,11 +14,18 @@ type Person struct {
   ID string
   FirstName string
   LastName string
+  Title *string
   GenderID string
   TeamID string
-  Birthday string       // ISO8601 format, may be partial
-  Phone string
-  Email string
-  Membership string
-  MembershipExpiration string
+  Birthday *string       // ISO8601 format, may be partial
+  Membership *string
+  MembershipExpiration *string
+  Street *string
+  Street2 *string
+  City *string
+  State *string
+  Country *string
+  Zip *string
+  Phone *string
+  Email *string
 }

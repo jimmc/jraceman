@@ -10,19 +10,21 @@ type EventRepo interface {
 }
 
 // Event describes an event such as a race.
+// Most fields are optional because some events are not competition
+// events, but things like lunch (to allow to scheduling).
 type Event struct {
   ID string
   MeetID string
+  Name string
   Number *int
-  Name *string
-  CompetitionID string
-  LevelID string
-  GenderID string
+  CompetitionID *string
+  LevelID *string
+  GenderID *string
   AreaID *string
   SeedingPlanID *string
   ProgressionID *string
   ProgressionState *string
   ScoringSystemID *string
-  Scratched bool
+  Scratched *bool
   EventComment *string
 }

@@ -8,7 +8,7 @@
 #no rows
 
 !table competition
-!columns "id","name","groupsize","maxalternates","duration"
+!columns "id","name","groupsize","maxalternates","scheduledduration"
 #no rows
 
 !table complan
@@ -87,7 +87,7 @@
 #no rows
 
 !table person
-!columns "id","firstname","lastname","genderid","teamid","birthday","phone","email","membership","membershipexpiration"
+!columns "id","firstname","lastname","title","genderid","teamid","birthday","membership","membershipexpiration","street","street2","city","state","country","zip","phone","email"
 #no rows
 
 !table seedingplan
@@ -107,11 +107,11 @@
 #no rows
 
 !table registration
-!columns "id","meetid","personid","teamid","amountcharged","surcharge","discount","amountpaid","waiversigned","paymentnotes"
+!columns "id","meetid","personid","amountcharged","surcharge","discount","amountpaid","waiversigned","paymentnotes"
 #no rows
 
 !table event
-!columns "id","meetid","number","name","competitionid","levelid","genderid","areaid","seedingplanid","progressionid","progressionstate","scoringsystemid","scratched","eventcomment"
+!columns "id","meetid","name","number","competitionid","levelid","genderid","areaid","seedingplanid","progressionid","progressionstate","scoringsystemid","scratched","eventcomment"
 #no rows
 
 !table entry

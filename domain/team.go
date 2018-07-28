@@ -14,7 +14,7 @@ type Team struct {
   ID string
   ShortName string
   Name string
-  Number int
+  Number *int
   ChallengeID *string
   NonScoring bool
   Street *string
