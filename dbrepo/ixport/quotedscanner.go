@@ -13,6 +13,7 @@ const (
   TokenComma
   TokenNull
   TokenInt
+  TokenFloat
   TokenBool
   TokenString
 )
@@ -39,7 +40,7 @@ func NewQuotedScanner(line string) *QuotedScanner {
   return q
 }
 
-// CommaSeparatedValues scans the entire line and returns the values
+// CommaSeparatedTokens scans the entire line and returns the values
 // between the commas. If there are two commas with no value between,
 // a null value is assumed for that position. If there are two values
 // without a comma between, an error is returned. When an error is
@@ -112,21 +113,41 @@ func (q *QuotedScanner) Next() bool {
     for end < len(q.runes) && unicode.IsDigit(q.runes[end]) {
       end++
     }
-    // TODO - look for a . for floating point; for now assume it's an int.
-    source := string(q.runes[start:end])
-    n, err := strconv.Atoi(source)
+    var err error
+    if end < len(q.runes) && q.runes[end] == '.' {
+      // Found a decimal point, read a floating point numbers.
+      end++
+      // Scan to the end of the fractional part.
+      for end < len(q.runes) && unicode.IsDigit(q.runes[end]) {
+        end++
+      }
+      source := string(q.runes[start:end])
+      var f float64
+      f, err = strconv.ParseFloat(source, 32)
+      q.nextToken = &QuotedToken{
+        Type: TokenFloat,
+        Pos: start,
+        Source: source,
+        Value: float32(f),
+      }
+    } else {
+      source := string(q.runes[start:end])
+      var n int
+      n, err = strconv.Atoi(source)
+      if err == nil {
+        q.nextToken = &QuotedToken{
+          Type: TokenInt,
+          Pos: start,
+          Source: source,
+          Value: n,
+        }
+      }
+    }
     if err != nil {
       q.nextToken = &QuotedToken{
         Type: TokenErr,
         Pos: start,
         Err: err,
-      }
-    } else {
-      q.nextToken = &QuotedToken{
-        Type: TokenInt,
-        Pos: start,
-        Source: source,
-        Value: n,
       }
     }
     q.pos = end
