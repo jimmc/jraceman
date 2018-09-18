@@ -108,8 +108,14 @@ func (q *QuotedScanner) Next() bool {
       Source: string(q.runes[start]),
     }
     q.pos++
-  case unicode.IsDigit(r):
-    end := start + 1
+  case unicode.IsDigit(r) || r == '-' && start+1 < len(q.runes) && unicode.IsDigit(q.runes[start+1]):
+    neg := false
+    digitStart := start
+    if r == '-' {
+      neg = true
+      digitStart += 1
+    }
+    end := digitStart + 1
     for end < len(q.runes) && unicode.IsDigit(q.runes[end]) {
       end++
     }
@@ -122,8 +128,12 @@ func (q *QuotedScanner) Next() bool {
         end++
       }
       source := string(q.runes[start:end])
+      digitSource := string(q.runes[digitStart:end])
       var f float64
-      f, err = strconv.ParseFloat(source, 32)
+      f, err = strconv.ParseFloat(digitSource, 32)
+      if neg {
+        f = -f
+      }
       q.nextToken = &QuotedToken{
         Type: TokenFloat,
         Pos: start,
@@ -132,15 +142,17 @@ func (q *QuotedScanner) Next() bool {
       }
     } else {
       source := string(q.runes[start:end])
+      digitSource := string(q.runes[digitStart:end])
       var n int
-      n, err = strconv.Atoi(source)
-      if err == nil {
-        q.nextToken = &QuotedToken{
-          Type: TokenInt,
-          Pos: start,
-          Source: source,
-          Value: n,
-        }
+      n, err = strconv.Atoi(digitSource)
+      if neg {
+        n = -n
+      }
+      q.nextToken = &QuotedToken{
+        Type: TokenInt,
+        Pos: start,
+        Source: source,
+        Value: n,
       }
     }
     if err != nil {

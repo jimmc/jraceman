@@ -15,7 +15,7 @@ func TestQuotedScannerEmpty(t *testing.T) {
 }
 
 func TestQuotedScannerBasic(t *testing.T) {
-  q := ixport.NewQuotedScanner("123,true,,\"abc\",null,false,456.78")
+  q := ixport.NewQuotedScanner("123,true,,\"abc\",null,false,456.78,-3,-0.9")
 
   expectedTokens := []*ixport.QuotedToken{
     &ixport.QuotedToken{
@@ -82,6 +82,28 @@ func TestQuotedScannerBasic(t *testing.T) {
       Pos: 27,
       Source: "456.78",
       Value: float32(456.78),
+    },
+    &ixport.QuotedToken{
+      Type: ixport.TokenComma,
+      Pos: 33,
+      Source: ",",
+    },
+    &ixport.QuotedToken{
+      Type: ixport.TokenInt,
+      Pos: 34,
+      Source: "-3",
+      Value: -3,
+    },
+    &ixport.QuotedToken{
+      Type: ixport.TokenComma,
+      Pos: 36,
+      Source: ",",
+    },
+    &ixport.QuotedToken{
+      Type: ixport.TokenFloat,
+      Pos: 37,
+      Source: "-0.9",
+      Value: float32(-0.9),
     },
   }
 
