@@ -18,9 +18,9 @@ type Race struct {
   Section *int
   AreaID *string
   Number *int
-  ScheduledStart *string        // timestamp
+  ScheduledStart *string        // datetime
   ScheduledDuration *int        // duration
-  ActualString *string          // timestamp
+  ActualStart *string          // datetime
   Scratched bool
   RaceComment *string
 }

@@ -16,6 +16,7 @@ const (
   TokenFloat
   TokenBool
   TokenString
+  TokenDateTime   // For example, {dt '2019-01-02 10:11:12.0'}.
 )
 
 type QuotedScanner struct {
@@ -211,6 +212,41 @@ func (q *QuotedScanner) Next() bool {
         Value: string(unescapedRunes),
       }
     }
+  case r == '{':
+    ok := false
+    end := start + 1
+    for end < len(q.runes) && q.runes[end] != '}' {
+      end++
+    }
+    if end < len(q.runes) && q.runes[end] == '}' {
+      end++
+      ok = true
+    }
+    source := string(q.runes[start:end])
+    var err error
+    if !ok {
+      err = fmt.Errorf("closing brace missing: %v", source)
+    } else if !strings.HasPrefix(source, "{dt ") {
+      err = fmt.Errorf("unrecognized brace keyword: %v", source)
+    } else if !strings.HasPrefix(source, "{dt '") || !strings.HasSuffix(source, "'}") {
+      err = fmt.Errorf("improperly quoted datetime string: %v", source)
+    } else {
+      q.nextToken = &QuotedToken{
+        Type: TokenDateTime,
+        Pos: start,
+        Source: source,
+        Value: strings.TrimSuffix(strings.TrimPrefix(source, "{dt '"), "'}"),
+      }
+    }
+    if err != nil {
+      q.nextToken = &QuotedToken{
+        Type: TokenErr,
+        Pos: start,
+        Source: source,
+        Err: err,
+      }
+    }
+    q.pos = end
   default:
     // The only other thing we support is boolean values or null
     end := start + 1

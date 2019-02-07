@@ -59,6 +59,9 @@ func (im *Importer) Import(reader io.Reader) error {
     if err := im.ImportLine(line); err != nil {
       return fmt.Errorf("line %d: %v", im.lineno, err)
     }
+    if im.lineno % 100 == 0 {
+      log.Printf("Import: %d lines processed\n", im.lineno)
+    }
   }
   if err := scanner.Err(); err != nil {
     return err
@@ -228,8 +231,10 @@ func (im *Importer) importDataLine(line string) error {
       if values[i] != existingValues[i] {
         diffColumns = append(diffColumns, im.columnNames[i])
         diffValues = append(diffValues, values[i])
+        /*
         log.Printf("column:%s old:%v(%T) new:%v(%T)",
             im.columnNames[i], existingValues[i], existingValues[i], values[i], values[i])
+        */
       }
     }
   }

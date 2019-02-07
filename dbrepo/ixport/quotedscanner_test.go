@@ -122,6 +122,55 @@ func TestQuotedScannerBasic(t *testing.T) {
   }
 }
 
+func TestQuotedScannerDateTime(t *testing.T) {
+  q := ixport.NewQuotedScanner("123,{dt '2019-01-02 10:11:12.0'},456")
+
+  expectedTokens := []*ixport.QuotedToken{
+    &ixport.QuotedToken{
+      Type: ixport.TokenInt,
+      Pos: 0,
+      Source: "123",
+      Value: 123,
+    },
+    &ixport.QuotedToken{
+      Type: ixport.TokenComma,
+      Pos: 3,
+      Source: ",",
+    },
+    &ixport.QuotedToken{
+      Type: ixport.TokenDateTime,
+      Pos: 4,
+      Source: "{dt '2019-01-02 10:11:12.0'}",
+      Value: "2019-01-02 10:11:12.0",
+    },
+    &ixport.QuotedToken{
+      Type: ixport.TokenComma,
+      Pos: 32,
+      Source: ",",
+    },
+    &ixport.QuotedToken{
+      Type: ixport.TokenInt,
+      Pos: 33,
+      Source: "456",
+      Value: 456,
+    },
+  }
+
+  for n, xt := range expectedTokens {
+    if !q.Next() {
+      t.Fatalf("Should have token #%d", n)
+    }
+    if got, want := q.Token(), xt; !reflect.DeepEqual(got, want) {
+      t.Fatalf("Token #%d: got %+v, want %+v", n, got, want)
+    }
+  }
+
+  if q.Next() {
+    xt := q.Token()
+    t.Fatalf("Extra token: %v", xt)
+  }
+}
+
 func TestQuotedScannerQuotes(t *testing.T) {
   q := ixport.NewQuotedScanner(`"a\"b","c\\d","e\n\t"`)
 

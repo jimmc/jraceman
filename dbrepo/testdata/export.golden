@@ -119,7 +119,7 @@
 #no rows
 
 !table race
-!columns "id","eventid","stageid","round","section","areaid","number","scheduledstart","scheduledduration","actualstring","scratched","racecomment"
+!columns "id","eventid","stageid","round","section","areaid","number","scheduledstart","scheduledduration","actualstart","scratched","racecomment"
 #no rows
 
 !table lane
