@@ -59,9 +59,11 @@ func (im *Importer) Import(reader io.Reader) error {
     if err := im.ImportLine(line); err != nil {
       return fmt.Errorf("line %d: %v", im.lineno, err)
     }
+    /*
     if im.lineno % 100 == 0 {
       log.Printf("Import: %d lines processed\n", im.lineno)
     }
+    */
   }
   if err := scanner.Err(); err != nil {
     return err
