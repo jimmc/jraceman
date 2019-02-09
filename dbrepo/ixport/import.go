@@ -9,6 +9,24 @@ import (
   "strings"
 )
 
+type ImporterCounts struct {
+  inserted int
+  updated int
+  unchanged int
+}
+
+func (i ImporterCounts) Inserted() int {
+  return i.inserted
+}
+
+func (i ImporterCounts) Updated() int {
+  return i.updated
+}
+
+func (i ImporterCounts) Unchanged() int {
+  return i.unchanged
+}
+
 type Importer struct {
   rowRepo RowRepo
   lineno int
@@ -17,9 +35,7 @@ type Importer struct {
   v1TableName string
   v1ColumnNames []string
   idIndex int
-  insertCount int
-  updateCount int
-  unchangedCount int
+  counts ImporterCounts
   importVersion int
   v1v2map map[string]*tableMapValue
 }
@@ -46,8 +62,8 @@ func (im *Importer) ColumnNames() []string {
   return im.columnNames
 }
 
-func (im *Importer) Counts() (insertCount, updateCount, unchangedCount int) {
-  return im.insertCount, im.updateCount, im.unchangedCount
+func (im *Importer) Counts() ImporterCounts {
+  return im.counts
 }
 
 func (im *Importer) Import(reader io.Reader) error {
@@ -245,15 +261,15 @@ func (im *Importer) importDataLine(line string) error {
     if err := im.rowRepo.Insert(im.tableName, im.columnNames, values, ID); err != nil {
       return err
     }
-    im.insertCount++
+    im.counts.inserted++
   } else if len(diffColumns) > 0 {
     if err := im.rowRepo.Update(im.tableName, diffColumns, diffValues, ID); err != nil {
       return err
     }
-    im.updateCount++
+    im.counts.updated++
   } else {
     // No change to the existing data.
-    im.unchangedCount++
+    im.counts.unchanged++
   }
 
   return nil

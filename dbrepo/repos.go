@@ -241,10 +241,10 @@ func (r *Repos) UpgradeTable(tableName string, dryrun bool) (bool, string, error
 }
 
 // Import reads in the specified text file and loads our tables.
-func (r *Repos) Import(in io.Reader) (int, int, int, error) {
+func (r *Repos) Import(in io.Reader) (ixport.ImporterCounts, error) {
   rr, err := NewRowRepoWithTx(r)
   if err != nil {
-    return 0, 0, 0, err
+    return ixport.ImporterCounts{}, err
   }
   var committed bool
   defer func() {
@@ -258,8 +258,7 @@ func (r *Repos) Import(in io.Reader) (int, int, int, error) {
     err = rr.Commit()
     committed = true
   }
-  insertCount, updateCount, unchangedCount := im.Counts()
-  return insertCount, updateCount, unchangedCount, err
+  return im.Counts(), err
 }
 
 // Export writes out all of our tables to a text file that can

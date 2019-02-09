@@ -105,17 +105,17 @@ func exportFile(config *config, dbRepos *dbrepo.Repos) error {
 func importFile(config *config, dbRepos *dbrepo.Repos) error {
   inFile, err := os.Open(config.importFile)
   if err != nil {
-    return fmt.Errorf("error opening import imput file %s: %v", config.importFile, err)
+    return fmt.Errorf("error opening import input file %s: %v", config.importFile, err)
   }
   defer inFile.Close()
 
   log.Printf("Importing from %s\n", config.importFile)
-  insertCount, updateCount, unchangedCount, err := dbRepos.Import(inFile)
+  counts, err := dbRepos.Import(inFile)
   if err != nil {
     return fmt.Errorf("error importing from %s: %v", config.importFile, err)
   }
   log.Printf("Import done: inserted %d, updated %d, unchanged %d records\n",
-      insertCount, updateCount, unchangedCount)
+      counts.Inserted(), counts.Updated(), counts.Unchanged())
   return nil
 }
 

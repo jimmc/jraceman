@@ -101,17 +101,17 @@ func TestImport(t *testing.T) {
     t.Errorf("Error creating tables: %v", err)
   }
 
-  inserted, updated, unchanged, err := dbr.Import(infile)
+  counts, err := dbr.Import(infile)
   if err != nil {
     t.Errorf("Error importing file: %v", err)
   }
-  if got, want := inserted, 5; got != want {
+  if got, want := counts.Inserted(), 5; got != want {
     t.Errorf("Inserted count, got %d, want %d", got, want)
   }
-  if got, want := updated, 0; got != want {
+  if got, want := counts.Updated(), 0; got != want {
     t.Errorf("Updated count, got %d, want %d", got, want)
   }
-  if got, want := unchanged, 0; got != want {
+  if got, want := counts.Unchanged(), 0; got != want {
     t.Errorf("Unchanged count, got %d, want %d", got, want)
   }
 
@@ -120,17 +120,17 @@ func TestImport(t *testing.T) {
     t.Fatalf("Error opening import file (2): %v", err)
   }
   defer infile2.Close()
-  inserted, updated, unchanged, err = dbr.Import(infile2)
+  counts, err = dbr.Import(infile2)
   if err != nil {
     t.Errorf("Error importing file: %v", err)
   }
-  if got, want := inserted, 1; got != want {
+  if got, want := counts.Inserted(), 1; got != want {
     t.Errorf("Inserted count, got %d, want %d", got, want)
   }
-  if got, want := updated, 2; got != want {
+  if got, want := counts.Updated(), 2; got != want {
     t.Errorf("Updated count, got %d, want %d", got, want)
   }
-  if got, want := unchanged, 3; got != want {
+  if got, want := counts.Unchanged(), 3; got != want {
     t.Errorf("Unchanged count, got %d, want %d", got, want)
   }
 }
@@ -150,7 +150,7 @@ func TestExport(t *testing.T) {
     t.Errorf("Error creating tables: %v", err)
   }
 
-  _, _, _, err = dbr.Import(infile)
+  _, err = dbr.Import(infile)
   if err != nil {
     t.Errorf("Error importing file: %v", err)
   }

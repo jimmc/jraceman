@@ -231,12 +231,14 @@ func TestImportv2(t *testing.T) {
   if got, want := trr.insertCount, 2; got != want {
     t.Errorf("InsertCount, got %v, want %v", got, want)
   }
-  insert, update, unchanged := im.Counts()
-  if got, want := insert, 2; got != want {
-    t.Errorf("Import InsertCount, got %d, want %d", got, want)
+  inserted := im.Counts().Inserted()
+  updated := im.Counts().Updated()
+  unchanged := im.Counts().Unchanged()
+  if got, want := inserted, 2; got != want {
+    t.Errorf("Import InsertedCount, got %d, want %d", got, want)
   }
-  if got, want := update, 0; got != want {
-    t.Errorf("Import UpdateCount, got %d, want %d", got, want)
+  if got, want := updated, 0; got != want {
+    t.Errorf("Import UpdatedCount, got %d, want %d", got, want)
   }
   if got, want := unchanged, 0; got != want {
     t.Errorf("Import UnchangedCount, got %d, want %d", got, want)
