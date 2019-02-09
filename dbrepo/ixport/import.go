@@ -261,7 +261,7 @@ func (im *Importer) importDataLine(line string) error {
     }
     // The row exists, look to see if any of our fields represent changes.
     for i := 0; i < len(values); i++ {
-      if values[i] != existingValues[i] {
+      if fieldChanged(values[i], existingValues[i]) {
         diffColumns = append(diffColumns, im.columnNames[i])
         diffValues = append(diffValues, values[i])
         /*
@@ -288,4 +288,32 @@ func (im *Importer) importDataLine(line string) error {
   }
 
   return nil
+}
+
+func fieldChanged(newVal interface{}, oldVal interface{}) bool {
+  if newVal == oldVal {
+    return false
+  }
+  // Look for values that compare differently, but we consider unchanged.
+  switch newV := newVal.(type) {
+  case float32:
+    switch oldV := oldVal.(type) {
+    case float64:
+      return float64(newV) != oldV
+    case int:
+      return newV != float32(oldV)
+    }
+  case bool:
+    switch oldV := oldVal.(type) {
+    case int:
+      return newV != (oldV != 0)
+    }
+  case string:
+    switch oldV := oldVal.(type) {
+    case int:
+      return newV != strconv.Itoa(oldV)
+    }
+  }
+  // Didn't find any compatible types.
+  return true
 }
