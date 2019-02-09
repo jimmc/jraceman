@@ -36,6 +36,7 @@ type Importer struct {
   v1ColumnNames []string
   idIndex int
   counts ImporterCounts
+  tableStartCounts ImporterCounts
   importVersion int
   v1v2map map[string]*tableMapValue
 }
@@ -81,6 +82,7 @@ func (im *Importer) Import(reader io.Reader) error {
     }
     */
   }
+  im.printPreviousTableStats()
   if err := scanner.Err(); err != nil {
     return err
   }
@@ -159,11 +161,24 @@ func (im *Importer) setType(appType string) error {
 }
 
 func (im *Importer) setTable(tableName string) error {
+  im.printPreviousTableStats()
+  im.tableStartCounts = im.counts
   im.tableName = tableName
   im.columnNames = []string{}
   im.idIndex = -1
   log.Printf("Import: table %s\n", im.tableName)
   return nil
+}
+
+func (im *Importer) printPreviousTableStats() {
+  if im.tableName == "" {
+    return              // No previous table.
+  }
+  tableInserted := im.counts.inserted - im.tableStartCounts.inserted
+  tableUpdated := im.counts.updated - im.tableStartCounts.updated
+  tableUnchanged := im.counts.unchanged - im.tableStartCounts.unchanged
+  log.Printf("Import: for table %s: inserted %d, updated %d, unchanged %d",
+      im.tableName, tableInserted, tableUpdated, tableUnchanged)
 }
 
 func (im *Importer) setColumns(columns string) error {
