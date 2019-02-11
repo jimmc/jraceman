@@ -35,6 +35,7 @@ type Importer struct {
   v1TableName string
   v1ColumnNames []string
   idIndex int
+  nameIndex int
   counts ImporterCounts
   tableStartCounts ImporterCounts
   importVersion int
@@ -42,9 +43,9 @@ type Importer struct {
 }
 
 type RowRepo interface {
-  Read(table string, columns []string, ID string) ([]interface{}, error)
-  Insert(table string, columns[]string, values []interface{}, ID string) error
-  Update(table string, columns[]string, values []interface{}, ID string) error
+  ReadByKey(table string, columns []string, keyName, key string) ([]interface{}, error)
+  Insert(table string, columns[]string, values []interface{}, key string) error
+  UpdateByKey(table string, columns[]string, values []interface{}, keyName, key string) error
 }
 
 func NewImporter(rowRepo RowRepo) *Importer {
@@ -166,6 +167,7 @@ func (im *Importer) setTable(tableName string) error {
   im.tableName = tableName
   im.columnNames = []string{}
   im.idIndex = -1
+  im.nameIndex = -1
   log.Printf("Import: table %s\n", im.tableName)
   return nil
 }
@@ -184,16 +186,22 @@ func (im *Importer) printPreviousTableStats() {
 func (im *Importer) setColumns(columns string) error {
   columnNames := strings.Split(columns, ",")
   hasID := false
+  hasName := false
   im.idIndex = -1
+  im.nameIndex = -1
   for n, _ := range columnNames {
     columnNames[n] = strings.TrimPrefix(strings.TrimSuffix(columnNames[n], `"`), `"`)
     if columnNames[n] == "id" {
       hasID = true
       im.idIndex = n
     }
+    if columnNames[n] == "name" {
+      hasName = true
+      im.nameIndex = n
+    }
   }
-  if !hasID {
-    return fmt.Errorf("id column is required but missing on line %d", im.lineno)
+  if !hasID && !hasName {
+    return fmt.Errorf("id or name column is required but missing on line %d", im.lineno)
   }
   im.columnNames = columnNames
   if im.importVersion == 1 {
@@ -212,8 +220,8 @@ func (im *Importer) setColumns(columns string) error {
 
 // ImportDataLine processes a line with field data values.
 func (im *Importer) importDataLine(line string) error {
-  if im.idIndex < 0 {
-    return fmt.Errorf("id column has not been specified")
+  if im.idIndex < 0 && im.nameIndex < 0 {
+    return fmt.Errorf("id or name column has not been specified")
   }
   s := NewQuotedScanner(line)
   tokens, err := s.CommaSeparatedTokens()
@@ -221,8 +229,6 @@ func (im *Importer) importDataLine(line string) error {
     return err
   }
   values := s.TokensToValues(tokens)
-  // TODO - look for strings of the form "{dt 'sss'}" (or d or t) as representing
-  // timestamp (datetime), date or time.
 
   if im.importVersion == 1 {
     if len(values) != len(im.v1ColumnNames) {
@@ -243,15 +249,21 @@ func (im *Importer) importDataLine(line string) error {
   isNew := false
   diffColumns := []string{}
   diffValues := []interface{}{}
-  ID, ok := values[im.idIndex].(string)
+  keyIndex := im.idIndex
+  keyName := "id"
+  if keyIndex < 0 {
+    keyIndex = im.nameIndex
+    keyName = "name"
+  }
+  key, ok := values[keyIndex].(string)
   if !ok {
-    return fmt.Errorf("id value must be a string, line %d", im.lineno)
+    return fmt.Errorf("id or name value must be a string, line %d", im.lineno)
   }
   // Look up the existing row to see if it exists and whether we are changing it.
-  existingValues, err := im.rowRepo.Read(im.tableName, im.columnNames, ID)
+  existingValues, err := im.rowRepo.ReadByKey(im.tableName, im.columnNames, keyName, key)
   if err != nil {
     return fmt.Errorf("error retrieving existing data for %s[%s]: %v",
-        im.tableName, values[im.idIndex], err)
+        im.tableName, key, err)
   }
   if existingValues == nil {
     isNew = true
@@ -273,12 +285,12 @@ func (im *Importer) importDataLine(line string) error {
   }
 
   if isNew {
-    if err := im.rowRepo.Insert(im.tableName, im.columnNames, values, ID); err != nil {
+    if err := im.rowRepo.Insert(im.tableName, im.columnNames, values, key); err != nil {
       return err
     }
     im.counts.inserted++
   } else if len(diffColumns) > 0 {
-    if err := im.rowRepo.Update(im.tableName, diffColumns, diffValues, ID); err != nil {
+    if err := im.rowRepo.UpdateByKey(im.tableName, diffColumns, diffValues, keyName, key); err != nil {
       return err
     }
     im.counts.updated++

@@ -46,19 +46,23 @@ func (r *dbRowRepo) Rollback() error {
 }
 
 func (r *dbRowRepo) Read(table string, columns []string, ID string) ([]interface{}, error) {
+  return r.ReadByKey(table, columns, "id", ID)
+}
+
+func (r *dbRowRepo) ReadByKey(table string, columns []string, keyName, key string) ([]interface{}, error) {
   values := make([]interface{}, len(columns))
   targets := make([]interface{}, len(columns))
   for i := 0; i < len(values); i++ {
     targets[i] = &values[i]
   }
-  selSql := "SELECT " + strings.Join(columns, ",") + " from " + table + " where id=?;"
-  err := r.queryRow(selSql, ID).Scan(targets...)
+  selSql := "SELECT " + strings.Join(columns, ",") + " from " + table + " where " + keyName + "=?;"
+  err := r.queryRow(selSql, key).Scan(targets...)
   if err != nil {
     if err == sql.ErrNoRows {
       return nil, nil           // No data and no error
     } else {
       return nil, fmt.Errorf("error retrieving existing row %s[%s]: %v; sql=%s",
-          table, ID, err, selSql)
+          table, key, err, selSql)
     }
   }
   // Convert to the expected common data types
@@ -73,18 +77,22 @@ func (r *dbRowRepo) Read(table string, columns []string, ID string) ([]interface
   return values, nil
 }
 
-func (r *dbRowRepo) Insert(table string, columns[]string, values []interface{}, ID string) error {
+func (r *dbRowRepo) Insert(table string, columns[]string, values []interface{}, key string) error {
   insSql := "INSERT into " + table + "(" + strings.Join(columns, ",") + ") values(" +
       strings.Repeat("?,", len(columns) - 1) + "?);"
   res, err := r.exec(insSql, values...)
-  return structsql.RequireOneResult(res, err, "Inserted", table, ID)
+  return structsql.RequireOneResult(res, err, "Inserted", table, key)
 }
 
 func (r *dbRowRepo) Update(table string, columns[]string, values []interface{}, ID string) error {
-  insSql := "UPDATE " + table + " set " + strings.Join(columns, " = ?, ") + " = ? where id = ?;"
-  values = append(values, ID)
+  return r.UpdateByKey(table, columns, values, "id", ID)
+}
+
+func (r *dbRowRepo) UpdateByKey(table string, columns[]string, values []interface{}, keyName, key string) error {
+  insSql := "UPDATE " + table + " set " + strings.Join(columns, " = ?, ") + " = ? where " + keyName + " = ?;"
+  values = append(values, key)
   res, err := r.exec(insSql, values...)
-  return structsql.RequireOneResult(res, err, "Updated", table, ID)
+  return structsql.RequireOneResult(res, err, "Updated", table, key)
 }
 
 func (r *dbRowRepo) queryRow(query string, args ...interface{}) *sql.Row {

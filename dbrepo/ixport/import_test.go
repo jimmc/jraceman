@@ -20,13 +20,13 @@ type testRowRepo struct {
   updateCount int
 }
 
-func (tr *testRowRepo) Read(table string, columns []string, ID string) ([]interface{}, error) {
+func (tr *testRowRepo) ReadByKey(table string, columns []string, keyName, key string) ([]interface{}, error) {
   tr.table = table
   tr.columns = columns
-  tr.id = ID
+  tr.id = key
   tr.readCount++
   var values []interface{}
-  switch ID {
+  switch key {
   case "A1":
     values = nil        // This is how we indicate we don't have this row
   case "A2":
@@ -48,11 +48,11 @@ func (tr *testRowRepo) Insert(table string, columns[]string, values []interface{
   return nil
 }
 
-func (tr *testRowRepo) Update(table string, columns[]string, values []interface{}, ID string) error {
+func (tr *testRowRepo) UpdateByKey(table string, columns[]string, values []interface{}, keyName, key string) error {
   tr.table = table
   tr.columns = columns
   tr.values = values
-  tr.id = ID
+  tr.id = key
   tr.updateCount++
   return nil
 }
