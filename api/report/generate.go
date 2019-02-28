@@ -70,7 +70,8 @@ func (h *handler) generateReportForHTTP(w http.ResponseWriter, r *http.Request, 
   }
   db := dbrepos.DB()
   log.Printf("Generating report: %v", name)
-  result, err := reportmain.GenerateResults(db, h.config.ReportRoot, name, data)
+  refdirs := []string{h.config.ReportRoot}
+  result, err := reportmain.GenerateResults(db, refdirs, name, data)
   if err != nil {
     http.Error(w, fmt.Sprintf("Error generating report: %v", err), http.StatusBadRequest)
     return

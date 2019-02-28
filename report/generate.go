@@ -13,13 +13,13 @@ type ReportResults struct {
 
 // GenerateResults generates a report from a form and a top piece of data.
 // The db argument can be either a sql.DB or a sql.Tx.
-func GenerateResults(db dbsource.DBQuery, reportRoot, formname, data string) (*ReportResults, error) {
+func GenerateResults(db dbsource.DBQuery, reportRoots []string, formname, data string) (*ReportResults, error) {
   dataSource := dbsource.New(db)
-  refdirpath := reportRoot
+  refdirpaths := reportRoots
   w := &strings.Builder{}
 
   g := gen.New(formname, true, w, dataSource)
-  if err := g.FromForm(refdirpath, data); err != nil {
+  if err := g.FromForm(refdirpaths, data); err != nil {
     return nil, err
   }
 
