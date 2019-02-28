@@ -8,6 +8,7 @@ import (
   apidb "github.com/jimmc/jracemango/api/database"
   apidebug "github.com/jimmc/jracemango/api/debug"
   "github.com/jimmc/jracemango/api/query"
+  apireport "github.com/jimmc/jracemango/api/report"
   "github.com/jimmc/jracemango/domain"
 )
 
@@ -21,6 +22,7 @@ type handler struct {
 type Config struct {
   Prefix string
   DomainRepos domain.Repos
+  ReportRoot string
 }
 
 // NewHandler creates the http handler that is used to route api requests.
@@ -52,6 +54,15 @@ func NewHandler(c *Config) http.Handler {
   debugHandler := apidebug.NewHandler(debugConfig)
   mux.Handle(debugPrefix, debugHandler)
 
+  reportPrefix := h.apiPrefix("report")
+  reportConfig := &apireport.Config{
+    Prefix: reportPrefix,
+    DomainRepos: c.DomainRepos,
+    ReportRoot: c.ReportRoot,
+  }
+  reportHandler := apireport.NewHandler(reportConfig)
+  mux.Handle(reportPrefix, reportHandler)
+
   queryPrefix := h.apiPrefix("query")
   queryConfig := &query.Config{
     Prefix: queryPrefix,
@@ -65,7 +76,8 @@ func NewHandler(c *Config) http.Handler {
 }
 
 func (h *handler) blank(w http.ResponseWriter, r *http.Request) {
-  http.Error(w, "Try one of /api/crud, /api/database, /api/debug, /api/query", http.StatusForbidden)
+  http.Error(w, "Try one of /api/crud, /api/database, /api/debug, /api/report, /api/query",
+      http.StatusForbidden)
 }
 
 // ApiPrefix composes our prefix with the next path component so that we can

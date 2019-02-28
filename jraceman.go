@@ -19,6 +19,7 @@ import (
 type config struct {
   // configuration
   port int
+  reportRoot string
   uiRoot string
   db string
 
@@ -33,6 +34,7 @@ func main() {
 
   // Configuration flags
   flag.IntVar(&config.port, "port", 8080, "port on which to listen for connections")
+  flag.StringVar(&config.reportRoot, "reportroot", "report/form", "location of report root")
   flag.StringVar(&config.uiRoot, "uiroot", "_ui/build/default", "location of ui root (build/default)")
   flag.StringVar(&config.db, "db", "", "location of database, in the form driver:name")
 
@@ -127,6 +129,7 @@ func runHttpServer(config *config, dbRepos *dbrepo.Repos) {
   apiHandler := api.NewHandler(&api.Config{
     Prefix: apiPrefix,
     DomainRepos: dbRepos,
+    ReportRoot: config.reportRoot,
   })
   mux.Handle("/ui/", http.StripPrefix("/ui/", uiFileHandler))
   mux.Handle(apiPrefix, apiHandler)
