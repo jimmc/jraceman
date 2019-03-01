@@ -14,14 +14,14 @@ func TestList(t *testing.T) {
   request := func() (*http.Request, error) {
     return http.NewRequest("GET", "/api/crud/site/", nil)
   }
-  if err := apitest.StartToGolden("site-list", request);
+  if err := apitest.StartCrudToGolden("site-list", request);
        err != nil {
     t.Error(err.Error())
   }
 }
 
 func TestListLimit(t *testing.T) {
-  repos, handler, err := apitest.StartToSetup()
+  repos, handler, err := apitest.StartCrudToSetup()
   if err != nil{
     t.Fatal(err.Error())
   }
@@ -46,14 +46,14 @@ func TestGet(t *testing.T) {
   request := func() (*http.Request, error) {
     return http.NewRequest("GET", "/api/crud/site/S2", nil)
   }
-  if err := apitest.StartToGolden("site-get", request);
+  if err := apitest.StartCrudToGolden("site-get", request);
        err != nil {
     t.Error(err.Error())
   }
 }
 
 func TestCreateWithID(t *testing.T) {
-  repos, handler, err := apitest.StartToSetup()
+  repos, handler, err := apitest.StartCrudToSetup()
   if err != nil{
     t.Fatal(err.Error())
   }
