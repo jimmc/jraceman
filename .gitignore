@@ -1,3 +1,4 @@
 jracemango
+report/testdata/*.html
 *.swp
 **/*.out

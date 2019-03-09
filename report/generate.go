@@ -18,7 +18,14 @@ func GenerateResults(db dbsource.DBQuery, reportRoots []string, formname, data s
   refdirpaths := reportRoots
   w := &strings.Builder{}
 
+  // TODO - this is just a sample function
+  incr := func(n int) int {
+    return n + 1
+  }
   g := gen.New(formname, true, w, dataSource)
+  g = g.WithFuncs(map[string]interface{}{
+    "incr": incr,
+  })
   if err := g.FromForm(refdirpaths, data); err != nil {
     return nil, err
   }

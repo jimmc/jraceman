@@ -1,0 +1,122 @@
+
+
+<html>
+<body>
+  <div class="header">
+<div class="top">
+<span class="left"></span>
+<span class="center"></span>
+<span class="right"></span>
+</div>
+<div class="jracemanDateLine">
+<table width="100%"><tr><td bgcolor="#f0f0f0" align=center>
+<font color="#808080">
+Printed Mar 12, 2018 10:11:12 AM
+by <a href="http://www.jraceman.org/">JRaceman</a>
+</font>
+</td></tr>
+</table>
+</div>
+<div class="bottom">
+<span class="left"></span>
+<span class="center"></span>
+<span class="right"></span>
+</div>
+
+  </div>
+  <center>
+  <div class="titleArea">
+    <h3>Entries By {@orderBy.display}</h3>
+  </div>
+  <table class="main" border=1>
+    <tr class="rowHeader">
+      <th>Team</th>
+      <th>Person</th>
+      <th>Event</th>
+      <th>Group</th>
+      <th>Alternate?</th>
+    </tr>
+
+    <tr class="rowParity0">
+      <td>CCC</td>
+      <td>Doe, John</td>
+      <td>#1 C1 500m Bantam Men</td>
+      <td></td>
+      <td></td>
+    </tr>
+
+    <tr class="rowParity1">
+      <td>CCC</td>
+      <td>Doe, Sam</td>
+      <td>#1 C1 500m Bantam Men</td>
+      <td></td>
+      <td></td>
+    </tr>
+
+    <tr class="rowParity0">
+      <td>CCC</td>
+      <td>Johnson, David</td>
+      <td>#1 C1 500m Bantam Men</td>
+      <td></td>
+      <td></td>
+    </tr>
+
+    <tr class="rowParity1">
+      <td>CCC</td>
+      <td>Johnson, Diane</td>
+      <td>#1 C1 500m Bantam Men</td>
+      <td></td>
+      <td></td>
+    </tr>
+
+    <tr class="rowParity0">
+      <td>ASP</td>
+      <td>Jones, Mike</td>
+      <td>#1 C1 500m Bantam Men</td>
+      <td></td>
+      <td></td>
+    </tr>
+
+    <tr class="rowParity1">
+      <td>ASP</td>
+      <td>Brown, Susan</td>
+      <td>#1 C1 500m Bantam Men</td>
+      <td></td>
+      <td></td>
+    </tr>
+
+
+    <tr class="rowTotal">
+      <td><b>Totals</b></td>
+      <td><b>#Teams: 2, &nbsp; #People: 6</b></td>
+      <td><b>#Entries: 6, &nbsp; #Events: 1</b></td>
+      <td><b>#Groups: 0</b></td>
+      <td><b>#Alt: 0</b></td>
+    </tr>
+
+  </table>
+  <div class="footer">
+<div class="top">
+<span class="left"></span>
+<span class="center"></span>
+<span class="right"></span>
+</div>
+<div class="jracemanDateLine">
+<table width="100%"><tr><td bgcolor="#f0f0f0" align=center>
+<font color="#808080">
+Printed Mar 12, 2018 10:11:12 AM
+by <a href="http://www.jraceman.org/">JRaceman</a>
+</font>
+</td></tr>
+</table>
+</div>
+<div class="bottom">
+<span class="left"></span>
+<span class="center"></span>
+<span class="right"></span>
+</div>
+
+  </div>
+</body>
+</html>
+
