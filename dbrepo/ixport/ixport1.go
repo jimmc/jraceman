@@ -114,6 +114,8 @@ func (im *Importer) translateNames1To2(v1TableName string, v1ColumnNames []strin
     v2columnName := tableMap.columnMap[v1columnName]
     if v2columnName != "" {
       v2columnNames = append(v2columnNames, tableMap.columnMap[v1columnName])
+    } else {
+      log.Printf("No translation for v1 table %s column %s", v1TableName, v1columnName)
     }
   }
   return tableMap.tableName, v2columnNames, nil
@@ -128,9 +130,6 @@ func (im *Importer) translateValues1To2(values []interface{}) []interface{} {
   if im.tableName == "area" {
     return im.translateAreaValues1To2(values)
   }
-  if im.tableName == "person" {
-    return im.translatePersonValues1To2(values)
-  }
   if im.tableName == "registration" {
     return im.translateRegistrationValues1To2(values)
   }
@@ -140,7 +139,8 @@ func (im *Importer) translateValues1To2(values []interface{}) []interface{} {
   if im.tableName == "team" {
     return im.translateTeamValues1To2(values)
   }
-  return values
+  // For all other tables, look for and remove values for columns we don't translate.
+  return im.removeNontranslatedValues(values)
 }
 
 // In all of the following table data translation functions,
@@ -159,7 +159,7 @@ func (im *Importer) translateAreaValues1To2(values []interface{}) []interface{} 
   return values
 }
 
-func (im *Importer) translatePersonValues1To2(values []interface{}) []interface{} {
+func (im *Importer) removeNontranslatedValues(values []interface{}) []interface{} {
   // We drop some column values.
   v2values := make([]interface{}, len(im.columnNames))
   c2 := 0
@@ -170,7 +170,7 @@ func (im *Importer) translatePersonValues1To2(values []interface{}) []interface{
     }
   }
   if c2 != len(im.columnNames) {
-    log.Printf("Wrong number of values being returned from translatePersonValue1To2, got %d, want %d",
+    log.Printf("Wrong number of values being returned from removeNontranslatedValues, got %d, want %d",
         c2, len(im.columnNames))
   }
   return v2values
