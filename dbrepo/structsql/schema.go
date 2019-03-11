@@ -18,6 +18,9 @@ func ColumnSpec(colInfo ColumnInfo) string {
     if colInfo.Required {
       columnSpec = columnSpec + " not null"
     }
+    if colInfo.HasDefault {
+      columnSpec = columnSpec + " default " + colInfo.DefaultAsString
+    }
     if colInfo.IsForeignKey {
       columnSpec = columnSpec + " references " + colInfo.FKTable + "(id)"
     }

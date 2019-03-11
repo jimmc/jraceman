@@ -1,6 +1,7 @@
 package structsql
 
 import (
+  "log"
   "reflect"
   "strings"
 )
@@ -12,6 +13,8 @@ type ColumnInfo struct {
   Required bool
   IsForeignKey bool
   FKTable string
+  HasDefault bool
+  DefaultAsString string
 }
 
 // ColumnInfosDiff describes how to change from one []ColumnInfo
@@ -59,6 +62,17 @@ func ColumnInfos(entity interface{}) []ColumnInfo {
       if isForeignKey {
         columnInfos[i].IsForeignKey = isForeignKey
         columnInfos[i].FKTable = strings.TrimSuffix(columnName, "id")
+      }
+      if columnInfos[i].Required {
+        // For non-id required columns, assume the default is the zero value.
+        columnInfos[i].HasDefault = true
+        switch columnType {
+        case "bool": columnInfos[i].DefaultAsString = "false"
+        case "float32": columnInfos[i].DefaultAsString = "0.0"
+        case "int": columnInfos[i].DefaultAsString = "0"
+        case "string": columnInfos[i].DefaultAsString = "''"
+        default: log.Printf("Unknown columnType %q for %s", columnType, columnName)
+        }
       }
     }
     columnInfos[i].Name = columnName
