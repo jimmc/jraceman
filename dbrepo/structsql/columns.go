@@ -65,12 +65,21 @@ func ColumnInfos(entity interface{}) []ColumnInfo {
       }
       if columnInfos[i].Required {
         // For non-id required columns, assume the default is the zero value.
-        columnInfos[i].HasDefault = true
         switch columnType {
-        case "bool": columnInfos[i].DefaultAsString = "false"
-        case "float32": columnInfos[i].DefaultAsString = "0.0"
-        case "int": columnInfos[i].DefaultAsString = "0"
-        case "string": columnInfos[i].DefaultAsString = "''"
+        // Only put in default for bool.
+        case "bool":
+          columnInfos[i].HasDefault = true
+          columnInfos[i].DefaultAsString = "false"
+        // Allow higher-level code to put in defaults for specified fields.
+        // case "float32":
+        //  columnInfos[i].HasDefault = true
+        //  columnInfos[i].DefaultAsString = "0.0"
+        // case "int":
+        //  columnInfos[i].HasDefault = true
+        //  columnInfos[i].DefaultAsString = "0"
+        // case "string":
+        //  columnInfos[i].HasDefault = true
+        //  columnInfos[i].DefaultAsString = "''"
         default: log.Printf("Unknown columnType %q for %s", columnType, columnName)
         }
       }
