@@ -1,0 +1,609 @@
+#!jraceman -import
+!exportVersion 2
+!appInfo JRaceman v2.0.0
+!type database
+
+!table option
+!columns "name","value"
+#no rows
+
+!table competition
+!columns "id","name","groupsize","maxalternates","scheduledduration"
+"C1-1000","C1 1000m",null,null,900
+"C1-200","C1 200m",null,null,300
+"C1-500","C1 500m",null,null,900
+"C1-5000","C1 5000m",null,null,3600
+"C2-1000","C2 1000m",2,1,900
+"C2-200","C2 200m",2,1,300
+"C2-500","C2 500m",2,1,900
+"C4-1000","C4 1000m",4,2,900
+"C4-200","C4 200m",4,2,300
+"C4-500","C4 500m",4,2,900
+"K1-1000","K1 1000m",null,null,900
+"K1-200","K1 200m",null,null,300
+"K1-500","K1 500m",null,null,900
+"K1-5000","K1 5000m",null,null,3600
+"K2-1000","K2 1000m",2,1,900
+"K2-200","K2 200m",2,1,300
+"K2-500","K2 500m",2,1,900
+"K4-1000","K4 1000m",4,2,900
+"K4-200","K4 200m",4,2,300
+"K4-500","K4 500m",4,2,900
+
+!table complan
+!columns "id","system","plan","minentries","maxentries","planorder"
+"CP.USACK1","USACK","AA1",10,18,0
+"CP.USACK2","USACK","BB1",19,27,0
+"CP.USACK3","USACK","BB2",19,27,1
+"CP.USACK4","USACK","CC1",28,36,0
+"CP.USACK5","USACK","CC2",28,36,1
+
+!table complanstage
+!columns "id","complanid","stageid","round","sectioncount","fillorder"
+"CS.USACK01","CP.USACK1","S1",1,2,null
+"CS.USACK02","CP.USACK1","S2",2,2,null
+"CS.USACK03","CP.USACK1","S3",3,2,null
+"CS.USACK04","CP.USACK2","S1",1,3,null
+"CS.USACK05","CP.USACK2","S2",2,2,null
+"CS.USACK06","CP.USACK2","S3",3,3,null
+"CS.USACK07","CP.USACK3","S1",1,3,null
+"CS.USACK08","CP.USACK3","S2",2,2,null
+"CS.USACK09","CP.USACK3","S3",3,3,null
+"CS.USACK10","CP.USACK4","S1",1,4,null
+"CS.USACK11","CP.USACK4","S2",2,3,null
+"CS.USACK12","CP.USACK4","S3",3,3,null
+"CS.USACK13","CP.USACK5","S1",1,4,null
+"CS.USACK14","CP.USACK5","S2",2,3,null
+"CS.USACK15","CP.USACK5","S3",3,3,null
+
+!table complanrule
+!columns "id","complanid","fromround","fromsection","fromplace","toround","tosection","tolane"
+"CP.USACK1.011","CP.USACK1",0,1,1,3,1,9
+"CP.USACK1.012","CP.USACK1",0,1,2,3,2,5
+"CP.USACK1.111","CP.USACK1",1,1,1,3,1,5
+"CP.USACK1.112","CP.USACK1",1,1,2,3,1,7
+"CP.USACK1.113","CP.USACK1",1,1,3,2,1,5
+"CP.USACK1.114","CP.USACK1",1,1,4,2,2,6
+"CP.USACK1.115","CP.USACK1",1,1,5,2,1,7
+"CP.USACK1.116","CP.USACK1",1,1,6,2,2,4
+"CP.USACK1.117","CP.USACK1",1,1,7,2,2,8
+"CP.USACK1.118","CP.USACK1",1,1,8,2,1,3
+"CP.USACK1.119","CP.USACK1",1,1,9,2,2,2
+"CP.USACK1.121","CP.USACK1",1,2,1,3,1,6
+"CP.USACK1.122","CP.USACK1",1,2,2,3,1,4
+"CP.USACK1.123","CP.USACK1",1,2,3,2,2,5
+"CP.USACK1.124","CP.USACK1",1,2,4,2,1,6
+"CP.USACK1.125","CP.USACK1",1,2,5,2,2,7
+"CP.USACK1.126","CP.USACK1",1,2,6,2,1,4
+"CP.USACK1.127","CP.USACK1",1,2,7,2,1,8
+"CP.USACK1.128","CP.USACK1",1,2,8,2,2,3
+"CP.USACK1.129","CP.USACK1",1,2,9,2,1,2
+"CP.USACK1.211","CP.USACK1",2,1,1,3,1,3
+"CP.USACK1.212","CP.USACK1",2,1,2,3,1,2
+"CP.USACK1.213","CP.USACK1",2,1,3,0,0,0
+"CP.USACK1.214","CP.USACK1",2,1,4,3,2,6
+"CP.USACK1.215","CP.USACK1",2,1,5,3,2,3
+"CP.USACK1.216","CP.USACK1",2,1,6,3,2,8
+"CP.USACK1.217","CP.USACK1",2,1,7,3,2,1
+"CP.USACK1.221","CP.USACK1",2,2,1,3,1,8
+"CP.USACK1.222","CP.USACK1",2,2,2,3,1,1
+"CP.USACK1.223","CP.USACK1",2,2,3,0,0,0
+"CP.USACK1.224","CP.USACK1",2,2,4,3,2,4
+"CP.USACK1.225","CP.USACK1",2,2,5,3,2,7
+"CP.USACK1.226","CP.USACK1",2,2,6,3,2,2
+"CP.USACK1.227","CP.USACK1",2,2,7,3,2,9
+"CP.USACK2.011","CP.USACK2",0,1,1,3,2,9
+"CP.USACK2.012","CP.USACK2",0,1,2,3,3,5
+"CP.USACK2.111","CP.USACK2",1,1,1,3,1,5
+"CP.USACK2.112","CP.USACK2",1,1,2,2,1,5
+"CP.USACK2.113","CP.USACK2",1,1,3,2,2,6
+"CP.USACK2.114","CP.USACK2",1,1,4,2,1,7
+"CP.USACK2.115","CP.USACK2",1,1,5,2,2,7
+"CP.USACK2.116","CP.USACK2",1,1,6,2,1,1
+"CP.USACK2.117","CP.USACK2",1,1,7,2,2,1
+"CP.USACK2.118","CP.USACK2",1,1,8,3,3,2
+"CP.USACK2.119","CP.USACK2",1,1,9,3,3,9
+"CP.USACK2.121","CP.USACK2",1,2,1,3,1,4
+"CP.USACK2.122","CP.USACK2",1,2,2,2,2,5
+"CP.USACK2.123","CP.USACK2",1,2,3,2,1,4
+"CP.USACK2.124","CP.USACK2",1,2,4,2,2,3
+"CP.USACK2.125","CP.USACK2",1,2,5,2,1,2
+"CP.USACK2.126","CP.USACK2",1,2,6,2,2,8
+"CP.USACK2.127","CP.USACK2",1,2,7,2,1,9
+"CP.USACK2.128","CP.USACK2",1,2,8,3,3,4
+"CP.USACK2.129","CP.USACK2",1,2,9,3,3,8
+"CP.USACK2.131","CP.USACK2",1,3,1,3,1,6
+"CP.USACK2.132","CP.USACK2",1,3,2,2,2,4
+"CP.USACK2.133","CP.USACK2",1,3,3,2,1,6
+"CP.USACK2.134","CP.USACK2",1,3,4,2,1,3
+"CP.USACK2.135","CP.USACK2",1,3,5,2,2,2
+"CP.USACK2.136","CP.USACK2",1,3,6,2,1,8
+"CP.USACK2.137","CP.USACK2",1,3,7,2,2,9
+"CP.USACK2.138","CP.USACK2",1,3,8,3,3,6
+"CP.USACK2.139","CP.USACK2",1,3,9,3,3,1
+"CP.USACK2.211","CP.USACK2",2,1,1,3,1,3
+"CP.USACK2.212","CP.USACK2",2,1,2,3,1,8
+"CP.USACK2.213","CP.USACK2",2,1,3,3,1,1
+"CP.USACK2.214","CP.USACK2",2,1,4,3,2,5
+"CP.USACK2.215","CP.USACK2",2,1,5,3,2,3
+"CP.USACK2.216","CP.USACK2",2,1,6,3,2,7
+"CP.USACK2.217","CP.USACK2",2,1,7,3,2,1
+"CP.USACK2.218","CP.USACK2",2,1,8,0,0,0
+"CP.USACK2.219","CP.USACK2",2,1,9,3,3,7
+"CP.USACK2.221","CP.USACK2",2,2,1,3,1,7
+"CP.USACK2.222","CP.USACK2",2,2,2,3,1,2
+"CP.USACK2.223","CP.USACK2",2,2,3,3,1,9
+"CP.USACK2.224","CP.USACK2",2,2,4,3,2,4
+"CP.USACK2.225","CP.USACK2",2,2,5,3,2,6
+"CP.USACK2.226","CP.USACK2",2,2,6,3,2,2
+"CP.USACK2.227","CP.USACK2",2,2,7,3,2,8
+"CP.USACK2.228","CP.USACK2",2,2,8,0,0,0
+"CP.USACK2.229","CP.USACK2",2,2,9,3,3,3
+"CP.USACK3.011","CP.USACK3",0,1,1,3,2,9
+"CP.USACK3.012","CP.USACK3",0,1,2,3,3,5
+"CP.USACK3.111","CP.USACK3",1,1,1,3,1,5
+"CP.USACK3.112","CP.USACK3",1,1,2,2,2,5
+"CP.USACK3.113","CP.USACK3",1,1,3,2,1,6
+"CP.USACK3.114","CP.USACK3",1,1,4,2,2,3
+"CP.USACK3.115","CP.USACK3",1,1,5,2,1,2
+"CP.USACK3.116","CP.USACK3",1,1,6,2,1,9
+"CP.USACK3.117","CP.USACK3",1,1,7,2,2,9
+"CP.USACK3.118","CP.USACK3",1,1,8,3,3,2
+"CP.USACK3.119","CP.USACK3",1,1,9,3,3,9
+"CP.USACK3.121","CP.USACK3",1,2,1,3,1,4
+"CP.USACK3.122","CP.USACK3",1,2,2,2,2,4
+"CP.USACK3.123","CP.USACK3",1,2,3,2,1,4
+"CP.USACK3.124","CP.USACK3",1,2,4,2,1,7
+"CP.USACK3.125","CP.USACK3",1,2,5,2,2,7
+"CP.USACK3.126","CP.USACK3",1,2,6,2,1,8
+"CP.USACK3.127","CP.USACK3",1,2,7,2,2,1
+"CP.USACK3.128","CP.USACK3",1,2,8,3,3,4
+"CP.USACK3.129","CP.USACK3",1,2,9,3,3,8
+"CP.USACK3.131","CP.USACK3",1,3,1,3,1,6
+"CP.USACK3.132","CP.USACK3",1,3,2,2,1,5
+"CP.USACK3.133","CP.USACK3",1,3,3,2,2,6
+"CP.USACK3.134","CP.USACK3",1,3,4,2,1,3
+"CP.USACK3.135","CP.USACK3",1,3,5,2,2,2
+"CP.USACK3.136","CP.USACK3",1,3,6,2,2,8
+"CP.USACK3.137","CP.USACK3",1,3,7,2,1,1
+"CP.USACK3.138","CP.USACK3",1,3,8,3,3,6
+"CP.USACK3.139","CP.USACK3",1,3,9,3,3,1
+"CP.USACK3.211","CP.USACK3",2,1,1,3,1,3
+"CP.USACK3.212","CP.USACK3",2,1,2,3,1,8
+"CP.USACK3.213","CP.USACK3",2,1,3,3,1,1
+"CP.USACK3.214","CP.USACK3",2,1,4,3,2,5
+"CP.USACK3.215","CP.USACK3",2,1,5,3,2,3
+"CP.USACK3.216","CP.USACK3",2,1,6,3,2,7
+"CP.USACK3.217","CP.USACK3",2,1,7,3,2,1
+"CP.USACK3.218","CP.USACK3",2,1,8,0,0,0
+"CP.USACK3.219","CP.USACK3",2,1,9,3,3,7
+"CP.USACK3.221","CP.USACK3",2,2,1,3,1,7
+"CP.USACK3.222","CP.USACK3",2,2,2,3,1,2
+"CP.USACK3.223","CP.USACK3",2,2,3,3,1,9
+"CP.USACK3.224","CP.USACK3",2,2,4,3,2,4
+"CP.USACK3.225","CP.USACK3",2,2,5,3,2,6
+"CP.USACK3.226","CP.USACK3",2,2,6,3,2,2
+"CP.USACK3.227","CP.USACK3",2,2,7,3,2,8
+"CP.USACK3.228","CP.USACK3",2,2,8,0,0,0
+"CP.USACK3.229","CP.USACK3",2,2,9,3,3,3
+"CP.USACK4.011","CP.USACK4",0,1,1,2,1,9
+"CP.USACK4.012","CP.USACK4",0,1,2,2,2,1
+"CP.USACK4.013","CP.USACK4",0,1,3,2,3,9
+"CP.USACK4.111","CP.USACK4",1,1,1,2,1,5
+"CP.USACK4.112","CP.USACK4",1,1,2,2,3,6
+"CP.USACK4.113","CP.USACK4",1,1,3,2,2,6
+"CP.USACK4.114","CP.USACK4",1,1,4,2,2,2
+"CP.USACK4.115","CP.USACK4",1,1,5,2,1,8
+"CP.USACK4.116","CP.USACK4",1,1,6,2,3,1
+"CP.USACK4.117","CP.USACK4",1,1,7,0,0,0
+"CP.USACK4.118","CP.USACK4",1,1,8,0,0,0
+"CP.USACK4.119","CP.USACK4",1,1,9,0,0,0
+"CP.USACK4.121","CP.USACK4",1,2,1,2,2,5
+"CP.USACK4.122","CP.USACK4",1,2,2,2,1,4
+"CP.USACK4.123","CP.USACK4",1,2,3,2,3,3
+"CP.USACK4.124","CP.USACK4",1,2,4,2,3,7
+"CP.USACK4.125","CP.USACK4",1,2,5,2,2,8
+"CP.USACK4.126","CP.USACK4",1,2,6,2,1,1
+"CP.USACK4.127","CP.USACK4",1,2,7,0,0,0
+"CP.USACK4.128","CP.USACK4",1,2,8,0,0,0
+"CP.USACK4.129","CP.USACK4",1,2,9,0,0,0
+"CP.USACK4.131","CP.USACK4",1,3,1,2,3,4
+"CP.USACK4.132","CP.USACK4",1,3,2,2,1,6
+"CP.USACK4.133","CP.USACK4",1,3,3,2,2,3
+"CP.USACK4.134","CP.USACK4",1,3,4,2,2,7
+"CP.USACK4.135","CP.USACK4",1,3,5,2,1,2
+"CP.USACK4.136","CP.USACK4",1,3,6,2,3,8
+"CP.USACK4.137","CP.USACK4",1,3,7,0,0,0
+"CP.USACK4.138","CP.USACK4",1,3,8,0,0,0
+"CP.USACK4.139","CP.USACK4",1,3,9,0,0,0
+"CP.USACK4.141","CP.USACK4",1,4,1,2,3,5
+"CP.USACK4.142","CP.USACK4",1,4,2,2,2,4
+"CP.USACK4.143","CP.USACK4",1,4,3,2,1,3
+"CP.USACK4.144","CP.USACK4",1,4,4,2,1,7
+"CP.USACK4.145","CP.USACK4",1,4,5,2,3,2
+"CP.USACK4.146","CP.USACK4",1,4,6,2,2,9
+"CP.USACK4.147","CP.USACK4",1,4,7,0,0,0
+"CP.USACK4.148","CP.USACK4",1,4,8,0,0,0
+"CP.USACK4.149","CP.USACK4",1,4,9,0,0,0
+"CP.USACK4.211","CP.USACK4",2,1,1,3,1,5
+"CP.USACK4.212","CP.USACK4",2,1,2,3,1,3
+"CP.USACK4.213","CP.USACK4",2,1,3,3,1,8
+"CP.USACK4.214","CP.USACK4",2,1,4,3,2,5
+"CP.USACK4.215","CP.USACK4",2,1,5,3,2,7
+"CP.USACK4.216","CP.USACK4",2,1,6,3,2,2
+"CP.USACK4.217","CP.USACK4",2,1,7,3,3,6
+"CP.USACK4.218","CP.USACK4",2,1,8,3,3,8
+"CP.USACK4.219","CP.USACK4",2,1,9,3,3,1
+"CP.USACK4.221","CP.USACK4",2,2,1,3,1,4
+"CP.USACK4.222","CP.USACK4",2,2,2,3,1,7
+"CP.USACK4.223","CP.USACK4",2,2,3,3,1,1
+"CP.USACK4.224","CP.USACK4",2,2,4,3,2,6
+"CP.USACK4.225","CP.USACK4",2,2,5,3,2,3
+"CP.USACK4.226","CP.USACK4",2,2,6,3,2,1
+"CP.USACK4.227","CP.USACK4",2,2,7,3,3,5
+"CP.USACK4.228","CP.USACK4",2,2,8,3,3,3
+"CP.USACK4.229","CP.USACK4",2,2,9,3,3,9
+"CP.USACK4.231","CP.USACK4",2,3,1,3,1,6
+"CP.USACK4.232","CP.USACK4",2,3,2,3,1,2
+"CP.USACK4.233","CP.USACK4",2,3,3,3,1,9
+"CP.USACK4.234","CP.USACK4",2,3,4,3,2,4
+"CP.USACK4.235","CP.USACK4",2,3,5,3,2,8
+"CP.USACK4.236","CP.USACK4",2,3,6,3,2,9
+"CP.USACK4.237","CP.USACK4",2,3,7,3,3,4
+"CP.USACK4.238","CP.USACK4",2,3,8,3,3,7
+"CP.USACK4.239","CP.USACK4",2,3,9,3,3,2
+"CP.USACK5.011","CP.USACK5",0,1,1,2,1,9
+"CP.USACK5.012","CP.USACK5",0,1,2,2,2,1
+"CP.USACK5.013","CP.USACK5",0,1,3,2,3,1
+"CP.USACK5.111","CP.USACK5",1,1,1,2,3,5
+"CP.USACK5.112","CP.USACK5",1,1,2,2,1,4
+"CP.USACK5.113","CP.USACK5",1,1,3,2,2,6
+"CP.USACK5.114","CP.USACK5",1,1,4,2,3,7
+"CP.USACK5.115","CP.USACK5",1,1,5,2,2,8
+"CP.USACK5.116","CP.USACK5",1,1,6,2,1,8
+"CP.USACK5.117","CP.USACK5",1,1,7,0,0,0
+"CP.USACK5.118","CP.USACK5",1,1,8,0,0,0
+"CP.USACK5.119","CP.USACK5",1,1,9,0,0,0
+"CP.USACK5.121","CP.USACK5",1,2,1,2,1,6
+"CP.USACK5.122","CP.USACK5",1,2,2,2,3,6
+"CP.USACK5.123","CP.USACK5",1,2,3,2,2,3
+"CP.USACK5.124","CP.USACK5",1,2,4,2,2,7
+"CP.USACK5.125","CP.USACK5",1,2,5,2,3,2
+"CP.USACK5.126","CP.USACK5",1,2,6,2,1,1
+"CP.USACK5.127","CP.USACK5",1,2,7,0,0,0
+"CP.USACK5.128","CP.USACK5",1,2,8,0,0,0
+"CP.USACK5.129","CP.USACK5",1,2,9,0,0,0
+"CP.USACK5.131","CP.USACK5",1,3,1,2,2,5
+"CP.USACK5.132","CP.USACK5",1,3,2,2,3,4
+"CP.USACK5.133","CP.USACK5",1,3,3,2,1,3
+"CP.USACK5.134","CP.USACK5",1,3,4,2,1,7
+"CP.USACK5.135","CP.USACK5",1,3,5,2,3,8
+"CP.USACK5.136","CP.USACK5",1,3,6,2,2,9
+"CP.USACK5.137","CP.USACK5",1,3,7,0,0,0
+"CP.USACK5.138","CP.USACK5",1,3,8,0,0,0
+"CP.USACK5.139","CP.USACK5",1,3,9,0,0,0
+"CP.USACK5.141","CP.USACK5",1,4,1,2,1,5
+"CP.USACK5.142","CP.USACK5",1,4,2,2,2,4
+"CP.USACK5.143","CP.USACK5",1,4,3,2,3,3
+"CP.USACK5.144","CP.USACK5",1,4,4,2,2,2
+"CP.USACK5.145","CP.USACK5",1,4,5,2,1,2
+"CP.USACK5.146","CP.USACK5",1,4,6,2,3,9
+"CP.USACK5.147","CP.USACK5",1,4,7,0,0,0
+"CP.USACK5.148","CP.USACK5",1,4,8,0,0,0
+"CP.USACK5.149","CP.USACK5",1,4,9,0,0,0
+"CP.USACK5.211","CP.USACK5",2,1,1,3,1,5
+"CP.USACK5.212","CP.USACK5",2,1,2,3,1,3
+"CP.USACK5.213","CP.USACK5",2,1,3,3,1,8
+"CP.USACK5.214","CP.USACK5",2,1,4,3,2,5
+"CP.USACK5.215","CP.USACK5",2,1,5,3,2,7
+"CP.USACK5.216","CP.USACK5",2,1,6,3,2,2
+"CP.USACK5.217","CP.USACK5",2,1,7,3,3,6
+"CP.USACK5.218","CP.USACK5",2,1,8,3,3,8
+"CP.USACK5.219","CP.USACK5",2,1,9,3,3,1
+"CP.USACK5.221","CP.USACK5",2,2,1,3,1,4
+"CP.USACK5.222","CP.USACK5",2,2,2,3,1,7
+"CP.USACK5.223","CP.USACK5",2,2,3,3,1,1
+"CP.USACK5.224","CP.USACK5",2,2,4,3,2,6
+"CP.USACK5.225","CP.USACK5",2,2,5,3,2,3
+"CP.USACK5.226","CP.USACK5",2,2,6,3,2,1
+"CP.USACK5.227","CP.USACK5",2,2,7,3,3,5
+"CP.USACK5.228","CP.USACK5",2,2,8,3,3,3
+"CP.USACK5.229","CP.USACK5",2,2,9,3,3,9
+"CP.USACK5.231","CP.USACK5",2,3,1,3,1,6
+"CP.USACK5.232","CP.USACK5",2,3,2,3,1,2
+"CP.USACK5.233","CP.USACK5",2,3,3,3,1,9
+"CP.USACK5.234","CP.USACK5",2,3,4,3,2,4
+"CP.USACK5.235","CP.USACK5",2,3,5,3,2,8
+"CP.USACK5.236","CP.USACK5",2,3,6,3,2,9
+"CP.USACK5.237","CP.USACK5",2,3,7,3,3,4
+"CP.USACK5.238","CP.USACK5",2,3,8,3,3,7
+"CP.USACK5.239","CP.USACK5",2,3,9,3,3,2
+
+!table site
+!columns "id","name","street","street2","city","state","zip","country","phone","fax"
+"SI1","Center Lake",null,null,null,null,null,null,null,null
+
+!table area
+!columns "id","name","siteid","lanes","extralanes"
+"SI1.A1","Main Course","SI1",9,2
+"SI1.A2","Long Distance Course","SI1",999,0
+
+!table exception
+!columns "id","name","shortname","resultallowedrequired"
+"X1","Did Not Finish","DNF",0
+"X2","Did Not Start","DNS",0
+"X3","Scratch","SCR",0
+"X4","Disqualified","DQ",0
+"X5","Time Not Available","TNA",1
+"X6","Estimated Time","EST",2
+"X7","Official Discretionary Decision","ODD",1
+
+!table level
+!columns "id","name","minentryage","minage","maxage","maxentryage","usegroupaverage"
+"L1","Bantam",null,null,13,13,false
+"L10","Para_A",null,null,null,null,false
+"L2","Juvenile",null,14,15,15,false
+"L3","Junior",null,16,17,17,false
+"L4","Senior",14,18,null,null,false
+"L5","Master",30,30,null,null,false
+"L6","Intermediate",18,18,null,null,false
+"L7","Open",null,null,null,null,false
+"L8","Para_LTA",null,null,null,null,false
+"L9","Para_TA",null,null,null,null,false
+"LM01","A1",30,30,34,null,false
+"LM02","A2",30,30,34,null,false
+"LM03","B1",35,35,39,null,false
+"LM04","B2",35,35,44,null,false
+"LM06","C1",40,40,44,null,false
+"LM07","C2",45,45,54,null,false
+"LM08","D1",45,45,49,null,false
+"LM09","D2",55,55,64,null,false
+"LM10","E1",50,50,54,null,false
+"LM11","E2",65,65,99,null,false
+"LM12","F1",55,55,59,null,false
+"LM13","G1",60,60,64,null,false
+"LM14","H1",65,65,69,null,false
+"LM15","I1",70,70,74,null,false
+"LM16","Novice A",30,30,34,34,false
+"LM17","Novice B",35,35,44,44,false
+"LM18","Novice C",45,45,99,99,false
+"LM19","Novice",30,null,null,null,false
+"LM20","J1",75,75,99,null,false
+"LM21","A3",30,30,34,34,false
+"LM22","B3",35,35,44,44,false
+"LM23","C3",45,45,99,99,false
+"P_LD","Para Long Distance",null,null,null,null,false
+
+!table stage
+!columns "id","name","number","isfinal"
+"S1","Heat",1,false
+"S2","Semifinal",2,false
+"S3","Final",3,true
+"SR","Rerace",0,false
+
+!table gender
+!columns "id","name"
+"F","Female"
+"M","Male"
+"X","Mixed"
+
+!table simplan
+!columns "id","system","plan","minentries","maxentries"
+"SP.DF","DF","DF",1,10000
+"SP1","Ted","DF",1,9
+"SP10","USACK2012B","DF",1,10
+"SP11","USACK2012B","Aa1",11,18
+"SP12","USACK2012B","Bb1",19,27
+"SP13","USACK2012B","Cc1",28,36
+"SP14","USACK2012B","Dd1",37,45
+"SP15","USACK2012B","Ee1",46,54
+"SP2","Ted","A",10,18
+"SP3","Ted","B",19,27
+"SP4","USACK2012","DF",1,9
+"SP5","USACK2012","Aa1",10,18
+"SP6","USACK2012","Bb1",19,27
+"SP7","USACK2012","Cc1",28,36
+"SP8","USACK2012","Dd1",37,45
+"SP9","USACK2012","Ee1",46,54
+
+!table simplanstage
+!columns "id","simplanid","stageid","sectioncount","fillorder"
+"SS1","SP1","S3",1,null
+"SS10","SP5","S1",2,null
+"SS11","SP5","S3",1,null
+"SS12","SP6","S1",3,null
+"SS13","SP6","S3",1,null
+"SS14","SP7","S1",4,null
+"SS15","SP7","S3",1,null
+"SS16","SP8","S1",5,null
+"SS17","SP8","S3",1,null
+"SS18","SP9","S1",6,null
+"SS19","SP9","S3",1,null
+"SS2","SP2","S1",2,null
+"SS20","SP11","S1",2,null
+"SS21","SP12","S1",3,null
+"SS22","SP13","S1",4,null
+"SS23","SP14","S1",5,null
+"SS24","SP15","S1",6,null
+"SS25","SP11","S3",2,null
+"SS26","SP12","S3",2,null
+"SS27","SP13","S3",2,null
+"SS28","SP14","S3",2,null
+"SS29","SP15","S3",2,null
+"SS3","SP2","S2",1,null
+"SS30","SP10","S3",1,null
+"SS4","SP2","S3",1,null
+"SS5","SP3","S1",3,null
+"SS6","SP3","S2",1,null
+"SS7","SP3","S3",1,null
+"SS8","SP.DF","S3",1,null
+"SS9","SP4","S3",1,null
+
+!table simplanrule
+!columns "id","simplanid","fromstageid","tostageid","thruplace","nextbesttimes"
+"SR1","SP2","S1","S3",3,null
+"SR10","SP8","S1","S3",1,4
+"SR11","SP9","S1","S3",1,3
+"SR12","SP11","S1","S3",2,14
+"SR13","SP12","S1","S3",1,15
+"SR14","SP13","S1","S3",1,14
+"SR15","SP14","S1","S3",1,13
+"SR16","SP15","S1","S3",1,12
+"SR2","SP2","S1","S2",7,1
+"SR3","SP2","S2","S3",3,null
+"SR4","SP3","S1","S3",2,null
+"SR5","SP3","S1","S2",5,null
+"SR6","SP3","S2","S3",3,null
+"SR7","SP5","S1","S3",2,5
+"SR8","SP6","S1","S3",1,6
+"SR9","SP7","S1","S3",1,5
+
+!table progression
+!columns "id","name","class","parameters"
+"PR.S.DF","Simplan DF","ProgressionSimplan","system=DF"
+"PR1","USACK","ProgressionUsack",null
+"PR10","USACK 2012 B","ProgressionSimplan","nsProgMode=after,multipleFinals=true,system=USACK2012B,useExtraLanes=false"
+"PR2","Simplan Ted","ProgressionSimplan","system=Ted"
+"PR3","USACK-X","ProgressionUsack","multipleFinals=false,useExtraLanes=true"
+"PR4","USACK-M","ProgressionUsack","multipleFinals=true,useExtraLanes=false"
+"PR5","USACK-MX","ProgressionUsack","multipleFinals=true,useExtraLanes=true"
+"PR6","ICF","ProgressionUsack","multipleFinals=false,useExtraLanes=false, useIcfProgressions=true"
+"PR7","Complan USACK","ProgressionComplan","system=USACK"
+"PR8","Complan USACK-X","ProgressionComplan","system=USACK,multipleFinals=false,useExtraLanes=true"
+"PR9","USACK 2012","ProgressionSimplan","nsProgMode=after,multipleFinals=false,system=USACK2012,useExtraLanes=true"
+
+!table scoringsystem
+!columns "id","name"
+"ScS1","USACK2001"
+"ScS2","USACK2002"
+"ScS3","USACK2012-short"
+"ScS4","USACK2012-long"
+"ScS5","NonScoring"
+
+!table scoringrule
+!columns "id","scoringsystemid","rule","value","points"
+"ScR01","ScS1","place",1,10
+"ScR02","ScS1","place",2,5
+"ScR03","ScS1","place",3,3
+"ScR04","ScS1","place",4,2
+"ScR05","ScS1","place",5,1
+"ScR06","ScS2","place",1,6
+"ScR07","ScS2","place",2,4
+"ScR08","ScS2","place",3,3
+"ScR09","ScS2","place",4,2
+"ScR10","ScS2","place",5,1
+"ScR11","ScS2","group",2,1
+"ScR12","ScS2","group",4,2
+"ScR13","ScS3","place",1,9
+"ScR14","ScS3","place",2,7
+"ScR15","ScS3","place",3,5
+"ScR16","ScS3","place",4,3
+"ScR17","ScS3","place",5,2
+"ScR18","ScS3","place",6,1
+"ScR19","ScS4","place",1,12
+"ScR20","ScS4","place",2,10
+"ScR21","ScS4","place",3,8
+"ScR22","ScS4","place",4,6
+"ScR23","ScS4","place",5,5
+"ScR24","ScS4","place",6,4
+"ScR25","ScS4","place",7,3
+"ScR26","ScS4","place",8,2
+"ScR27","ScS4","place",9,1
+"ScR28","ScS5","place",1,0
+
+!table laneorder
+!columns "id","areaid","lane","ordering"
+#no rows
+
+!table challenge
+!columns "id","name"
+#no rows
+
+!table team
+!columns "id","shortname","name","number","challengeid","nonscoring","street","street2","city","state","zip","country","phone","fax"
+"CCC","CCC","Centerville Canoe Club",null,null,false,null,null,null,null,null,null,null,null
+"ASP","ASP","All State Paddlers",null,null,false,null,null,null,null,null,null,null,null
+"SHCKT","SHCKT","Sun Harbor Canoe and Kayak Team",null,null,false,null,null,null,null,null,null,null,null
+
+!table person
+!columns "id","firstname","lastname","title","genderid","teamid","birthday","membership","membershipexpiration","street","street2","city","state","country","zip","phone","email"
+"P1","John","Doe",null,"M","CCC",null,null,null,null,null,null,null,null,null,null,null
+"P2","Sam","Doe",null,"M","CCC",null,null,null,null,null,null,null,null,null,null,null
+"P3","Jane","Doe",null,"F","CCC",null,null,null,null,null,null,null,null,null,null,null
+"P4","Julie","Doe",null,"F","CCC",null,null,null,null,null,null,null,null,null,null,null
+"P5","David","Johnson",null,"M","CCC",null,null,null,null,null,null,null,null,null,null,null
+"P6","Diane","Johnson",null,"F","CCC",null,null,null,null,null,null,null,null,null,null,null
+"P7","Nancy","Smith",null,"F","ASP",null,null,null,null,null,null,null,null,null,null,null
+"P8","Mike","Jones",null,"M","ASP",null,null,null,null,null,null,null,null,null,null,null
+"P9","Mary","Jones",null,"F","ASP",null,null,null,null,null,null,null,null,null,null,null
+"P10","Tom","Brown",null,"M","ASP",null,null,null,null,null,null,null,null,null,null,null
+"P11","Sally","Brown",null,"F","ASP",null,null,null,null,null,null,null,null,null,null,null
+"P12","Susan","Brown",null,"F","ASP",null,null,null,null,null,null,null,null,null,null,null
+"P13","Lizzie","Brown",null,"F","ASP",null,null,null,null,null,null,null,null,null,null,null
+"P14","Charity","Lavender",null,"F","SHCKT",null,null,null,null,null,null,null,null,null,null,null
+"P15","Frank","Carr",null,"M","SHCKT",null,null,null,null,null,null,null,null,null,null,null
+"P16","Petunia","Lavender",null,"F","SHCKT",null,null,null,null,null,null,null,null,null,null,null
+"P17","Felicity","Farmer",null,"F","SHCKT",null,null,null,null,null,null,null,null,null,null,null
+"P18","Hank","Farmer",null,"M","SHCKT",null,null,null,null,null,null,null,null,null,null,null
+
+!table seedingplan
+!columns "id","name","seedingorder"
+#no rows
+
+!table seedinglist
+!columns "id","seedingplanid","rank","personid"
+#no rows
+
+!table meet
+!columns "id","name","shortname","siteid","startdate","enddate","agedate","webreportsdirectory","transferdirectory","labelimageleft","labelimageright","scoringsystemid"
+"M1","National Sprint Championship 2018","Nationals 2018","SI1","2018-08-01","2018-08-05",null,null,null,null,null,null
+
+!table registrationfee
+!columns "id","meetid","eventcount","amountcharged"
+#no rows
+
+!table registration
+!columns "id","meetid","personid","amountcharged","surcharge","discount","amountpaid","waiversigned","paymentnotes"
+#no rows
+
+!table event
+!columns "id","meetid","name","number","competitionid","levelid","genderid","areaid","seedingplanid","progressionid","progressionstate","scoringsystemid","scratched","eventcomment"
+"M1.EV1","M1","C1 500m Bantam Men",1,"C1-500","L1","M",null,null,null,null,null,null,null
+"M1.EV2","M1","K1 500m Bantam Men",2,"K1-500","L1","M",null,null,null,null,null,null,null
+"M1.EV3","M1","C1 500m Bantam Women",3,"C1-500","L1","F",null,null,null,null,null,null,null
+"M1.EV4","M1","K1 500m Bantam Women",4,"K1-500","L1","F",null,null,null,null,null,null,null
+
+!table entry
+!columns "id","personid","eventid","groupname","alternate","scratched"
+"Z.EN1","P1","M1.EV1",null,false,false
+"Z.EN2","P2","M1.EV1",null,false,false
+"Z.EN3","P5","M1.EV1",null,false,false
+"Z.EN4","P6","M1.EV1",null,false,false
+"Z.EN5","P8","M1.EV1",null,false,false
+"Z.EN6","P12","M1.EV1",null,false,false
+"Z.EN7","P1","M1.EV2",null,false,false
+"Z.EN8","P3","M1.EV2",null,false,false
+"Z.EN9","P4","M1.EV2",null,false,false
+"Z.EN10","P8","M1.EV2",null,false,false
+"Z.EN11","P10","M1.EV2",null,false,false
+"Z.EN12","P14","M1.EV2",null,false,false
+"Z.EN13","P15","M1.EV2",null,false,false
+"Z.EN14","P4","M1.EV3",null,false,false
+"Z.EN15","P5","M1.EV3",null,false,false
+"Z.EN16","P8","M1.EV3",null,false,false
+"Z.EN17","P11","M1.EV3",null,false,false
+"Z.EN18","P12","M1.EV3",null,false,false
+
+!table race
+!columns "id","eventid","stageid","round","section","areaid","number","scheduledstart","scheduledduration","actualstart","scratched","racecomment"
+#no rows
+
+!table lane
+!columns "id","entryid","raceid","lane","result","exceptionid","place","scoreplace","score"
+#no rows
+
+!table contextoption
+!columns "id","name","value","host","webcontext","meetid"
+"CTX1","Backup.directory","/some/directory/backup/dbname","unixhost.local",null,null
+"CTX2","Backup.directory","C:\\some\\directory\\backup\\dbname","WindowsHost",null,null
+"CTX3","Meets.WebReports.directory","/some/directory/web","unixhost.local",null,null
