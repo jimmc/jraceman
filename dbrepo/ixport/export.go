@@ -61,10 +61,32 @@ func (e *Exporter) exportTableDataFromStruct(w io.Writer, tableName string, elem
         io.WriteString(w, ",")
       }
       switch t := target.(type) {
+      case *bool:
+        fmt.Fprintf(w, "%v", *t)
+      case *float32:
+        fmt.Fprintf(w, "%v", *t)
       case *int:
         fmt.Fprintf(w, "%d", *t)
       case *string:
         fmt.Fprintf(w, "%q", *t)
+      case **bool:
+        if *t == nil {
+          fmt.Fprintf(w, "null")
+        } else {
+          fmt.Fprintf(w, "%v", **t)
+        }
+      case **float32:
+        if *t == nil {
+          fmt.Fprintf(w, "null")
+        } else {
+          fmt.Fprintf(w, "%v", **t)
+        }
+      case **int:
+        if *t == nil {
+          fmt.Fprintf(w, "null")
+        } else {
+          fmt.Fprintf(w, "%v", **t)
+        }
       case **string:
         if *t == nil {
           fmt.Fprintf(w, "null")
