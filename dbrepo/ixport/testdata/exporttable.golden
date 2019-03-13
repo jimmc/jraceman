@@ -1,6 +1,6 @@
 
 !table test
-!columns "n","s","s2"
-1,"a","x"
-2,"b","x"
-3,"c",null
+!columns "n","s","s2","b","f"
+1,"a","x",false,1
+2,"b","x",true,2.34
+3,"c",null,false,0

@@ -1,3 +1,4 @@
-CREATE table test(n int, s string not null, s2 string);
+CREATE table test(n int, s string not null, s2 string, b bool, f float);
 
-INSERT into test(n, s, s2) values(1, 'a', 'x'), (2, 'b', 'x'), (3, 'c', null);
+INSERT into test(n, s, s2, b, f) values
+(1, 'a', 'x', false, 1.0), (2, 'b', 'x', true, 2.34), (3, 'c', null, false, 0);

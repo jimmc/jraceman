@@ -38,6 +38,8 @@ type testEntity struct {
   N int
   S string
   S2 *string
+  B bool
+  F float32
 }
 
 func TestExportTable(t *testing.T) {

@@ -1,7 +1,7 @@
 package structsql
 
 import (
-  "log"
+  // "log"
   "reflect"
   "strings"
 )
@@ -80,7 +80,7 @@ func ColumnInfos(entity interface{}) []ColumnInfo {
         // case "string":
         //  columnInfos[i].HasDefault = true
         //  columnInfos[i].DefaultAsString = "''"
-        default: log.Printf("Unknown columnType %q for %s", columnType, columnName)
+        // default: log.Printf("Unknown columnType %q for %s", columnType, columnName)
         }
       }
     }

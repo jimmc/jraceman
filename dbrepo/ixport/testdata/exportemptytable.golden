@@ -1,4 +1,4 @@
 
 !table test
-!columns "n","s","s2"
+!columns "n","s","s2","b","f"
 #no rows
