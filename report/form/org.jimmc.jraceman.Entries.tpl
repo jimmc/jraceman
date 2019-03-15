@@ -1,3 +1,6 @@
+{{/*GT: {
+  "display": "Entries"
+} */ -}}
 {{ $rows := rows `
     SELECT
       team.shortname as Team,
