@@ -1,7 +1,6 @@
 package debug
 
 import (
-  "encoding/json"
   "fmt"
   "log"
   "net/http"
@@ -18,36 +17,17 @@ func (h *handler) sql(w http.ResponseWriter, r *http.Request) {
       sqlStr := r.URL.Query().Get("q")
       h.executeSql(w, r, sqlStr)
     case http.MethodPost:
-      // When using a POST, we expect the query as a parameter.
-      sqlStr, err := h.getRequestParameter(r, "q")
+      // When using a POST, we expect the query value as a JSON parameter in the body.
+      jsonBody, err := apihttp.GetRequestParameters(r)
       if err != nil {
         http.Error(w, err.Error(), http.StatusBadRequest)
         return
       }
+      sqlStr := apihttp.GetJsonParameter(jsonBody, "q")
       h.executeSql(w, r, sqlStr)
     default:
       http.Error(w, "Method must be GET or POST", http.StatusMethodNotAllowed)
   }
-}
-
-func (h *handler) getRequestParameter(r *http.Request, name string) (string, error) {
-    contentType := r.Header.Get("content-type")
-    log.Printf("content-type: %v\n", contentType)
-    if contentType == "application/json" {
-      decoder := json.NewDecoder(r.Body)
-      jsonBody := make(map[string]interface{}, 0)
-      if err := decoder.Decode(&jsonBody); err != nil {
-        return "", fmt.Errorf("Error decoding JSON body: %v", err)
-      }
-      val, ok := jsonBody[name]
-      if ok {
-        return val.(string), nil
-      } else {
-        return "", nil
-      }
-    } else {
-      return r.FormValue("q"), nil
-    }
 }
 
 func (h *handler) executeSql(w http.ResponseWriter, r *http.Request, sqlStr string) {
