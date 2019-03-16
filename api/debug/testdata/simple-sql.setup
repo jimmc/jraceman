@@ -1,0 +1,6 @@
+CREATE table test(id int, name string not null, foo string, bar bool);
+
+INSERT into test(id, name, foo, bar) values
+(1, 'a', 'x', false),
+(2, 'b', 'x', true),
+(3, 'c', null, false);

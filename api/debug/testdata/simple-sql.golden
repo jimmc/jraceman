@@ -1,0 +1,22 @@
+{
+  "Columns": [
+    {
+      "Name": "name",
+      "Type": "string"
+    },
+    {
+      "Name": "bar",
+      "Type": "bool"
+    }
+  ],
+  "Rows": [
+    [
+      "a",
+      0
+    ],
+    [
+      "b",
+      1
+    ]
+  ]
+}
