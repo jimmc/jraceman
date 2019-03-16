@@ -11,9 +11,9 @@ type ReportResults struct {
   HTML string           // The generated report.
 }
 
-// GenerateResults generates a report from a form and a top piece of data.
+// GenerateResults generates a report from a template and a top piece of data.
 // The db argument can be either a sql.DB or a sql.Tx.
-func GenerateResults(db dbsource.DBQuery, reportRoots []string, formname, data string) (*ReportResults, error) {
+func GenerateResults(db dbsource.DBQuery, reportRoots []string, templateName, data string) (*ReportResults, error) {
   dataSource := dbsource.New(db)
   refdirpaths := reportRoots
   w := &strings.Builder{}
@@ -22,7 +22,7 @@ func GenerateResults(db dbsource.DBQuery, reportRoots []string, formname, data s
   incr := func(n int) int {
     return n + 1
   }
-  g := gen.New(formname, true, w, dataSource)
+  g := gen.New(templateName, true, w, dataSource)
   g = g.WithFuncs(map[string]interface{}{
     "incr": incr,
   })

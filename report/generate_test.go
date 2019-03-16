@@ -49,7 +49,7 @@ func TestStandardReports(t *testing.T) {
       defer dbRepos.Close()
       db := dbRepos.DB()
 
-      reportRoots := []string{"testdata", "form"}
+      reportRoots := []string{"testdata", "template"}
 
       results, err := GenerateResults(db, reportRoots, tt.reportName, tt.data)
       if err != nil {

@@ -5,7 +5,7 @@ import (
 )
 
 func TestReadTemplateAttrs(t *testing.T) {
-  attrslist, err := ReadTemplateAttrs("form")
+  attrslist, err := ReadTemplateAttrs("template")
   if err != nil {
     t.Fatalf("ReadTemplateAttrs error: %v", err)
   }
