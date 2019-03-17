@@ -1,0 +1,10 @@
+[
+  {
+    "Name": "org.jimmc.jraceman.Entries",
+    "Display": "Entries"
+  },
+  {
+    "Name": "org.jimmc.jraceman.Lanes",
+    "Display": "Lanes"
+  }
+]

@@ -3,6 +3,7 @@ package report
 import (
   "fmt"
   "net/http"
+  "strings"
 
   "github.com/jimmc/jracemango/domain"
 )
@@ -23,12 +24,18 @@ func NewHandler(c *Config) http.Handler {
   h := handler{config: c}
   mux := http.NewServeMux()
   mux.HandleFunc(h.apiPrefix("generate"), h.generate)
-  mux.HandleFunc(h.config.Prefix, h.blank)
+  mux.HandleFunc(h.config.Prefix, h.root)
   return mux
 }
 
-func (h *handler) blank(w http.ResponseWriter, r *http.Request) {
-  http.Error(w, "Try /api/report/generate", http.StatusForbidden)
+func (h *handler) root(w http.ResponseWriter, r *http.Request) {
+  p := strings.TrimPrefix(r.URL.Path, h.config.Prefix)
+  if p=="" {
+    // If no path components after our root, return a list of reports.
+    h.list(w, r)
+    return
+  }
+  http.Error(w, "Try /api/report/\n", http.StatusForbidden)
 }
 
 func (h *handler) apiPrefix(s string) string {

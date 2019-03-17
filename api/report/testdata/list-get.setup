@@ -1,0 +1,2 @@
+# The list-reports api command doesn't use anything from the database,
+# so we don't need to create any data there.
