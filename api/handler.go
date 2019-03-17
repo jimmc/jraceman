@@ -22,7 +22,7 @@ type handler struct {
 type Config struct {
   Prefix string
   DomainRepos domain.Repos
-  ReportRoot string
+  ReportRoots []string
 }
 
 // NewHandler creates the http handler that is used to route api requests.
@@ -58,7 +58,7 @@ func NewHandler(c *Config) http.Handler {
   reportConfig := &apireport.Config{
     Prefix: reportPrefix,
     DomainRepos: c.DomainRepos,
-    ReportRoot: c.ReportRoot,
+    ReportRoots: c.ReportRoots,
   }
   reportHandler := apireport.NewHandler(reportConfig)
   mux.Handle(reportPrefix, reportHandler)

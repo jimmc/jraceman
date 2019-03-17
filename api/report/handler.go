@@ -15,7 +15,7 @@ type handler struct {
 type Config struct {
   Prefix string
   DomainRepos domain.Repos
-  ReportRoot string
+  ReportRoots []string
 }
 
 // NewHandler creates the http handler for our calls.

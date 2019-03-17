@@ -9,7 +9,11 @@ import (
 )
 
 func StartReportToGolden(basename string, callback func() (*http.Request, error)) error {
-  repos, handler, err := StartReportToSetup()
+  return StartReportToGoldenWithRoots(basename, []string{"testdata"}, callback)
+}
+
+func StartReportToGoldenWithRoots(basename string, roots []string, callback func() (*http.Request, error)) error {
+  repos, handler, err := StartReportToSetupWithRoots(roots)
   if err != nil{
     return err
   }
@@ -20,6 +24,10 @@ func StartReportToGolden(basename string, callback func() (*http.Request, error)
 
 // StartReportToSetup initializes the database and the http handler for api/report.
 func StartReportToSetup() (*dbrepo.Repos, http.Handler, error) {
+  return StartReportToSetupWithRoots([]string{"testdata"})
+}
+
+func StartReportToSetupWithRoots(roots []string) (*dbrepo.Repos, http.Handler, error) {
   repos, err := dbtest.ReposEmpty()
   if err != nil {
     return nil, nil, err
@@ -27,7 +35,7 @@ func StartReportToSetup() (*dbrepo.Repos, http.Handler, error) {
   config := &report.Config{
     Prefix: "/api/report/",
     DomainRepos: repos,
-    ReportRoot: "testdata",
+    ReportRoots: roots,
   }
   handler := report.NewHandler(config)
   return repos, handler, nil
