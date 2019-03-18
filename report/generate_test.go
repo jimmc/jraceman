@@ -28,15 +28,19 @@ func TestStandardReports(t *testing.T) {
   gen.Now = tNow
   defer func() { gen.Now = oldNowFunc }()
 
+  roots1 := []string{"template"}
+  roots2 := []string{"testdata", "template"}
   for _, tt := range []struct{
     testName string
     setupName string
     reportName string
+    reportRoots []string
+    templateName string
     data string
   } {
-      { "test1", "empty", "test1", "<topdata>" },
-      { "lanes", "empty", "lanes-test", "EV123" },
-      { "entries", "sample1", "entries-test", "M1.EV1" },
+      { "test1", "empty", "test1", roots2, "test1", "<topdata>" },
+      { "lanes", "empty", "lanes-test", roots2, "lanes-test", "EV123" },
+      { "entries", "sample1", "entries-test", roots1, "org.jimmc.jraceman.Entries", "M1.EV1" },
   } {
     t.Run(tt.testName, func(t *testing.T) {
 
@@ -49,9 +53,7 @@ func TestStandardReports(t *testing.T) {
       defer dbRepos.Close()
       db := dbRepos.DB()
 
-      reportRoots := []string{"testdata", "template"}
-
-      results, err := GenerateResults(db, reportRoots, tt.reportName, tt.data)
+      results, err := GenerateResults(db, tt.reportRoots, tt.templateName, tt.data)
       if err != nil {
         t.Fatal(err)
       }

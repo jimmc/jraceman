@@ -1,6 +1,7 @@
 package report
 
 import (
+  "fmt"
   "strings"
 
   "github.com/jimmc/gtrepgen/dbsource"
@@ -15,22 +16,41 @@ type ReportResults struct {
 // The db argument can be either a sql.DB or a sql.Tx.
 func GenerateResults(db dbsource.DBQuery, reportRoots []string, templateName, data string) (*ReportResults, error) {
   dataSource := dbsource.New(db)
-  refdirpaths := reportRoots
   w := &strings.Builder{}
 
-  // TODO - this is just a sample function
-  incr := func(n int) int {
-    return n + 1
+  attrs, err := gen.FindAndReadAttributes(templateName, reportRoots)
+  if err != nil {
+    return nil, fmt.Errorf("reading template attributes: %v", err)
+  }
+
+  attrsFunc := func(names ...string) (interface{}, error) {
+    return descendAttributes(attrs, names...)
   }
   g := gen.New(templateName, true, w, dataSource)
   g = g.WithFuncs(map[string]interface{}{
-    "incr": incr,
+    "attrs": attrsFunc,
   })
-  if err := g.FromForm(refdirpaths, data); err != nil {
+  if err := g.FromForm(reportRoots, data); err != nil {
     return nil, err
   }
 
   return &ReportResults{
     HTML: w.String(),
   }, nil
+}
+
+func descendAttributes(attrs interface{}, names ...string) (interface{}, error) {
+  var a interface{}
+  a = attrs
+  for _, name := range names {
+    m, ok := a.(map[string]interface{})
+    if !ok {
+      return nil, fmt.Errorf("value is not map when trying to get field %q", name)
+    }
+    a, ok = m[name]
+    if !ok {
+      return nil, fmt.Errorf("field %q not found", name)
+    }
+  }
+  return a, nil
 }
