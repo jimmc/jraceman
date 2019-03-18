@@ -1,5 +1,24 @@
 {{/*GT: {
-  "display": "Entries"
+  "display": "Entries",
+  "description": "Entries ordered as selected.",
+  "orderby": {
+    "team": {
+      "display": "Team, Person, Event",
+      "sql": "team.shortname, person.lastname, person.firstname, event.number"
+    },
+    "person": {
+      "display": "Person, Event",
+      "sql": "person.lastname, person.firstname, event.number team.shortname"
+    },
+    "eventTeam": {
+      "display": "Event, Team, Person",
+      "sql": "event.number, team.shortname, person.lastname, person.firstname"
+    },
+    "eventPerson": {
+      "display": "Event, Person",
+      "sql": "event.number, person.lastname, person.firstname, team.shortname"
+    }
+  }
 } */ -}}
 {{ $rows := rows `
     SELECT
