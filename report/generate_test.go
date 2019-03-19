@@ -53,7 +53,8 @@ func TestStandardReports(t *testing.T) {
       defer dbRepos.Close()
       db := dbRepos.DB()
 
-      results, err := GenerateResults(db, tt.reportRoots, tt.templateName, tt.data)
+      reportOpts := &ReportOptions{}
+      results, err := GenerateResults(db, tt.reportRoots, tt.templateName, tt.data, reportOpts)
       if err != nil {
         t.Fatal(err)
       }

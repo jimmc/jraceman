@@ -8,7 +8,7 @@
     },
     "person": {
       "display": "Person, Event",
-      "sql": "person.lastname, person.firstname, event.number team.shortname"
+      "sql": "person.lastname, person.firstname, event.number, team.shortname"
     },
     "eventTeam": {
       "display": "Event, Team, Person",
@@ -20,7 +20,8 @@
     }
   }
 } */ -}}
-{{ $rows := rows `
+{{$orderby := "team" -}}
+{{ $rows := rows (printf `
     SELECT
       team.shortname as Team,
       person.lastName || ', ' || person.firstName as Person,
@@ -40,7 +41,8 @@
       LEFT JOIN meet on event.meetid=meet.id
       LEFT JOIN area on event.areaid=area.id
     WHERE event.id = ? AND (NOT COALESCE(event.scratched,false) AND NOT COALESCE(entry.scratched,false))
-` . }}
+    ORDER BY %s
+` (attrs "orderby" $orderby "sql")) . }}
 {{ $totals := row `
   SELECT
     count(distinct team.id) as TeamCount,

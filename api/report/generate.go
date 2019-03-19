@@ -45,7 +45,10 @@ func (h *handler) generateReportForHTTP(w http.ResponseWriter, r *http.Request, 
   }
   db := dbrepos.DB()
   log.Printf("Generating report: %v", name)
-  result, err := reportmain.GenerateResults(db, h.config.ReportRoots, name, data)
+  options := &reportmain.ReportOptions{
+    // TODO - collect options passed in by user
+  }
+  result, err := reportmain.GenerateResults(db, h.config.ReportRoots, name, data, options)
   if err != nil {
     http.Error(w, fmt.Sprintf("Error generating report: %v", err), http.StatusBadRequest)
     return
