@@ -9,17 +9,25 @@ import (
 )
 
 func StartReportToGolden(basename string, callback func() (*http.Request, error)) error {
-  return StartReportToGoldenWithRoots(basename, []string{"testdata"}, callback)
+  return StartReportDbToGoldenWithRoots(basename, basename, []string{"testdata"}, callback)
+}
+
+func StartReportDbToGolden(dbbasename, basename string, callback func() (*http.Request, error)) error {
+  return StartReportDbToGoldenWithRoots(dbbasename, basename, []string{"testdata"}, callback)
 }
 
 func StartReportToGoldenWithRoots(basename string, roots []string, callback func() (*http.Request, error)) error {
+  return StartReportDbToGoldenWithRoots(basename, basename, roots, callback)
+}
+
+func StartReportDbToGoldenWithRoots(dbbasename, basename string, roots []string, callback func() (*http.Request, error)) error {
   repos, handler, err := StartReportToSetupWithRoots(roots)
   if err != nil{
     return err
   }
   defer repos.Close()
 
-  return SetupToGolden(repos, handler, basename, callback)
+  return SetupDbToGolden(repos, handler, dbbasename, basename, callback)
 }
 
 // StartReportToSetup initializes the database and the http handler for api/report.

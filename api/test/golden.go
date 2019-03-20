@@ -14,7 +14,16 @@ import (
 
 func SetupToGolden(repos *dbrepo.Repos, handler http.Handler, basename string,
     callback func() (*http.Request, error)) error {
-  setupfilename := "testdata/" + basename + ".setup"
+  return SetupDbToGolden(repos, handler, basename, basename, callback)
+}
+
+// SetupDbToGolden loads a database setup file into the given database, runs the
+// test callback, records the output into the out file, and compares to the golden file.
+// The all files are located in the testdata folder. The basename arg is used to make
+// the filenames for both the output and golden files.
+func SetupDbToGolden(repos *dbrepo.Repos, handler http.Handler, dbsetupbasename, basename string,
+    callback func() (*http.Request, error)) error {
+  setupfilename := "testdata/" + dbsetupbasename + ".setup"
   outfilename := "testdata/" + basename + ".out"
   goldenfilename := "testdata/" + basename + ".golden"
 
