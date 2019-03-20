@@ -1,5 +1,6 @@
 
 
+
 <html>
 <body>
   <div class="header">
@@ -26,7 +27,7 @@ by <a href="http://www.jraceman.org/">JRaceman</a>
   </div>
   <center>
   <div class="titleArea">
-    <h3>Entries By {@orderBy.display}</h3>
+    <h3>Entries By Team, Person, Event</h3>
   </div>
   <table class="main" border=1>
     <tr class="rowHeader">
@@ -35,6 +36,22 @@ by <a href="http://www.jraceman.org/">JRaceman</a>
       <th>Event</th>
       <th>Group</th>
       <th>Alternate?</th>
+    </tr>
+
+    <tr class="rowParity0">
+      <td>ASP</td>
+      <td>Brown, Susan</td>
+      <td>#1 C1 500m Bantam Men</td>
+      <td></td>
+      <td></td>
+    </tr>
+
+    <tr class="rowParity1">
+      <td>ASP</td>
+      <td>Jones, Mike</td>
+      <td>#1 C1 500m Bantam Men</td>
+      <td></td>
+      <td></td>
     </tr>
 
     <tr class="rowParity0">
@@ -64,22 +81,6 @@ by <a href="http://www.jraceman.org/">JRaceman</a>
     <tr class="rowParity1">
       <td>CCC</td>
       <td>Johnson, Diane</td>
-      <td>#1 C1 500m Bantam Men</td>
-      <td></td>
-      <td></td>
-    </tr>
-
-    <tr class="rowParity0">
-      <td>ASP</td>
-      <td>Jones, Mike</td>
-      <td>#1 C1 500m Bantam Men</td>
-      <td></td>
-      <td></td>
-    </tr>
-
-    <tr class="rowParity1">
-      <td>ASP</td>
-      <td>Brown, Susan</td>
       <td>#1 C1 500m Bantam Men</td>
       <td></td>
       <td></td>

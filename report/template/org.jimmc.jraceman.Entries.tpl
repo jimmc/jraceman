@@ -20,7 +20,7 @@
     }
   }
 } */ -}}
-{{$orderby := "team" -}}
+{{ $orderBy := include "org.jimmc.jraceman.orderBy" "team" }}
 {{ $rows := rows (printf `
     SELECT
       team.shortname as Team,
@@ -42,7 +42,7 @@
       LEFT JOIN area on event.areaid=area.id
     WHERE event.id = ? AND (NOT COALESCE(event.scratched,false) AND NOT COALESCE(entry.scratched,false))
     ORDER BY %s
-` (attrs "orderby" $orderby "sql")) . }}
+` $orderBy.sql) . }}
 {{ $totals := row `
   SELECT
     count(distinct team.id) as TeamCount,
@@ -66,7 +66,7 @@
   </div>
   <center>
   <div class="titleArea">
-    <h3>Entries By {@orderBy.display}</h3>
+    <h3>Entries By {{ attrs "orderby" $orderBy.key "display" }}</h3>
   </div>
   <table class="main" border=1>
     <tr class="rowHeader">
