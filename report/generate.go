@@ -39,7 +39,7 @@ func GenerateResults(db dbsource.DBQuery, reportRoots []string, templateName, da
     "attrs": attrsFunc,
     "options": optionsFunc,
   })
-  if err := g.FromForm(reportRoots, data); err != nil {
+  if err := g.FromTemplate(reportRoots, data); err != nil {
     return nil, err
   }
 
