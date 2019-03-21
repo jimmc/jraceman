@@ -28,6 +28,12 @@ func GenerateResults(db dbsource.DBQuery, reportRoots []string, templateName, da
     return nil, fmt.Errorf("reading template attributes: %v", err)
   }
 
+  if options != nil {
+    if err := validateReportOptions(templateName, options, attrs); err != nil {
+      return nil, err
+    }
+  }
+
   attrsFunc := func(names ...string) (interface{}, error) {
     return descendAttributes(attrs, names...)
   }
@@ -46,6 +52,33 @@ func GenerateResults(db dbsource.DBQuery, reportRoots []string, templateName, da
   return &ReportResults{
     HTML: w.String(),
   }, nil
+}
+
+func validateReportOptions(tplName string, options *ReportOptions, attrs interface{}) error {
+  if options == nil {
+    return nil
+  }
+  if options.OrderByKey != "" {
+    attrsMap, ok := attrs.(map[string]interface{})
+    if !ok {
+      return fmt.Errorf("invalid orderby option %q, template %s does not include attributes map",
+          options.OrderByKey, tplName)
+    }
+    attrsOrderby := attrsMap["orderby"]
+    if attrsOrderby == nil {
+      return fmt.Errorf("invalid orderby option %q, template %s does not permit orderby",
+          options.OrderByKey, tplName)
+    }
+    orderbyMap, ok := attrsOrderby.(map[string]interface{})
+    if !ok {
+      return fmt.Errorf("invalid format for orderby map in template %s", tplName)
+    }
+    if orderbyMap[options.OrderByKey] == nil {
+      return fmt.Errorf("invalid orderby option %q for template %s",
+          options.OrderByKey, tplName)
+    }
+  }
+  return nil
 }
 
 func descendAttributes(attrs interface{}, names ...string) (interface{}, error) {

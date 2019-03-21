@@ -1,5 +1,9 @@
 [
   {
+    "Name": "site-all-report",
+    "Display": "Sites"
+  },
+  {
     "Name": "org.jimmc.jraceman.Entries",
     "Display": "Entries"
   },

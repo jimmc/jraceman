@@ -16,7 +16,8 @@ func (h *handler) generate(w http.ResponseWriter, r *http.Request) {
     case http.MethodGet:
       rName := r.URL.Query().Get("name")
       rData := r.URL.Query().Get("data")
-      h.generateReportForHTTP(w, r, rName, rData)
+      rOrderBy := r.URL.Query().Get("orderby")
+      h.generateReportForHTTP(w, r, rName, rData, rOrderBy)
     case http.MethodPost:
       // When using a POST, we expect the name and data values as JSON parameters in the body.
       jsonBody, err := apihttp.GetRequestParameters(r)
@@ -26,17 +27,21 @@ func (h *handler) generate(w http.ResponseWriter, r *http.Request) {
       }
       rName := apihttp.GetJsonParameter(jsonBody, "name")
       rData := apihttp.GetJsonParameter(jsonBody, "data")
-      h.generateReportForHTTP(w, r, rName, rData)
+      rOrderBy := apihttp.GetJsonParameter(jsonBody, "orderby")
+      h.generateReportForHTTP(w, r, rName, rData, rOrderBy)
     default:
       http.Error(w, "Method must be GET or POST", http.StatusMethodNotAllowed)
   }
 }
 
-func (h *handler) generateReportForHTTP(w http.ResponseWriter, r *http.Request, name, data string) {
+func (h *handler) generateReportForHTTP(w http.ResponseWriter, r *http.Request, name, data string, orderby string) {
   name = strings.TrimSpace(name)
   if name == "" {
     http.Error(w, "No report name specified", http.StatusBadRequest)
     return
+  }
+  options := &reportmain.ReportOptions{
+    OrderByKey: orderby,
   }
   dbrepos, ok := h.config.DomainRepos.(*dbrepo.Repos)
   if !ok {
@@ -45,9 +50,6 @@ func (h *handler) generateReportForHTTP(w http.ResponseWriter, r *http.Request, 
   }
   db := dbrepos.DB()
   log.Printf("Generating report: %v", name)
-  options := &reportmain.ReportOptions{
-    // TODO - collect options passed in by user
-  }
   result, err := reportmain.GenerateResults(db, h.config.ReportRoots, name, data, options)
   if err != nil {
     http.Error(w, fmt.Sprintf("Error generating report: %v", err), http.StatusBadRequest)
