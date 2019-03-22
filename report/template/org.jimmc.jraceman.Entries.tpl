@@ -1,6 +1,7 @@
 {{/*GT: {
   "display": "Entries",
   "description": "Entries ordered as selected.",
+  "where": [ "event", "team", "person" ],
   "orderby": {
     "team": {
       "display": "Team, Person, Event",

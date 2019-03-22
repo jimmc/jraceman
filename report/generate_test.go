@@ -72,7 +72,6 @@ func TestStandardReports(t *testing.T) {
 }
 
 func TestValidateReportOptions(t *testing.T) {
-  attrsNotMap := "hello"
   attrsEmpty := map[string]interface{}{}
   attrsWithOrderBy := map[string]interface{}{
     "orderby": map[string]interface{} {
@@ -83,13 +82,12 @@ func TestValidateReportOptions(t *testing.T) {
   tests := []struct{
     name string
     options *ReportOptions
-    attrs interface{}
+    attrs map[string]interface{}
     expectError bool
   }{
     { "nil options", nil, attrsEmpty, false },
     { "no orderby option", &ReportOptions{}, attrsEmpty, false },
     { "nil attrs", &ReportOptions{OrderByKey:"foo"}, nil, true },
-    { "attrs not map", &ReportOptions{OrderByKey:"foo"}, attrsNotMap, true },
     { "empty attrs map", &ReportOptions{OrderByKey:"foo"}, attrsEmpty, true },
     { "invalid orderby option", &ReportOptions{OrderByKey:"foo"}, attrsWithOrderBy, true },
     { "valid orderby option", &ReportOptions{OrderByKey:"abc"}, attrsWithOrderBy, false },

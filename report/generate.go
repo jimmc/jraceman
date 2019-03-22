@@ -10,6 +10,13 @@ import (
 
 type ReportOptions struct {
   OrderByKey string     // One of the key values in the attr orderby list for the template.
+  WhereValues map[string]WhereValue
+}
+
+// WhereValues contains the values specified in the options for one where field.
+type WhereValue struct {
+  Op string     // The comparison operation to use for this field.
+  Value interface{}     // The value to use on the RHS of the comparison.
 }
 
 type ReportResults struct {
@@ -27,23 +34,39 @@ func GenerateResults(db dbsource.DBQuery, reportRoots []string, templateName, da
   if err != nil {
     return nil, fmt.Errorf("reading template attributes: %v", err)
   }
+  attrsMap := map[string]interface{}{}
+  if attrs != nil {
+    var ok bool
+    attrsMap, ok = attrs.(map[string]interface{})
+    if !ok {
+      return nil, fmt.Errorf("attributes in template %q is not a map", templateName)
+    }
+  }
 
   if options != nil {
-    if err := validateReportOptions(templateName, options, attrs); err != nil {
+    if err := validateReportOptions(templateName, options, attrsMap); err != nil {
       return nil, err
     }
   }
 
   attrsFunc := func(names ...string) (interface{}, error) {
-    return descendAttributes(attrs, names...)
+    return descendAttributes(attrsMap, names...)
   }
   optionsFunc := func(names ...string) (interface{}, error) {
     return descendOptions(options, names...)
+  }
+  whereData, err := where(attrsMap, options)
+  if err != nil {
+    return nil, err
+  }
+  whereFunc := func() (interface{}, error) {
+    return whereData, nil
   }
   g := gen.New(templateName, true, w, dataSource)
   g = g.WithFuncs(map[string]interface{}{
     "attrs": attrsFunc,
     "options": optionsFunc,
+    "where": whereFunc,
   })
   if err := g.FromTemplate(reportRoots, data); err != nil {
     return nil, err
@@ -54,16 +77,11 @@ func GenerateResults(db dbsource.DBQuery, reportRoots []string, templateName, da
   }, nil
 }
 
-func validateReportOptions(tplName string, options *ReportOptions, attrs interface{}) error {
+func validateReportOptions(tplName string, options *ReportOptions, attrsMap map[string]interface{}) error {
   if options == nil {
     return nil
   }
   if options.OrderByKey != "" {
-    attrsMap, ok := attrs.(map[string]interface{})
-    if !ok {
-      return fmt.Errorf("invalid orderby option %q, template %s does not include attributes map",
-          options.OrderByKey, tplName)
-    }
     attrsOrderby := attrsMap["orderby"]
     if attrsOrderby == nil {
       return fmt.Errorf("invalid orderby option %q, template %s does not permit orderby",
@@ -81,9 +99,9 @@ func validateReportOptions(tplName string, options *ReportOptions, attrs interfa
   return nil
 }
 
-func descendAttributes(attrs interface{}, names ...string) (interface{}, error) {
+func descendAttributes(attrsMap map[string]interface{}, names ...string) (interface{}, error) {
   var a interface{}
-  a = attrs
+  a = attrsMap
   for depth, name := range names {
     m, ok := a.(map[string]interface{})
     if !ok {
