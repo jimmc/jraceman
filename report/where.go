@@ -86,27 +86,34 @@ func where(attrsMap map[string]interface{}, options *ReportOptions) (*whereData,
   if err != nil {
     return nil, err
   }
-  whereList, err = expandWhereList(whereList)
-  if err != nil {
-    return nil, err
-  }
   whereMap, err := whereListToMap(whereList)
   if err != nil {
     return nil, err
   }
-  return whereMapToData(whereMap, options.WhereValues)
+  whereListInUse := extractWhereListInUse(whereList, options.WhereValues)
+  return whereMapToData(whereMap, whereListInUse, options.WhereValues)
 }
 
 // attrsToWhereList extracts the list of standard where field names from
-// the template attributes.
+// the template attributes, including expansion.
 func attrsToWhereList(attrsMap map[string]interface{}) ([]string, error) {
+  whereList, err := extractWhereList(attrsMap)
+  if err != nil {
+    return nil, err
+  }
+  return expandWhereList(whereList)
+}
+
+// extractList extracts the list of standard where field names from
+// the template attributes.
+func extractWhereList(attrsMap map[string]interface{}) ([]string, error) {
   whereAttr := attrsMap["where"]
   if whereAttr == nil {
     return nil, nil
   }
   whereList, ok := whereAttr.([]interface{})
   if !ok {
-    return nil, fmt.Errorf("'where' attribute is not array (it is %T)", whereAttr)
+    return nil, fmt.Errorf("'where' attribute is not array of interface{} (it is %T)", whereAttr)
   }
   ss := make([]string, len(whereList))
   for i, v := range whereList {
@@ -170,20 +177,39 @@ func whereListToMap(names []string) (map[string]whereDetails, error) {
   return r, nil
 }
 
+// extractWhereListInUse takes a list of all defined where fields for a
+// template and returns a list that only contains the fields that are
+// used in the options.
+func extractWhereListInUse(whereList []string, whereValues map[string]WhereValue) []string {
+  r := []string{}
+  for _, s := range whereList {
+    if _, ok := whereValues[s]; ok {
+      r = append(r, s)
+    }
+  }
+  return r
+}
+
 // whereMapToData generates the WHERE expression based on the given
 // map of fields and the corresponding values.
 // It also validates that each where value in the options
 // matches a where field in the attributes.
 // whereMap is the list of available fields for this report.
+// whereListInUse is the list of field names from whereValues,
+// which we use to order the where expressions.
 // whereValues is the set of values supplied in the options.
 // TODO - validate that the type in the options matches the DB type.
-func whereMapToData(whereMap map[string]whereDetails, whereValues map[string]WhereValue) (*whereData, error) {
-  exprs := make([]string, len(whereValues))
-  for whereName, whereValue := range whereValues {
-    fieldDetails, ok := whereMap[whereName]
+func whereMapToData(whereMap map[string]whereDetails, whereListInUse []string, whereValues map[string]WhereValue) (*whereData, error) {
+  exprs := []string{}
+  for whereName, _ := range whereValues {
+    _, ok := whereMap[whereName]
     if !ok {
       return nil, fmt.Errorf("where field %q is not valid for this template", whereName)
     }
+  }
+  for _, whereName := range whereListInUse {
+    whereValue := whereValues[whereName]
+    fieldDetails := whereMap[whereName]
     fieldExpr, err := whereString(fieldDetails, whereValue)
     if err != nil {
       return nil, err
@@ -191,6 +217,9 @@ func whereMapToData(whereMap map[string]whereDetails, whereValues map[string]Whe
     exprs = append(exprs, fieldExpr)
   }
   expr := strings.Join(exprs, " && ")
+  if expr == "" {
+    return &emptyWhere, nil
+  }
   return &whereData{
     expr: expr,
     whereclause: " where " + expr,
