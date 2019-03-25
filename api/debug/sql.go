@@ -23,7 +23,7 @@ func (h *handler) sql(w http.ResponseWriter, r *http.Request) {
         http.Error(w, err.Error(), http.StatusBadRequest)
         return
       }
-      sqlStr := apihttp.GetJsonParameter(jsonBody, "q")
+      sqlStr := apihttp.GetJsonStringParameter(jsonBody, "q")
       h.executeSql(w, r, sqlStr)
     default:
       http.Error(w, "Method must be GET or POST", http.StatusMethodNotAllowed)

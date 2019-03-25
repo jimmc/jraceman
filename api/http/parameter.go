@@ -21,7 +21,7 @@ func GetRequestParameters(r *nethttp.Request) (map[string]interface{}, error) {
   return jsonBody, nil
 }
 
-func GetJsonParameter(jsonBody map[string]interface{}, name string) string {
+func GetJsonStringParameter(jsonBody map[string]interface{}, name string) string {
   val, ok := jsonBody[name]
   if !ok {
     return ""
