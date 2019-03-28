@@ -30,18 +30,26 @@ func TestStandardReports(t *testing.T) {
 
   roots1 := []string{"template"}
   roots2 := []string{"testdata", "template"}
-  for _, tt := range []struct{
+  tests := []struct{
     testName string
     setupName string
     reportName string
     reportRoots []string
     templateName string
     data string
+    options *ReportOptions
   } {
-      { "test1", "empty", "test1", roots2, "test1", "<topdata>" },
-      { "lanes", "empty", "lanes-test", roots2, "lanes-test", "EV123" },
-      { "entries", "sample1", "entries-test", roots1, "org.jimmc.jraceman.Entries", "M1.EV1" },
-  } {
+      { "test1", "empty", "test1", roots2, "test1", "<topdata>", nil },
+      { "lanes", "empty", "lanes-test", roots2, "lanes-test", "EV123", nil },
+      { "entries", "sample1", "entries-test", roots1, "org.jimmc.jraceman.Entries", "",
+        &ReportOptions{
+          WhereValues: map[string]WhereValue {
+            "event_id": {Op: "eq", Value: "M1.EV1"},
+          },
+        },
+      },
+  }
+  for _, tt := range tests {
     t.Run(tt.testName, func(t *testing.T) {
 
       setupfilename := "testdata/" + tt.setupName + ".setup"
@@ -53,8 +61,7 @@ func TestStandardReports(t *testing.T) {
       defer dbRepos.Close()
       db := dbRepos.DB()
 
-      reportOpts := &ReportOptions{}
-      results, err := GenerateResults(db, tt.reportRoots, tt.templateName, tt.data, reportOpts)
+      results, err := GenerateResults(db, tt.reportRoots, tt.templateName, tt.data, tt.options)
       if err != nil {
         t.Fatal(err)
       }

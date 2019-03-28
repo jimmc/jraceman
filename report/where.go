@@ -5,17 +5,18 @@ import (
   "strings"
 )
 
-// whereData is what gets returned to the template to build the sql string.
-// whereclause and andclause start with a leading space and are intended to
+// WhereData is what gets returned to the template to build the sql string.
+// WhereClause and AndClause start with a leading space and are intended to
 // allow the template to just use that field and have it work whether the
 // options contains where values or not.
-type whereData struct {
-  expr string               // Just the expression after WHERE.
-  whereclause string        // WHERE and the expression.
-  andclause string          // AND and the expression.
+type WhereData struct {
+  Expr string               // Just the expression after WHERE.
+  WhereClause string        // WHERE and the expression.
+  AndClause string          // AND and the expression.
 }
 
 // whereDetails specifies how to create a where expression for one field.
+// This information comes from the template attributes.
 type whereDetails struct {
   display string
   table string
@@ -26,6 +27,8 @@ type whereDetails struct {
 }
 
 // whereGroups povides a standard set of expansions into where fields.
+// The template attributes can include one of the keywords in this map,
+// which then get expanded into the corresponding list of where fields.
 var whereGroups = map[string][]string {
   "event": { "event_id", "event_name", "event_number" },
   "person": { "person_id" },
@@ -74,14 +77,14 @@ var stdWheres = map[string]whereDetails {
 
 // emptyWhere is what we return to the template when there are no where
 // fields specified in the options.
-var emptyWhere = whereData{
-  expr: "",
-  whereclause: "",
-  andclause: "",
+var emptyWhere = WhereData{
+  Expr: "",
+  WhereClause: "",
+  AndClause: "",
 }
 
 // where generates the data that we return to the template.
-func where(attrsMap map[string]interface{}, options *ReportOptions) (*whereData, error) {
+func where(attrsMap map[string]interface{}, options *ReportOptions) (*WhereData, error) {
   whereList, err := attrsToWhereList(attrsMap)
   if err != nil {
     return nil, err
@@ -89,6 +92,9 @@ func where(attrsMap map[string]interface{}, options *ReportOptions) (*whereData,
   whereMap, err := whereListToMap(whereList)
   if err != nil {
     return nil, err
+  }
+  if options == nil {
+    options = &ReportOptions{}
   }
   whereListInUse := extractWhereListInUse(whereList, options.WhereValues)
   return whereMapToData(whereMap, whereListInUse, options.WhereValues)
@@ -199,7 +205,7 @@ func extractWhereListInUse(whereList []string, whereValues map[string]WhereValue
 // which we use to order the where expressions.
 // whereValues is the set of values supplied in the options.
 // TODO - validate that the type in the options matches the DB type.
-func whereMapToData(whereMap map[string]whereDetails, whereListInUse []string, whereValues map[string]WhereValue) (*whereData, error) {
+func whereMapToData(whereMap map[string]whereDetails, whereListInUse []string, whereValues map[string]WhereValue) (*WhereData, error) {
   exprs := []string{}
   for whereName, _ := range whereValues {
     _, ok := whereMap[whereName]
@@ -216,14 +222,14 @@ func whereMapToData(whereMap map[string]whereDetails, whereListInUse []string, w
     }
     exprs = append(exprs, fieldExpr)
   }
-  expr := strings.Join(exprs, " && ")
+  expr := strings.Join(exprs, " AND ")
   if expr == "" {
     return &emptyWhere, nil
   }
-  return &whereData{
-    expr: expr,
-    whereclause: " where " + expr,
-    andclause: " && " + expr,
+  return &WhereData{
+    Expr: expr,
+    WhereClause: " where " + expr,
+    AndClause: " AND " + expr,
   }, nil
 }
 
@@ -236,11 +242,30 @@ func whereString(fieldDetails whereDetails, whereValue WhereValue) (string, erro
   if field == "" {
     field = fmt.Sprintf("%s.%s", fieldDetails.table, fieldDetails.column)
   }
+  op, err := whereOpStr(whereValue.Op)
+  if err != nil {
+    return "", fmt.Errorf("invalid op %q for field %s", whereValue.Op, fieldDetails.display)
+  }
   switch v := whereValue.Value.(type) {
   case string:
-    return fmt.Sprintf("%s %s %s", field, whereValue.Op, sqlQuotedString(v)), nil
+    return fmt.Sprintf("%s %s %s", field, op, sqlQuotedString(v)), nil
   default:
-    return fmt.Sprintf("%s %s %v", field, whereValue.Op, v), nil
+    return fmt.Sprintf("%s %s %v", field, op, v), nil
+  }
+}
+
+// whereOpStr converts the Op field from a WhereValue to the string to be used
+// in the sql for that expression.
+func whereOpStr(op string) (string, error) {
+  switch op {
+  case "eq": return "=", nil
+  case "ne": return "!=", nil
+  case "gt": return ">", nil
+  case "ge": return ">=", nil
+  case "lt": return "<", nil
+  case "le": return "<=", nil
+  // TODO: add "in" operator
+  default: return "", fmt.Errorf("unknown op %q", op)
   }
 }
 

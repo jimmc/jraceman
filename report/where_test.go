@@ -11,7 +11,7 @@ func TestWhere(t *testing.T) {
     name string
     attrsMap map[string]interface{}
     options *ReportOptions
-    expect *whereData
+    expect *WhereData
     expectError bool
   } {
     {
@@ -19,7 +19,7 @@ func TestWhere(t *testing.T) {
       attrsMap: map[string]interface{}{"where": []interface{}{"event", "person_id"}},
       options: &ReportOptions{WhereValues: map[string]WhereValue{
       }},
-      expect: &whereData{},
+      expect: &WhereData{},
       expectError: false,
     },
     {
@@ -28,10 +28,10 @@ func TestWhere(t *testing.T) {
       options: &ReportOptions{WhereValues: map[string]WhereValue{
         "event_id": {Op: "eq", Value: "ID"},
       }},
-      expect: &whereData{
-        expr: "event.id eq 'ID'",
-        whereclause: " where event.id eq 'ID'",
-        andclause: " && event.id eq 'ID'",
+      expect: &WhereData{
+        Expr: "event.id = 'ID'",
+        WhereClause: " where event.id = 'ID'",
+        AndClause: " AND event.id = 'ID'",
       },
       expectError: false,
     },
@@ -55,7 +55,7 @@ func TestWhere(t *testing.T) {
         t.Fatalf("where: unexpected error: %v", err)
       } else {
         want := tc.expect
-        if diff := cmp.Diff(want, got, cmp.AllowUnexported(whereData{})); diff != "" {
+        if diff := cmp.Diff(want, got, cmp.AllowUnexported(WhereData{})); diff != "" {
           t.Errorf("where mismatch (-want +got):\n%s", diff)
         }
       }
@@ -234,7 +234,7 @@ func TestWhereMapToData(t *testing.T) {
     whereMap map[string]whereDetails
     whereListInUse []string
     whereValues map[string]WhereValue
-    expect *whereData
+    expect *WhereData
     expectError bool
   } {
     {
@@ -245,7 +245,7 @@ func TestWhereMapToData(t *testing.T) {
       whereListInUse: []string{},
       whereValues: map[string]WhereValue{
       },
-      expect: &whereData{},
+      expect: &WhereData{},
       expectError: false,
     },
     {
@@ -257,10 +257,10 @@ func TestWhereMapToData(t *testing.T) {
       whereValues: map[string]WhereValue{
         "a": WhereValue{Op: "eq", Value: 123},
       },
-      expect: &whereData{
-        expr: "A.c eq 123",
-        whereclause: " where A.c eq 123",
-        andclause: " && A.c eq 123",
+      expect: &WhereData{
+        Expr: "A.c = 123",
+        WhereClause: " where A.c = 123",
+        AndClause: " AND A.c = 123",
       },
       expectError: false,
     },
@@ -275,10 +275,10 @@ func TestWhereMapToData(t *testing.T) {
         "a": WhereValue{Op: "eq", Value: 123},
         "b": WhereValue{Op: "ne", Value: "xyz"},
       },
-      expect: &whereData{
-        expr: "A.c eq 123 && B.d ne 'xyz'",
-        whereclause: " where A.c eq 123 && B.d ne 'xyz'",
-        andclause: " && A.c eq 123 && B.d ne 'xyz'",
+      expect: &WhereData{
+        Expr: "A.c = 123 AND B.d != 'xyz'",
+        WhereClause: " where A.c = 123 AND B.d != 'xyz'",
+        AndClause: " AND A.c = 123 AND B.d != 'xyz'",
       },
       expectError: false,
     },
@@ -292,7 +292,7 @@ func TestWhereMapToData(t *testing.T) {
         "a": WhereValue{Op: "eq", Value: 123},
         "b": WhereValue{Op: "ne", Value: "xyz"},
       },
-      expect: &whereData{},
+      expect: &WhereData{},
       expectError: true,
     },
   }
@@ -307,7 +307,7 @@ func TestWhereMapToData(t *testing.T) {
         t.Fatalf("whereMapToData: unexpected error: %v:", err)
       } else {
         want := tc.expect
-        if diff := cmp.Diff(want, got, cmp.AllowUnexported(whereData{})); diff != "" {
+        if diff := cmp.Diff(want, got); diff != "" {
           t.Errorf("whereMapToData mismatch (-want +got):\n%s", diff)
         }
       }
@@ -408,19 +408,19 @@ func TestWhereString(t *testing.T) {
     {
       name: "int",
       field: whereDetails{table: "tbl", column: "col"},
-      value: WhereValue{Op: "=", Value: 123},
+      value: WhereValue{Op: "eq", Value: 123},
       expect: "tbl.col = 123",
     },
     {
       name: "string",
       field: whereDetails{table: "tbl", column: "col"},
-      value: WhereValue{Op: "=", Value: "abc"},
+      value: WhereValue{Op: "eq", Value: "abc"},
       expect: "tbl.col = 'abc'",
     },
     {
       name: "field override",
       field: whereDetails{table: "tbl", column: "col", field: "fff"},
-      value: WhereValue{Op: "=", Value: 123},
+      value: WhereValue{Op: "eq", Value: 123},
       expect: "fff = 123",
     },
   }

@@ -21,7 +21,8 @@
     }
   }
 } */ -}}
-{{ $orderBy := include "org.jimmc.jraceman.orderBy" "team" }}
+{{ $orderBy := include "org.jimmc.jraceman.orderBy" "team" -}}
+{{ $where := where -}}
 {{ $rows := rows (printf `
     SELECT
       team.shortname as Team,
@@ -41,10 +42,10 @@
       LEFT JOIN gender on event.genderid=gender.id
       LEFT JOIN meet on event.meetid=meet.id
       LEFT JOIN area on event.areaid=area.id
-    WHERE event.id = ? AND (NOT COALESCE(event.scratched,false) AND NOT COALESCE(entry.scratched,false))
+    WHERE (NOT COALESCE(event.scratched,false) AND NOT COALESCE(entry.scratched,false))%s
     ORDER BY %s
-` $orderBy.sql) . }}
-{{ $totals := row `
+` $where.AndClause $orderBy.sql) . -}}
+{{ $totals := row (printf `
   SELECT
     count(distinct team.id) as TeamCount,
     count(distinct person.id) as PeopleCount,
@@ -58,8 +59,8 @@
     LEFT JOIN team on person.teamid=team.id
     LEFT JOIN event on entry.eventid=event.id
     LEFT JOIN meet on event.meetid=meet.id
-  WHERE event.id = ? AND (NOT COALESCE(event.scratched,false) AND NOT COALESCE(entry.scratched,false))
-` . }}
+  WHERE (NOT COALESCE(event.scratched,false) AND NOT COALESCE(entry.scratched,false))%s
+` $where.AndClause) -}}
 <html>
 <body>
   <div class="header">
