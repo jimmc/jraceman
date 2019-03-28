@@ -1,0 +1,6 @@
+{
+  "name": "site-report-where",
+  "where": {
+    "site_id": { "op": "eq", "value": "S2" }
+  }
+}

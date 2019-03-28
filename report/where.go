@@ -58,6 +58,11 @@ var stdWheres = map[string]whereDetails {
     table: "person",
     column: "id",
   },
+  "site_id": whereDetails{
+    display: "Site",
+    table: "site",
+    column: "id",
+  },
   "team_id": whereDetails{
     display: "Team",
     table: "team",

@@ -67,6 +67,10 @@ func (h *handler) generateReportForHTTP(w http.ResponseWriter, r *http.Request, 
   apihttp.MarshalAndReply(w, result)
 }
 
+func OptionsFromParametersForTesting(orderby string, where interface{}) (*reportmain.ReportOptions, error) {
+  return optionsFromParameters(orderby, where)
+}
+
 func optionsFromParameters(orderby string, where interface{}) (*reportmain.ReportOptions, error) {
   whereValues, err := whereMapFromParameters(where)
   if err != nil {
