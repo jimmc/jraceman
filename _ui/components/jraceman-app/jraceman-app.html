@@ -12,6 +12,8 @@
 <link rel="import" href="../../components/meet-setup/meet-setup.html">
 <link rel="import" href="../../components/plan-setup/plan-setup.html">
 <link rel="import" href="../../components/query-results/query-results.html">
+<link rel="import" href="../../components/reports-tab/reports-tab.html">
+<link rel="import" href="../../components/report-results/report-results.html">
 <link rel="import" href="../../components/sport-setup/sport-setup.html">
 <link rel="import" href="../../components/team-setup/team-setup.html">
 <link rel="import" href="../../components/venue-setup/venue-setup.html">
@@ -69,7 +71,8 @@
               query-results={{queryResults}} selected-result=[[selectedResult]]
               select-up=[[requestSelect]]></meet-setup>
           <div class="tabContent" name="byEvent">By Event is not yet implemented</div>
-          <div class="tabContent" name="reports">Reports is not yet implemented</div>
+          <reports-tab class="tabContent" name="reports"
+              report-results={{reportResults}}></reports-tab>
           <database-tab class="tabContent" name="database"
               query-results={{queryResults}} selected-result=[[selectedResult]]
               select-up=[[requestSelect]]></database-tab>
@@ -82,7 +85,7 @@
         <paper-tabs selected="{{selectedBottomTab}}">
           <paper-tab name="messages">Messages</paper-tab>
           <paper-tab name="queryResults">Query Results[[queryResultsMoreLabel]]</paper-tab>
-          <paper-tab name="report">Report</paper-tab>
+          <paper-tab name="report">Report[[reportResultsMoreLabel]]</paper-tab>
           <paper-tab name="help">Help</paper-tab>
         </paper-tabs>
 
@@ -91,7 +94,9 @@
           <query-results name="queryResults" query-results=[[queryResults]]
               query-results-more-label={{queryResultsMoreLabel}}
               selected-result={{selectedResult}}></query-results>
-          <div name="report">Report is not yet implemented</div>
+          <report-results name="reportResults" report-results=[[reportResults]]
+              report-results-more-label={{reportResultsMoreLabel}}
+              ></report-results>
           <div name="help">Help is not yet implemented</div>
         </iron-pages>
       </div>

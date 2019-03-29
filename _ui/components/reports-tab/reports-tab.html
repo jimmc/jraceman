@@ -1,0 +1,39 @@
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-input/paper-textarea.html">
+<link rel="import" href="../../bower_components/polymer-decorators/polymer-decorators.html">
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../components/api-manager/api-manager.html">
+<link rel="import" href="../../components/jraceman-style/jraceman-style.html">
+
+<dom-module id="reports-tab">
+  <template>
+    <style include="jraceman-style">
+      :host {
+        height: 100%;
+      }
+      #main {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+      }
+      #buttons {
+        flex: none;
+      }
+    </style>
+    <div id="main">
+      <div>
+        Available reports:
+        <select id="reportName">
+          <template is="dom-repeat" items=[[reportList]] as="report">
+            <option value="[[report.Name]]">[[report.Display]]</option>
+          </template>
+        </select>
+      </div>
+      <div id="buttons">
+        <paper-button on-click="generate">Generate</paper-button>
+      </div>
+    </div>
+  </template>
+</dom-module>
+
+<script src="reports-tab.js"></script>

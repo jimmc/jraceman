@@ -16,6 +16,9 @@ class JRacemanApp extends Polymer.Element {
   @Polymer.decorators.property({type: Object})
   queryResults: object;
 
+  @Polymer.decorators.property({type: Object})
+  reportResults: object;
+
   ready() {
     super.ready();
     ClientMessages.append("top", "JRaceman client started");
@@ -26,6 +29,12 @@ class JRacemanApp extends Polymer.Element {
   @Polymer.decorators.observe('queryResults')
   queryResultsChanged() {
     this.selectedBottomTab = 1;
+  }
+
+  // When the report results get changed, display them.
+  @Polymer.decorators.observe('reportResults')
+  reportResultsChanged() {
+    this.selectedBottomTab = 2;
   }
 
   selectTopTab(tab: string) {
