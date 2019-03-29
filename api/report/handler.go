@@ -35,7 +35,19 @@ func (h *handler) root(w http.ResponseWriter, r *http.Request) {
     h.list(w, r)
     return
   }
-  http.Error(w, "Try /api/report/\n", http.StatusForbidden)
+  ss := strings.Split(p, "/")
+  // Since we know p!="", ss must have at least one element.
+  reportName := ss[0]
+  action := "attributes"        // Preset to the default action.
+  if len(ss) > 1 && ss[1] != "" {
+    action = ss[1]
+  }
+
+  switch action {
+  // case "attributes": h.attributesByName(w, r, reportName)
+  case "generate": h.generateByName(w, r, reportName)
+  default: http.Error(w, "Try /api/report/\n", http.StatusForbidden)
+  }
 }
 
 func (h *handler) apiPrefix(s string) string {

@@ -12,9 +12,15 @@ import (
 )
 
 func (h *handler) generate(w http.ResponseWriter, r *http.Request) {
+  h.generateByName(w, r, "")
+}
+
+func (h *handler) generateByName(w http.ResponseWriter, r *http.Request, rName string) {
   switch r.Method {
     case http.MethodGet:
-      rName := r.URL.Query().Get("name")
+      if rName == "" {
+        rName = r.URL.Query().Get("name")
+      }
       rData := r.URL.Query().Get("data")
       rOrderBy := r.URL.Query().Get("orderby")
       // WHERE parameters require nesting that is too complex for 
@@ -27,7 +33,9 @@ func (h *handler) generate(w http.ResponseWriter, r *http.Request) {
         http.Error(w, err.Error(), http.StatusBadRequest)
         return
       }
-      rName := apihttp.GetJsonStringParameter(jsonBody, "name")
+      if rName == "" {
+        rName = apihttp.GetJsonStringParameter(jsonBody, "name")
+      }
       rData := apihttp.GetJsonStringParameter(jsonBody, "data")
       rOrderBy := apihttp.GetJsonStringParameter(jsonBody, "orderby")
       rWhere, ok := jsonBody["where"]
