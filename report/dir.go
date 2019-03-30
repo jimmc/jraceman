@@ -2,6 +2,7 @@ package report
 
 import (
   "fmt"
+  "log"
 
   "github.com/jimmc/gtrepgen/gen"
 )
@@ -9,6 +10,7 @@ import (
 type ReportAttributes struct {
   Name string
   Display string
+  OrderBy map[string]string
 }
 
 /* ClientVisibleReports returns the list of reports and their attributes
@@ -28,6 +30,9 @@ func ClientVisibleReports(reportRoots []string) ([]*ReportAttributes, error) {
   return allAttrs, nil
 }
 
+/* ClientVisibleReportsOne returns the list of reports and their attributes
+ * from one root directory.
+ */
 func ClientVisibleReportsOne(templateDir string) ([]*ReportAttributes, error) {
   attrs, err := ReadTemplateAttrs(templateDir)
   if err != nil {
@@ -43,9 +48,16 @@ func ClientVisibleReportsOne(templateDir string) ([]*ReportAttributes, error) {
     if !ok {
       continue  // Display is not a string value, ignore this entry
     }
+    orderbymap, err := extractUserOrderByMap(tplAttrs)
+    if err != nil {
+      // If we get an error, don't add this report to the list, but still show other reports.
+      log.Printf("Error decoding orderby in template %q: %v", name, err)
+      continue
+    }
     report := &ReportAttributes{
       Name: name,
       Display: display,
+      OrderBy: orderbymap,
     }
     reports = append(reports, report)
   }
@@ -73,4 +85,33 @@ func ReadTemplateAttrs(templateDir string) ([]map[string]interface{}, error) {
     attrMaps = append(attrMaps, fmap)
   }
   return attrMaps, err
+}
+
+// extractUserOrderByMap looks at the orderby attribute in the given template attributes
+// and extacts from that the user-visible fields.
+// If there is no orderby attribute, it returns nil for both the value and the error.
+func extractUserOrderByMap(tplAttrs map[string]interface{}) (map[string]string, error) {
+    orderbyval, ok := tplAttrs["orderby"]
+    if !ok {
+      return nil, nil   // No orderby attribute, that's OK.
+    }
+    orderby, ok := orderbyval.(map[string]interface{})
+    if !ok {
+      return nil, fmt.Errorf("orderby attribute is not map[string]interface{}, it is %T", orderbyval)
+    }
+    // We return a map from the orderby key to the display value.
+    r := map[string]string{}
+    for k, v := range orderby {
+      orderitem, ok := v.(map[string]interface{})
+      if !ok {
+        return nil, fmt.Errorf("value for orderby item %s is not map[string]interface{}, it is %T", k, v)
+      }
+      displayV := orderitem["display"]
+      display, ok := displayV.(string)
+      if !ok {
+        return nil, fmt.Errorf("value for display in orderby item %s is not string, it is %T", k, displayV)
+      }
+      r[k] = display
+    }
+    return r, nil
 }
