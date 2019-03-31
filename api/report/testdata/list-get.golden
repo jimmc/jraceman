@@ -2,6 +2,7 @@
   {
     "Name": "site-all-report",
     "Display": "Sites",
+    "Description": "List all sites",
     "OrderBy": [
       {
         "Name": "name",
@@ -16,6 +17,7 @@
   {
     "Name": "org.jimmc.jraceman.Entries",
     "Display": "Entries",
+    "Description": "Entries ordered as selected.",
     "OrderBy": [
       {
         "Name": "team",
@@ -38,6 +40,7 @@
   {
     "Name": "org.jimmc.jraceman.Lanes",
     "Display": "Lanes",
-    "OrderBy": null
+    "Description": "",
+    "OrderBy": []
   }
 ]

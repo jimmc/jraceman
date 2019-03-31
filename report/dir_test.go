@@ -12,20 +12,23 @@ func TestClientVisibleReports(t *testing.T) {
   if err != nil {
     t.Fatalf("ClientVisibleReports error: %v", err)
   }
-  expected := []*ReportAttributes{
+  expected := []*ReportFields{
     {
       Name: "org.jimmc.jraceman.Entries",
       Display: "Entries",
-      OrderBy: []OrderByItem{
-        OrderByItem{Name: "team",        Display: "Team, Person, Event"},
-        OrderByItem{Name: "person",      Display: "Person, Event"},
-        OrderByItem{Name: "eventTeam",   Display: "Event, Team, Person"},
-        OrderByItem{Name: "eventPerson", Display: "Event, Person"},
+      Description: "Entries ordered as selected.",
+      OrderBy: []FieldsOrderByItem{
+        FieldsOrderByItem{Name: "team",        Display: "Team, Person, Event"},
+        FieldsOrderByItem{Name: "person",      Display: "Person, Event"},
+        FieldsOrderByItem{Name: "eventTeam",   Display: "Event, Team, Person"},
+        FieldsOrderByItem{Name: "eventPerson", Display: "Event, Person"},
       },
     },
     {
       Name: "org.jimmc.jraceman.Lanes",
       Display: "Lanes",
+      Description: "",
+      OrderBy: []FieldsOrderByItem{},
     },
   }
   got, want := reports, expected
@@ -43,7 +46,7 @@ func TestReadTemplateAttrs(t *testing.T) {
     t.Fatalf("Wrong number of files-with-attributes found, got %d, want %d", got, want)
   }
   fmt.Printf("attrslist: %+v\n", attrslist)
-  if got, want := attrslist[0]["name"], "org.jimmc.jraceman.Entries"; got != want {
+  if got, want := attrslist[0].Name, "org.jimmc.jraceman.Entries"; got != want {
     t.Errorf("Name of first report: got %s, want %s", got, want)
   }
 }
@@ -51,56 +54,28 @@ func TestReadTemplateAttrs(t *testing.T) {
 func TestExtractUserOrderByMap(t *testing.T) {
   tests := []struct{
     name string
-    input map[string]interface{}
-    expect []OrderByItem
+    input *ReportAttributes
+    expect []FieldsOrderByItem
     expectError bool
   } {
     {
       name: "empty",
-      input: map[string]interface{}{},
-      expect: nil,
+      input: &ReportAttributes{},
+      expect: []FieldsOrderByItem{},
     },
     {
       name: "normal",
-      input: map[string]interface{}{
-        "name": "normal",
-        "orderby": []interface{}{
-          map[string]interface{}{"name":"a", "display": "AA"},
-          map[string]interface{}{"name":"b", "display": "BB"},
+      input: &ReportAttributes{
+        Name: "normal",
+        OrderBy: []AttributesOrderByItem{
+          {Name:"a", Display: "AA"},
+          {Name:"b", Display: "BB"},
         },
       },
-      expect: []OrderByItem{
+      expect: []FieldsOrderByItem{
         {Name: "a", Display: "AA"},
         {Name: "b", Display: "BB"},
       },
-    },
-    {
-      name: "bad_orderby",
-      input: map[string]interface{}{
-        "name": "bad_orderby",
-        "orderby": "not_an_array",
-      },
-      expectError: true,
-    },
-    {
-      name: "bad_orderby_item",
-      input: map[string]interface{}{
-        "name": "bad_orderby_item",
-        "orderby": []interface{}{
-          "not_a_map",
-        },
-      },
-      expectError: true,
-    },
-    {
-      name: "bad_orderby_display",
-      input: map[string]interface{}{
-        "name": "bad_orderby_display",
-        "orderby": []interface{}{
-          map[string]interface{}{"display": 123},
-        },
-      },
-      expectError: true,
     },
   }
   for _, tc := range tests {

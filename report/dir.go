@@ -7,15 +7,34 @@ import (
   "github.com/jimmc/gtrepgen/gen"
 )
 
-type OrderByItem struct {
-  Name string
-  Display string
-}
-
+// ReportAttributes contains the attributes loaded from a report template.
 type ReportAttributes struct {
   Name string
   Display string
-  OrderBy []OrderByItem
+  Description string
+  Where []string
+  OrderBy []AttributesOrderByItem
+}
+
+// AttributesOrderByItem contains the OrderBy info loaded from a report template.
+type AttributesOrderByItem struct {
+  Name string
+  Display string
+  Sql string
+}
+
+// ReportFields contains the information about a report template that is given to the user.
+type ReportFields struct {
+  Name string
+  Display string
+  Description string
+  OrderBy []FieldsOrderByItem
+}
+
+// FieldsOrderByItem is the information about OrderBy that is given to the user.
+type FieldsOrderByItem struct {
+  Name string
+  Display string
 }
 
 /* ClientVisibleReports returns the list of reports and their attributes
@@ -23,45 +42,42 @@ type ReportAttributes struct {
  * Once we have user ids and authorizations, this function should accept
  * a user id and return only data that should be visible to that user.
  */
-func ClientVisibleReports(reportRoots []string) ([]*ReportAttributes, error) {
-  allAttrs := make([]*ReportAttributes, 0)
+func ClientVisibleReports(reportRoots []string) ([]*ReportFields, error) {
+  allFields := make([]*ReportFields, 0)
   for _, root := range reportRoots {
-    attrs, err := ClientVisibleReportsOne(root)
+    fields, err := ClientVisibleReportsOne(root)
     if err != nil {
       return nil, err
     }
-    allAttrs = append(allAttrs, attrs...)
+    allFields = append(allFields, fields...)
   }
-  return allAttrs, nil
+  return allFields, nil
 }
 
-/* ClientVisibleReportsOne returns the list of reports and their attributes
+/* ClientVisibleReportsOne returns the list of reports and their user-visible attributes
  * from one root directory.
  */
-func ClientVisibleReportsOne(templateDir string) ([]*ReportAttributes, error) {
+func ClientVisibleReportsOne(templateDir string) ([]*ReportFields, error) {
   attrs, err := ReadTemplateAttrs(templateDir)
   if err != nil {
     return nil, err
   }
-  reports := make([]*ReportAttributes, 0)
+  reports := make([]*ReportFields, 0)
   for _, tplAttrs := range attrs {
-    name, ok := tplAttrs["name"].(string)
-    if !ok {
-      continue  // Name is not a string value, ignore this entry
-    }
-    display, ok := tplAttrs["display"].(string)
-    if !ok {
-      continue  // Display is not a string value, ignore this entry
-    }
     userOrderByList, err := extractUserOrderByList(tplAttrs)
     if err != nil {
       // If we get an error, don't add this report to the list, but still show other reports.
-      log.Printf("Error decoding orderby in template %q: %v", name, err)
+      log.Printf("Error decoding orderby in template %q: %v", tplAttrs.Name, err)
       continue
     }
-    report := &ReportAttributes{
-      Name: name,
-      Display: display,
+    if tplAttrs.Display == "" {
+      // Don't include templates with no Display attribute.
+      continue
+    }
+    report := &ReportFields{
+      Name: tplAttrs.Name,
+      Display: tplAttrs.Display,
+      Description: tplAttrs.Description,
       OrderBy: userOrderByList,
     }
     reports = append(reports, report)
@@ -72,58 +88,37 @@ func ClientVisibleReportsOne(templateDir string) ([]*ReportAttributes, error) {
 /* ReadTemplateAttrs loads the attributes from all the template files in
  * the given directory.
  */
-func ReadTemplateAttrs(templateDir string) ([]map[string]interface{}, error) {
-  attrs, err := gen.ReadDirFilesAttributes(templateDir)
-  if attrs == nil {
+func ReadTemplateAttrs(templateDir string) ([]*ReportAttributes, error) {
+  newDestPointer := func() interface{} {
+    return &ReportAttributes{}
+  }
+  fileAttrs, err := gen.ReadDirFilesAttributesAs(templateDir, newDestPointer)
+  if fileAttrs == nil {
     return nil, err
   }
-  attrMaps := []map[string]interface{}{}
-  for _, fattrs := range attrs {
+  reportAttrs := []*ReportAttributes{}
+  for _, fattrs := range fileAttrs {
     if fattrs.Err != nil {
       return nil, fmt.Errorf("for template %q received error %v", fattrs.Name, fattrs.Err)
     }
-    fmap, ok := fattrs.Attributes.(map[string]interface{})
+    attrs, ok := fattrs.Attributes.(*ReportAttributes)
     if !ok {
       return nil, fmt.Errorf("invalid data type for template %q", fattrs.Name)
     }
-    fmap["name"] = fattrs.Name
-    attrMaps = append(attrMaps, fmap)
+    attrs.Name = fattrs.Name
+    reportAttrs = append(reportAttrs, attrs)
   }
-  return attrMaps, err
+  return reportAttrs, err
 }
 
 // extractUserOrderByList looks at the orderby attribute in the given template attributes
 // and extacts from that the user-visible fields.
-// If there is no orderby attribute, it returns nil for both the value and the error.
-func extractUserOrderByList(tplAttrs map[string]interface{}) ([]OrderByItem, error) {
-    tplName := tplAttrs["name"]
-    orderbyval, ok := tplAttrs["orderby"]
-    if !ok {
-      return nil, nil   // No orderby attribute, that's OK.
-    }
-    orderbyList, ok := orderbyval.([]interface{})
-    if !ok {
-      return nil, fmt.Errorf("orderby attribute for template %q is not []interface{}, it is %T", tplName, orderbyval)
-    }
-    r := []OrderByItem{}
-    for _, v := range orderbyList {
-      orderitem, ok := v.(map[string]interface{})
-      if !ok {
-        return nil, fmt.Errorf("value for orderby item %v is not map[string]interface{}, it is %T", v, v)
-      }
-      nameV := orderitem["name"]
-      name, ok := nameV.(string)
-      if !ok {
-        return nil, fmt.Errorf("value for name in orderby item %s is not string, it is %T", v, nameV)
-      }
-      displayV := orderitem["display"]
-      display, ok := displayV.(string)
-      if !ok {
-        return nil, fmt.Errorf("value for display in orderby item %s is not string, it is %T", name, displayV)
-      }
-      r = append(r, OrderByItem{
-        Name: name,
-        Display: display,
+func extractUserOrderByList(tplAttrs *ReportAttributes) ([]FieldsOrderByItem, error) {
+    r := []FieldsOrderByItem{}
+    for _, v := range tplAttrs.OrderBy {
+      r = append(r, FieldsOrderByItem{
+        Name: v.Name,
+        Display: v.Display,
       })
     }
     return r, nil
