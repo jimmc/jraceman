@@ -80,17 +80,17 @@ func TestStandardReports(t *testing.T) {
 }
 
 func TestValidateReportOptions(t *testing.T) {
-  attrsEmpty := map[string]interface{}{}
-  attrsWithOrderBy := map[string]interface{}{
-    "orderby": []interface{} {
-      map[string]interface{}{"name": "abc", "display": "xyz"},
-      map[string]interface{}{"name": "def", "display": "uvw"},
+  attrsEmpty := &ReportAttributes{}
+  attrsWithOrderBy := &ReportAttributes{
+    OrderBy: []AttributesOrderByItem{
+      AttributesOrderByItem{Name: "abc", Display: "xyz"},
+      AttributesOrderByItem{Name: "def", Display: "uvw"},
     },
   }
   tests := []struct{
     name string
     options *ReportOptions
-    attrs map[string]interface{}
+    attrs *ReportAttributes
     expectError bool
   }{
     { "nil options", nil, attrsEmpty, false },

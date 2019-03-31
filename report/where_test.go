@@ -9,14 +9,16 @@ import (
 func TestWhere(t *testing.T) {
   tests := []struct{
     name string
-    attrsMap map[string]interface{}
+    attrs *ReportAttributes
     options *ReportOptions
     expect *WhereData
     expectError bool
   } {
     {
       name: "empty_options",
-      attrsMap: map[string]interface{}{"where": []interface{}{"event", "person_id"}},
+      attrs: &ReportAttributes{
+        Where: []string{"event", "person_id"},
+      },
       options: &ReportOptions{WhereValues: map[string]WhereValue{
       }},
       expect: &WhereData{},
@@ -24,7 +26,9 @@ func TestWhere(t *testing.T) {
     },
     {
       name: "one_option",
-      attrsMap: map[string]interface{}{"where": []interface{}{"event", "person_id"}},
+      attrs: &ReportAttributes{
+        Where: []string{"event", "person_id"},
+      },
       options: &ReportOptions{WhereValues: map[string]WhereValue{
         "event_id": {Op: "eq", Value: "ID"},
       }},
@@ -37,7 +41,9 @@ func TestWhere(t *testing.T) {
     },
     {
       name: "invalid_option",
-      attrsMap: map[string]interface{}{"where": []interface{}{"event", "person_id"}},
+      attrs: &ReportAttributes{
+        Where: []string{"event", "person_id"},
+      },
       options: &ReportOptions{WhereValues: map[string]WhereValue{
         "no_such_field": {Op: "eq", Value: "anything"},
       }},
@@ -46,7 +52,7 @@ func TestWhere(t *testing.T) {
   }
   for _, tc := range tests {
     t.Run(tc.name, func(t *testing.T) {
-      got, err := where(tc.attrsMap, tc.options)
+      got, err := where(tc.attrs, tc.options)
       if tc.expectError {
         if err == nil {
           t.Fatalf("where: expected error but did not get one")
@@ -57,100 +63,6 @@ func TestWhere(t *testing.T) {
         want := tc.expect
         if diff := cmp.Diff(want, got, cmp.AllowUnexported(WhereData{})); diff != "" {
           t.Errorf("where mismatch (-want +got):\n%s", diff)
-        }
-      }
-    })
-  }
-}
-
-func TestAttrsToWhereList(t *testing.T) {
-  tests := []struct{
-    name string
-    input map[string]interface{}
-    expect []string
-    expectError bool
-  } {
-    {
-      name: "no_where",
-      input: map[string]interface{}{},
-      expect: []string{},
-      expectError: false,
-    },
-    {
-      name: "simple",
-      input: map[string]interface{}{"where": []interface{}{"a", "b", "c"}},
-      expect: []string{"a", "b", "c"},
-      expectError: false,
-    },
-    {
-      name: "expanded",
-      input: map[string]interface{}{"where": []interface{}{"a", "event", "c"}},
-      expect: []string{"a", "event_id", "event_name", "event_number", "c"},
-      expectError: false,
-    },
-  }
-  for _, tc := range tests {
-    t.Run(tc.name, func(t *testing.T) {
-      got, err := attrsToWhereList(tc.input)
-      if tc.expectError {
-        if err == nil {
-          t.Fatalf("attrsToWhereList: expected error but did not get one")
-        }
-      } else if err != nil {
-        t.Fatalf("attrsToWhereList: unexpected error: %v", err)
-      } else {
-        want := tc.expect
-        if diff := cmp.Diff(want, got); diff != "" {
-          t.Errorf("attrsToWhereList mismatch (-want +got):\n%s", diff)
-        }
-      }
-    })
-  }
-}
-
-func TestExtractWhereList(t *testing.T) {
-  tests := []struct{
-    name string
-    input map[string]interface{}
-    expect []string
-    expectError bool
-  } {
-    {
-      name: "no_where",
-      input: map[string]interface{}{},
-      expect: nil,
-      expectError: false,
-    },
-    {
-      name: "simple",
-      input: map[string]interface{}{"where": []interface{}{"a", "b", "c"}},
-      expect: []string{"a", "b", "c"},
-      expectError: false,
-    },
-    {
-      name: "where_not_array",
-      input: map[string]interface{}{"where": "x"},
-      expectError: true,
-    },
-    {
-      name: "where_item_not_string",
-      input: map[string]interface{}{"where": []interface{}{"a", 2, "c"}},
-      expectError: true,
-    },
-  }
-  for _, tc := range tests {
-    t.Run(tc.name, func(t *testing.T){
-      got, err := extractWhereList(tc.input)
-      if tc.expectError {
-        if err == nil {
-          t.Fatalf("extractWhereList: expected error but did not get one")
-        }
-      } else if err != nil {
-        t.Fatalf("extractWhereList: unexpected error: %v", err)
-      } else {
-        want := tc.expect
-        if diff := cmp.Diff(want, got); diff != "" {
-          t.Errorf("extractWhereList mismatch (-want +got):\n%s", diff)
         }
       }
     })

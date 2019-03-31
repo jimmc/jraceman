@@ -89,8 +89,8 @@ var emptyWhere = WhereData{
 }
 
 // where generates the data that we return to the template.
-func where(attrsMap map[string]interface{}, options *ReportOptions) (*WhereData, error) {
-  whereList, err := attrsToWhereList(attrsMap)
+func where(attrs *ReportAttributes, options *ReportOptions) (*WhereData, error) {
+  whereList, err := expandWhereList(attrs.Where)
   if err != nil {
     return nil, err
   }
@@ -103,38 +103,6 @@ func where(attrsMap map[string]interface{}, options *ReportOptions) (*WhereData,
   }
   whereListInUse := extractWhereListInUse(whereList, options.WhereValues)
   return whereMapToData(whereMap, whereListInUse, options.WhereValues)
-}
-
-// attrsToWhereList extracts the list of standard where field names from
-// the template attributes, including expansion.
-func attrsToWhereList(attrsMap map[string]interface{}) ([]string, error) {
-  whereList, err := extractWhereList(attrsMap)
-  if err != nil {
-    return nil, err
-  }
-  return expandWhereList(whereList)
-}
-
-// extractList extracts the list of standard where field names from
-// the template attributes.
-func extractWhereList(attrsMap map[string]interface{}) ([]string, error) {
-  whereAttr := attrsMap["where"]
-  if whereAttr == nil {
-    return nil, nil
-  }
-  whereList, ok := whereAttr.([]interface{})
-  if !ok {
-    return nil, fmt.Errorf("'where' attribute is not array of interface{} (it is %T)", whereAttr)
-  }
-  ss := make([]string, len(whereList))
-  for i, v := range whereList {
-    s, ok := v.(string)
-    if !ok {
-      return nil, fmt.Errorf("'where' attribute item %v at index %d is not string (it is %T)", v, i, v)
-    }
-    ss[i] = s
-  }
-  return ss, nil
 }
 
 // expandWhereList expands entries in whereGroups.

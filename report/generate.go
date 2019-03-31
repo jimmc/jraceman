@@ -40,37 +40,28 @@ func GenerateResults(db dbsource.DBQuery, reportRoots []string, templateName, da
   dataSource := dbsource.New(db)
   w := &strings.Builder{}
 
-  attrs, err := gen.FindAndReadAttributes(templateName, reportRoots)
-  if err != nil {
+  attrs := &ReportAttributes{}
+  if err := gen.FindAndReadAttributesInto(templateName, reportRoots, attrs); err != nil {
     return nil, fmt.Errorf("reading template attributes: %v", err)
   }
-  attrsMap := map[string]interface{}{}
-  if attrs != nil {
-    var ok bool
-    attrsMap, ok = attrs.(map[string]interface{})
-    if !ok {
-      return nil, fmt.Errorf("attributes in template %q is not a map", templateName)
-    }
-  }
-
   computed := &ReportComputed{}
   if options != nil {
-    if err := validateReportOptions(templateName, options, attrsMap, computed); err != nil {
+    if err := validateReportOptions(templateName, options, attrs, computed); err != nil {
       return nil, err
     }
   }
   log.Printf("computed=%+v\n", computed)
 
   attrsFunc := func(names ...string) (interface{}, error) {
-    return descendAttributes(attrsMap, names...)
+    return attrs, nil
   }
   optionsFunc := func(names ...string) (interface{}, error) {
-    return descendOptions(options, names...)
+    return options, nil
   }
   computedFunc := func(names ...string) (interface{}, error) {
     return computed, nil
   }
-  whereData, err := where(attrsMap, options)
+  whereData, err := where(attrs, options)
   if err != nil {
     return nil, err
   }
@@ -93,80 +84,34 @@ func GenerateResults(db dbsource.DBQuery, reportRoots []string, templateName, da
   }, nil
 }
 
-func validateReportOptions(tplName string, options *ReportOptions, attrsMap map[string]interface{}, computed *ReportComputed) error {
+func validateReportOptions(tplName string, options *ReportOptions, attrs *ReportAttributes, computed *ReportComputed) error {
   if options == nil {
     return nil
   }
   if options.OrderByKey != "" {
-    attrsOrderby := attrsMap["orderby"]
-    if attrsOrderby == nil {
+    if attrs == nil || len(attrs.OrderBy) == 0 {
       return fmt.Errorf("invalid orderby option %q, template %s does not permit orderby",
           options.OrderByKey, tplName)
     }
-    orderbyList, ok := attrsOrderby.([]interface{})
-    if !ok {
-      return fmt.Errorf("invalid format for orderby list in template %s", tplName)
-    }
-    orderbyItem, err := findOrderByItem(orderbyList, options.OrderByKey)
+    orderByItem, err := findOrderByItem(attrs.OrderBy, options.OrderByKey)
     if err != nil {
       return fmt.Errorf("invalid orderby option %q for template %s",
           options.OrderByKey, tplName)
     }
-    obx := orderbyItem["sql"]
-    if obx != nil {
-      computed.OrderByExpr = obx.(string)
-      computed.OrderByDisplay = orderbyItem["display"].(string)
-      if computed.OrderByExpr != "" {
-        computed.OrderByClause = "ORDER BY " + computed.OrderByExpr
-      }
+    computed.OrderByExpr = orderByItem.Sql
+    computed.OrderByDisplay = orderByItem.Display
+    if computed.OrderByExpr != "" {
+      computed.OrderByClause = "ORDER BY " + computed.OrderByExpr
     }
   }
   return nil
 }
 
-func findOrderByItem(orderbyList []interface{}, orderbyName string) (map[string]interface{}, error) {
-  for _, itemval := range orderbyList {
-    item, ok := itemval.(map[string]interface{})
-    if !ok {
-      return nil, fmt.Errorf("orderby item is not map[string]interface{}, it is %T", itemval)
-    }
-    if item["name"] == orderbyName {
-      return item, nil
+func findOrderByItem(orderByList []AttributesOrderByItem, orderByName string) (*AttributesOrderByItem, error) {
+  for _, item := range orderByList {
+    if item.Name == orderByName {
+      return &item, nil
     }
   }
-  return nil, fmt.Errorf("orderby item %q not found", orderbyName)
-}
-
-func descendAttributes(attrsMap map[string]interface{}, names ...string) (interface{}, error) {
-  var a interface{}
-  a = attrsMap
-  for depth, name := range names {
-    m, ok := a.(map[string]interface{})
-    if !ok {
-      return nil, fmt.Errorf("value is not map when trying to get field %q at depth %d", name, depth)
-    }
-    a, ok = m[name]
-    if !ok {
-      return nil, fmt.Errorf("field %q not found at depth %d", name, depth)
-    }
-  }
-  return a, nil
-}
-
-func descendOptions(options *ReportOptions, names ...string) (interface{}, error) {
-  if options == nil {
-    return nil, fmt.Errorf("no report options specified")
-  }
-  if len(names) == 0 {
-    return nil, fmt.Errorf("no option name specified")
-  }
-  if len(names) > 1 {
-    return nil, fmt.Errorf("too many option names specified")
-  }
-  switch names[0] {
-  case "orderby":
-    return options.OrderByKey, nil
-  default:
-    return nil, fmt.Errorf("unknown option name %q", names[0])
-  }
+  return nil, fmt.Errorf("orderby item %q not found", orderByName)
 }
