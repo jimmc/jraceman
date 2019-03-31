@@ -1,4 +1,5 @@
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
 <link rel="import" href="../../bower_components/paper-input/paper-textarea.html">
 <link rel="import" href="../../bower_components/polymer-decorators/polymer-decorators.html">
 <link rel="import" href="../../bower_components/polymer/polymer.html">
@@ -23,9 +24,16 @@
     <div id="main">
       <div>
         Available reports:
-        <select id="reportName">
+        <select id="reportName" on-change="reportNameChanged">
           <template is="dom-repeat" items=[[reportList]] as="report">
             <option value="[[report.Name]]">[[report.Display]]</option>
+          </template>
+        </select>
+        <br>
+        Order By:
+        <select id="orderBy">
+          <template is="dom-repeat" items=[[orderByList]] as="item">
+            <option value="[[item.Name]]">[[item.Display]]</option>
           </template>
         </select>
       </div>
