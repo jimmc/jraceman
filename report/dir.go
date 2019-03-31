@@ -7,10 +7,15 @@ import (
   "github.com/jimmc/gtrepgen/gen"
 )
 
+type OrderByItem struct {
+  Name string
+  Display string
+}
+
 type ReportAttributes struct {
   Name string
   Display string
-  OrderBy map[string]string
+  OrderBy []OrderByItem
 }
 
 /* ClientVisibleReports returns the list of reports and their attributes
@@ -48,7 +53,7 @@ func ClientVisibleReportsOne(templateDir string) ([]*ReportAttributes, error) {
     if !ok {
       continue  // Display is not a string value, ignore this entry
     }
-    orderbymap, err := extractUserOrderByMap(tplAttrs)
+    userOrderByList, err := extractUserOrderByList(tplAttrs)
     if err != nil {
       // If we get an error, don't add this report to the list, but still show other reports.
       log.Printf("Error decoding orderby in template %q: %v", name, err)
@@ -57,7 +62,7 @@ func ClientVisibleReportsOne(templateDir string) ([]*ReportAttributes, error) {
     report := &ReportAttributes{
       Name: name,
       Display: display,
-      OrderBy: orderbymap,
+      OrderBy: userOrderByList,
     }
     reports = append(reports, report)
   }
@@ -87,31 +92,39 @@ func ReadTemplateAttrs(templateDir string) ([]map[string]interface{}, error) {
   return attrMaps, err
 }
 
-// extractUserOrderByMap looks at the orderby attribute in the given template attributes
+// extractUserOrderByList looks at the orderby attribute in the given template attributes
 // and extacts from that the user-visible fields.
 // If there is no orderby attribute, it returns nil for both the value and the error.
-func extractUserOrderByMap(tplAttrs map[string]interface{}) (map[string]string, error) {
+func extractUserOrderByList(tplAttrs map[string]interface{}) ([]OrderByItem, error) {
+    tplName := tplAttrs["name"]
     orderbyval, ok := tplAttrs["orderby"]
     if !ok {
       return nil, nil   // No orderby attribute, that's OK.
     }
-    orderby, ok := orderbyval.(map[string]interface{})
+    orderbyList, ok := orderbyval.([]interface{})
     if !ok {
-      return nil, fmt.Errorf("orderby attribute is not map[string]interface{}, it is %T", orderbyval)
+      return nil, fmt.Errorf("orderby attribute for template %q is not []interface{}, it is %T", tplName, orderbyval)
     }
-    // We return a map from the orderby key to the display value.
-    r := map[string]string{}
-    for k, v := range orderby {
+    r := []OrderByItem{}
+    for _, v := range orderbyList {
       orderitem, ok := v.(map[string]interface{})
       if !ok {
-        return nil, fmt.Errorf("value for orderby item %s is not map[string]interface{}, it is %T", k, v)
+        return nil, fmt.Errorf("value for orderby item %v is not map[string]interface{}, it is %T", v, v)
+      }
+      nameV := orderitem["name"]
+      name, ok := nameV.(string)
+      if !ok {
+        return nil, fmt.Errorf("value for name in orderby item %s is not string, it is %T", v, nameV)
       }
       displayV := orderitem["display"]
       display, ok := displayV.(string)
       if !ok {
-        return nil, fmt.Errorf("value for display in orderby item %s is not string, it is %T", k, displayV)
+        return nil, fmt.Errorf("value for display in orderby item %s is not string, it is %T", name, displayV)
       }
-      r[k] = display
+      r = append(r, OrderByItem{
+        Name: name,
+        Display: display,
+      })
     }
     return r, nil
 }

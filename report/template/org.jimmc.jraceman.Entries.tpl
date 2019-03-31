@@ -2,27 +2,31 @@
   "display": "Entries",
   "description": "Entries ordered as selected.",
   "where": [ "event", "team", "person" ],
-  "orderby": {
-    "team": {
+  "orderby": [
+    {
+      "name": "team",
       "display": "Team, Person, Event",
       "sql": "team.shortname, person.lastname, person.firstname, event.number"
     },
-    "person": {
+    {
+      "name": "person",
       "display": "Person, Event",
       "sql": "person.lastname, person.firstname, event.number, team.shortname"
     },
-    "eventTeam": {
+    {
+      "name": "eventTeam",
       "display": "Event, Team, Person",
       "sql": "event.number, team.shortname, person.lastname, person.firstname"
     },
-    "eventPerson": {
+    {
+      "name": "eventPerson",
       "display": "Event, Person",
       "sql": "event.number, person.lastname, person.firstname, team.shortname"
     }
-  }
+  ]
 } */ -}}
-{{ $orderBy := include "org.jimmc.jraceman.orderBy" "team" -}}
 {{ $where := where -}}
+{{ $comp := computed -}}
 {{ $rows := rows (printf `
     SELECT
       team.shortname as Team,
@@ -43,8 +47,8 @@
       LEFT JOIN meet on event.meetid=meet.id
       LEFT JOIN area on event.areaid=area.id
     WHERE (NOT COALESCE(event.scratched,false) AND NOT COALESCE(entry.scratched,false))%s
-    ORDER BY %s
-` $where.AndClause $orderBy.sql) . -}}
+    %s
+` $where.AndClause $comp.OrderByClause) . -}}
 {{ $totals := row (printf `
   SELECT
     count(distinct team.id) as TeamCount,
@@ -68,7 +72,7 @@
   </div>
   <center>
   <div class="titleArea">
-    <h3>Entries By {{ attrs "orderby" $orderBy.key "display" }}</h3>
+    <h3>Entries By {{ $comp.OrderByDisplay }}</h3>
   </div>
   <table class="main" border=1>
     <tr class="rowHeader">

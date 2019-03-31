@@ -16,11 +16,11 @@ func TestClientVisibleReports(t *testing.T) {
     {
       Name: "org.jimmc.jraceman.Entries",
       Display: "Entries",
-      OrderBy: map[string]string{
-        "eventPerson": "Event, Person",
-        "eventTeam":   "Event, Team, Person",
-        "person":      "Person, Event",
-        "team":        "Team, Person, Event",
+      OrderBy: []OrderByItem{
+        OrderByItem{Name: "team",        Display: "Team, Person, Event"},
+        OrderByItem{Name: "person",      Display: "Person, Event"},
+        OrderByItem{Name: "eventTeam",   Display: "Event, Team, Person"},
+        OrderByItem{Name: "eventPerson", Display: "Event, Person"},
       },
     },
     {
@@ -52,39 +52,42 @@ func TestExtractUserOrderByMap(t *testing.T) {
   tests := []struct{
     name string
     input map[string]interface{}
-    expect map[string]string
+    expect []OrderByItem
     expectError bool
   } {
     {
       name: "empty",
-      input:map[string]interface{}{},
+      input: map[string]interface{}{},
       expect: nil,
     },
     {
       name: "normal",
       input: map[string]interface{}{
-        "orderby": map[string]interface{}{
-          "a": map[string]interface{}{"display": "AA"},
-          "b": map[string]interface{}{"display": "BB"},
+        "name": "normal",
+        "orderby": []interface{}{
+          map[string]interface{}{"name":"a", "display": "AA"},
+          map[string]interface{}{"name":"b", "display": "BB"},
         },
       },
-      expect: map[string]string{
-        "a": "AA",
-        "b": "BB",
+      expect: []OrderByItem{
+        {Name: "a", Display: "AA"},
+        {Name: "b", Display: "BB"},
       },
     },
     {
       name: "bad_orderby",
       input: map[string]interface{}{
-        "orderby": "not_a_map",
+        "name": "bad_orderby",
+        "orderby": "not_an_array",
       },
       expectError: true,
     },
     {
       name: "bad_orderby_item",
       input: map[string]interface{}{
-        "orderby": map[string]interface{}{
-          "a": "not_a_map",
+        "name": "bad_orderby_item",
+        "orderby": []interface{}{
+          "not_a_map",
         },
       },
       expectError: true,
@@ -92,8 +95,9 @@ func TestExtractUserOrderByMap(t *testing.T) {
     {
       name: "bad_orderby_display",
       input: map[string]interface{}{
-        "orderby": map[string]interface{}{
-          "a": map[string]interface{}{"display": 123},
+        "name": "bad_orderby_display",
+        "orderby": []interface{}{
+          map[string]interface{}{"display": 123},
         },
       },
       expectError: true,
@@ -101,17 +105,17 @@ func TestExtractUserOrderByMap(t *testing.T) {
   }
   for _, tc := range tests {
     t.Run(tc.name, func(t *testing.T) {
-      got, err := extractUserOrderByMap(tc.input)
+      got, err := extractUserOrderByList(tc.input)
       if tc.expectError {
         if err == nil {
-          t.Fatalf("extractUserOrderByMap: expected error but did not get one")
+          t.Fatalf("extractUserOrderByList: expected error but did not get one")
         }
       } else if err != nil {
-        t.Fatalf("extractUserOrderByMap: unexpected error: %v", err)
+        t.Fatalf("extractUserOrderByList: unexpected error: %v", err)
       } else {
         want := tc.expect
         if diff := cmp.Diff(want, got); diff != "" {
-          t.Errorf("extractUserOrderByMap mismatch (-want +got):\n%s", diff)
+          t.Errorf("extractUserOrderByList mismatch (-want +got):\n%s", diff)
         }
       }
     })

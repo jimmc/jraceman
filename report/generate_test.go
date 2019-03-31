@@ -43,6 +43,7 @@ func TestStandardReports(t *testing.T) {
       { "lanes", "empty", "lanes-test", roots2, "lanes-test", "EV123", nil },
       { "entries", "sample1", "entries-test", roots1, "org.jimmc.jraceman.Entries", "",
         &ReportOptions{
+          OrderByKey: "team",
           WhereValues: map[string]WhereValue {
             "event_id": {Op: "eq", Value: "M1.EV1"},
           },
@@ -81,9 +82,9 @@ func TestStandardReports(t *testing.T) {
 func TestValidateReportOptions(t *testing.T) {
   attrsEmpty := map[string]interface{}{}
   attrsWithOrderBy := map[string]interface{}{
-    "orderby": map[string]interface{} {
-      "abc": "xyz",
-      "def": "uvw",
+    "orderby": []interface{} {
+      map[string]interface{}{"name": "abc", "display": "xyz"},
+      map[string]interface{}{"name": "def", "display": "uvw"},
     },
   }
   tests := []struct{
@@ -102,7 +103,8 @@ func TestValidateReportOptions(t *testing.T) {
   for _, tc := range tests {
     t.Run(tc.name, func(t *testing.T) {
       tplName := "<" + tc.name+ ">"
-      err := validateReportOptions(tplName, tc.options, tc.attrs)
+      computed := &ReportComputed{}
+      err := validateReportOptions(tplName, tc.options, tc.attrs, computed)
       if tc.expectError && err == nil {
         t.Errorf("Expected error but dit not get it")
       } else if !tc.expectError && err != nil {

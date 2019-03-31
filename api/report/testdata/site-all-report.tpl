@@ -1,16 +1,18 @@
 {{/*GT: {
   "display": "Sites",
   "description": "List all sites",
-  "orderby": {
-    "name": {
+  "orderby": [
+    {
+      "name": "name",
       "display": "Site name",
       "sql": "name"
     },
-    "city": {
+    {
+      "name": "city",
       "display": "City",
       "sql": "city"
     }
-  }
+  ]
 } */ -}}
 {{ $orderBy := include "org.jimmc.jraceman.orderBy" "name" -}}
 This is the test sites report, ordered by {{ attrs "orderby" $orderBy.key "display" }}.
