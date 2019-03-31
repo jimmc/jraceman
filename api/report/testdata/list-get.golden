@@ -1,14 +1,43 @@
 [
   {
     "Name": "site-all-report",
-    "Display": "Sites"
+    "Display": "Sites",
+    "OrderBy": [
+      {
+        "Name": "name",
+        "Display": "Site name"
+      },
+      {
+        "Name": "city",
+        "Display": "City"
+      }
+    ]
   },
   {
     "Name": "org.jimmc.jraceman.Entries",
-    "Display": "Entries"
+    "Display": "Entries",
+    "OrderBy": [
+      {
+        "Name": "team",
+        "Display": "Team, Person, Event"
+      },
+      {
+        "Name": "person",
+        "Display": "Person, Event"
+      },
+      {
+        "Name": "eventTeam",
+        "Display": "Event, Team, Person"
+      },
+      {
+        "Name": "eventPerson",
+        "Display": "Event, Person"
+      }
+    ]
   },
   {
     "Name": "org.jimmc.jraceman.Lanes",
-    "Display": "Lanes"
+    "Display": "Lanes",
+    "OrderBy": null
   }
 ]

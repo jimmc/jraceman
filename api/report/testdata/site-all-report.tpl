@@ -14,8 +14,7 @@
     }
   ]
 } */ -}}
-{{ $orderBy := include "org.jimmc.jraceman.orderBy" "name" -}}
-This is the test sites report, ordered by {{ attrs "orderby" $orderBy.key "display" }}.
-{{range rows (printf "SELECT name, city, phone from site ORDER BY %s" $orderBy.sql) -}}
+This is the test sites report, ordered by {{ (computed).OrderByDisplay }}.
+{{range rows (printf "SELECT name, city, phone from site ORDER BY %s" (computed).OrderByExpr) -}}
 name={{.name}}, city={{.city}}, phone={{.phone}}
 {{- end}}
