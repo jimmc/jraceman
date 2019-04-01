@@ -1,9 +1,10 @@
 package structsql
 
 import (
-  // "log"
   "reflect"
   "strings"
+
+  // "github.com/golang/glog"
 )
 
 // ColumnInfo describes the attributes of a database column.
@@ -80,7 +81,7 @@ func ColumnInfos(entity interface{}) []ColumnInfo {
         // case "string":
         //  columnInfos[i].HasDefault = true
         //  columnInfos[i].DefaultAsString = "''"
-        // default: log.Printf("Unknown columnType %q for %s", columnType, columnName)
+        // default: glog.Errorf("Unknown columnType %q for %s", columnType, columnName)
         }
       }
     }

@@ -2,9 +2,10 @@ package structsql
 
 import (
   "database/sql"
-  "log"
   "reflect"
   "strings"
+
+  "github.com/golang/glog"
 )
 
 // Insert inserts a new row into the database using the sql string
@@ -42,7 +43,7 @@ func InsertSql(tableName string, entity interface{}) (string, []interface{}) {
   }
   sql := "INSERT into " + tableName + "(" + strings.Join(columnNames, ",") + ")" +
       " values (" + strings.Join(placeHolders,",") + ");"
-  log.Printf("InsertSql: %v\n", sql)
-  log.Printf("  values: %v\n", values)
+  glog.V(1).Infof("InsertSql: %v\n", sql)
+  glog.V(1).Infof("  values: %v\n", values)
   return sql, values
 }

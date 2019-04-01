@@ -4,9 +4,10 @@ import (
   "bufio"
   "fmt"
   "io"
-  "log"
   "strconv"
   "strings"
+
+  "github.com/golang/glog"
 )
 
 type ImporterCounts struct {
@@ -79,7 +80,7 @@ func (im *Importer) Import(reader io.Reader) error {
     }
     /*
     if im.lineno % 100 == 0 {
-      log.Printf("Import: %d lines processed\n", im.lineno)
+      glog.Infof("Import: %d lines processed\n", im.lineno)
     }
     */
   }
@@ -168,7 +169,7 @@ func (im *Importer) setTable(tableName string) error {
   im.columnNames = []string{}
   im.idIndex = -1
   im.nameIndex = -1
-  log.Printf("Import: table %s\n", im.tableName)
+  glog.Infof("Import: table %s\n", im.tableName)
   return nil
 }
 
@@ -179,7 +180,7 @@ func (im *Importer) printPreviousTableStats() {
   tableInserted := im.counts.inserted - im.tableStartCounts.inserted
   tableUpdated := im.counts.updated - im.tableStartCounts.updated
   tableUnchanged := im.counts.unchanged - im.tableStartCounts.unchanged
-  log.Printf("Import: for table %s: inserted %d, updated %d, unchanged %d",
+  glog.Infof("Import: for table %s: inserted %d, updated %d, unchanged %d",
       im.tableName, tableInserted, tableUpdated, tableUnchanged)
 }
 
@@ -213,7 +214,7 @@ func (im *Importer) setColumns(columns string) error {
     im.v1ColumnNames = im.columnNames
     im.tableName = v2TableName
     im.columnNames = v2ColumnNames
-    log.Printf("Import: translate v1 table %s to v2 table %s\n", im.v1TableName, im.tableName)
+    glog.Infof("Import: translate v1 table %s to v2 table %s\n", im.v1TableName, im.tableName)
   }
   return nil
 }
@@ -277,7 +278,7 @@ func (im *Importer) importDataLine(line string) error {
         diffColumns = append(diffColumns, im.columnNames[i])
         diffValues = append(diffValues, values[i])
         /*
-        log.Printf("column:%s old:%v(%T) new:%v(%T)",
+        glog.V(1).Infof("column:%s old:%v(%T) new:%v(%T)",
             im.columnNames[i], existingValues[i], existingValues[i], values[i], values[i])
         */
       }

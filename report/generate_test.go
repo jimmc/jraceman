@@ -3,7 +3,6 @@ package report
 import (
   "fmt"
   "io/ioutil"
-  "log"
   "os"
   "testing"
   "time"
@@ -11,6 +10,8 @@ import (
   "github.com/jimmc/gtrepgen/gen"
   "github.com/jimmc/jracemango/dbrepo"
   dbtest "github.com/jimmc/jracemango/dbrepo/test"
+
+  "github.com/golang/glog"
 )
 
 func tNow() time.Time {
@@ -131,12 +132,12 @@ func openAndLoad(setupfile string) (*dbrepo.Repos, error) {
   }
   defer inFile.Close()
 
-  log.Printf("Importing from %s\n", setupfile)
+  glog.Infof("Importing from %s\n", setupfile)
   counts, err := dbRepos.Import(inFile)
   if err != nil {
     return nil, fmt.Errorf("error importing from %s: %v", setupfile, err)
   }
-  log.Printf("Import done: inserted %d, updated %d, unchanged %d records\n",
+  glog.Infof("Import done: inserted %d, updated %d, unchanged %d records\n",
       counts.Inserted(), counts.Updated(), counts.Unchanged())
   return dbRepos, nil
 }

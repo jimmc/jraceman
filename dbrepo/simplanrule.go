@@ -3,7 +3,6 @@ package dbrepo
 import (
   "database/sql"
   "io"
-  "log"
 
   "github.com/jimmc/jracemango/dbrepo/ixport"
   "github.com/jimmc/jracemango/dbrepo/strsql"
@@ -19,7 +18,6 @@ func (r *DBSimplanRuleRepo) UpdateColumnInfos(columnInfos []structsql.ColumnInfo
   // We have two foreign key columns to the stage table, so we need
   // to special-case our columninfo creation.
   for c, col := range columnInfos {
-    log.Print("simplanrule col.Name ", col.Name)
     if col.Name == "fromstageid" || col.Name == "tostageid" {
       columnInfos[c].FKTable = "stage"
     }

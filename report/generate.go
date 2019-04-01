@@ -2,11 +2,12 @@ package report
 
 import (
   "fmt"
-  "log"
   "strings"
 
   "github.com/jimmc/gtrepgen/dbsource"
   "github.com/jimmc/gtrepgen/gen"
+
+  "github.com/golang/glog"
 )
 
 // ReportOptions is the data given to us by the user to generate an instance of the report.
@@ -50,7 +51,7 @@ func GenerateResults(db dbsource.DBQuery, reportRoots []string, templateName, da
       return nil, err
     }
   }
-  log.Printf("computed=%+v\n", computed)
+  glog.V(1).Infof("computed=%+v\n", computed)
 
   attrsFunc := func(names ...string) (interface{}, error) {
     return attrs, nil

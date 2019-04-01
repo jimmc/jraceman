@@ -2,7 +2,8 @@ package ixport
 
 import (
   "fmt"
-  "log"
+
+  "github.com/golang/glog"
 )
 
 type tableColumnsInfo struct {
@@ -115,7 +116,7 @@ func (im *Importer) translateNames1To2(v1TableName string, v1ColumnNames []strin
     if v2columnName != "" {
       v2columnNames = append(v2columnNames, tableMap.columnMap[v1columnName])
     } else {
-      log.Printf("No translation for v1 table %s column %s", v1TableName, v1columnName)
+      glog.Errorf("No translation for v1 table %s column %s", v1TableName, v1columnName)
     }
   }
   return tableMap.tableName, v2columnNames, nil
@@ -170,7 +171,7 @@ func (im *Importer) removeNontranslatedValues(values []interface{}) []interface{
     }
   }
   if c2 != len(im.columnNames) {
-    log.Printf("Wrong number of values being returned from removeNontranslatedValues, got %d, want %d",
+    glog.Errorf("Wrong number of values being returned from removeNontranslatedValues, got %d, want %d",
         c2, len(im.columnNames))
   }
   return v2values

@@ -2,10 +2,11 @@ package structsql
 
 import (
   "database/sql"
-  "log"
   "reflect"
   "sort"
   "strings"
+
+  "github.com/golang/glog"
 )
 
 // UpdateByID updates a record by ID.
@@ -51,10 +52,10 @@ func columnsUpdateStringAndVals(mods map[string]interface{}) (string, []interfac
 // ModsToSql takes a map of the modifications from Diffs and generates the
 // sql string and values to be executed to perform the update.
 func ModsToSql(table string, mods map[string]interface{}, ID string) (string, []interface{}) {
-  log.Printf("mods = %v", mods)
+  glog.V(1).Infof("mods = %v", mods)
   kvString, vals := columnsUpdateStringAndVals(mods)
   updateSql := "update " + table + " set " + kvString + " where id = ?;"
   vals = append(vals, ID)
-  log.Printf("updateSql = %q, vals = %v", updateSql, vals)
+  glog.V(1).Infof("updateSql = %q, vals = %v", updateSql, vals)
   return updateSql, vals
 }

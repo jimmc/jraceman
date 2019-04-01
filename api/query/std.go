@@ -3,7 +3,6 @@ package query
 import (
   "encoding/json"
   "fmt"
-  "log"
   "net/http"
   "strings"
 
@@ -11,6 +10,8 @@ import (
   "github.com/jimmc/jracemango/dbrepo"
   "github.com/jimmc/jracemango/dbrepo/strsql"
   "github.com/jimmc/jracemango/dbrepo/structsql"
+
+  "github.com/golang/glog"
 )
 
 // QueryParam defines one column comparison for an SQL query.
@@ -67,7 +68,7 @@ func (h *handler) stdquery(w http.ResponseWriter, r *http.Request, st std) {
     http.Error(w, "Additional path elements may not be specified after "+ pathPrefix, http.StatusBadRequest)
     return
   }
-  log.Printf("%s %s", r.Method, entityType);
+  glog.V(1).Infof("%s %s", r.Method, entityType);
   switch r.Method {
     case http.MethodGet:
       h.stdGetColumns(w, r, st)
@@ -110,7 +111,7 @@ func (h *handler) stdList(w http.ResponseWriter, r *http.Request, st std) {
     // No query params, so no WHERE clause
   }
 
-  log.Printf("query: %v", query)
+  glog.V(1).Infof("query: %v", query)
 
   db := h.config.DomainRepos.(*dbrepo.Repos).DB()
   result, err := strsql.QueryStarAndCollect(db, query, whereVals...)

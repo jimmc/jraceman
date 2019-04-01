@@ -3,7 +3,8 @@ package structsql
 import (
   "database/sql"
   "fmt"
-  "log"
+
+  "github.com/golang/glog"
 )
 
 // UpgradeTable upgrades a table from its current state to match
@@ -68,10 +69,10 @@ func CreateOrUpgradeTableSql(db *sql.DB, tableName string, entity interface{}, t
 // If the table exists, an ALTER TABLE statement is generated to add any
 // missing columns.
 func UpgradeTableSql(tableName string, columnInfos, tableColumns []ColumnInfo) (string, error) {
-  log.Printf("tableColumns for %s: %v", tableName, tableColumns)
-  log.Printf("columnInfos for %s: %v", tableName, columnInfos)
+  glog.V(1).Infof("tableColumns for %s: %v", tableName, tableColumns)
+  glog.V(1).Infof("columnInfos for %s: %v", tableName, columnInfos)
   diffs := DiffColumnInfos(tableColumns, columnInfos)
-  log.Printf("UpgradeTablesSql diffs for %s: %v", tableName, diffs)
+  glog.V(1).Infof("UpgradeTablesSql diffs for %s: %v", tableName, diffs)
   if len(diffs.Change) != 0 {
     // We don't know how to change columns, so this is an error.
     changedColNames := make([]string, len(diffs.Change))
@@ -91,6 +92,6 @@ func UpgradeTableSql(tableName string, columnInfos, tableColumns []ColumnInfo) (
     alterColSql := "ALTER TABLE " + tableName + " ADD COLUMN " + columnSpec + "; "
     alterSql = alterSql + alterColSql;
   }
-  log.Printf("UpgradeTableSql: %v\n", alterSql)
+  glog.V(1).Infof("UpgradeTableSql: %v\n", alterSql)
   return alterSql, nil
 }

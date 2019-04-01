@@ -4,11 +4,12 @@ import (
   "database/sql"
   "fmt"
   "io"
-  "log"
   "strings"
 
   "github.com/jimmc/jracemango/dbrepo/ixport"
   "github.com/jimmc/jracemango/domain"
+
+  "github.com/golang/glog"
 )
 
 // Repos implements the domain.Repos interface.
@@ -144,7 +145,7 @@ func Open(repoPath string) (*Repos, error) {
   }
   dbtype := repoPath[:colon]
   dbloc := repoPath[colon+1:]
-  log.Printf("Opening dbrepo type %s at %s", dbtype, dbloc)
+  glog.Infof("Opening dbrepo type %s at %s", dbtype, dbloc)
   db, err := sql.Open(dbtype, dbloc)
   if err != nil {
     return nil, err

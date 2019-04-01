@@ -2,13 +2,14 @@ package debug
 
 import (
   "fmt"
-  "log"
   "net/http"
   "strings"
 
   apihttp "github.com/jimmc/jracemango/api/http"
   "github.com/jimmc/jracemango/dbrepo"
   "github.com/jimmc/jracemango/dbrepo/strsql"
+
+  "github.com/golang/glog"
 )
 
 func (h *handler) sql(w http.ResponseWriter, r *http.Request) {
@@ -36,7 +37,7 @@ func (h *handler) executeSql(w http.ResponseWriter, r *http.Request, sqlStr stri
     http.Error(w, "No sql specified", http.StatusBadRequest)
     return
   }
-  log.Printf("Executing sql: %v", sqlStr)
+  glog.V(1).Infof("Executing sql: %v", sqlStr)
   dbrepos, ok := h.config.DomainRepos.(*dbrepo.Repos)
   if !ok {
     http.Error(w, "Bad database repo", http.StatusInternalServerError)

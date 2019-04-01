@@ -3,13 +3,14 @@ package http
 import (
   "encoding/json"
   "fmt"
-  "log"
   nethttp "net/http"
+
+  "github.com/golang/glog"
 )
 
 func GetRequestParameters(r *nethttp.Request) (map[string]interface{}, error) {
   contentType := r.Header.Get("content-type")
-  log.Printf("content-type: %v\n", contentType)
+  glog.V(1).Infof("content-type: %v\n", contentType)
   if contentType != "application/json" {
     return nil, fmt.Errorf("POST requires content-type=application/json")
   }

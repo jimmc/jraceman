@@ -2,9 +2,10 @@ package report
 
 import (
   "fmt"
-  "log"
 
   "github.com/jimmc/gtrepgen/gen"
+
+  "github.com/golang/glog"
 )
 
 // ReportAttributes contains the attributes loaded from a report template.
@@ -67,7 +68,7 @@ func ClientVisibleReportsOne(templateDir string) ([]*ReportFields, error) {
     userOrderByList, err := extractUserOrderByList(tplAttrs)
     if err != nil {
       // If we get an error, don't add this report to the list, but still show other reports.
-      log.Printf("Error decoding orderby in template %q: %v", tplAttrs.Name, err)
+      glog.Errorf("Error decoding orderby in template %q: %v", tplAttrs.Name, err)
       continue
     }
     if tplAttrs.Display == "" {

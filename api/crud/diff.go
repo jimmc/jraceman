@@ -6,9 +6,10 @@ package crud
 import (
   "encoding/json"
   "fmt"
-  "github.com/jimmc/jracemango/domain"
-  "log"
 
+  "github.com/jimmc/jracemango/domain"
+
+  "github.com/golang/glog"
   "gopkg.in/d4l3k/messagediff.v1"
   jsonpatch "gopkg.in/evanphx/json-patch.v3"
 )
@@ -43,7 +44,7 @@ func patchToDiffs(oldEntity, newEntity interface{}, patch interface{}) (domain.D
   if err != nil {
     return nil, false, fmt.Errorf("error marshaling patch data: %v", err)
   }
-  log.Printf("patchBytes: %v", string(patchBytes))
+  glog.V(1).Infof("patchBytes: %v", string(patchBytes))
   oldEntityBytes, err := json.Marshal(oldEntity)
   if err != nil {
     return nil, false, fmt.Errorf("error marshaling oldEntity: %v", err)

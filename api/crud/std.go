@@ -3,13 +3,14 @@ package crud
 import (
   "encoding/json"
   "fmt"
-  "log"
   "net/http"
   "strconv"
   "strings"
 
   "github.com/jimmc/jracemango/domain"
   apihttp "github.com/jimmc/jracemango/api/http"
+
+  "github.com/golang/glog"
 )
 
 // Std defines the type-specific methods that are needed by the generic
@@ -32,7 +33,7 @@ func (h *handler) stdcrud(w http.ResponseWriter, r *http.Request, st std) {
   // TODO - check authorization
   entityType := st.EntityTypeName()
   entityID := strings.TrimPrefix(r.URL.Path, h.crudPrefix(entityType))
-  log.Printf("%s %s '%s'", r.Method, entityType, entityID);
+  glog.Infof("%s %s '%s'", r.Method, entityType, entityID);
   switch r.Method {
     case http.MethodGet:
       if entityID == "" {
@@ -153,7 +154,7 @@ func (h *handler) stdUpdate(w http.ResponseWriter, r *http.Request, st std, enti
     http.Error(w, msg, http.StatusBadRequest)
     return
   }
-  log.Printf("entity diffs: %v", diffs.Modified())
+  glog.V(1).Infof("entity diffs: %v", diffs.Modified())
 
   if err := st.UpdateByID(entityID, oldEntity, newEntity, diffs); err != nil {
     msg := fmt.Sprintf("Error updating data: %v", err)
@@ -190,7 +191,7 @@ func (h *handler) stdPatch(w http.ResponseWriter, r *http.Request, st std, entit
     http.Error(w, msg, http.StatusBadRequest)
     return
   }
-  log.Printf("entity diffs: %v", diffs.Modified())
+  glog.V(1).Infof("entity diffs: %v", diffs.Modified())
 
   if err := st.UpdateByID(entityID, oldEntity, newEntity, diffs); err != nil {
     msg := fmt.Sprintf("Error updating data: %v", err)

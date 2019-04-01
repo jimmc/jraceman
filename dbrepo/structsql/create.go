@@ -2,8 +2,9 @@ package structsql
 
 import (
   "database/sql"
-  "log"
   "strings"
+
+  "github.com/golang/glog"
 )
 
 type ColumnInfosUpdater interface {
@@ -59,6 +60,6 @@ func CreateTableSqlFromColumnInfos(tableName string, columnInfos []ColumnInfo) s
     columnSpecs[i] = ColumnSpec(colInfo)
   }
   sql := "CREATE TABLE " + tableName + "(" + strings.Join(columnSpecs, ", ") + ");"
-  log.Printf("CreateTableSql: %v\n", sql)
+  glog.V(1).Infof("CreateTableSql: %v\n", sql)
   return sql
 }

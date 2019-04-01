@@ -2,13 +2,14 @@ package report
 
 import (
   "fmt"
-  "log"
   "net/http"
   "strings"
 
   apihttp "github.com/jimmc/jracemango/api/http"
   "github.com/jimmc/jracemango/dbrepo"
   reportmain "github.com/jimmc/jracemango/report"
+
+  "github.com/golang/glog"
 )
 
 func (h *handler) generate(w http.ResponseWriter, r *http.Request) {
@@ -65,7 +66,7 @@ func (h *handler) generateReportForHTTP(w http.ResponseWriter, r *http.Request, 
     return
   }
   db := dbrepos.DB()
-  log.Printf("Generating report: %v", name)
+  glog.Infof("Generating report: %v", name)
   result, err := reportmain.GenerateResults(db, h.config.ReportRoots, name, data, options)
   if err != nil {
     http.Error(w, fmt.Sprintf("Error generating report: %v", err), http.StatusBadRequest)

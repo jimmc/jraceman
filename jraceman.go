@@ -3,7 +3,6 @@ package main
 import (
   "flag"
   "fmt"
-  "log"
   "net/http"
   "os"
   "strconv"
@@ -11,6 +10,8 @@ import (
   "github.com/jimmc/jracemango/api"
   "github.com/jimmc/jracemango/app"
   "github.com/jimmc/jracemango/dbrepo"
+
+  "github.com/golang/glog"
 
   // _ "github.com/go-sql-driver/mysql"
   _ "github.com/mattn/go-sqlite3"       // driver name: sqlite3
@@ -46,36 +47,36 @@ func main() {
   flag.Parse()
 
   if config.db == "" {
-    log.Fatal("-db is required")
+    glog.Fatal("-db is required")
   }
 
   dbRepos, err := dbrepo.Open(config.db)
   if err != nil {
-    log.Fatalf("Failed to open repository: %v", err)
+    glog.Fatalf("Failed to open repository: %v", err)
   }
   defer dbRepos.Close()
 
   actionTaken := false
 
   if config.create {
-    log.Printf("Creating database tables")
+    glog.Info("Creating database tables")
     err = dbRepos.CreateTables()
     if err != nil {
-      log.Fatalf("Failed to create repository tables: %v", err)
+      glog.Fatalf("Failed to create repository tables: %v", err)
     }
     actionTaken = true
   }
 
   if config.exportFile != "" {
     if err := exportFile(config, dbRepos); err != nil {
-      log.Fatalf(err.Error())
+      glog.Fatalf(err.Error())
     }
     actionTaken = true;
   }
 
   if config.importFile != "" {
     if err := importFile(config, dbRepos); err != nil {
-      log.Fatalf(err.Error())
+      glog.Fatalf(err.Error())
     }
     actionTaken = true;
   }
@@ -97,7 +98,7 @@ func exportFile(config *config, dbRepos *dbrepo.Repos) error {
     return fmt.Errorf("error opening export output file %s: %v", config.exportFile, err)
   }
   defer outFile.Close()
-  log.Printf("Exporting to %s\n", config.exportFile)
+  glog.Infof("Exporting to %s\n", config.exportFile)
   if err := dbRepos.Export(outFile); err != nil {
     return fmt.Errorf("error exporting to %s: %v", config.exportFile, err)
   }
@@ -111,12 +112,12 @@ func importFile(config *config, dbRepos *dbrepo.Repos) error {
   }
   defer inFile.Close()
 
-  log.Printf("Importing from %s\n", config.importFile)
+  glog.Infof("Importing from %s\n", config.importFile)
   counts, err := dbRepos.Import(inFile)
   if err != nil {
     return fmt.Errorf("error importing from %s: %v", config.importFile, err)
   }
-  log.Printf("Import done: inserted %d, updated %d, unchanged %d records\n",
+  glog.Infof("Import done: inserted %d, updated %d, unchanged %d records\n",
       counts.Inserted(), counts.Updated(), counts.Unchanged())
   return nil
 }
@@ -138,7 +139,7 @@ func runHttpServer(config *config, dbRepos *dbrepo.Repos) {
   mux.HandleFunc("/", redirectToUi)
 
   fmt.Printf("jraceman serving on port %v\n", config.port)
-  log.Fatal(http.ListenAndServe(":"+strconv.Itoa(config.port), mux))
+  glog.Fatal(http.ListenAndServe(":"+strconv.Itoa(config.port), mux))
 }
 
 func redirectToUi(w http.ResponseWriter, r *http.Request) {

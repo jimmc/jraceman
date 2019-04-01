@@ -1,10 +1,11 @@
 package structsql
 
 import (
-  "log"
   "reflect"
   "strconv"
   "strings"
+
+  "github.com/golang/glog"
 )
 
 // Placeholder is ? for MySQL,$N for PostgreSQL,
@@ -38,7 +39,7 @@ func SelectSql(tableName string, entity interface{}) (string, []interface{}) {
 func FindByIDSql(tableName string, entity interface{}) (string, []interface{}) {
   sql, targets := SelectSql(tableName, entity)
   sql = sql + " where id=?;"
-  log.Printf("FindByIDSql: %v\n", sql)
+  glog.V(1).Infof("FindByIDSql: %v\n", sql)
   return sql, targets
 }
 
@@ -54,6 +55,6 @@ func ListSql(tableName string, entity interface{}, offset, limit int) (string, [
   if offset != 0 {
     sql = sql + " offset " + strconv.Itoa(offset)
   }
-  log.Printf("ListSql: %v\n", sql)
+  glog.V(1).Infof("ListSql: %v\n", sql)
   return sql, targets
 }
