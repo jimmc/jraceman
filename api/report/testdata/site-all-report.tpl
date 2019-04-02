@@ -14,7 +14,7 @@
     }
   ]
 } */ -}}
-This is the test sites report, ordered by {{ (computed).OrderByDisplay }}.
-{{range rows (printf "SELECT name, city, phone from site ORDER BY %s" (computed).OrderByExpr) -}}
+This is the test sites report, ordered by {{ (computed).OrderBy.Display }}.
+{{range rows (printf "SELECT name, city, phone from site ORDER BY %s" (computed).OrderBy.Expr) -}}
 name={{.name}}, city={{.city}}, phone={{.phone}}
 {{- end}}

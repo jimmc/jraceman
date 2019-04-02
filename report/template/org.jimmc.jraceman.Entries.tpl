@@ -25,7 +25,6 @@
     }
   ]
 } */ -}}
-{{ $where := where -}}
 {{ $comp := computed -}}
 {{ $rows := rows (printf `
     SELECT
@@ -48,7 +47,7 @@
       LEFT JOIN area on event.areaid=area.id
     WHERE (NOT COALESCE(event.scratched,false) AND NOT COALESCE(entry.scratched,false))%s
     %s
-` $where.AndClause $comp.OrderByClause) . -}}
+` $comp.Where.AndClause $comp.OrderBy.Clause) . -}}
 {{ $totals := row (printf `
   SELECT
     count(distinct team.id) as TeamCount,
@@ -64,7 +63,7 @@
     LEFT JOIN event on entry.eventid=event.id
     LEFT JOIN meet on event.meetid=meet.id
   WHERE (NOT COALESCE(event.scratched,false) AND NOT COALESCE(entry.scratched,false))%s
-` $where.AndClause) -}}
+` $comp.Where.AndClause) -}}
 <html>
 <body>
   <div class="header">
@@ -72,7 +71,7 @@
   </div>
   <center>
   <div class="titleArea">
-    <h3>Entries By {{ $comp.OrderByDisplay }}</h3>
+    <h3>Entries By {{ $comp.OrderBy.Display }}</h3>
   </div>
   <table class="main" border=1>
     <tr class="rowHeader">

@@ -7,9 +7,14 @@ import (
 // ReportComputed is the collection of data that we compute based on the report attributes
 // and the ReportOptions.
 type ReportComputed struct {
-  OrderByExpr string    // The orderby sql corresponding to the OrderByKey in the Options.
-  OrderByDisplay string
-  OrderByClause string  // Blank if no OrderBy, else "ORDER BY " and the expression.
+  OrderBy ComputedOrderBy
+  Where ComputedWhere
+}
+
+type ComputedOrderBy struct {
+  Expr string    // The orderby sql corresponding to the OrderByKey in the Options.
+  Display string
+  Clause string  // Blank if no OrderBy, else "ORDER BY " and the expression.
 }
 
 func validateReportOptions(tplName string, options *ReportOptions, attrs *ReportAttributes, computed *ReportComputed) error {
@@ -26,10 +31,10 @@ func validateReportOptions(tplName string, options *ReportOptions, attrs *Report
       return fmt.Errorf("invalid orderby option %q for template %s",
           options.OrderByKey, tplName)
     }
-    computed.OrderByExpr = orderByItem.Sql
-    computed.OrderByDisplay = orderByItem.Display
-    if computed.OrderByExpr != "" {
-      computed.OrderByClause = "ORDER BY " + computed.OrderByExpr
+    computed.OrderBy.Expr = orderByItem.Sql
+    computed.OrderBy.Display = orderByItem.Display
+    if computed.OrderBy.Expr != "" {
+      computed.OrderBy.Clause = "ORDER BY " + computed.OrderBy.Expr
     }
   }
   return nil
@@ -45,7 +50,13 @@ func findOrderByItem(orderByList []AttributesOrderByItem, orderByName string) (*
 }
 
 func getComputed(templateName string, options *ReportOptions, attrs *ReportAttributes) (*ReportComputed, error) {
-  computed := &ReportComputed{}
+  where, err := where(attrs, options)
+  if err != nil {
+    return nil, err
+  }
+  computed := &ReportComputed{
+    Where: *where,
+  }
   if options != nil {
     if err := validateReportOptions(templateName, options, attrs, computed); err != nil {
       return nil, err

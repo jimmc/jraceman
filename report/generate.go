@@ -36,18 +36,12 @@ func GenerateResults(db dbsource.DBQuery, reportRoots []string, templateName, da
     return nil, err
   }
   glog.V(1).Infof("computed=%+v\n", computed)
-  whereData, err := where(attrs, options)
-  if err != nil {
-    return nil, err
-  }
-  glog.V(1).Infof("where=%+v\n", whereData)
 
   g := gen.New(templateName, true, w, dataSource)
   g = g.WithFuncs(map[string]interface{}{
     "attrs": func() interface{} { return attrs },
     "options": func() interface{} { return options },
     "computed": func() interface{} { return computed },
-    "where": func() interface{} { return whereData },
   })
   if err := g.FromTemplate(reportRoots, data); err != nil {
     return nil, err
