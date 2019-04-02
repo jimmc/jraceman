@@ -11,23 +11,23 @@ func TestClientVisibleReports(t *testing.T) {
   if err != nil {
     t.Fatalf("ClientVisibleReports error: %v", err)
   }
-  expected := []*ReportFields{
+  expected := []*ReportControls{
     {
       Name: "org.jimmc.jraceman.Entries",
       Display: "Entries",
       Description: "Entries ordered as selected.",
-      OrderBy: []FieldsOrderByItem{
-        FieldsOrderByItem{Name: "team",        Display: "Team, Person, Event"},
-        FieldsOrderByItem{Name: "person",      Display: "Person, Event"},
-        FieldsOrderByItem{Name: "eventTeam",   Display: "Event, Team, Person"},
-        FieldsOrderByItem{Name: "eventPerson", Display: "Event, Person"},
+      OrderBy: []ControlsOrderByItem{
+        ControlsOrderByItem{Name: "team",        Display: "Team, Person, Event"},
+        ControlsOrderByItem{Name: "person",      Display: "Person, Event"},
+        ControlsOrderByItem{Name: "eventTeam",   Display: "Event, Team, Person"},
+        ControlsOrderByItem{Name: "eventPerson", Display: "Event, Person"},
       },
     },
     {
       Name: "org.jimmc.jraceman.Lanes",
       Display: "Lanes",
       Description: "",
-      OrderBy: []FieldsOrderByItem{},
+      OrderBy: []ControlsOrderByItem{},
     },
   }
   got, want := reports, expected
@@ -40,13 +40,13 @@ func TestExtractUserOrderByMap(t *testing.T) {
   tests := []struct{
     name string
     input *ReportAttributes
-    expect []FieldsOrderByItem
+    expect []ControlsOrderByItem
     expectError bool
   } {
     {
       name: "empty",
       input: &ReportAttributes{},
-      expect: []FieldsOrderByItem{},
+      expect: []ControlsOrderByItem{},
     },
     {
       name: "normal",
@@ -57,7 +57,7 @@ func TestExtractUserOrderByMap(t *testing.T) {
           {Name:"b", Display: "BB"},
         },
       },
-      expect: []FieldsOrderByItem{
+      expect: []ControlsOrderByItem{
         {Name: "a", Display: "AA"},
         {Name: "b", Display: "BB"},
       },

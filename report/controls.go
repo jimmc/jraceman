@@ -4,16 +4,16 @@ import (
   "github.com/golang/glog"
 )
 
-// ReportFields contains the information about a report template that is given to the user.
-type ReportFields struct {
+// ReportControls contains the information about a report template that is given to the user.
+type ReportControls struct {
   Name string
   Display string
   Description string
-  OrderBy []FieldsOrderByItem
+  OrderBy []ControlsOrderByItem
 }
 
-// FieldsOrderByItem is the information about OrderBy that is given to the user.
-type FieldsOrderByItem struct {
+// ControlsOrderByItem is the information about OrderBy that is given to the user.
+type ControlsOrderByItem struct {
   Name string
   Display string
 }
@@ -23,27 +23,27 @@ type FieldsOrderByItem struct {
  * Once we have user ids and authorizations, this function should accept
  * a user id and return only data that should be visible to that user.
  */
-func ClientVisibleReports(reportRoots []string) ([]*ReportFields, error) {
-  allFields := make([]*ReportFields, 0)
+func ClientVisibleReports(reportRoots []string) ([]*ReportControls, error) {
+  allControls := make([]*ReportControls, 0)
   for _, root := range reportRoots {
-    fields, err := ClientVisibleReportsOne(root)
+    controls, err := ClientVisibleReportsOne(root)
     if err != nil {
       return nil, err
     }
-    allFields = append(allFields, fields...)
+    allControls = append(allControls, controls...)
   }
-  return allFields, nil
+  return allControls, nil
 }
 
 /* ClientVisibleReportsOne returns the list of reports and their user-visible attributes
  * from one root directory.
  */
-func ClientVisibleReportsOne(templateDir string) ([]*ReportFields, error) {
+func ClientVisibleReportsOne(templateDir string) ([]*ReportControls, error) {
   attrs, err := ReadTemplateAttrs(templateDir)
   if err != nil {
     return nil, err
   }
-  reports := make([]*ReportFields, 0)
+  reports := make([]*ReportControls, 0)
   for _, tplAttrs := range attrs {
     userOrderByList, err := extractUserOrderByList(tplAttrs)
     if err != nil {
@@ -55,7 +55,7 @@ func ClientVisibleReportsOne(templateDir string) ([]*ReportFields, error) {
       // Don't include templates with no Display attribute.
       continue
     }
-    report := &ReportFields{
+    report := &ReportControls{
       Name: tplAttrs.Name,
       Display: tplAttrs.Display,
       Description: tplAttrs.Description,
@@ -67,11 +67,11 @@ func ClientVisibleReportsOne(templateDir string) ([]*ReportFields, error) {
 }
 
 // extractUserOrderByList looks at the orderby attribute in the given template attributes
-// and extacts from that the user-visible fields.
-func extractUserOrderByList(tplAttrs *ReportAttributes) ([]FieldsOrderByItem, error) {
-    r := []FieldsOrderByItem{}
+// and extacts from that the user-visible controls.
+func extractUserOrderByList(tplAttrs *ReportAttributes) ([]ControlsOrderByItem, error) {
+    r := []ControlsOrderByItem{}
     for _, v := range tplAttrs.OrderBy {
-      r = append(r, FieldsOrderByItem{
+      r = append(r, ControlsOrderByItem{
         Name: v.Name,
         Display: v.Display,
       })
