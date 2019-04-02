@@ -7,7 +7,7 @@ import (
 )
 
 func TestClientVisibleReports(t *testing.T) {
-  reports, err := ClientVisibleReportsOne("template")
+  reports, err := ClientVisibleReports([]string{"template"})
   if err != nil {
     t.Fatalf("ClientVisibleReports error: %v", err)
   }
@@ -36,7 +36,7 @@ func TestClientVisibleReports(t *testing.T) {
   }
 }
 
-func TestExtractUserOrderByMap(t *testing.T) {
+func TestExtractControlsOrderByList(t *testing.T) {
   tests := []struct{
     name string
     input *ReportAttributes
@@ -65,17 +65,17 @@ func TestExtractUserOrderByMap(t *testing.T) {
   }
   for _, tc := range tests {
     t.Run(tc.name, func(t *testing.T) {
-      got, err := extractUserOrderByList(tc.input)
+      got, err := extractControlsOrderByList(tc.input)
       if tc.expectError {
         if err == nil {
-          t.Fatalf("extractUserOrderByList: expected error but did not get one")
+          t.Fatalf("extractControlsOrderByList: expected error but did not get one")
         }
       } else if err != nil {
-        t.Fatalf("extractUserOrderByList: unexpected error: %v", err)
+        t.Fatalf("extractControlsOrderByList: unexpected error: %v", err)
       } else {
         want := tc.expect
         if diff := cmp.Diff(want, got); diff != "" {
-          t.Errorf("extractUserOrderByList mismatch (-want +got):\n%s", diff)
+          t.Errorf("extractControlsOrderByList mismatch (-want +got):\n%s", diff)
         }
       }
     })

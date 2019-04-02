@@ -22,6 +22,21 @@ type AttributesOrderByItem struct {
   Sql string
 }
 
+/* ReadAllTemplateAttrs loads the attributes from all the template files
+ * in all of the given directories.
+ */
+func ReadAllTemplateAttrs(reportRoots []string) ([]*ReportAttributes, error) {
+  allAttrs := make([]*ReportAttributes, 0)
+  for _, root := range reportRoots {
+    dirAttrs, err := ReadTemplateAttrs(root)
+    if err != nil {
+      return nil, err
+    }
+    allAttrs = append(allAttrs, dirAttrs...)
+  }
+  return allAttrs, nil
+}
+
 /* ReadTemplateAttrs loads the attributes from all the template files in
  * the given directory.
  */
@@ -46,4 +61,13 @@ func ReadTemplateAttrs(templateDir string) ([]*ReportAttributes, error) {
     reportAttrs = append(reportAttrs, attrs)
   }
   return reportAttrs, err
+}
+
+// getAttributes loads our attributes from the template in one of the given report roots.
+func getAttributes(templateName string, reportRoots []string) (*ReportAttributes, error) {
+  attrs := &ReportAttributes{}
+  if err := gen.FindAndReadAttributesInto(templateName, reportRoots, attrs); err != nil {
+    return nil, fmt.Errorf("reading template attributes: %v", err)
+  }
+  return attrs, nil
 }

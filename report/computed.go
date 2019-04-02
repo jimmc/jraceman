@@ -43,3 +43,13 @@ func findOrderByItem(orderByList []AttributesOrderByItem, orderByName string) (*
   }
   return nil, fmt.Errorf("orderby item %q not found", orderByName)
 }
+
+func getComputed(templateName string, options *ReportOptions, attrs *ReportAttributes) (*ReportComputed, error) {
+  computed := &ReportComputed{}
+  if options != nil {
+    if err := validateReportOptions(templateName, options, attrs, computed); err != nil {
+      return nil, err
+    }
+  }
+  return computed, nil
+}

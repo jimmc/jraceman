@@ -45,7 +45,7 @@ func TestStandardReports(t *testing.T) {
       { "entries", "sample1", "entries-test", roots1, "org.jimmc.jraceman.Entries", "",
         &ReportOptions{
           OrderByKey: "team",
-          WhereValues: map[string]WhereValue {
+          WhereValues: map[string]OptionsWhereValue {
             "event_id": {Op: "eq", Value: "M1.EV1"},
           },
         },

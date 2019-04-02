@@ -131,7 +131,7 @@ func TestOptionsFromParameters(t *testing.T) {
     {
       name: "none",
       expect: &reportmain.ReportOptions{
-        WhereValues: map[string]reportmain.WhereValue{},
+        WhereValues: map[string]reportmain.OptionsWhereValue{},
       },
     },
     {
@@ -139,7 +139,7 @@ func TestOptionsFromParameters(t *testing.T) {
       orderby: "foo",
       expect: &reportmain.ReportOptions{
         OrderByKey: "foo",
-        WhereValues: map[string]reportmain.WhereValue{},
+        WhereValues: map[string]reportmain.OptionsWhereValue{},
       },
     },
     {
@@ -151,8 +151,8 @@ func TestOptionsFromParameters(t *testing.T) {
         },
       },
       expect: &reportmain.ReportOptions{
-        WhereValues: map[string]reportmain.WhereValue{
-          "a": reportmain.WhereValue{Op: "eq", Value: "xyz"},
+        WhereValues: map[string]reportmain.OptionsWhereValue{
+          "a": reportmain.OptionsWhereValue{Op: "eq", Value: "xyz"},
         },
       },
     },
@@ -189,13 +189,13 @@ func TestWhereMapFromParameters(t *testing.T) {
   tests := []struct{
     name string
     where interface{}
-    expect map[string]reportmain.WhereValue
+    expect map[string]reportmain.OptionsWhereValue
     expectError bool
   } {
     {
       name: "no_where",
       where: nil,
-      expect: map[string]reportmain.WhereValue{},
+      expect: map[string]reportmain.OptionsWhereValue{},
     },
     {
       name: "not_map",
@@ -217,8 +217,8 @@ func TestWhereMapFromParameters(t *testing.T) {
           "value": "xyz",
         },
       },
-      expect: map[string]reportmain.WhereValue{
-        "a": reportmain.WhereValue{Op: "eq", Value: "xyz"},
+      expect: map[string]reportmain.OptionsWhereValue{
+        "a": reportmain.OptionsWhereValue{Op: "eq", Value: "xyz"},
       },
     },
     {

@@ -24,51 +24,46 @@ type ControlsOrderByItem struct {
  * a user id and return only data that should be visible to that user.
  */
 func ClientVisibleReports(reportRoots []string) ([]*ReportControls, error) {
-  allControls := make([]*ReportControls, 0)
-  for _, root := range reportRoots {
-    controls, err := ClientVisibleReportsOne(root)
-    if err != nil {
-      return nil, err
-    }
-    allControls = append(allControls, controls...)
-  }
-  return allControls, nil
-}
-
-/* ClientVisibleReportsOne returns the list of reports and their user-visible attributes
- * from one root directory.
- */
-func ClientVisibleReportsOne(templateDir string) ([]*ReportControls, error) {
-  attrs, err := ReadTemplateAttrs(templateDir)
+  attrs, err := ReadAllTemplateAttrs(reportRoots)
   if err != nil {
     return nil, err
   }
   reports := make([]*ReportControls, 0)
   for _, tplAttrs := range attrs {
-    userOrderByList, err := extractUserOrderByList(tplAttrs)
-    if err != nil {
-      // If we get an error, don't add this report to the list, but still show other reports.
-      glog.Errorf("Error decoding orderby in template %q: %v", tplAttrs.Name, err)
+    controls := attrsToControls(tplAttrs)
+    if controls == nil {
       continue
     }
-    if tplAttrs.Display == "" {
-      // Don't include templates with no Display attribute.
-      continue
-    }
-    report := &ReportControls{
-      Name: tplAttrs.Name,
-      Display: tplAttrs.Display,
-      Description: tplAttrs.Description,
-      OrderBy: userOrderByList,
-    }
-    reports = append(reports, report)
+    reports = append(reports, controls)
   }
   return reports, nil
 }
 
-// extractUserOrderByList looks at the orderby attribute in the given template attributes
+// attrsToControls creates the user-visible ReportControls from the ReportAttributes
+// read from a report template.
+func attrsToControls(tplAttrs *ReportAttributes) *ReportControls {
+  if tplAttrs.Display == "" {
+    // Don't include templates with no Display attribute.
+    return nil
+  }
+  userOrderByList, err := extractControlsOrderByList(tplAttrs)
+  if err != nil {
+    // If we get an error, don't add this report to the list, but still show other reports.
+    glog.Errorf("Error decoding orderby in template %q: %v", tplAttrs.Name, err)
+    return nil
+  }
+  report := &ReportControls{
+    Name: tplAttrs.Name,
+    Display: tplAttrs.Display,
+    Description: tplAttrs.Description,
+    OrderBy: userOrderByList,
+  }
+  return report
+}
+
+// extractControlsOrderByList looks at the orderby attribute in the given template attributes
 // and extacts from that the user-visible controls.
-func extractUserOrderByList(tplAttrs *ReportAttributes) ([]ControlsOrderByItem, error) {
+func extractControlsOrderByList(tplAttrs *ReportAttributes) ([]ControlsOrderByItem, error) {
     r := []ControlsOrderByItem{}
     for _, v := range tplAttrs.OrderBy {
       r = append(r, ControlsOrderByItem{

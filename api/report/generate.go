@@ -92,19 +92,19 @@ func optionsFromParameters(orderby string, where interface{}) (*reportmain.Repor
   return options, nil
 }
 
-func WhereMapFromParametersForTesting(where interface{}) (map[string]reportmain.WhereValue, error) {
+func WhereMapFromParametersForTesting(where interface{}) (map[string]reportmain.OptionsWhereValue, error) {
   return whereMapFromParameters(where)
 }
 
-func whereMapFromParameters(where interface{}) (map[string]reportmain.WhereValue, error) {
+func whereMapFromParameters(where interface{}) (map[string]reportmain.OptionsWhereValue, error) {
   if where == nil {
-    return map[string]reportmain.WhereValue{}, nil
+    return map[string]reportmain.OptionsWhereValue{}, nil
   }
   whereMap, ok := where.(map[string]interface{})
   if !ok {
     return nil, fmt.Errorf("invalid 'where' options, must be map[string]interface, but is %T", where)
   }
-  r := map[string]reportmain.WhereValue{}
+  r := map[string]reportmain.OptionsWhereValue{}
   for k, v := range whereMap {
     vals, ok := v.(map[string]interface{})
     if !ok {
@@ -120,7 +120,7 @@ func whereMapFromParameters(where interface{}) (map[string]reportmain.WhereValue
       return nil, fmt.Errorf("op for field %q must be string, but is %T", k, op)
     }
     value := vals["value"]
-    wv := reportmain.WhereValue{Op: op, Value: value}
+    wv := reportmain.OptionsWhereValue{Op: op, Value: value}
     r[k] = wv
   }
   return r, nil
