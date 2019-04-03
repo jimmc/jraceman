@@ -12,12 +12,6 @@ type ReportControls struct {
   OrderBy []ControlsOrderByItem
 }
 
-// ControlsOrderByItem is the information about OrderBy that is given to the user.
-type ControlsOrderByItem struct {
-  Name string
-  Display string
-}
-
 /* ClientVisibleReports returns the list of reports and their attributes
  * that should be visible to a client.
  * Once we have user ids and authorizations, this function should accept
@@ -59,17 +53,4 @@ func attrsToControls(tplAttrs *ReportAttributes) *ReportControls {
     OrderBy: userOrderByList,
   }
   return report
-}
-
-// extractControlsOrderByList looks at the orderby attribute in the given template attributes
-// and extacts from that the user-visible controls.
-func extractControlsOrderByList(tplAttrs *ReportAttributes) ([]ControlsOrderByItem, error) {
-    r := []ControlsOrderByItem{}
-    for _, v := range tplAttrs.OrderBy {
-      r = append(r, ControlsOrderByItem{
-        Name: v.Name,
-        Display: v.Display,
-      })
-    }
-    return r, nil
 }

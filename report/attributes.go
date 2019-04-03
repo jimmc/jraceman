@@ -15,13 +15,6 @@ type ReportAttributes struct {
   OrderBy []AttributesOrderByItem
 }
 
-// AttributesOrderByItem contains the OrderBy info loaded from a report template.
-type AttributesOrderByItem struct {
-  Name string
-  Display string
-  Sql string
-}
-
 /* ReadAllTemplateAttrs loads the attributes from all the template files
  * in all of the given directories.
  */
