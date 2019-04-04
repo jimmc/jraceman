@@ -12,7 +12,7 @@ import (
 // ReportOptions is the data given to us by the user to generate an instance of the report.
 type ReportOptions struct {
   OrderByKey string     // One of the key values in the attr orderby list for the template.
-  WhereValues map[string]OptionsWhereValue
+  WhereValues map[string]OptionsWhereItem
 }
 
 type ReportResults struct {

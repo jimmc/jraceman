@@ -19,7 +19,7 @@ func TestWhere(t *testing.T) {
       attrs: &ReportAttributes{
         Where: []string{"event", "person_id"},
       },
-      options: &ReportOptions{WhereValues: map[string]OptionsWhereValue{
+      options: &ReportOptions{WhereValues: map[string]OptionsWhereItem{
       }},
       expect: &ComputedWhere{},
       expectError: false,
@@ -29,7 +29,7 @@ func TestWhere(t *testing.T) {
       attrs: &ReportAttributes{
         Where: []string{"event", "person_id"},
       },
-      options: &ReportOptions{WhereValues: map[string]OptionsWhereValue{
+      options: &ReportOptions{WhereValues: map[string]OptionsWhereItem{
         "event_id": {Op: "eq", Value: "ID"},
       }},
       expect: &ComputedWhere{
@@ -44,7 +44,7 @@ func TestWhere(t *testing.T) {
       attrs: &ReportAttributes{
         Where: []string{"event", "person_id"},
       },
-      options: &ReportOptions{WhereValues: map[string]OptionsWhereValue{
+      options: &ReportOptions{WhereValues: map[string]OptionsWhereItem{
         "no_such_field": {Op: "eq", Value: "anything"},
       }},
       expectError: true,
@@ -52,17 +52,17 @@ func TestWhere(t *testing.T) {
   }
   for _, tc := range tests {
     t.Run(tc.name, func(t *testing.T) {
-      got, err := where(tc.attrs, tc.options)
+      got, err := computeWhere(tc.attrs, tc.options)
       if tc.expectError {
         if err == nil {
-          t.Fatalf("where: expected error but did not get one")
+          t.Fatalf("computeWhere: expected error but did not get one")
         }
       } else if err != nil {
         t.Fatalf("where: unexpected error: %v", err)
       } else {
         want := tc.expect
         if diff := cmp.Diff(want, got, cmp.AllowUnexported(ComputedWhere{})); diff != "" {
-          t.Errorf("where mismatch (-want +got):\n%s", diff)
+          t.Errorf("computeWhere mismatch (-want +got):\n%s", diff)
         }
       }
     })
@@ -113,21 +113,21 @@ func TestExtractWhereListInUse(t *testing.T) {
   tests := []struct{
     name string
     whereList []string
-    whereValues map[string]OptionsWhereValue
+    whereValues map[string]OptionsWhereItem
     expect []string
   } {
     {
       name: "empty",
       whereList: []string{},
-      whereValues: map[string]OptionsWhereValue{},
+      whereValues: map[string]OptionsWhereItem{},
       expect: []string{},
     },
     {
       name: "simple",
       whereList: []string{"a", "b", "c"},
-      whereValues: map[string]OptionsWhereValue{
-        "a": OptionsWhereValue{},
-        "c": OptionsWhereValue{},
+      whereValues: map[string]OptionsWhereItem{
+        "a": OptionsWhereItem{},
+        "c": OptionsWhereItem{},
       },
       expect: []string{"a", "c"},
     },
@@ -145,7 +145,7 @@ func TestWhereMapToData(t *testing.T) {
     name string
     whereMap map[string]whereDetails
     whereListInUse []string
-    whereValues map[string]OptionsWhereValue
+    whereValues map[string]OptionsWhereItem
     expect *ComputedWhere
     expectError bool
   } {
@@ -155,7 +155,7 @@ func TestWhereMapToData(t *testing.T) {
         "a": whereDetails{table:"A", column:"c"},
       },
       whereListInUse: []string{},
-      whereValues: map[string]OptionsWhereValue{
+      whereValues: map[string]OptionsWhereItem{
       },
       expect: &ComputedWhere{},
       expectError: false,
@@ -166,8 +166,8 @@ func TestWhereMapToData(t *testing.T) {
         "a": whereDetails{table:"A", column:"c"},
       },
       whereListInUse: []string{"a"},
-      whereValues: map[string]OptionsWhereValue{
-        "a": OptionsWhereValue{Op: "eq", Value: 123},
+      whereValues: map[string]OptionsWhereItem{
+        "a": OptionsWhereItem{Op: "eq", Value: 123},
       },
       expect: &ComputedWhere{
         Expr: "A.c = 123",
@@ -183,9 +183,9 @@ func TestWhereMapToData(t *testing.T) {
         "b": whereDetails{table:"B", column:"d"},
       },
       whereListInUse: []string{"a", "b"},
-      whereValues: map[string]OptionsWhereValue{
-        "a": OptionsWhereValue{Op: "eq", Value: 123},
-        "b": OptionsWhereValue{Op: "ne", Value: "xyz"},
+      whereValues: map[string]OptionsWhereItem{
+        "a": OptionsWhereItem{Op: "eq", Value: 123},
+        "b": OptionsWhereItem{Op: "ne", Value: "xyz"},
       },
       expect: &ComputedWhere{
         Expr: "A.c = 123 AND B.d != 'xyz'",
@@ -200,9 +200,9 @@ func TestWhereMapToData(t *testing.T) {
         "a": whereDetails{table:"A", column:"c"},
       },
       whereListInUse: []string{"a","b"},
-      whereValues: map[string]OptionsWhereValue{
-        "a": OptionsWhereValue{Op: "eq", Value: 123},
-        "b": OptionsWhereValue{Op: "ne", Value: "xyz"},
+      whereValues: map[string]OptionsWhereItem{
+        "a": OptionsWhereItem{Op: "eq", Value: 123},
+        "b": OptionsWhereItem{Op: "ne", Value: "xyz"},
       },
       expect: &ComputedWhere{},
       expectError: true,
@@ -314,25 +314,25 @@ func TestWhereString(t *testing.T) {
   tests := []struct{
     name string
     field whereDetails
-    value OptionsWhereValue
+    value OptionsWhereItem
     expect string
   } {
     {
       name: "int",
       field: whereDetails{table: "tbl", column: "col"},
-      value: OptionsWhereValue{Op: "eq", Value: 123},
+      value: OptionsWhereItem{Op: "eq", Value: 123},
       expect: "tbl.col = 123",
     },
     {
       name: "string",
       field: whereDetails{table: "tbl", column: "col"},
-      value: OptionsWhereValue{Op: "eq", Value: "abc"},
+      value: OptionsWhereItem{Op: "eq", Value: "abc"},
       expect: "tbl.col = 'abc'",
     },
     {
       name: "field override",
       field: whereDetails{table: "tbl", column: "col", field: "fff"},
-      value: OptionsWhereValue{Op: "eq", Value: 123},
+      value: OptionsWhereItem{Op: "eq", Value: 123},
       expect: "fff = 123",
     },
   }

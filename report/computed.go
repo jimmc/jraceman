@@ -25,7 +25,7 @@ func validateReportOptions(tplName string, options *ReportOptions, attrs *Report
 }
 
 func getComputed(templateName string, options *ReportOptions, attrs *ReportAttributes) (*ReportComputed, error) {
-  where, err := where(attrs, options)
+  where, err := computeWhere(attrs, options)
   if err != nil {
     return nil, err
   }

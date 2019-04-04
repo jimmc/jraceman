@@ -5,8 +5,8 @@ import (
   "strings"
 )
 
-// OptionsWhereValue contains the value specified in ReportOptions for one where field.
-type OptionsWhereValue struct {
+// OptionsWhereItem contains the value specified in ReportOptions for one where field.
+type OptionsWhereItem struct {
   Op string     // The comparison operation to use for this field.
   Value interface{}     // The value to use on the RHS of the comparison.
 }
@@ -94,8 +94,8 @@ var emptyWhere = ComputedWhere{
   AndClause: "",
 }
 
-// where generates the data that we return to the template.
-func where(attrs *ReportAttributes, options *ReportOptions) (*ComputedWhere, error) {
+// computeWhere computes the 'where' data that we supply to the template during generation.
+func computeWhere(attrs *ReportAttributes, options *ReportOptions) (*ComputedWhere, error) {
   whereList, err := expandWhereList(attrs.Where)
   if err != nil {
     return nil, err
@@ -165,7 +165,7 @@ func whereListToMap(names []string) (map[string]whereDetails, error) {
 // extractWhereListInUse takes a list of all defined where fields for a
 // template and returns a list that only contains the fields that are
 // used in the options.
-func extractWhereListInUse(whereList []string, whereValues map[string]OptionsWhereValue) []string {
+func extractWhereListInUse(whereList []string, whereValues map[string]OptionsWhereItem) []string {
   r := []string{}
   for _, s := range whereList {
     if _, ok := whereValues[s]; ok {
@@ -184,7 +184,7 @@ func extractWhereListInUse(whereList []string, whereValues map[string]OptionsWhe
 // which we use to order the where expressions.
 // whereValues is the set of values supplied in the options.
 // TODO - validate that the type in the options matches the DB type.
-func whereMapToData(whereMap map[string]whereDetails, whereListInUse []string, whereValues map[string]OptionsWhereValue) (*ComputedWhere, error) {
+func whereMapToData(whereMap map[string]whereDetails, whereListInUse []string, whereValues map[string]OptionsWhereItem) (*ComputedWhere, error) {
   exprs := []string{}
   for whereName, _ := range whereValues {
     _, ok := whereMap[whereName]
@@ -214,7 +214,7 @@ func whereMapToData(whereMap map[string]whereDetails, whereListInUse []string, w
 
 // whereString generates a where string for the specified field using the
 // operator and value that came from the options.
-func whereString(fieldDetails whereDetails, whereValue OptionsWhereValue) (string, error) {
+func whereString(fieldDetails whereDetails, whereValue OptionsWhereItem) (string, error) {
   // TODO - check for valid op, based on field database type
   // TODO - check for value type, format accordingly.
   field := fieldDetails.field
@@ -233,7 +233,7 @@ func whereString(fieldDetails whereDetails, whereValue OptionsWhereValue) (strin
   }
 }
 
-// whereOpStr converts the Op field from a OptionsWhereValue to the string to be used
+// whereOpStr converts the Op field from a OptionsWhereItem to the string to be used
 // in the sql for that expression.
 func whereOpStr(op string) (string, error) {
   switch op {
