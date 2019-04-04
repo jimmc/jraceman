@@ -36,6 +36,27 @@
             <option value="[[item.Name]]">[[item.Display]]</option>
           </template>
         </select>
+        <br>
+        <table>
+          <template is="dom-repeat" items=[[whereList]] as="item">
+            <tr>
+              <td>[[item.Display]]</td>
+              <td>
+                <select id="op_[[item.Name]]">
+                  <option value="eq">=</option>
+                  <option value="ne">!=</option>
+                  <option value="gt">&gt;</option>
+                  <option value="ge">&gt;=</option>
+                  <option value="lt">&lt;</option>
+                  <option value="le">&lt;=</option>
+                </select>
+              </td>
+              <td>
+                <input type=text id="val_[[item.Name]]" name=[[item.Name]] label=[[item.Name]]></input>
+              </td>
+            </tr>
+          </template>
+        </table>
       </div>
       <div id="buttons">
         <paper-button on-click="generate">Generate</paper-button>

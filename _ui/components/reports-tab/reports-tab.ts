@@ -3,10 +3,17 @@ interface ReportAttributes {
   Name: string;
   Display: string;
   OrderBy: {[key:string]:string}[];
+  Where: {[key:string]:string}[];
 }
 
-// OrderBy is what we prepare for our UI for each OrderBy.
-interface OrderBy {
+// OrderByControl is what we prepare for our UI for each OrderBy.
+interface OrderByControl {
+  Name: string;
+  Display: string;
+}
+
+// WhereControl is what we prepare for our UI for each Where item.
+interface WhereControl {
   Name: string;
   Display: string;
 }
@@ -15,7 +22,10 @@ interface OrderBy {
 class ReportsTab extends Polymer.Element {
 
   @Polymer.decorators.property({type: Object, notify: true})
-  orderByList: OrderBy[];
+  orderByList: OrderByControl[];
+
+  @Polymer.decorators.property({type: Object, notify: true})
+  whereList: WhereControl[];
 
   @Polymer.decorators.property({type: Object, notify: true})
   reportList: ReportAttributes[];
@@ -44,15 +54,16 @@ class ReportsTab extends Polymer.Element {
   reportNameChanged() {
     const reportName = this.$.main.querySelector("#reportName").value;
     this.updateOrderByList(reportName)
+    this.updateWhereList(reportName)
   }
 
   updateOrderByList(reportName: string) {
-    var obl: OrderBy[] = []
+    var obl: OrderByControl[] = []
     const reportAttrs = this.findReport(reportName)
     const reportOrderBys: {[key:string]:string}[] = reportAttrs.OrderBy
     if (reportOrderBys) {
       for (let item of reportOrderBys) {
-        const orderby: OrderBy = {
+        const orderby: OrderByControl = {
           Name: item["Name"],
           Display: item["Display"],
         }
@@ -60,6 +71,22 @@ class ReportsTab extends Polymer.Element {
       }
     }
     this.orderByList = obl
+  }
+
+  updateWhereList(reportName: string) {
+    var wcl: WhereControl[] = []
+    const reportAttrs = this.findReport(reportName)
+    const reportWhereItems: {[key:string]:string}[] = reportAttrs.Where
+    if (reportWhereItems) {
+      for (let item of reportWhereItems) {
+        const whereItem: WhereControl = {
+          Name: item["Name"],
+          Display: item["Display"],
+        }
+        wcl.push(whereItem)
+      }
+    }
+    this.whereList = wcl
   }
 
   findReport(reportName: string): ReportAttributes {
