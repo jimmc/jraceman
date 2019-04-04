@@ -46,6 +46,9 @@ func extractControlsOrderByList(tplAttrs *ReportAttributes) ([]ControlsOrderByIt
 }
 
 func computeOrderBy(tplName string, options *ReportOptions, attrs *ReportAttributes) (*ComputedOrderBy, error) {
+  if options == nil || options.OrderByKey == "" {
+    return &ComputedOrderBy{}, nil
+  }
   if attrs == nil || len(attrs.OrderBy) == 0 {
     return nil, fmt.Errorf("invalid orderby option %q, template %s does not permit orderby",
         options.OrderByKey, tplName)

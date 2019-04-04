@@ -4,7 +4,7 @@ import (
   "testing"
 )
 
-func TestValidateReportOptions(t *testing.T) {
+func TestGetComputed(t *testing.T) {
   attrsEmpty := &ReportAttributes{}
   attrsWithOrderBy := &ReportAttributes{
     OrderBy: []AttributesOrderByItem{
@@ -28,12 +28,19 @@ func TestValidateReportOptions(t *testing.T) {
   for _, tc := range tests {
     t.Run(tc.name, func(t *testing.T) {
       tplName := "<" + tc.name+ ">"
-      computed := &ReportComputed{}
-      err := validateReportOptions(tplName, tc.options, tc.attrs, computed)
-      if tc.expectError && err == nil {
-        t.Errorf("Expected error but dit not get it")
-      } else if !tc.expectError && err != nil {
-        t.Errorf("Unexpected error: %v", err)
+      computed, err := getComputed(tplName, tc.options, tc.attrs)
+      if tc.expectError {
+        if err == nil {
+          t.Fatalf("Expected error but did not get it")
+        }
+      } else {
+        if err != nil {
+          t.Fatalf("Unexpected error: %v", err)
+        }
+        // TODO - we should check the computed result here.
+        if computed == nil {
+          t.Fatalf("Expected computed value but got nil")
+        }
       }
     })
   }

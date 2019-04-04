@@ -1,6 +1,7 @@
 package report
 
 import (
+  "fmt"
 )
 
 // ReportComputed is the collection of data that we compute based on the report attributes
@@ -10,32 +11,21 @@ type ReportComputed struct {
   Where ComputedWhere
 }
 
-func validateReportOptions(tplName string, options *ReportOptions, attrs *ReportAttributes, computed *ReportComputed) error {
-  if options == nil {
-    return nil
-  }
-  if options.OrderByKey != "" {
-    ob, err := computeOrderBy(tplName, options, attrs)
-    if err != nil {
-      return err
-    }
-    computed.OrderBy = *ob
-  }
-  return nil
-}
-
 func getComputed(templateName string, options *ReportOptions, attrs *ReportAttributes) (*ReportComputed, error) {
+  if attrs == nil {
+    return nil, fmt.Errorf("nil attrs are not allowed in getComputed") // Internal error.
+  }
   where, err := computeWhere(attrs, options)
+  if err != nil {
+    return nil, err
+  }
+  orderby, err := computeOrderBy(templateName, options, attrs)
   if err != nil {
     return nil, err
   }
   computed := &ReportComputed{
     Where: *where,
-  }
-  if options != nil {
-    if err := validateReportOptions(templateName, options, attrs, computed); err != nil {
-      return nil, err
-    }
+    OrderBy: *orderby,
   }
   return computed, nil
 }
