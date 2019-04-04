@@ -22,12 +22,22 @@ func TestClientVisibleReports(t *testing.T) {
         ControlsOrderByItem{Name: "eventTeam",   Display: "Event, Team, Person"},
         ControlsOrderByItem{Name: "eventPerson", Display: "Event, Person"},
       },
+      Where: []ControlsWhereItem{
+	{Name: "event_id", Display: "Event"},
+	{Name: "event_name", Display: "Event Name"},
+	{Name: "event_number", Display: "Event Number"},
+	{Name: "team_id", Display: "Team"},
+	{Name: "team_shortname", Display: "Team Short Name"},
+	{Name: "team_name", Display: "Team Name"},
+	{Name: "person_id", Display: "Person"},
+      },
     },
     {
       Name: "org.jimmc.jraceman.Lanes",
       Display: "Lanes",
       Description: "",
       OrderBy: []ControlsOrderByItem{},
+      Where: []ControlsWhereItem{},
     },
   }
   got, want := reports, expected

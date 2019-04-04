@@ -35,7 +35,7 @@ func TestExtractControlsOrderByList(t *testing.T) {
   }
   for _, tc := range tests {
     t.Run(tc.name, func(t *testing.T) {
-      got, err := extractControlsOrderByList(tc.input)
+      got, err := extractControlsOrderByItems(tc.input)
       if tc.expectError {
         if err == nil {
           t.Fatalf("extractControlsOrderByList: expected error but did not get one")

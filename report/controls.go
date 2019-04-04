@@ -10,6 +10,7 @@ type ReportControls struct {
   Display string
   Description string
   OrderBy []ControlsOrderByItem
+  Where []ControlsWhereItem
 }
 
 /* ClientVisibleReports returns the list of reports and their attributes
@@ -40,17 +41,24 @@ func attrsToControls(tplAttrs *ReportAttributes) *ReportControls {
     // Don't include templates with no Display attribute.
     return nil
   }
-  userOrderByList, err := extractControlsOrderByList(tplAttrs)
+  orderByItems, err := extractControlsOrderByItems(tplAttrs)
   if err != nil {
     // If we get an error, don't add this report to the list, but still show other reports.
     glog.Errorf("Error decoding orderby in template %q: %v", tplAttrs.Name, err)
+    return nil
+  }
+  whereItems, err := extractControlsWhereItems(tplAttrs)
+  if err != nil {
+    // If we get an error, don't add this report to the list, but still show other reports.
+    glog.Errorf("Error decoding where in template %q: %v", tplAttrs.Name, err)
     return nil
   }
   report := &ReportControls{
     Name: tplAttrs.Name,
     Display: tplAttrs.Display,
     Description: tplAttrs.Description,
-    OrderBy: userOrderByList,
+    OrderBy: orderByItems,
+    Where: whereItems,
   }
   return report
 }

@@ -32,17 +32,17 @@ func findOrderByItem(orderByList []AttributesOrderByItem, orderByName string) (*
   return nil, fmt.Errorf("orderby item %q not found", orderByName)
 }
 
-// extractControlsOrderByList looks at the orderby attribute in the given template attributes
+// extractControlsOrderByItems looks at the orderby attribute in the given template attributes
 // and extacts from that the user-visible controls.
-func extractControlsOrderByList(tplAttrs *ReportAttributes) ([]ControlsOrderByItem, error) {
-    r := []ControlsOrderByItem{}
-    for _, v := range tplAttrs.OrderBy {
-      r = append(r, ControlsOrderByItem{
-        Name: v.Name,
-        Display: v.Display,
-      })
-    }
-    return r, nil
+func extractControlsOrderByItems(tplAttrs *ReportAttributes) ([]ControlsOrderByItem, error) {
+  r := []ControlsOrderByItem{}
+  for _, v := range tplAttrs.OrderBy {
+    r = append(r, ControlsOrderByItem{
+      Name: v.Name,
+      Display: v.Display,
+    })
+  }
+  return r, nil
 }
 
 func computeOrderBy(tplName string, options *ReportOptions, attrs *ReportAttributes) (*ComputedOrderBy, error) {

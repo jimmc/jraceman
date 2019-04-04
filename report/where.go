@@ -5,6 +5,12 @@ import (
   "strings"
 )
 
+// ControlsWhereItem is the 'where' info that we pass to the user.
+type ControlsWhereItem struct {
+  Name string
+  Display string
+}
+
 // OptionsWhereItem contains the value specified in ReportOptions for one where field.
 type OptionsWhereItem struct {
   Op string     // The comparison operation to use for this field.
@@ -92,6 +98,28 @@ var emptyWhere = ComputedWhere{
   Expr: "",
   WhereClause: "",
   AndClause: "",
+}
+
+// extractControlsWhereItems generates the 'where' info that we pass to the user.
+func extractControlsWhereItems(tplAttrs *ReportAttributes) ([]ControlsWhereItem, error) {
+  whereList, err := expandWhereList(tplAttrs.Where)
+  if err != nil {
+    return nil, err
+  }
+  whereMap, err := whereListToMap(whereList)
+  if err != nil {
+    return nil, err
+  }
+  r := []ControlsWhereItem{}
+  for _, name := range whereList {
+    details := whereMap[name]
+    item := ControlsWhereItem{
+      Name: name,
+      Display: details.display,
+    }
+    r = append(r, item)
+  }
+  return r, nil
 }
 
 // computeWhere computes the 'where' data that we supply to the template during generation.

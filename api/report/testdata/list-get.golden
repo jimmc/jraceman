@@ -12,7 +12,8 @@
         "Name": "city",
         "Display": "City"
       }
-    ]
+    ],
+    "Where": []
   },
   {
     "Name": "org.jimmc.jraceman.Entries",
@@ -35,12 +36,43 @@
         "Name": "eventPerson",
         "Display": "Event, Person"
       }
+    ],
+    "Where": [
+      {
+        "Name": "event_id",
+        "Display": "Event"
+      },
+      {
+        "Name": "event_name",
+        "Display": "Event Name"
+      },
+      {
+        "Name": "event_number",
+        "Display": "Event Number"
+      },
+      {
+        "Name": "team_id",
+        "Display": "Team"
+      },
+      {
+        "Name": "team_shortname",
+        "Display": "Team Short Name"
+      },
+      {
+        "Name": "team_name",
+        "Display": "Team Name"
+      },
+      {
+        "Name": "person_id",
+        "Display": "Person"
+      }
     ]
   },
   {
     "Name": "org.jimmc.jraceman.Lanes",
     "Display": "Lanes",
     "Description": "",
-    "OrderBy": []
+    "OrderBy": [],
+    "Where": []
   }
 ]
