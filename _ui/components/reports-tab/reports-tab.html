@@ -43,12 +43,9 @@
               <td>[[item.Display]]</td>
               <td>
                 <select id="op_[[item.Name]]">
-                  <option value="eq">=</option>
-                  <option value="ne">!=</option>
-                  <option value="gt">&gt;</option>
-                  <option value="ge">&gt;=</option>
-                  <option value="lt">&lt;</option>
-                  <option value="le">&lt;=</option>
+                  <template is="dom-repeat" items=[[item.Ops]] as="op">
+                    <option value="[[op.Name]]">[[op.Display]]</option>
+                  </template>
                 </select>
               </td>
               <td>

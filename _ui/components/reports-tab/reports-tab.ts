@@ -3,7 +3,14 @@ interface ReportAttributes {
   Name: string;
   Display: string;
   OrderBy: {[key:string]:string}[];
-  Where: {[key:string]:string}[];
+  Where: ReportWhereControl[];
+}
+
+// ReportWhereControl is we get from the API for each where item.
+interface ReportWhereControl {
+  Name: string;
+  Display: string;
+  Ops: string[];
 }
 
 // OrderByControl is what we prepare for our UI for each OrderBy.
@@ -16,6 +23,13 @@ interface OrderByControl {
 interface WhereControl {
   Name: string;
   Display: string;
+  Ops: WhereControlOp[];
+}
+
+// WhereControlOp is what we prepare for our UI for each Op on a Where item.
+interface WhereControlOp {
+  Name: string;
+  Display: string;
 }
 
 // WhereOption is what we send back to the API for each where field used.
@@ -23,6 +37,16 @@ interface WhereOption {
   Name: string;
   Op: string;
   Value: string;
+}
+
+const opDisplayMap: {[key:string]:string} = {
+  "eq": "=",
+  "ne": "!=",
+  "gt": ">",
+  "ge": ">=",
+  "lt": "<",
+  "le": "<=",
+  "like": "LIKE",
 }
 
 @Polymer.decorators.customElement('reports-tab')
@@ -81,17 +105,28 @@ class ReportsTab extends Polymer.Element {
   }
 
   updateWhereList(reportName: string) {
-    var wcl: WhereControl[] = []
     const reportAttrs = this.findReport(reportName)
-    const reportWhereItems: {[key:string]:string}[] = reportAttrs.Where
-    if (reportWhereItems) {
-      for (let item of reportWhereItems) {
-        const whereItem: WhereControl = {
-          Name: item["Name"],
-          Display: item["Display"],
+    const reportWhereItems: ReportWhereControl[] = reportAttrs.Where
+    if (!reportWhereItems) {
+      this.whereList = []
+      return
+    }
+    var wcl: WhereControl[] = []
+    for (let item of reportWhereItems) {
+      var ops: WhereControlOp[] = []
+      for (const opName of item.Ops) {
+        const opItem: WhereControlOp = {
+          Name: opName,
+          Display: opDisplayMap[opName],
         }
-        wcl.push(whereItem)
+        ops.push(opItem);
       }
+      const whereItem: WhereControl = {
+        Name: item.Name,
+        Display: item.Display,
+        Ops: ops,
+      }
+      wcl.push(whereItem)
     }
     this.whereList = wcl
   }
