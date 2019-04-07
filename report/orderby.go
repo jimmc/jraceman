@@ -18,7 +18,7 @@ type ControlsOrderByItem struct {
 }
 
 type ComputedOrderBy struct {
-  Expr string    // The orderby sql corresponding to the OrderByKey in the Options.
+  Expr string    // The orderby sql corresponding to the OrderBy in the Options.
   Display string
   Clause string  // Blank if no OrderBy, else "ORDER BY " and the expression.
 }
@@ -46,17 +46,17 @@ func extractControlsOrderByItems(tplAttrs *ReportAttributes) ([]ControlsOrderByI
 }
 
 func computeOrderBy(tplName string, options *ReportOptions, attrs *ReportAttributes) (*ComputedOrderBy, error) {
-  if options == nil || options.OrderByKey == "" {
+  if options == nil || options.OrderBy == "" {
     return &ComputedOrderBy{}, nil
   }
   if attrs == nil || len(attrs.OrderBy) == 0 {
     return nil, fmt.Errorf("invalid orderby option %q, template %s does not permit orderby",
-        options.OrderByKey, tplName)
+        options.OrderBy, tplName)
   }
-  orderByItem, err := findOrderByItem(attrs.OrderBy, options.OrderByKey)
+  orderByItem, err := findOrderByItem(attrs.OrderBy, options.OrderBy)
   if err != nil {
     return nil, fmt.Errorf("invalid orderby option %q for template %s",
-        options.OrderByKey, tplName)
+        options.OrderBy, tplName)
   }
   computedOrderBy := &ComputedOrderBy{
     Expr: orderByItem.Sql,

@@ -19,8 +19,7 @@ func TestWhere(t *testing.T) {
       attrs: &ReportAttributes{
         Where: []string{"event", "person_id"},
       },
-      options: &ReportOptions{WhereValues: map[string]OptionsWhereItem{
-      }},
+      options: &ReportOptions{Where: []OptionsWhereItem{}},
       expect: &ComputedWhere{},
       expectError: false,
     },
@@ -29,8 +28,8 @@ func TestWhere(t *testing.T) {
       attrs: &ReportAttributes{
         Where: []string{"event", "person_id"},
       },
-      options: &ReportOptions{WhereValues: map[string]OptionsWhereItem{
-        "event_id": {Op: "eq", Value: "ID"},
+      options: &ReportOptions{Where: []OptionsWhereItem{
+        {Name: "event_id", Op: "eq", Value: "ID"},
       }},
       expect: &ComputedWhere{
         Expr: "event.id = 'ID'",
@@ -44,8 +43,8 @@ func TestWhere(t *testing.T) {
       attrs: &ReportAttributes{
         Where: []string{"event", "person_id"},
       },
-      options: &ReportOptions{WhereValues: map[string]OptionsWhereItem{
-        "no_such_field": {Op: "eq", Value: "anything"},
+      options: &ReportOptions{Where: []OptionsWhereItem{
+        {Name: "no_such_field", Op: "eq", Value: "anything"},
       }},
       expectError: true,
     },
@@ -113,21 +112,21 @@ func TestExtractWhereListInUse(t *testing.T) {
   tests := []struct{
     name string
     whereList []string
-    whereValues map[string]OptionsWhereItem
+    whereValues []OptionsWhereItem
     expect []string
   } {
     {
       name: "empty",
       whereList: []string{},
-      whereValues: map[string]OptionsWhereItem{},
+      whereValues: []OptionsWhereItem{},
       expect: []string{},
     },
     {
       name: "simple",
       whereList: []string{"a", "b", "c"},
-      whereValues: map[string]OptionsWhereItem{
-        "a": OptionsWhereItem{},
-        "c": OptionsWhereItem{},
+      whereValues: []OptionsWhereItem{
+        {Name: "a"},
+        {Name: "c"},
       },
       expect: []string{"a", "c"},
     },
@@ -145,29 +144,28 @@ func TestWhereMapToData(t *testing.T) {
     name string
     whereMap map[string]whereDetails
     whereListInUse []string
-    whereValues map[string]OptionsWhereItem
+    whereValues []OptionsWhereItem
     expect *ComputedWhere
     expectError bool
   } {
     {
       name: "noValues",
       whereMap: map[string]whereDetails{
-        "a": whereDetails{table:"A", column:"c"},
+        "a": {table:"A", column:"c"},
       },
       whereListInUse: []string{},
-      whereValues: map[string]OptionsWhereItem{
-      },
+      whereValues: []OptionsWhereItem{},
       expect: &ComputedWhere{},
       expectError: false,
     },
     {
       name: "oneValue",
       whereMap: map[string]whereDetails{
-        "a": whereDetails{table:"A", column:"c"},
+        "a": {table:"A", column:"c"},
       },
       whereListInUse: []string{"a"},
-      whereValues: map[string]OptionsWhereItem{
-        "a": OptionsWhereItem{Op: "eq", Value: 123},
+      whereValues: []OptionsWhereItem{
+        {Name: "a", Op: "eq", Value: 123},
       },
       expect: &ComputedWhere{
         Expr: "A.c = 123",
@@ -179,13 +177,13 @@ func TestWhereMapToData(t *testing.T) {
     {
       name: "twoValues",
       whereMap: map[string]whereDetails{
-        "a": whereDetails{table:"A", column:"c"},
-        "b": whereDetails{table:"B", column:"d"},
+        "a": {table:"A", column:"c"},
+        "b": {table:"B", column:"d"},
       },
       whereListInUse: []string{"a", "b"},
-      whereValues: map[string]OptionsWhereItem{
-        "a": OptionsWhereItem{Op: "eq", Value: 123},
-        "b": OptionsWhereItem{Op: "ne", Value: "xyz"},
+      whereValues: []OptionsWhereItem{
+        {Name: "a", Op: "eq", Value: 123},
+        {Name: "b", Op: "ne", Value: "xyz"},
       },
       expect: &ComputedWhere{
         Expr: "A.c = 123 AND B.d != 'xyz'",
@@ -197,12 +195,12 @@ func TestWhereMapToData(t *testing.T) {
     {
       name: "invalidValue",
       whereMap: map[string]whereDetails{
-        "a": whereDetails{table:"A", column:"c"},
+        "a": {table:"A", column:"c"},
       },
       whereListInUse: []string{"a","b"},
-      whereValues: map[string]OptionsWhereItem{
-        "a": OptionsWhereItem{Op: "eq", Value: 123},
-        "b": OptionsWhereItem{Op: "ne", Value: "xyz"},
+      whereValues: []OptionsWhereItem{
+        {Name: "a", Op: "eq", Value: 123},
+        {Name: "b", Op: "ne", Value: "xyz"},
       },
       expect: &ComputedWhere{},
       expectError: true,

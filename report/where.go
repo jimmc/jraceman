@@ -13,6 +13,7 @@ type ControlsWhereItem struct {
 
 // OptionsWhereItem contains the value specified in ReportOptions for one where field.
 type OptionsWhereItem struct {
+  Name string   // The name of this where field.
   Op string     // The comparison operation to use for this field.
   Value interface{}     // The value to use on the RHS of the comparison.
 }
@@ -135,8 +136,8 @@ func computeWhere(attrs *ReportAttributes, options *ReportOptions) (*ComputedWhe
   if options == nil {
     options = &ReportOptions{}
   }
-  whereListInUse := extractWhereListInUse(whereList, options.WhereValues)
-  return whereMapToData(whereMap, whereListInUse, options.WhereValues)
+  whereListInUse := extractWhereListInUse(whereList, options.Where)
+  return whereMapToData(whereMap, whereListInUse, options.Where)
 }
 
 // expandWhereList expands entries in whereGroups.
@@ -193,18 +194,22 @@ func whereListToMap(names []string) (map[string]whereDetails, error) {
 // extractWhereListInUse takes a list of all defined where fields for a
 // template and returns a list that only contains the fields that are
 // used in the options.
-func extractWhereListInUse(whereList []string, whereValues map[string]OptionsWhereItem) []string {
+// This function does a brute-force O(m*n) search. We are assuming the
+// number of possible where values are pretty small, so that this is an acceptable cost.
+func extractWhereListInUse(whereList []string, whereValues []OptionsWhereItem) []string {
   r := []string{}
   for _, s := range whereList {
-    if _, ok := whereValues[s]; ok {
-      r = append(r, s)
+    for _, w := range whereValues {
+      if s == w.Name {
+        r = append(r, s)
+      }
     }
   }
   return r
 }
 
 // whereMapToData generates the WHERE expression based on the given
-// map of fields and the corresponding values.
+// set of option fields and the corresponding values.
 // It also validates that each where value in the options
 // matches a where field in the attributes.
 // whereMap is the list of available fields for this report.
@@ -212,16 +217,20 @@ func extractWhereListInUse(whereList []string, whereValues map[string]OptionsWhe
 // which we use to order the where expressions.
 // whereValues is the set of values supplied in the options.
 // TODO - validate that the type in the options matches the DB type.
-func whereMapToData(whereMap map[string]whereDetails, whereListInUse []string, whereValues map[string]OptionsWhereItem) (*ComputedWhere, error) {
+func whereMapToData(whereMap map[string]whereDetails, whereListInUse []string, whereValues []OptionsWhereItem) (*ComputedWhere, error) {
+  // Build a map from name to OptionsWhereItem
+  whereValuesMap := make(map[string]OptionsWhereItem)
   exprs := []string{}
-  for whereName, _ := range whereValues {
+  for _, wv := range whereValues {
+    whereName := wv.Name
     _, ok := whereMap[whereName]
     if !ok {
       return nil, fmt.Errorf("where field %q is not valid for this template", whereName)
     }
+    whereValuesMap[whereName] = wv
   }
   for _, whereName := range whereListInUse {
-    whereValue := whereValues[whereName]
+    whereValue := whereValuesMap[whereName]
     fieldDetails := whereMap[whereName]
     fieldExpr, err := whereString(fieldDetails, whereValue)
     if err != nil {

@@ -11,8 +11,10 @@ import (
 
 // ReportOptions is the data given to us by the user to generate an instance of the report.
 type ReportOptions struct {
-  OrderByKey string     // One of the key values in the attr orderby list for the template.
-  WhereValues map[string]OptionsWhereItem
+  Name string
+  Data string        // Optional data to be passed as "dot" to the report template.
+  OrderBy string     // One of the key values in the attr orderby list for the template.
+  Where []OptionsWhereItem
 }
 
 type ReportResults struct {
@@ -21,7 +23,7 @@ type ReportResults struct {
 
 // GenerateResults generates a report from a template and a top piece of data.
 // The db argument can be either a sql.DB or a sql.Tx.
-func GenerateResults(db dbsource.DBQuery, reportRoots []string, templateName, data string,
+func GenerateResults(db dbsource.DBQuery, reportRoots []string, templateName string,
     options *ReportOptions) (*ReportResults, error) {
   dataSource := dbsource.New(db)
   w := &strings.Builder{}
@@ -43,7 +45,7 @@ func GenerateResults(db dbsource.DBQuery, reportRoots []string, templateName, da
     "options": func() interface{} { return options },
     "computed": func() interface{} { return computed },
   })
-  if err := g.FromTemplate(reportRoots, data); err != nil {
+  if err := g.FromTemplate(reportRoots, options.Data); err != nil {
     return nil, err
   }
 

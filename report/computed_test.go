@@ -20,10 +20,10 @@ func TestGetComputed(t *testing.T) {
   }{
     { "nil options", nil, attrsEmpty, false },
     { "no orderby option", &ReportOptions{}, attrsEmpty, false },
-    { "nil attrs", &ReportOptions{OrderByKey:"foo"}, nil, true },
-    { "empty attrs map", &ReportOptions{OrderByKey:"foo"}, attrsEmpty, true },
-    { "invalid orderby option", &ReportOptions{OrderByKey:"foo"}, attrsWithOrderBy, true },
-    { "valid orderby option", &ReportOptions{OrderByKey:"abc"}, attrsWithOrderBy, false },
+    { "nil attrs", &ReportOptions{OrderBy:"foo"}, nil, true },
+    { "empty attrs map", &ReportOptions{OrderBy:"foo"}, attrsEmpty, true },
+    { "invalid orderby option", &ReportOptions{OrderBy:"foo"}, attrsWithOrderBy, true },
+    { "valid orderby option", &ReportOptions{OrderBy:"abc"}, attrsWithOrderBy, false },
   }
   for _, tc := range tests {
     t.Run(tc.name, func(t *testing.T) {

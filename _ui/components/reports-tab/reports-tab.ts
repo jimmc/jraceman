@@ -18,6 +18,13 @@ interface WhereControl {
   Display: string;
 }
 
+// WhereOption is what we send back to the API for each where field used.
+interface WhereOption {
+  Name: string;
+  Op: string;
+  Value: string;
+}
+
 @Polymer.decorators.customElement('reports-tab')
 class ReportsTab extends Polymer.Element {
 
@@ -106,7 +113,8 @@ class ReportsTab extends Polymer.Element {
     const path = '/api/report/generate/'
     const formData = {
       name: reportName,
-      orderby: orderBy
+      orderby: orderBy,
+      where: this.whereOptions()
     }
     const options = {
       method: 'POST',
@@ -120,5 +128,25 @@ class ReportsTab extends Polymer.Element {
         Error: e.responseText
       }
     }
+  }
+
+  whereOptions() {
+    const whereList: WhereOption[] = [];
+    for (const item of this.whereList) {
+      const name  = item.Name;
+      const opFieldTag = "#op_" + name;
+      const valFieldTag = "#val_" + name;
+      const op = this.$.main.querySelector(opFieldTag).value
+      const val = this.$.main.querySelector(valFieldTag).value
+      if (val != '') {
+        const itemOption: WhereOption = {
+          Name: name,
+          Op: op,
+          Value: val
+        };
+        whereList.push(itemOption)
+      }
+    }
+    return whereList
   }
 }

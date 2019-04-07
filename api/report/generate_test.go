@@ -6,10 +6,7 @@ import (
   "strings"
   "testing"
 
-  apireport "github.com/jimmc/jracemango/api/report"
   apitest "github.com/jimmc/jracemango/api/test"
-  reportmain "github.com/jimmc/jracemango/report"
-  "github.com/google/go-cmp/cmp"
 )
 
 var testRoots = []string{"testdata", "../../report/template"}
@@ -37,7 +34,7 @@ func TestPost(t *testing.T) {
   defer payloadfile.Close()
 
   request := func() (*http.Request, error) {
-    req, err := http.NewRequest("POST", "/api/report/generate/", payloadfile)
+    req, err := http.NewRequest("POST", "/api/report/site-report/generate/", payloadfile)
     if err != nil {
       return nil, err
     }
@@ -107,7 +104,7 @@ func TestWherePost(t *testing.T) {
   defer payloadfile.Close()
 
   request := func() (*http.Request, error) {
-    req, err := http.NewRequest("POST", "/api/report/generate/", payloadfile)
+    req, err := http.NewRequest("POST", "/api/report/site-report-where/generate/", payloadfile)
     if err != nil {
       return nil, err
     }
@@ -117,153 +114,5 @@ func TestWherePost(t *testing.T) {
   if err := apitest.SetupDbToGolden(repos, handler, "site-report", "site-report-where", request);
        err != nil {
     t.Error(err.Error())
-  }
-}
-
-func TestOptionsFromParameters(t *testing.T) {
-  tests := []struct{
-    name string
-    orderby string
-    where interface{}
-    expect *reportmain.ReportOptions
-    expectError bool
-  } {
-    {
-      name: "none",
-      expect: &reportmain.ReportOptions{
-        WhereValues: map[string]reportmain.OptionsWhereItem{},
-      },
-    },
-    {
-      name: "orderby",
-      orderby: "foo",
-      expect: &reportmain.ReportOptions{
-        OrderByKey: "foo",
-        WhereValues: map[string]reportmain.OptionsWhereItem{},
-      },
-    },
-    {
-      name: "valid_where",
-      where: map[string]interface{}{
-        "a": map[string]interface{}{
-          "op": "eq",
-          "value": "xyz",
-        },
-      },
-      expect: &reportmain.ReportOptions{
-        WhereValues: map[string]reportmain.OptionsWhereItem{
-          "a": reportmain.OptionsWhereItem{Op: "eq", Value: "xyz"},
-        },
-      },
-    },
-    {
-      name: "invalid_where",
-      where: map[string]interface{}{
-        "a": map[string]interface{}{
-          "value": "xyz",
-        },
-      },
-      expectError: true,
-    },
-  }
-  for _, tc := range tests {
-    t.Run(tc.name, func(t *testing.T) {
-      got, err := apireport.OptionsFromParametersForTesting(tc.orderby, tc.where)
-      if tc.expectError {
-        if err == nil {
-          t.Fatalf("optionsFromParameters: expected error but did not get one")
-        }
-      } else if err != nil {
-        t.Fatalf("optionsFromParameters: unexpected error: %v", err)
-      } else {
-        want := tc.expect
-        if diff := cmp.Diff(want, got); diff != "" {
-          t.Errorf("where mismatch (-want +got):\n%s", diff)
-        }
-      }
-    })
-  }
-}
-
-func TestWhereMapFromParameters(t *testing.T) {
-  tests := []struct{
-    name string
-    where interface{}
-    expect map[string]reportmain.OptionsWhereItem
-    expectError bool
-  } {
-    {
-      name: "no_where",
-      where: nil,
-      expect: map[string]reportmain.OptionsWhereItem{},
-    },
-    {
-      name: "not_map",
-      where: 123,
-      expectError: true,
-    },
-    {
-      name: "not_map_of_maps",
-      where: map[string]interface{}{
-        "a": 456,
-      },
-      expectError: true,
-    },
-    {
-      name: "one_field",
-      where: map[string]interface{}{
-        "a": map[string]interface{}{
-          "op": "eq",
-          "value": "xyz",
-        },
-      },
-      expect: map[string]reportmain.OptionsWhereItem{
-        "a": reportmain.OptionsWhereItem{Op: "eq", Value: "xyz"},
-      },
-    },
-    {
-      name: "op_missing",
-      where: map[string]interface{}{
-        "a": map[string]interface{}{
-          "value": "xyz",
-        },
-      },
-      expectError: true,
-    },
-    {
-      name: "op_not_string",
-      where: map[string]interface{}{
-        "a": map[string]interface{}{
-          "op": 789,
-        },
-      },
-      expectError: true,
-    },
-    {
-      name: "no_value",
-      where: map[string]interface{}{
-        "a": map[string]interface{}{
-          "Op": "ne",
-        },
-      },
-      expectError: true,
-    },
-  }
-  for _, tc := range tests {
-    t.Run(tc.name, func(t *testing.T) {
-      got, err := apireport.WhereMapFromParametersForTesting(tc.where)
-      if tc.expectError {
-        if err == nil {
-          t.Fatalf("whereMapFromParameters: expected error but did not get one")
-        }
-      } else if err != nil {
-        t.Fatalf("whereMapFromParameters: unexpected error: %v", err)
-      } else {
-        want := tc.expect
-        if diff := cmp.Diff(want, got); diff != "" {
-          t.Errorf("where mismatch (-want +got):\n%s", diff)
-        }
-      }
-    })
   }
 }

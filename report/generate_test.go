@@ -37,16 +37,15 @@ func TestStandardReports(t *testing.T) {
     reportName string
     reportRoots []string
     templateName string
-    data string
     options *ReportOptions
   } {
-      { "test1", "empty", "test1", roots2, "test1", "<topdata>", nil },
-      { "lanes", "empty", "lanes-test", roots2, "lanes-test", "EV123", nil },
-      { "entries", "sample1", "entries-test", roots1, "org.jimmc.jraceman.Entries", "",
+      { "test1", "empty", "test1", roots2, "test1", &ReportOptions{Data:"<topdata>"} },
+      { "lanes", "empty", "lanes-test", roots2, "lanes-test", &ReportOptions{Data:"EV123"} },
+      { "entries", "sample1", "entries-test", roots1, "org.jimmc.jraceman.Entries",
         &ReportOptions{
-          OrderByKey: "team",
-          WhereValues: map[string]OptionsWhereItem {
-            "event_id": {Op: "eq", Value: "M1.EV1"},
+          OrderBy: "team",
+          Where: []OptionsWhereItem {
+            {Name: "event_id",Op: "eq", Value: "M1.EV1"},
           },
         },
       },
@@ -63,7 +62,7 @@ func TestStandardReports(t *testing.T) {
       defer dbRepos.Close()
       db := dbRepos.DB()
 
-      results, err := GenerateResults(db, tt.reportRoots, tt.templateName, tt.data, tt.options)
+      results, err := GenerateResults(db, tt.reportRoots, tt.templateName, tt.options)
       if err != nil {
         t.Fatal(err)
       }
