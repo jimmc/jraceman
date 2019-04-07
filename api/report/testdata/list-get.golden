@@ -40,31 +40,75 @@
     "Where": [
       {
         "Name": "event_id",
-        "Display": "Event"
+        "Display": "Event",
+        "Ops": [
+          "eq"
+        ]
       },
       {
         "Name": "event_name",
-        "Display": "Event Name"
+        "Display": "Event Name",
+        "Ops": [
+          "eq",
+          "ne",
+          "gt",
+          "ge",
+          "lt",
+          "le",
+          "like"
+        ]
       },
       {
         "Name": "event_number",
-        "Display": "Event Number"
+        "Display": "Event Number",
+        "Ops": [
+          "eq",
+          "ne",
+          "gt",
+          "ge",
+          "lt",
+          "le"
+        ]
       },
       {
         "Name": "team_id",
-        "Display": "Team"
+        "Display": "Team",
+        "Ops": [
+          "eq"
+        ]
       },
       {
         "Name": "team_shortname",
-        "Display": "Team Short Name"
+        "Display": "Team Short Name",
+        "Ops": [
+          "eq",
+          "ne",
+          "gt",
+          "ge",
+          "lt",
+          "le",
+          "like"
+        ]
       },
       {
         "Name": "team_name",
-        "Display": "Team Name"
+        "Display": "Team Name",
+        "Ops": [
+          "eq",
+          "ne",
+          "gt",
+          "ge",
+          "lt",
+          "le",
+          "like"
+        ]
       },
       {
         "Name": "person_id",
-        "Display": "Person"
+        "Display": "Person",
+        "Ops": [
+          "eq"
+        ]
       }
     ]
   },

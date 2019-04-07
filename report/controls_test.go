@@ -3,14 +3,24 @@ package report
 import (
   "testing"
 
+  "github.com/jimmc/jracemango/dbrepo"
+
   "github.com/google/go-cmp/cmp"
 )
 
 func TestClientVisibleReports(t *testing.T) {
-  reports, err := ClientVisibleReports([]string{"template"})
+  dbrepos, err := dbrepo.Open("sqlite3::memory:")
+  if err != nil {
+    t.Fatalf("failed to open repository: %v", err)
+  }
+  defer dbrepos.Close()
+  reports, err := ClientVisibleReports(dbrepos, []string{"template"})
   if err != nil {
     t.Fatalf("ClientVisibleReports error: %v", err)
   }
+  keyOps := []string{"eq"}
+  stringOps := []string{"eq", "ne", "gt", "ge", "lt", "le", "like"}
+  dfltOps := []string{"eq", "ne", "gt", "ge", "lt", "le"}
   expected := []*ReportControls{
     {
       Name: "org.jimmc.jraceman.Entries",
@@ -23,13 +33,13 @@ func TestClientVisibleReports(t *testing.T) {
         ControlsOrderByItem{Name: "eventPerson", Display: "Event, Person"},
       },
       Where: []ControlsWhereItem{
-	{Name: "event_id", Display: "Event"},
-	{Name: "event_name", Display: "Event Name"},
-	{Name: "event_number", Display: "Event Number"},
-	{Name: "team_id", Display: "Team"},
-	{Name: "team_shortname", Display: "Team Short Name"},
-	{Name: "team_name", Display: "Team Name"},
-	{Name: "person_id", Display: "Person"},
+	{Name: "event_id", Display: "Event", Ops: keyOps},
+	{Name: "event_name", Display: "Event Name", Ops: stringOps},
+	{Name: "event_number", Display: "Event Number", Ops: dfltOps},
+	{Name: "team_id", Display: "Team", Ops: keyOps},
+	{Name: "team_shortname", Display: "Team Short Name", Ops: stringOps},
+	{Name: "team_name", Display: "Team Name", Ops: stringOps},
+	{Name: "person_id", Display: "Person", Ops: keyOps},
       },
     },
     {

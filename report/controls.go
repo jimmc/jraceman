@@ -1,6 +1,8 @@
 package report
 
 import (
+  "github.com/jimmc/jracemango/dbrepo"
+
   "github.com/golang/glog"
 )
 
@@ -18,14 +20,14 @@ type ReportControls struct {
  * Once we have user ids and authorizations, this function should accept
  * a user id and return only data that should be visible to that user.
  */
-func ClientVisibleReports(reportRoots []string) ([]*ReportControls, error) {
+func ClientVisibleReports(dbrepos *dbrepo.Repos, reportRoots []string) ([]*ReportControls, error) {
   attrs, err := ReadAllTemplateAttrs(reportRoots)
   if err != nil {
     return nil, err
   }
   reports := make([]*ReportControls, 0)
   for _, tplAttrs := range attrs {
-    controls := attrsToControls(tplAttrs)
+    controls := attrsToControls(dbrepos, tplAttrs)
     if controls == nil {
       continue
     }
@@ -36,7 +38,7 @@ func ClientVisibleReports(reportRoots []string) ([]*ReportControls, error) {
 
 // attrsToControls creates the user-visible ReportControls from the ReportAttributes
 // read from a report template.
-func attrsToControls(tplAttrs *ReportAttributes) *ReportControls {
+func attrsToControls(dbrepos *dbrepo.Repos, tplAttrs *ReportAttributes) *ReportControls {
   if tplAttrs.Display == "" {
     // Don't include templates with no Display attribute.
     return nil
@@ -47,7 +49,7 @@ func attrsToControls(tplAttrs *ReportAttributes) *ReportControls {
     glog.Errorf("Error decoding orderby in template %q: %v", tplAttrs.Name, err)
     return nil
   }
-  whereItems, err := extractControlsWhereItems(tplAttrs)
+  whereItems, err := extractControlsWhereItems(dbrepos, tplAttrs)
   if err != nil {
     // If we get an error, don't add this report to the list, but still show other reports.
     glog.Errorf("Error decoding where in template %q: %v", tplAttrs.Name, err)

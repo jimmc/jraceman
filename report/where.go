@@ -3,12 +3,18 @@ package report
 import (
   "fmt"
   "strings"
+
+  "github.com/jimmc/jracemango/dbrepo"
+  "github.com/jimmc/jracemango/dbrepo/structsql"
+
+  "github.com/golang/glog"
 )
 
 // ControlsWhereItem is the 'where' info that we pass to the user.
 type ControlsWhereItem struct {
   Name string
   Display string
+  Ops []string
 }
 
 // OptionsWhereItem contains the value specified in ReportOptions for one where field.
@@ -37,6 +43,16 @@ type whereDetails struct {
   field string  // This can be used to override table.column such as if
                 // the sql expression includes an "as" that names the table
                 // something different from the standard name.
+}
+
+// whereFieldType provides information about a field based on the database
+// type information for that table and column.
+// This data is a subset of dbrepos.structsql.ColumnInfo
+type whereFieldType struct {
+  Type string
+  IsKey bool
+  IsForeignKey bool
+  FKTable string
 }
 
 // whereGroups povides a standard set of expansions into where fields.
@@ -102,7 +118,7 @@ var emptyWhere = ComputedWhere{
 }
 
 // extractControlsWhereItems generates the 'where' info that we pass to the user.
-func extractControlsWhereItems(tplAttrs *ReportAttributes) ([]ControlsWhereItem, error) {
+func extractControlsWhereItems(dbrepos *dbrepo.Repos, tplAttrs *ReportAttributes) ([]ControlsWhereItem, error) {
   whereList, err := expandWhereList(tplAttrs.Where)
   if err != nil {
     return nil, err
@@ -111,12 +127,19 @@ func extractControlsWhereItems(tplAttrs *ReportAttributes) ([]ControlsWhereItem,
   if err != nil {
     return nil, err
   }
+  whereTypes, err := whereListToTypes(dbrepos, whereList, whereMap)
+  if err != nil {
+    return nil, err
+  }
+  glog.V(1).Info("whereTypes: ", whereTypes)
   r := []ControlsWhereItem{}
   for _, name := range whereList {
     details := whereMap[name]
     item := ControlsWhereItem{
       Name: name,
       Display: details.display,
+      Ops: typeToOps(whereTypes[name]),
+      // TODO - add foreign key info
     }
     r = append(r, item)
   }
@@ -208,6 +231,70 @@ func extractWhereListInUse(whereList []string, whereValues []OptionsWhereItem) [
   return r
 }
 
+// whereListToTypes returns a map of type information for each used field by
+// looking it up in our dbrepos table and field data.
+func whereListToTypes(dbrepos *dbrepo.Repos, whereList []string, whereMap map[string]whereDetails) (map[string]whereFieldType, error) {
+  tableColumns := loadTableColumns(dbrepos, whereList, whereMap)
+  types := make(map[string]whereFieldType)
+  for _, name := range whereList {
+    details := whereMap[name]
+    colInfo := tableColumns[details.table][details.column]
+    fieldType := whereFieldType{
+      Type: colInfo.Type,
+      IsKey: (colInfo.Name == "id"),
+      IsForeignKey: colInfo.IsForeignKey,
+      FKTable: colInfo.FKTable,
+    }
+    types[name] = fieldType
+  }
+  return types, nil
+}
+
+// loadTableColumns returns a map from table name and column name to type info about that column.
+func loadTableColumns(dbrepos *dbrepo.Repos, whereList []string, whereMap map[string]whereDetails) map[string]map[string]structsql.ColumnInfo {
+  // Get the list of tables in our repo.
+  tableEntries := dbrepos.TableEntries()
+  // Turn the list into a map keyed on table name.
+  tableEntriesMap := make(map[string]dbrepo.TableEntry)
+  for _, tableEntry := range tableEntries {
+    tableEntriesMap[tableEntry.Name] = tableEntry
+  }
+  // 'Where' fields are based on columns.
+  tableColumns := make(map[string]map[string]structsql.ColumnInfo)
+  // We only need column info for the 'where' fields defined for this report.
+  for _, name := range whereList {
+    table := whereMap[name].table
+    if _, ok := tableColumns[table]; !ok {
+      // If we don't already have info for this table, make it now.
+      tableEntry, ok := tableEntriesMap[table]
+      if !ok {
+        // This means we are trying to use a table that doesn't exist.
+        glog.Errorf("Can't find entry for table %q", table)
+        continue
+      }
+      tableEntity := tableEntry.Table.New()
+      columnInfos := structsql.ColumnInfos(tableEntity)
+      // Turn the array of column infos into a map by column name.
+      columnInfosMap := make(map[string]structsql.ColumnInfo)
+      for _, colInfo := range columnInfos {
+        columnInfosMap[colInfo.Name] = colInfo
+      }
+      tableColumns[table] = columnInfosMap
+    }
+  }
+  return tableColumns
+}
+
+func typeToOps(typeInfo whereFieldType) []string {
+  if typeInfo.IsKey || typeInfo.IsForeignKey {
+    return []string{"eq"}
+  }
+  if typeInfo.Type == "string" {
+    return []string{"eq", "ne", "gt", "ge", "lt", "le", "like"} // TODO - add "in"
+  }
+  return []string{"eq", "ne", "gt", "ge", "lt", "le"}   // TODO - add "in"
+}
+
 // whereMapToData generates the WHERE expression based on the given
 // set of option fields and the corresponding values.
 // It also validates that each where value in the options
@@ -280,6 +367,7 @@ func whereOpStr(op string) (string, error) {
   case "ge": return ">=", nil
   case "lt": return "<", nil
   case "le": return "<=", nil
+  case "like": return "LIKE", nil
   // TODO: add "in" operator
   default: return "", fmt.Errorf("unknown op %q", op)
   }
