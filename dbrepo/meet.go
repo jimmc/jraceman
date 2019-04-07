@@ -14,6 +14,10 @@ type DBMeetRepo struct {
   db *sql.DB
 }
 
+func (r *DBMeetRepo) New() interface{} {
+  return domain.Meet{}
+}
+
 func (r *DBMeetRepo) CreateTable() error {
   return structsql.CreateTable(r.db, "meet", domain.Meet{})
 }

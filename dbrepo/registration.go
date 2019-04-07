@@ -14,6 +14,10 @@ type DBRegistrationRepo struct {
   db *sql.DB
 }
 
+func (r *DBRegistrationRepo) New() interface{} {
+  return domain.Registration{}
+}
+
 func (r *DBRegistrationRepo) CreateTable() error {
   return structsql.CreateTable(r.db, "registration", domain.Registration{})
 }

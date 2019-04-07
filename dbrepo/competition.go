@@ -14,6 +14,10 @@ type DBCompetitionRepo struct {
   db *sql.DB
 }
 
+func (r *DBCompetitionRepo) New() interface{} {
+  return domain.Competition{}
+}
+
 func (r *DBCompetitionRepo) CreateTable() error {
   return structsql.CreateTable(r.db, "competition", domain.Competition{})
 }

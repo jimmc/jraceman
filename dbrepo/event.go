@@ -15,6 +15,10 @@ type DBEventRepo struct {
   db *sql.DB
 }
 
+func (r *DBEventRepo) New() interface{} {
+  return domain.Event{}
+}
+
 func (r *DBEventRepo) CreateTable() error {
   return structsql.CreateTable(r.db, "event", domain.Event{})
 }

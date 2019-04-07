@@ -14,6 +14,10 @@ type DBSimplanRepo struct {
   db *sql.DB
 }
 
+func (r *DBSimplanRepo) New() interface{} {
+  return domain.Simplan{}
+}
+
 func (r *DBSimplanRepo) CreateTable() error {
   return structsql.CreateTable(r.db, "simplan", domain.Simplan{})
 }

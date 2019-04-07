@@ -14,6 +14,10 @@ type DBProgressionRepo struct {
   db *sql.DB
 }
 
+func (r *DBProgressionRepo) New() interface{} {
+  return domain.Progression{}
+}
+
 func (r *DBProgressionRepo) CreateTable() error {
   return structsql.CreateTable(r.db, "progression", domain.Progression{})
 }

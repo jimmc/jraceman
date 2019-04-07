@@ -14,6 +14,10 @@ type DBPersonRepo struct {
   db *sql.DB
 }
 
+func (r *DBPersonRepo) New() interface{} {
+  return domain.Person{}
+}
+
 func (r *DBPersonRepo) CreateTable() error {
   return structsql.CreateTable(r.db, "person", domain.Person{})
 }

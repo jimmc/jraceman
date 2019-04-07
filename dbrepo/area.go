@@ -14,6 +14,10 @@ type DBAreaRepo struct {
   db *sql.DB
 }
 
+func (r *DBAreaRepo) New() interface{} {
+  return domain.Area{}
+}
+
 func (r *DBAreaRepo) CreateTable() error {
   return structsql.CreateTable(r.db, "area", domain.Area{})
 }

@@ -49,6 +49,7 @@ type Repos struct {
 }
 
 type TableRepo interface {
+  New() interface{}     // Returns a new instance of the domain struct for this table.
   CreateTable() error
   UpgradeTable(dryrun bool) (bool, string, error)
   Export(e *ixport.Exporter, w io.Writer) error

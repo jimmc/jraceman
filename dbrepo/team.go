@@ -14,6 +14,10 @@ type DBTeamRepo struct {
   db *sql.DB
 }
 
+func (r *DBTeamRepo) New() interface{} {
+  return domain.Team{}
+}
+
 func (r *DBTeamRepo) CreateTable() error {
   return structsql.CreateTable(r.db, "team", domain.Team{})
 }

@@ -25,6 +25,10 @@ func (r *DBSimplanRuleRepo) UpdateColumnInfos(columnInfos []structsql.ColumnInfo
   return columnInfos
 }
 
+func (r *DBSimplanRuleRepo) New() interface{} {
+  return domain.SimplanRule{}
+}
+
 func (r *DBSimplanRuleRepo) CreateTable() error {
   return structsql.CreateTableWithUpdater(r.db, "simplanrule", domain.SimplanRule{}, r)
 }

@@ -14,6 +14,10 @@ type DBLaneRepo struct {
   db *sql.DB
 }
 
+func (r *DBLaneRepo) New() interface{} {
+  return domain.Lane{}
+}
+
 func (r *DBLaneRepo) CreateTable() error {
   return structsql.CreateTable(r.db, "lane", domain.Lane{})
 }

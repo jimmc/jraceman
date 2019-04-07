@@ -14,6 +14,10 @@ type DBLaneOrderRepo struct {
   db *sql.DB
 }
 
+func (r *DBLaneOrderRepo) New() interface{} {
+  return domain.LaneOrder{}
+}
+
 func (r *DBLaneOrderRepo) CreateTable() error {
   return structsql.CreateTable(r.db, "laneorder", domain.LaneOrder{})
 }

@@ -14,6 +14,10 @@ type DBSimplanStageRepo struct {
   db *sql.DB
 }
 
+func (r *DBSimplanStageRepo) New() interface{} {
+  return domain.SimplanStage{}
+}
+
 func (r *DBSimplanStageRepo) CreateTable() error {
   return structsql.CreateTable(r.db, "simplanstage", domain.SimplanStage{})
 }

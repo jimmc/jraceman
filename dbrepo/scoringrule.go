@@ -14,6 +14,10 @@ type DBScoringRuleRepo struct {
   db *sql.DB
 }
 
+func (r *DBScoringRuleRepo) New() interface{} {
+  return domain.ScoringRule{}
+}
+
 func (r *DBScoringRuleRepo) CreateTable() error {
   return structsql.CreateTable(r.db, "scoringrule", domain.ScoringRule{})
 }

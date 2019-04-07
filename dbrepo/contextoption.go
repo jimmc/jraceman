@@ -14,6 +14,10 @@ type DBContextOptionRepo struct {
   db *sql.DB
 }
 
+func (r *DBContextOptionRepo) New() interface{} {
+  return domain.ContextOption{}
+}
+
 func (r *DBContextOptionRepo) CreateTable() error {
   return structsql.CreateTable(r.db, "contextoption", domain.ContextOption{})
 }

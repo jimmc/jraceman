@@ -14,6 +14,10 @@ type DBSeedingListRepo struct {
   db *sql.DB
 }
 
+func (r *DBSeedingListRepo) New() interface{} {
+  return domain.SeedingList{}
+}
+
 func (r *DBSeedingListRepo) CreateTable() error {
   return structsql.CreateTable(r.db, "seedinglist", domain.SeedingList{})
 }

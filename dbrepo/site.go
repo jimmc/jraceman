@@ -14,6 +14,10 @@ type DBSiteRepo struct {
   db *sql.DB
 }
 
+func (r *DBSiteRepo) New() interface{} {
+  return domain.Site{}
+}
+
 func (r *DBSiteRepo) CreateTable() error {
   return structsql.CreateTable(r.db, "site", domain.Site{})
 }

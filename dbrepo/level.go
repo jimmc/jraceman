@@ -14,6 +14,10 @@ type DBLevelRepo struct {
   db *sql.DB
 }
 
+func (r *DBLevelRepo) New() interface{} {
+  return domain.Level{}
+}
+
 func (r *DBLevelRepo) CreateTable() error {
   return structsql.CreateTable(r.db, "level", domain.Level{})
 }

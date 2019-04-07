@@ -14,6 +14,10 @@ type DBGenderRepo struct {
   db *sql.DB
 }
 
+func (r *DBGenderRepo) New() interface{} {
+  return domain.Gender{}
+}
+
 func (r *DBGenderRepo) CreateTable() error {
   return structsql.CreateTable(r.db, "gender", domain.Gender{})
 }

@@ -14,6 +14,10 @@ type DBChallengeRepo struct {
   db *sql.DB
 }
 
+func (r *DBChallengeRepo) New() interface{} {
+  return domain.Challenge{}
+}
+
 func (r *DBChallengeRepo) CreateTable() error {
   return structsql.CreateTable(r.db, "challenge", domain.Challenge{})
 }

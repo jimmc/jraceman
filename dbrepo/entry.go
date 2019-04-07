@@ -14,6 +14,10 @@ type DBEntryRepo struct {
   db *sql.DB
 }
 
+func (r *DBEntryRepo) New() interface{} {
+  return domain.Entry{}
+}
+
 func (r *DBEntryRepo) CreateTable() error {
   return structsql.CreateTable(r.db, "entry", domain.Entry{})
 }

@@ -14,6 +14,10 @@ type DBComplanStageRepo struct {
   db *sql.DB
 }
 
+func (r *DBComplanStageRepo) New() interface{} {
+  return domain.ComplanStage{}
+}
+
 func (r *DBComplanStageRepo) CreateTable() error {
   return structsql.CreateTable(r.db, "complanstage", domain.ComplanStage{})
 }

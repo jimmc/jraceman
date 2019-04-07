@@ -15,6 +15,10 @@ type DBRaceRepo struct {
   db *sql.DB
 }
 
+func (r *DBRaceRepo) New() interface{} {
+  return domain.Race{}
+}
+
 func (r *DBRaceRepo) CreateTable() error {
   return structsql.CreateTable(r.db, "race", domain.Race{})
 }

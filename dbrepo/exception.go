@@ -14,6 +14,10 @@ type DBExceptionRepo struct {
   db *sql.DB
 }
 
+func (r *DBExceptionRepo) New() interface{} {
+  return domain.Exception{}
+}
+
 func (r *DBExceptionRepo) CreateTable() error {
   return structsql.CreateTable(r.db, "exception", domain.Exception{})
 }
