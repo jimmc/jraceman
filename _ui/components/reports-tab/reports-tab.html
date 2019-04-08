@@ -14,28 +14,42 @@
       }
       #main {
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
         height: 100%;
+      }
+      #left {
+        flex: 0 0 30%
+      }
+      #right {
+        flex: 1
       }
       #buttons {
         flex: none;
       }
     </style>
     <div id="main">
-      <div>
-        Available reports:
-        <select id="reportName" on-change="reportNameChanged">
-          <template is="dom-repeat" items=[[reportList]] as="report">
-            <option value="[[report.Name]]">[[report.Display]]</option>
-          </template>
-        </select>
-        <br>
-        Order By:
-        <select id="orderBy">
-          <template is="dom-repeat" items=[[orderByList]] as="item">
-            <option value="[[item.Name]]">[[item.Display]]</option>
-          </template>
-        </select>
+      <div id="left">
+        <div id="buttons">
+          <paper-button on-click="generate">Generate</paper-button>
+        </div>
+        <div>
+          Available reports:
+          <select id="reportName" on-change="reportNameChanged">
+            <template is="dom-repeat" items=[[reportList]] as="report">
+              <option value="[[report.Name]]">[[report.Display]]</option>
+            </template>
+          </select>
+          <br>
+          Order By:
+          <select id="orderBy">
+            <template is="dom-repeat" items=[[orderByList]] as="item">
+              <option value="[[item.Name]]">[[item.Display]]</option>
+            </template>
+          </select>
+        </div>
+      </div>  <!-- left -->
+      <div id="right">
+        Select:
         <br>
         <table>
           <template is="dom-repeat" items=[[whereList]] as="item">
@@ -54,10 +68,7 @@
             </tr>
           </template>
         </table>
-      </div>
-      <div id="buttons">
-        <paper-button on-click="generate">Generate</paper-button>
-      </div>
+      </div>  <!-- right -->
     </div>
   </template>
 </dom-module>
