@@ -1,0 +1,7 @@
+CREATE table site(
+    id string, name string, street string, street2 string,
+    city string, state string, zip string, country string, phone string, fax string);
+
+INSERT into site(id, name, city, phone) values
+  ("S1", "Site One", "Anytown", "800-555-1212"),
+  ("S2", "Site Two", "Somewhere", "888-555-1234");

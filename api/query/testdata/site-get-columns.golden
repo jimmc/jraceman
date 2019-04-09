@@ -1,0 +1,94 @@
+{
+  "Columns": [
+    {
+      "Name": "id",
+      "Type": "string",
+      "Required": true,
+      "IsForeignKey": false,
+      "FKTable": "",
+      "HasDefault": false,
+      "DefaultAsString": ""
+    },
+    {
+      "Name": "name",
+      "Type": "string",
+      "Required": true,
+      "IsForeignKey": false,
+      "FKTable": "",
+      "HasDefault": false,
+      "DefaultAsString": ""
+    },
+    {
+      "Name": "street",
+      "Type": "string",
+      "Required": false,
+      "IsForeignKey": false,
+      "FKTable": "",
+      "HasDefault": false,
+      "DefaultAsString": ""
+    },
+    {
+      "Name": "street2",
+      "Type": "string",
+      "Required": false,
+      "IsForeignKey": false,
+      "FKTable": "",
+      "HasDefault": false,
+      "DefaultAsString": ""
+    },
+    {
+      "Name": "city",
+      "Type": "string",
+      "Required": false,
+      "IsForeignKey": false,
+      "FKTable": "",
+      "HasDefault": false,
+      "DefaultAsString": ""
+    },
+    {
+      "Name": "state",
+      "Type": "string",
+      "Required": false,
+      "IsForeignKey": false,
+      "FKTable": "",
+      "HasDefault": false,
+      "DefaultAsString": ""
+    },
+    {
+      "Name": "zip",
+      "Type": "string",
+      "Required": false,
+      "IsForeignKey": false,
+      "FKTable": "",
+      "HasDefault": false,
+      "DefaultAsString": ""
+    },
+    {
+      "Name": "country",
+      "Type": "string",
+      "Required": false,
+      "IsForeignKey": false,
+      "FKTable": "",
+      "HasDefault": false,
+      "DefaultAsString": ""
+    },
+    {
+      "Name": "phone",
+      "Type": "string",
+      "Required": false,
+      "IsForeignKey": false,
+      "FKTable": "",
+      "HasDefault": false,
+      "DefaultAsString": ""
+    },
+    {
+      "Name": "fax",
+      "Type": "string",
+      "Required": false,
+      "IsForeignKey": false,
+      "FKTable": "",
+      "HasDefault": false,
+      "DefaultAsString": ""
+    }
+  ]
+}
