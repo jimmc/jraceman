@@ -1,0 +1,70 @@
+{
+  "Columns": [
+    {
+      "Name": "id",
+      "Type": "string"
+    },
+    {
+      "Name": "name",
+      "Type": "string"
+    },
+    {
+      "Name": "street",
+      "Type": "string"
+    },
+    {
+      "Name": "street2",
+      "Type": "string"
+    },
+    {
+      "Name": "city",
+      "Type": "string"
+    },
+    {
+      "Name": "state",
+      "Type": "string"
+    },
+    {
+      "Name": "zip",
+      "Type": "string"
+    },
+    {
+      "Name": "country",
+      "Type": "string"
+    },
+    {
+      "Name": "phone",
+      "Type": "string"
+    },
+    {
+      "Name": "fax",
+      "Type": "string"
+    }
+  ],
+  "Rows": [
+    [
+      "S1",
+      "Site One",
+      null,
+      null,
+      "Anytown",
+      null,
+      null,
+      null,
+      "800-555-1212",
+      null
+    ],
+    [
+      "S2",
+      "Site Two",
+      null,
+      null,
+      "Somewhere",
+      null,
+      null,
+      null,
+      "888-555-1234",
+      null
+    ]
+  ]
+}

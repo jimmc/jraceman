@@ -64,18 +64,54 @@ func (h *handler) stdquery(w http.ResponseWriter, r *http.Request, st std) {
   entityType := st.EntityTypeName()
   pathPrefix := h.queryPrefix(entityType)
   morePath := strings.TrimPrefix(r.URL.Path, pathPrefix)
+  // TODO - we might want to get rid of these defaults and require that the
+  // next part of the path be specified.
+  getOp := "column"     // Default op for GET request.
+  postOp := "row"       // Default op for POST request.
   if morePath != "" {
-    http.Error(w, "Additional path elements may not be specified after "+ pathPrefix, http.StatusBadRequest)
-    return
+    morePath = strings.TrimSuffix(morePath, "/")
+    moreParts := strings.SplitN(morePath, "/", 2)
+    if len(moreParts) > 1 {
+      msg := fmt.Sprintf("Too many additional path elements after %s (%v)", pathPrefix, morePath)
+      http.Error(w, msg, http.StatusBadRequest)
+      return
+    }
+    getOp = moreParts[0]
+    postOp = moreParts[0]
   }
-  glog.V(1).Infof("%s %s", r.Method, entityType);
+  glog.V(1).Infof("%s %s %s|%s", r.Method, entityType, getOp, postOp);
   switch r.Method {
     case http.MethodGet:
-      h.stdGetColumns(w, r, st)
+      switch getOp {
+      case "column":
+        h.stdGetColumns(w, r, st)
+      case "row":
+        h.stdList(w, r, st, []queryParam{})       // Get all rows.
+      default:
+        http.Error(w, "Invalid GET operation", http.StatusBadRequest)
+        return
+      }
     case http.MethodPost:
-      h.stdList(w, r, st)
+      switch postOp {
+      case "column":
+        h.stdGetColumns(w, r, st)
+      case "row":
+        var queryParams []queryParam
+        if r.Body != nil {
+          decoder := json.NewDecoder(r.Body)
+          if err := decoder.Decode(&queryParams); err != nil {
+            msg := fmt.Sprintf("Error decoding JSON query parameters: %v", err)
+            http.Error(w, msg, http.StatusBadRequest)
+            return
+          }
+        }
+        h.stdList(w, r, st, queryParams)
+      default:
+        http.Error(w, "Invalid POST operation", http.StatusBadRequest)
+        return
+      }
     default:
-      http.Error(w, "Method must be POST", http.StatusMethodNotAllowed)
+      http.Error(w, "Method must be GET or POST", http.StatusMethodNotAllowed)
   }
 }
 
@@ -88,14 +124,7 @@ func (h *handler) stdGetColumns(w http.ResponseWriter, r *http.Request, st std) 
   apihttp.MarshalAndReply(w, result)
 }
 
-func (h *handler) stdList(w http.ResponseWriter, r *http.Request, st std) {
-  decoder := json.NewDecoder(r.Body)
-  var queryParams []queryParam
-  if err := decoder.Decode(&queryParams); err != nil {
-    msg := fmt.Sprintf("Error decoding JSON query parameters: %v", err)
-    http.Error(w, msg, http.StatusBadRequest)
-    return
-  }
+func (h *handler) stdList(w http.ResponseWriter, r *http.Request, st std, queryParams []queryParam) {
   tableName := st.EntityTypeName()
   query := "select * from " + tableName
   whereVals := make([]interface{}, len(queryParams))
