@@ -18,6 +18,10 @@ func (sc *meetQuery) NewEntity() interface{} {
   return &domain.Meet{}
 }
 
+func (sc *meetQuery) SummaryQuery() string {
+  return "select ShortName || ': ' || Name ' [' || ID || ']' as summary from " + sc.EntityTypeName()
+}
+
 func (h *handler) meet(w http.ResponseWriter, r *http.Request) {
   sq := &meetQuery{h}
   h.stdquery(w, r, sq)

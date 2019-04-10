@@ -1,0 +1,16 @@
+{
+  "Columns": [
+    {
+      "Name": "summary",
+      "Type": ""
+    }
+  ],
+  "Rows": [
+    [
+      "Site One [S1]"
+    ],
+    [
+      "Site Two [S2]"
+    ]
+  ]
+}

@@ -18,6 +18,10 @@ func (sc *seedinglistQuery) NewEntity() interface{} {
   return &domain.SeedingList{}
 }
 
+func (sc *seedinglistQuery) SummaryQuery() string {
+  return "select '[' || ID || '] ' as summary from " + sc.EntityTypeName()
+}
+
 func (h *handler) seedinglist(w http.ResponseWriter, r *http.Request) {
   sq := &seedinglistQuery{h}
   h.stdquery(w, r, sq)

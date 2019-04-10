@@ -18,6 +18,10 @@ func (sc *genderQuery) NewEntity() interface{} {
   return &domain.Gender{}
 }
 
+func (sc *genderQuery) SummaryQuery() string {
+  return "select Name || ' [' || ID || ']' as summary from " + sc.EntityTypeName()
+}
+
 func (h *handler) gender(w http.ResponseWriter, r *http.Request) {
   sq := &genderQuery{h}
   h.stdquery(w, r, sq)

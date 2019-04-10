@@ -18,6 +18,10 @@ func (sc *siteQuery) NewEntity() interface{} {
   return &domain.Site{}
 }
 
+func (sc *siteQuery) SummaryQuery() string {
+  return "select Name || ' [' || ID || ']' as summary from " + sc.EntityTypeName()
+}
+
 func (h *handler) site(w http.ResponseWriter, r *http.Request) {
   sq := &siteQuery{h}
   h.stdquery(w, r, sq)

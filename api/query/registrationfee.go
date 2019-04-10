@@ -18,6 +18,10 @@ func (sc *registrationfeeQuery) NewEntity() interface{} {
   return &domain.RegistrationFee{}
 }
 
+func (sc *registrationfeeQuery) SummaryQuery() string {
+  return "select '[' || ID || '] ' as summary from " + sc.EntityTypeName()
+}
+
 func (h *handler) registrationfee(w http.ResponseWriter, r *http.Request) {
   sq := &registrationfeeQuery{h}
   h.stdquery(w, r, sq)

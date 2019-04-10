@@ -18,6 +18,10 @@ func (sc *simplanstageQuery) NewEntity() interface{} {
   return &domain.SimplanStage{}
 }
 
+func (sc *simplanstageQuery) SummaryQuery() string {
+  return "select '[' || ID || '] ' as summary from " + sc.EntityTypeName()
+}
+
 func (h *handler) simplanstage(w http.ResponseWriter, r *http.Request) {
   sq := &simplanstageQuery{h}
   h.stdquery(w, r, sq)

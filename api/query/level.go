@@ -18,6 +18,10 @@ func (sc *levelQuery) NewEntity() interface{} {
   return &domain.Level{}
 }
 
+func (sc *levelQuery) SummaryQuery() string {
+  return "select Name || ' [' || ID || ']' as summary from " + sc.EntityTypeName()
+}
+
 func (h *handler) level(w http.ResponseWriter, r *http.Request) {
   sq := &levelQuery{h}
   h.stdquery(w, r, sq)

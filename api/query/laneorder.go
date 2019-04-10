@@ -18,6 +18,10 @@ func (sc *laneorderQuery) NewEntity() interface{} {
   return &domain.LaneOrder{}
 }
 
+func (sc *laneorderQuery) SummaryQuery() string {
+  return "select '[' || ID || '] ' as summary from " + sc.EntityTypeName()
+}
+
 func (h *handler) laneorder(w http.ResponseWriter, r *http.Request) {
   sq := &laneorderQuery{h}
   h.stdquery(w, r, sq)

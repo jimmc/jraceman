@@ -18,6 +18,10 @@ func (sc *complanstageQuery) NewEntity() interface{} {
   return &domain.ComplanStage{}
 }
 
+func (sc *complanstageQuery) SummaryQuery() string {
+  return "select '[' || ID || '] ' as summary from " + sc.EntityTypeName()
+}
+
 func (h *handler) complanstage(w http.ResponseWriter, r *http.Request) {
   sq := &complanstageQuery{h}
   h.stdquery(w, r, sq)

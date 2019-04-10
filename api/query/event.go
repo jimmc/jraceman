@@ -18,6 +18,10 @@ func (sc *eventQuery) NewEntity() interface{} {
   return &domain.Event{}
 }
 
+func (sc *eventQuery) SummaryQuery() string {
+  return "select Name || '[' || ID || ']' as summary from " + sc.EntityTypeName()
+}
+
 func (h *handler) event(w http.ResponseWriter, r *http.Request) {
   sq := &eventQuery{h}
   h.stdquery(w, r, sq)

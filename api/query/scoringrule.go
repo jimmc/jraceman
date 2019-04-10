@@ -18,6 +18,10 @@ func (sc *scoringruleQuery) NewEntity() interface{} {
   return &domain.ScoringRule{}
 }
 
+func (sc *scoringruleQuery) SummaryQuery() string {
+  return "select '[' || ID || '] ' as summary from " + sc.EntityTypeName()
+}
+
 func (h *handler) scoringrule(w http.ResponseWriter, r *http.Request) {
   sq := &scoringruleQuery{h}
   h.stdquery(w, r, sq)

@@ -18,6 +18,10 @@ func (sc *optionQuery) NewEntity() interface{} {
   return &domain.Option{}
 }
 
+func (sc *optionQuery) SummaryQuery() string {
+  return "select Name || ' [' || ID || ']' as summary from " + sc.EntityTypeName()
+}
+
 func (h *handler) option(w http.ResponseWriter, r *http.Request) {
   sq := &optionQuery{h}
   h.stdquery(w, r, sq)

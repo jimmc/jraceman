@@ -53,6 +53,7 @@ func (qp *queryParam) CleanValue() interface{} {
 type std interface {
   EntityTypeName() string   // such as "site"
   NewEntity() interface{}       // such as a new Site
+  SummaryQuery() string    // An SQL query that is suitable for use as a summary for each row.
 }
 
 // Stdquery is an http handler that takes care of most of the work for
@@ -85,8 +86,8 @@ func (h *handler) stdquery(w http.ResponseWriter, r *http.Request, st std) {
       switch getOp {
       case "column":
         h.stdGetColumns(w, r, st)
-      case "row":
-        h.stdList(w, r, st, []queryParam{})       // Get all rows.
+      case "row", "summary":
+        h.stdGetRows(w, r, st, []queryParam{}, getOp)       // Get all rows.
       default:
         http.Error(w, "Invalid GET operation", http.StatusBadRequest)
         return
@@ -95,7 +96,7 @@ func (h *handler) stdquery(w http.ResponseWriter, r *http.Request, st std) {
       switch postOp {
       case "column":
         h.stdGetColumns(w, r, st)
-      case "row":
+      case "row", "summary":
         var queryParams []queryParam
         if r.Body != nil {
           decoder := json.NewDecoder(r.Body)
@@ -105,7 +106,7 @@ func (h *handler) stdquery(w http.ResponseWriter, r *http.Request, st std) {
             return
           }
         }
-        h.stdList(w, r, st, queryParams)
+        h.stdGetRows(w, r, st, queryParams, postOp)
       default:
         http.Error(w, "Invalid POST operation", http.StatusBadRequest)
         return
@@ -124,9 +125,12 @@ func (h *handler) stdGetColumns(w http.ResponseWriter, r *http.Request, st std) 
   apihttp.MarshalAndReply(w, result)
 }
 
-func (h *handler) stdList(w http.ResponseWriter, r *http.Request, st std, queryParams []queryParam) {
+func (h *handler) stdGetRows(w http.ResponseWriter, r *http.Request, st std, queryParams []queryParam, op string) {
   tableName := st.EntityTypeName()
   query := "select * from " + tableName
+  if op == "summary" {
+    query = st.SummaryQuery()
+  }
   whereVals := make([]interface{}, len(queryParams))
   if len(queryParams) > 0 {
     whereParts := make([]string, len(queryParams))
@@ -138,6 +142,9 @@ func (h *handler) stdList(w http.ResponseWriter, r *http.Request, st std, queryP
     query = query + " WHERE " + strings.Join(whereParts, " AND ")
   } else {
     // No query params, so no WHERE clause
+  }
+  if op == "summary" {
+    query = query + " ORDER BY summary"
   }
 
   glog.V(1).Infof("query: %v", query)

@@ -93,3 +93,14 @@ func TestPostRows(t *testing.T) {
     t.Error(err.Error())
   }
 }
+
+func TestGetSummaries(t *testing.T) {
+  request := func() (*http.Request, error) {
+    return http.NewRequest("GET", "/api/query/site/summary/", nil)
+  }
+  if err := apitest.StartQueryToGolden("site-get-summary", request);
+       err != nil {
+    t.Error(err.Error())
+  }
+}
+
