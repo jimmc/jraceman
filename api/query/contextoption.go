@@ -19,7 +19,7 @@ func (sc *contextoptionQuery) NewEntity() interface{} {
 }
 
 func (sc *contextoptionQuery) SummaryQuery() string {
-  return "select Name || ' [' || ID || ']' as summary from " + sc.EntityTypeName()
+  return "select ID, Name || ' [' || ID || ']' as summary from " + sc.EntityTypeName()
 }
 
 func (h *handler) contextoption(w http.ResponseWriter, r *http.Request) {

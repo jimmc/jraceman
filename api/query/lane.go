@@ -19,7 +19,7 @@ func (sc *laneQuery) NewEntity() interface{} {
 }
 
 func (sc *laneQuery) SummaryQuery() string {
-  return "select '[' || ID || '] ' as summary from " + sc.EntityTypeName()
+  return "select ID, '[' || ID || '] ' as summary from " + sc.EntityTypeName()
 }
 
 func (h *handler) lane(w http.ResponseWriter, r *http.Request) {

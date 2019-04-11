@@ -19,7 +19,7 @@ func (sc *complanruleQuery) NewEntity() interface{} {
 }
 
 func (sc *complanruleQuery) SummaryQuery() string {
-  return "select '[' || ID || '] ' as summary from " + sc.EntityTypeName()
+  return "select ID, '[' || ID || '] ' as summary from " + sc.EntityTypeName()
 }
 
 func (h *handler) complanrule(w http.ResponseWriter, r *http.Request) {

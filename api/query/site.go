@@ -19,7 +19,7 @@ func (sc *siteQuery) NewEntity() interface{} {
 }
 
 func (sc *siteQuery) SummaryQuery() string {
-  return "select Name || ' [' || ID || ']' as summary from " + sc.EntityTypeName()
+  return "select ID, Name || ' [' || ID || ']' as summary from " + sc.EntityTypeName()
 }
 
 func (h *handler) site(w http.ResponseWriter, r *http.Request) {

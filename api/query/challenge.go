@@ -19,7 +19,7 @@ func (sc *challengeQuery) NewEntity() interface{} {
 }
 
 func (sc *challengeQuery) SummaryQuery() string {
-  return "select Name || '[' || ID || ']' as summary from " + sc.EntityTypeName()
+  return "select ID, Name || '[' || ID || ']' as summary from " + sc.EntityTypeName()
 }
 
 func (h *handler) challenge(w http.ResponseWriter, r *http.Request) {

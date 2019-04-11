@@ -19,7 +19,7 @@ func (sc *seedingplanQuery) NewEntity() interface{} {
 }
 
 func (sc *seedingplanQuery) SummaryQuery() string {
-  return "select Name || ' [' || ID || ']' as summary from " + sc.EntityTypeName()
+  return "select ID, Name || ' [' || ID || ']' as summary from " + sc.EntityTypeName()
 }
 
 func (h *handler) seedingplan(w http.ResponseWriter, r *http.Request) {

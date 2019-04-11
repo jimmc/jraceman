@@ -19,7 +19,7 @@ func (sc *levelQuery) NewEntity() interface{} {
 }
 
 func (sc *levelQuery) SummaryQuery() string {
-  return "select Name || ' [' || ID || ']' as summary from " + sc.EntityTypeName()
+  return "select ID, Name || ' [' || ID || ']' as summary from " + sc.EntityTypeName()
 }
 
 func (h *handler) level(w http.ResponseWriter, r *http.Request) {

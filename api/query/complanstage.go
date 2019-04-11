@@ -19,7 +19,7 @@ func (sc *complanstageQuery) NewEntity() interface{} {
 }
 
 func (sc *complanstageQuery) SummaryQuery() string {
-  return "select '[' || ID || '] ' as summary from " + sc.EntityTypeName()
+  return "select ID, '[' || ID || '] ' as summary from " + sc.EntityTypeName()
 }
 
 func (h *handler) complanstage(w http.ResponseWriter, r *http.Request) {

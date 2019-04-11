@@ -19,7 +19,7 @@ func (sc *registrationQuery) NewEntity() interface{} {
 }
 
 func (sc *registrationQuery) SummaryQuery() string {
-  return "select '[' || ID || '] ' as summary from " + sc.EntityTypeName()
+  return "select ID, '[' || ID || '] ' as summary from " + sc.EntityTypeName()
 }
 
 func (h *handler) registration(w http.ResponseWriter, r *http.Request) {

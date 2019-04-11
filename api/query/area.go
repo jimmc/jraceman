@@ -19,7 +19,7 @@ func (sc *areaQuery) NewEntity() interface{} {
 }
 
 func (sc *areaQuery) SummaryQuery() string {
-  return "select Name || ' [' || ID || ']' as summary from " + sc.EntityTypeName()
+  return "select ID, Name || ' [' || ID || ']' as summary from " + sc.EntityTypeName()
 }
 
 func (h *handler) area(w http.ResponseWriter, r *http.Request) {

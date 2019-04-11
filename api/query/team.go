@@ -19,7 +19,7 @@ func (sc *teamQuery) NewEntity() interface{} {
 }
 
 func (sc *teamQuery) SummaryQuery() string {
-  return "select ShortName || ': ' || Name || ' [' || ID || ']' as summary from " + sc.EntityTypeName()
+  return "select ID, ShortName || ': ' || Name || ' [' || ID || ']' as summary from " + sc.EntityTypeName()
 }
 
 func (h *handler) team(w http.ResponseWriter, r *http.Request) {

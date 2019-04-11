@@ -19,7 +19,7 @@ func (sc *scoringruleQuery) NewEntity() interface{} {
 }
 
 func (sc *scoringruleQuery) SummaryQuery() string {
-  return "select '[' || ID || '] ' as summary from " + sc.EntityTypeName()
+  return "select ID, '[' || ID || '] ' as summary from " + sc.EntityTypeName()
 }
 
 func (h *handler) scoringrule(w http.ResponseWriter, r *http.Request) {

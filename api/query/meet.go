@@ -19,7 +19,7 @@ func (sc *meetQuery) NewEntity() interface{} {
 }
 
 func (sc *meetQuery) SummaryQuery() string {
-  return "select ShortName || ': ' || Name ' [' || ID || ']' as summary from " + sc.EntityTypeName()
+  return "select ID, ShortName || ': ' || Name ' [' || ID || ']' as summary from " + sc.EntityTypeName()
 }
 
 func (h *handler) meet(w http.ResponseWriter, r *http.Request) {

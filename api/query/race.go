@@ -19,7 +19,7 @@ func (sc *raceQuery) NewEntity() interface{} {
 }
 
 func (sc *raceQuery) SummaryQuery() string {
-  return "select '[' || ID || '] ' as summary from " + sc.EntityTypeName()
+  return "select ID, '[' || ID || '] ' as summary from " + sc.EntityTypeName()
 }
 
 func (h *handler) race(w http.ResponseWriter, r *http.Request) {

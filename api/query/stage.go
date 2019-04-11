@@ -19,7 +19,7 @@ func (sc *stageQuery) NewEntity() interface{} {
 }
 
 func (sc *stageQuery) SummaryQuery() string {
-  return "select Name || ' [' || ID || ']' as summary from " + sc.EntityTypeName()
+  return "select ID, Name || ' [' || ID || ']' as summary from " + sc.EntityTypeName()
 }
 
 func (h *handler) stage(w http.ResponseWriter, r *http.Request) {

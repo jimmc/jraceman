@@ -19,7 +19,7 @@ func (sc *simplanstageQuery) NewEntity() interface{} {
 }
 
 func (sc *simplanstageQuery) SummaryQuery() string {
-  return "select '[' || ID || '] ' as summary from " + sc.EntityTypeName()
+  return "select ID, '[' || ID || '] ' as summary from " + sc.EntityTypeName()
 }
 
 func (h *handler) simplanstage(w http.ResponseWriter, r *http.Request) {

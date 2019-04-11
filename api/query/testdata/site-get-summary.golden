@@ -1,15 +1,21 @@
 {
   "Columns": [
     {
+      "Name": "id",
+      "Type": "string"
+    },
+    {
       "Name": "summary",
       "Type": ""
     }
   ],
   "Rows": [
     [
+      "S1",
       "Site One [S1]"
     ],
     [
+      "S2",
       "Site Two [S2]"
     ]
   ]

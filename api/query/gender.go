@@ -19,7 +19,7 @@ func (sc *genderQuery) NewEntity() interface{} {
 }
 
 func (sc *genderQuery) SummaryQuery() string {
-  return "select Name || ' [' || ID || ']' as summary from " + sc.EntityTypeName()
+  return "select ID, Name || ' [' || ID || ']' as summary from " + sc.EntityTypeName()
 }
 
 func (h *handler) gender(w http.ResponseWriter, r *http.Request) {

@@ -19,7 +19,7 @@ func (sc *progressionQuery) NewEntity() interface{} {
 }
 
 func (sc *progressionQuery) SummaryQuery() string {
-  return "select Name || ' [' || ID || ']' as summary from " + sc.EntityTypeName()
+  return "select ID, Name || ' [' || ID || ']' as summary from " + sc.EntityTypeName()
 }
 
 func (h *handler) progression(w http.ResponseWriter, r *http.Request) {

@@ -19,7 +19,7 @@ func (sc *personQuery) NewEntity() interface{} {
 }
 
 func (sc *personQuery) SummaryQuery() string {
-  return "select person.LastName || ', ' || person.FirstName || " +
+  return "select person.ID as ID, person.LastName || ', ' || person.FirstName || " +
           "' (' || team.ShortName || ') [' || person.ID || ']' as summary " +
           "from person join team on person.teamid = team.id"
 }
