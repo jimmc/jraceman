@@ -33,13 +33,13 @@ func TestClientVisibleReports(t *testing.T) {
         ControlsOrderByItem{Name: "eventPerson", Display: "Event, Person"},
       },
       Where: []ControlsWhereItem{
-	{Name: "event_id", Display: "Event", Ops: keyOps},
+	{Name: "event_id", Display: "Event", Ops: keyOps, KeyTable: "event"},
 	{Name: "event_name", Display: "Event Name", Ops: stringOps},
 	{Name: "event_number", Display: "Event Number", Ops: dfltOps},
-	{Name: "team_id", Display: "Team", Ops: keyOps},
+	{Name: "team_id", Display: "Team", Ops: keyOps, KeyTable: "team"},
 	{Name: "team_shortname", Display: "Team Short Name", Ops: stringOps},
 	{Name: "team_name", Display: "Team Name", Ops: stringOps},
-	{Name: "person_id", Display: "Person", Ops: keyOps},
+	{Name: "person_id", Display: "Person", Ops: keyOps, KeyTable: "person"},
       },
     },
     {

@@ -15,6 +15,7 @@ type ControlsWhereItem struct {
   Name string
   Display string
   Ops []string
+  KeyTable string       // If this is set, client should display summaries from this table.
 }
 
 // OptionsWhereItem contains the value specified in ReportOptions for one where field.
@@ -51,8 +52,7 @@ type whereDetails struct {
 type whereFieldType struct {
   Type string
   IsKey bool
-  IsForeignKey bool
-  FKTable string
+  Table string
 }
 
 // whereGroups povides a standard set of expansions into where fields.
@@ -139,7 +139,9 @@ func extractControlsWhereItems(dbrepos *dbrepo.Repos, tplAttrs *ReportAttributes
       Name: name,
       Display: details.display,
       Ops: typeToOps(whereTypes[name]),
-      // TODO - add foreign key info
+    }
+    if whereTypes[name].IsKey {
+      item.KeyTable = whereTypes[name].Table
     }
     r = append(r, item)
   }
@@ -239,11 +241,14 @@ func whereListToTypes(dbrepos *dbrepo.Repos, whereList []string, whereMap map[st
   for _, name := range whereList {
     details := whereMap[name]
     colInfo := tableColumns[details.table][details.column]
+    table := details.table
+    if colInfo.IsForeignKey {
+      table = colInfo.FKTable
+    }
     fieldType := whereFieldType{
       Type: colInfo.Type,
-      IsKey: (colInfo.Name == "id"),
-      IsForeignKey: colInfo.IsForeignKey,
-      FKTable: colInfo.FKTable,
+      IsKey: (colInfo.Name == "id") || colInfo.IsForeignKey,
+      Table: table,
     }
     types[name] = fieldType
   }
@@ -286,7 +291,7 @@ func loadTableColumns(dbrepos *dbrepo.Repos, whereList []string, whereMap map[st
 }
 
 func typeToOps(typeInfo whereFieldType) []string {
-  if typeInfo.IsKey || typeInfo.IsForeignKey {
+  if typeInfo.IsKey {
     return []string{"eq"}
   }
   if typeInfo.Type == "string" {

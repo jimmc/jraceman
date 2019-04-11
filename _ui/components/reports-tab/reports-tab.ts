@@ -11,6 +11,7 @@ interface ReportWhereControl {
   Name: string;
   Display: string;
   Ops: string[];
+  KeyTable: string;
 }
 
 // OrderByControl is what we prepare for our UI for each OrderBy.
@@ -24,6 +25,8 @@ interface WhereControl {
   Name: string;
   Display: string;
   Ops: WhereControlOp[];
+  KeyTable: string;
+  KeyItems: KeyTableItem[];
 }
 
 // WhereControlOp is what we prepare for our UI for each Op on a Where item.
@@ -37,6 +40,12 @@ interface WhereOption {
   Name: string;
   Op: string;
   Value: string;
+}
+
+// KeyTableItem is what we prepare for the UI for a choice list on a key field.
+interface KeyTableItem {
+  ID: string;
+  Summary: string;
 }
 
 const opDisplayMap: {[key:string]:string} = {
@@ -86,6 +95,7 @@ class ReportsTab extends Polymer.Element {
     const reportName = this.$.main.querySelector("#reportName").value;
     this.updateOrderByList(reportName)
     this.updateWhereList(reportName)
+    this.updateKeyChoices()
   }
 
   updateOrderByList(reportName: string) {
@@ -125,10 +135,40 @@ class ReportsTab extends Polymer.Element {
         Name: item.Name,
         Display: item.Display,
         Ops: ops,
+        KeyTable: item.KeyTable,
+        KeyItems: [{ID:"", Summary:"(no items available)"}],
       }
       wcl.push(whereItem)
     }
     this.whereList = wcl
+  }
+
+  // updateKeyChoices goes through the updated whereList looking for fields that have a KeyTable set.
+  // For each of those, it issues a summary request for that table and stores the results in TODO.
+  updateKeyChoices() {
+    for (var i = 0; i<this.whereList.length; i++) {
+      const item = this.whereList[i]
+      if (item.KeyTable) {
+        this.loadKeyChoices(i, item.KeyTable)
+      }
+    }
+  }
+
+  async loadKeyChoices(i: number, table: string) {
+    console.log("In loadKeyChoices for", table)
+    const path = '/api/query/' + table + "/summary/"
+    const options = {}
+    try {
+      const result = await ApiManager.xhrJson(path, options)
+      const newKeyItems: KeyTableItem[] = [];
+      newKeyItems.push({ID: "", Summary: ""});
+      for (const row of result.Rows) {
+        newKeyItems.push({ID: row[0], Summary: row[1]});
+      }
+      this.set('whereList.'+i+'.KeyItems', newKeyItems)
+    } catch(e) {
+      console.log("Error: ", e)         // TODO
+    }
   }
 
   findReport(reportName: string): ReportAttributes {

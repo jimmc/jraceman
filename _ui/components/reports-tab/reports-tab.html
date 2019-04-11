@@ -63,7 +63,16 @@
                 </select>
               </td>
               <td>
-                <input type=text id="val_[[item.Name]]" name=[[item.Name]] label=[[item.Name]]></input>
+                <template is="dom-if" if="[[item.KeyTable]]" restamp="true">
+                  <select id="val_[[item.Name]]">
+                    <template is="dom-repeat" items=[[item.KeyItems]] as="keyitem">
+                      <option value="[[keyitem.ID]]">[[keyitem.Summary]]</option>
+                    </template>
+                  </select>
+                </template>
+                <template is="dom-if" if="[[!item.KeyTable]]">
+                  <input type=text id="val_[[item.Name]]" name=[[item.Name]] label=[[item.Name]]></input>
+                </template>
               </td>
             </tr>
           </template>

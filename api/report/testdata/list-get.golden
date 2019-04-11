@@ -43,7 +43,8 @@
         "Display": "Event",
         "Ops": [
           "eq"
-        ]
+        ],
+        "KeyTable": "event"
       },
       {
         "Name": "event_name",
@@ -56,7 +57,8 @@
           "lt",
           "le",
           "like"
-        ]
+        ],
+        "KeyTable": ""
       },
       {
         "Name": "event_number",
@@ -68,14 +70,16 @@
           "ge",
           "lt",
           "le"
-        ]
+        ],
+        "KeyTable": ""
       },
       {
         "Name": "team_id",
         "Display": "Team",
         "Ops": [
           "eq"
-        ]
+        ],
+        "KeyTable": "team"
       },
       {
         "Name": "team_shortname",
@@ -88,7 +92,8 @@
           "lt",
           "le",
           "like"
-        ]
+        ],
+        "KeyTable": ""
       },
       {
         "Name": "team_name",
@@ -101,14 +106,16 @@
           "lt",
           "le",
           "like"
-        ]
+        ],
+        "KeyTable": ""
       },
       {
         "Name": "person_id",
         "Display": "Person",
         "Ops": [
           "eq"
-        ]
+        ],
+        "KeyTable": "person"
       }
     ]
   },
