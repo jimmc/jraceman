@@ -15,6 +15,7 @@ import (
 // Repos implements the domain.Repos interface.
 type Repos struct {
   db *sql.DB
+  tableMap map[string]TableRepo
   dbArea *DBAreaRepo
   dbChallenge *DBChallengeRepo
   dbCompetition *DBCompetitionRepo
@@ -193,7 +194,21 @@ func Open(repoPath string) (*Repos, error) {
     dbTeam: &DBTeamRepo{db},
   }
 
+  tableMap := make(map[string]TableRepo)
+  for _, entry := range r.TableEntries() {
+    tableMap[entry.Name] = entry.Table
+  }
+  r.tableMap = tableMap
+
   return r, err
+}
+
+func (r *Repos) TableRepo(name string) (TableRepo, error) {
+  table, ok := r.tableMap[name]
+  if !ok {
+    return nil, fmt.Errorf("no such table %q", name)
+  }
+  return table, nil
 }
 
 // Close closes the database.

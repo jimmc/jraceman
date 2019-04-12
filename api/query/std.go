@@ -119,6 +119,19 @@ func (h *handler) stdquery(w http.ResponseWriter, r *http.Request, st std) {
 func (h *handler) stdGetColumns(w http.ResponseWriter, r *http.Request, st std) {
   entity := st.NewEntity()
   columnInfos := structsql.ColumnInfos(entity)
+
+  // Special-case the column info if needed.
+  dbrepos := h.config.DomainRepos.(*dbrepo.Repos)
+  tableRepo, err := dbrepos.TableRepo(st.EntityTypeName())
+  if err != nil {
+    http.Error(w, err.Error(), http.StatusInternalServerError)
+    return
+  }
+  columnsUpdater, ok := tableRepo.(structsql.ColumnInfosUpdater)
+  if ok {
+    columnInfos = columnsUpdater.UpdateColumnInfos(columnInfos)
+  }
+
   result := &GetColumnResults{
     Columns: columnInfos,
   }
