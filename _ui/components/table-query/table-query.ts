@@ -2,11 +2,18 @@ interface ColumnDesc {
   Name: string;
   Label: string;
   Type: string;
+  FKTable: string;
+  FKItems: FKItem[];
 }
 
 interface TableDesc {
   Table?: string;
   Columns: ColumnDesc[];
+}
+
+interface FKItem {
+  ID: string;
+  Summary: string;
 }
 
 @Polymer.decorators.customElement('table-query')

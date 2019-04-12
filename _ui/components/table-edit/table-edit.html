@@ -29,7 +29,18 @@
             <template is="dom-repeat" items=[[tableDesc.Columns]] as="col" items-index-as="colIndex">
               <tr>
                 <td>[[col.Label]]</td>
-                <td><input type=text id="val_[[col.Name]]" name=[[col.Name]] label=[[col.Name]]></input></td>
+                <td>
+                  <template is="dom-if" if="[[col.FKTable]]" restamp="true">
+                    <select id="val_[[col.Name]]">
+                      <template is="dom-repeat" items=[[col.FKItems]] as="keyitem">
+                        <option value="[[keyitem.ID]]">[[keyitem.Summary]]</option>
+                      </template>
+                    </select>
+                  </template>
+                  <template is="dom-if" if="[[!col.FKTable]]">
+                    <input type=text id="val_[[col.Name]]" name=[[col.Name]] label=[[col.Name]]></input>
+                  </template>
+                </td>
               </tr>
             </template>
           </table>

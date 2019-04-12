@@ -32,14 +32,27 @@
                   <select id="op_[[col.Name]]">
                     <option value="eq">=</option>
                     <option value="ne">!=</option>
-                    <option value="gt">&gt;</option>
-                    <option value="ge">&gt;=</option>
-                    <option value="lt">&lt;</option>
-                    <option value="le">&lt;=</option>
-                    <option value="like" hidden="[[!isStringColumn(col.Type)]]">LIKE</option>
+                    <template is="dom-if" if="[[!col.FKTable]]">
+                      <option value="gt">&gt;</option>
+                      <option value="ge">&gt;=</option>
+                      <option value="lt">&lt;</option>
+                      <option value="le">&lt;=</option>
+                      <option value="like" hidden="[[!isStringColumn(col.Type)]]">LIKE</option>
+                    </template>
                   </select>
                 </td>
-                <td><input type=text id="val_[[col.Name]]" name=[[col.Name]] label=[[col.Name]]></input></td>
+                <td>
+                  <template is="dom-if" if="[[col.FKTable]]" restamp="true">
+                    <select id="val_[[col.Name]]">
+                      <template is="dom-repeat" items=[[col.FKItems]] as="keyitem">
+                        <option value="[[keyitem.ID]]">[[keyitem.Summary]]</option>
+                      </template>
+                    </select>
+                  </template>
+                  <template is="dom-if" if="[[!col.FKTable]]">
+                    <input type=text id="val_[[col.Name]]" name=[[col.Name]] label=[[col.Name]]></input>
+                  </template>
+                </td>
               </tr>
             </template>
           </table>

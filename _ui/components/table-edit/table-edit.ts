@@ -1,12 +1,21 @@
+// ColumnDesc is what we get back from the API as the description of a column.
 interface ColumnDesc {
   Name: string;
-  Label: string;
+  Label: string;        // We fill in this field.
   Type: string;
+  FKTable: string;
+  // The API sends back some other fields that we ignore.
+  FKItems: FKItem[];    // We fill in this field.
 }
 
 interface TableDesc {
   Table?: string;
   Columns: ColumnDesc[];
+}
+
+interface FKItem {
+  ID: string;
+  Summary: string;
 }
 
 @Polymer.decorators.customElement('table-edit')
