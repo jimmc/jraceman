@@ -1,0 +1,445 @@
+[
+	{
+		"Name": "org.jimmc.jraceman.Entries",
+		"Display": "Entries",
+		"Description": "Entries ordered as selected.",
+		"OrderBy": [
+			{
+				"Name": "team",
+				"Display": "Team, Person, Event"
+			},
+			{
+				"Name": "person",
+				"Display": "Person, Event"
+			},
+			{
+				"Name": "eventTeam",
+				"Display": "Event, Team, Person"
+			},
+			{
+				"Name": "eventPerson",
+				"Display": "Event, Person"
+			}
+		],
+		"Where": [
+			{
+				"Name": "event_id",
+				"Display": "Event",
+				"Ops": [
+					"eq"
+				],
+				"KeyTable": "event"
+			},
+			{
+				"Name": "event_name",
+				"Display": "Event Name",
+				"Ops": [
+					"eq",
+					"ne",
+					"gt",
+					"ge",
+					"lt",
+					"le",
+					"like"
+				],
+				"KeyTable": ""
+			},
+			{
+				"Name": "event_number",
+				"Display": "Event Number",
+				"Ops": [
+					"eq",
+					"ne",
+					"gt",
+					"ge",
+					"lt",
+					"le"
+				],
+				"KeyTable": ""
+			},
+			{
+				"Name": "team_id",
+				"Display": "Team",
+				"Ops": [
+					"eq"
+				],
+				"KeyTable": "team"
+			},
+			{
+				"Name": "team_shortname",
+				"Display": "Team Short Name",
+				"Ops": [
+					"eq",
+					"ne",
+					"gt",
+					"ge",
+					"lt",
+					"le",
+					"like"
+				],
+				"KeyTable": ""
+			},
+			{
+				"Name": "team_name",
+				"Display": "Team Name",
+				"Ops": [
+					"eq",
+					"ne",
+					"gt",
+					"ge",
+					"lt",
+					"le",
+					"like"
+				],
+				"KeyTable": ""
+			},
+			{
+				"Name": "person_id",
+				"Display": "Person",
+				"Ops": [
+					"eq"
+				],
+				"KeyTable": "person"
+			}
+		]
+	},
+	{
+		"Name": "org.jimmc.jraceman.EntryCountPerEvent",
+		"Display": "Entry Count Per Event",
+		"Description": "The number of Entries and Teams entered for each Event.",
+		"OrderBy": [
+			{
+				"Name": "event",
+				"Display": "Event"
+			},
+			{
+				"Name": "teamcount",
+				"Display": "#Teams"
+			},
+			{
+				"Name": "entrycount",
+				"Display": "#Entries"
+			},
+			{
+				"Name": "groupcount",
+				"Display": "#Groups"
+			}
+		],
+		"Where": [
+			{
+				"Name": "event_id",
+				"Display": "Event",
+				"Ops": [
+					"eq"
+				],
+				"KeyTable": "event"
+			},
+			{
+				"Name": "event_name",
+				"Display": "Event Name",
+				"Ops": [
+					"eq",
+					"ne",
+					"gt",
+					"ge",
+					"lt",
+					"le",
+					"like"
+				],
+				"KeyTable": ""
+			},
+			{
+				"Name": "event_number",
+				"Display": "Event Number",
+				"Ops": [
+					"eq",
+					"ne",
+					"gt",
+					"ge",
+					"lt",
+					"le"
+				],
+				"KeyTable": ""
+			},
+			{
+				"Name": "meet_id",
+				"Display": "Meet",
+				"Ops": [
+					"eq"
+				],
+				"KeyTable": "meet"
+			},
+			{
+				"Name": "person_id",
+				"Display": "Person",
+				"Ops": [
+					"eq"
+				],
+				"KeyTable": "person"
+			},
+			{
+				"Name": "team_id",
+				"Display": "Team",
+				"Ops": [
+					"eq"
+				],
+				"KeyTable": "team"
+			},
+			{
+				"Name": "team_shortname",
+				"Display": "Team Short Name",
+				"Ops": [
+					"eq",
+					"ne",
+					"gt",
+					"ge",
+					"lt",
+					"le",
+					"like"
+				],
+				"KeyTable": ""
+			},
+			{
+				"Name": "team_name",
+				"Display": "Team Name",
+				"Ops": [
+					"eq",
+					"ne",
+					"gt",
+					"ge",
+					"lt",
+					"le",
+					"like"
+				],
+				"KeyTable": ""
+			}
+		]
+	},
+	{
+		"Name": "org.jimmc.jraceman.EntryCountPerLevel",
+		"Display": "Entry Count Per Level",
+		"Description": "The number of Entries and Teams entered for each Level.",
+		"OrderBy": [
+			{
+				"Name": "level",
+				"Display": "Level"
+			},
+			{
+				"Name": "teamcount",
+				"Display": "#Teams"
+			},
+			{
+				"Name": "personcount",
+				"Display": "#People"
+			},
+			{
+				"Name": "entrycount",
+				"Display": "#Entries"
+			},
+			{
+				"Name": "groupcount",
+				"Display": "#Groups"
+			}
+		],
+		"Where": [
+			{
+				"Name": "event_id",
+				"Display": "Event",
+				"Ops": [
+					"eq"
+				],
+				"KeyTable": "event"
+			},
+			{
+				"Name": "event_name",
+				"Display": "Event Name",
+				"Ops": [
+					"eq",
+					"ne",
+					"gt",
+					"ge",
+					"lt",
+					"le",
+					"like"
+				],
+				"KeyTable": ""
+			},
+			{
+				"Name": "event_number",
+				"Display": "Event Number",
+				"Ops": [
+					"eq",
+					"ne",
+					"gt",
+					"ge",
+					"lt",
+					"le"
+				],
+				"KeyTable": ""
+			},
+			{
+				"Name": "meet_id",
+				"Display": "Meet",
+				"Ops": [
+					"eq"
+				],
+				"KeyTable": "meet"
+			},
+			{
+				"Name": "person_id",
+				"Display": "Person",
+				"Ops": [
+					"eq"
+				],
+				"KeyTable": "person"
+			},
+			{
+				"Name": "team_id",
+				"Display": "Team",
+				"Ops": [
+					"eq"
+				],
+				"KeyTable": "team"
+			},
+			{
+				"Name": "team_shortname",
+				"Display": "Team Short Name",
+				"Ops": [
+					"eq",
+					"ne",
+					"gt",
+					"ge",
+					"lt",
+					"le",
+					"like"
+				],
+				"KeyTable": ""
+			},
+			{
+				"Name": "team_name",
+				"Display": "Team Name",
+				"Ops": [
+					"eq",
+					"ne",
+					"gt",
+					"ge",
+					"lt",
+					"le",
+					"like"
+				],
+				"KeyTable": ""
+			}
+		]
+	},
+	{
+		"Name": "org.jimmc.jraceman.EntryCountPerPerson",
+		"Display": "Entry Count Per Person",
+		"Description": "The number of Entries entered for each Person.",
+		"OrderBy": [
+			{
+				"Name": "person",
+				"Display": "Person"
+			},
+			{
+				"Name": "entrycount",
+				"Display": "#Entries"
+			}
+		],
+		"Where": [
+			{
+				"Name": "event_id",
+				"Display": "Event",
+				"Ops": [
+					"eq"
+				],
+				"KeyTable": "event"
+			},
+			{
+				"Name": "event_name",
+				"Display": "Event Name",
+				"Ops": [
+					"eq",
+					"ne",
+					"gt",
+					"ge",
+					"lt",
+					"le",
+					"like"
+				],
+				"KeyTable": ""
+			},
+			{
+				"Name": "event_number",
+				"Display": "Event Number",
+				"Ops": [
+					"eq",
+					"ne",
+					"gt",
+					"ge",
+					"lt",
+					"le"
+				],
+				"KeyTable": ""
+			},
+			{
+				"Name": "meet_id",
+				"Display": "Meet",
+				"Ops": [
+					"eq"
+				],
+				"KeyTable": "meet"
+			},
+			{
+				"Name": "person_id",
+				"Display": "Person",
+				"Ops": [
+					"eq"
+				],
+				"KeyTable": "person"
+			},
+			{
+				"Name": "team_id",
+				"Display": "Team",
+				"Ops": [
+					"eq"
+				],
+				"KeyTable": "team"
+			},
+			{
+				"Name": "team_shortname",
+				"Display": "Team Short Name",
+				"Ops": [
+					"eq",
+					"ne",
+					"gt",
+					"ge",
+					"lt",
+					"le",
+					"like"
+				],
+				"KeyTable": ""
+			},
+			{
+				"Name": "team_name",
+				"Display": "Team Name",
+				"Ops": [
+					"eq",
+					"ne",
+					"gt",
+					"ge",
+					"lt",
+					"le",
+					"like"
+				],
+				"KeyTable": ""
+			}
+		]
+	},
+	{
+		"Name": "org.jimmc.jraceman.Lanes",
+		"Display": "Lanes",
+		"Description": "",
+		"OrderBy": [],
+		"Where": []
+	}
+]
