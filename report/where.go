@@ -60,6 +60,7 @@ type whereFieldType struct {
 // which then get expanded into the corresponding list of where fields.
 var whereGroups = map[string][]string {
   "event": { "event_id", "event_name", "event_number" },
+  "meet": { "meet_id" },
   "person": { "person_id" },
   "team": { "team_id", "team_shortname", "team_name" },
 }
@@ -81,6 +82,11 @@ var stdWheres = map[string]whereDetails {
     display: "Event Number",
     table: "event",
     column: "number",
+  },
+  "meet_id": whereDetails{
+    display: "Meet",
+    table: "meet",
+    column: "id",
   },
   "person_id": whereDetails{
     display: "Person",
