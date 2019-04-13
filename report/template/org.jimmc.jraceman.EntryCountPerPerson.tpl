@@ -1,42 +1,25 @@
 {{/*GT: {
-  "display": "Entry Count Per Event",
-  "description": "The number of Entries and Teams entered for each Event.",
+  "display": "Entry Count Per Person",
+  "description": "The number of Entries entered for each Person.",
   "where": [ "event", "meet", "person", "team" ],
   "orderby": [
     {
-      "name": "event",
-      "display": "Event",
-      "sql": "event.number, event.name"
-    },
-    {
-      "name": "teamcount",
-      "display": "#Teams",
-      "sql": "teamcount desc, event.number, event.name"
+      "name": "person",
+      "display": "Person",
+      "sql": "Person.lastName, Person.firstName"
     },
     {
       "name": "entrycount",
       "display": "#Entries",
       "sql": "entrycount desc, event.number, event.name"
-    },
-    {
-      "name": "groupcount",
-      "display": "#Groups",
-      "sql": "groupcount desc, event.number, event.name"
     }
   ]
 } */ -}}
 {{ $comp := computed -}}
 {{ $rows := rows (printf `
     SELECT
-      ( CASE WHEN Event.scratched THEN '<strike>' ELSE '' END ||
-        Event.meetId || ' ' ||
-        COALESCE('#' || Event.number || ': ', '') ||
-        COALESCE(Event.name,
-          (Competition.name || ' ' || Level.name || ' ' || Gender.name)) ||
-        ' [' || Event.id || ']' ||
-        CASE WHEN Event.scratched THEN '</strike>' ELSE '' END
-      ) as Event,
-      count(distinct Team.id) as TeamCount,
+      Team.shortName as Team,
+      (Person.lastName || ', ' || Person.firstName) as Person,
       count(distinct Entry.id) as EntryCount,
       count(distinct Entry.groupname) as GroupCount
     FROM Entry
@@ -48,7 +31,7 @@
       LEFT JOIN Gender on Event.genderId=Gender.id
       LEFT JOIN Meet on Event.meetId=Meet.id
     WHERE (NOT COALESCE(event.scratched,false) AND NOT COALESCE(entry.scratched,false)) %s
-    GROUP BY Event.id
+    GROUP BY Person.id
     %s
 ` $comp.Where.AndClause $comp.OrderBy.Clause) . -}}
 {{ $totals := row (printf `
@@ -72,27 +55,27 @@
   </div>
   <center>
   <div class="titleArea">
-    <h3>Entries Per Event by {{ $comp.OrderBy.Display }}</h3>
+    <h3>Entries Per Person by {{ $comp.OrderBy.Display }}</h3>
   </div>
   <table class="main" border=1>
     <tr class="rowHeader">
-      <th>Event</th>
-      <th>#Teams</th>
+      <th>Team</th>
+      <th>Person</th>
       <th>#Entries</th>
       <th>#Groups</th>
     </tr>
 {{ range $rows }}
     <tr class="rowParity{{ evenodd .rowindex "0" "1" }}">
-      <td>{{.Event}}</td>
-      <td align=right>{{.TeamCount}}</td>
+      <td>{{.Team}}</td>
+      <td>{{.Person}}</td>
       <td align=right>{{.EntryCount}}</td>
       <td align=right>{{.GroupCount}}</td>
     </tr>
 {{ end }}
 {{ with $totals }}
     <tr class="rowTotal">
-      <td><b>Totals -- #Events: {{.EventCount}} -- #People: {{.PersonCount}}</b></td>
       <td><b>#Teams: {{.TeamCount}}</b></td>
+      <td><b>#People: {{.PersonCount}}</b></td>
       <td><b>#Entries: {{.EntryCount}}</b></td>
       <td><b>#Groups: {{.GroupCount}}</b></td>
     </tr>

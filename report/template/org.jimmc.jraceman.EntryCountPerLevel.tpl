@@ -63,7 +63,7 @@
       LEFT JOIN Event on Entry.eventId=Event.id
       LEFT JOIN Meet on Event.meetId=Meet.id
       LEFT JOIN Level on Event.levelId=Level.id
-    WHERE NOT COALESCE(Entry.scratched, false) %s
+    WHERE (NOT COALESCE(event.scratched,false) AND NOT COALESCE(entry.scratched,false)) %s
 ` $comp.Where.AndClause) -}}
 <html>
 <body>
