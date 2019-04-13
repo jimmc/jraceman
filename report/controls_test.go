@@ -43,6 +43,27 @@ func TestClientVisibleReports(t *testing.T) {
       },
     },
     {
+      Name:        "org.jimmc.jraceman.EntryCountPerEvent",
+      Display:     "Entry Count Per Event",
+      Description: "The number of Entries and Teams entered for each Event.",
+      OrderBy: []ControlsOrderByItem{
+        {Name: "event", Display: "Event"},
+        {Name: "teamcount", Display: "#Teams"},
+        {Name: "entrycount", Display: "#Entries"},
+        {Name: "groupcount", Display: "#Groups"},
+      },
+      Where: []ControlsWhereItem{
+	{Name: "event_id", Display: "Event", Ops: keyOps, KeyTable: "event"},
+	{Name: "event_name", Display: "Event Name", Ops: stringOps},
+	{Name: "event_number", Display: "Event Number", Ops: dfltOps},
+	{Name: "meet_id", Display: "Meet", Ops: keyOps, KeyTable: "meet"},
+	{Name: "person_id", Display: "Person", Ops: keyOps, KeyTable: "person"},
+	{Name: "team_id", Display: "Team", Ops: keyOps, KeyTable: "team"},
+	{Name: "team_shortname", Display: "Team Short Name", Ops: stringOps},
+	{Name: "team_name", Display: "Team Name", Ops: stringOps},
+      },
+    },
+    {
       Name: "org.jimmc.jraceman.Lanes",
       Display: "Lanes",
       Description: "",
