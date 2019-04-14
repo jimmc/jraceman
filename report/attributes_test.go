@@ -10,7 +10,7 @@ func TestReadTemplateAttrs(t *testing.T) {
   if err != nil {
     t.Fatalf("ReadTemplateAttrs error: %v", err)
   }
-  if got, want := len(attrslist), 5; got != want {
+  if got, want := len(attrslist), 6; got != want {
     t.Fatalf("Wrong number of files-with-attributes found, got %d, want %d", got, want)
   }
   fmt.Printf("attrslist: %+v\n", attrslist)
