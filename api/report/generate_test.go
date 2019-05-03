@@ -7,6 +7,8 @@ import (
   "testing"
 
   apitest "github.com/jimmc/jracemango/api/test"
+
+  goldenhttp "github.com/jimmc/golden/http"
 )
 
 var testRoots = []string{"testdata", "../../report/template"}
@@ -41,7 +43,7 @@ func TestPost(t *testing.T) {
     req.Header.Set("Content-Type", "application/json")
     return req, nil
   }
-  if err := apitest.SetupToGolden(repos, handler, "site-report", request);
+  if err := goldenhttp.SetupToGolden(repos.DB(), handler, "site-report", request);
        err != nil {
     t.Error(err.Error())
   }
@@ -111,7 +113,7 @@ func TestWherePost(t *testing.T) {
     req.Header.Set("Content-Type", "application/json")
     return req, nil
   }
-  if err := apitest.SetupDbToGolden(repos, handler, "site-report", "site-report-where", request);
+  if err := goldenhttp.SetupDbToGolden(repos.DB(), handler, "site-report", "site-report-where", request);
        err != nil {
     t.Error(err.Error())
   }

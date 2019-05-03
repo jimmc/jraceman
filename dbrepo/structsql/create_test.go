@@ -3,8 +3,9 @@ package structsql_test
 import (
   "testing"
 
-  dbtest "github.com/jimmc/jracemango/dbrepo/test"
   "github.com/jimmc/jracemango/dbrepo/structsql"
+
+  goldendb "github.com/jimmc/golden/db"
 )
 
 type Foo struct {
@@ -33,7 +34,7 @@ func TestCreateTableSql(t *testing.T) {
 }
 
 func TestCreateTable(t *testing.T) {
-  db, err := dbtest.EmptyDb()
+  db, err := goldendb.EmptyDb()
   if err != nil {
     t.Fatal(err.Error())
   }

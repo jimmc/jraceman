@@ -7,7 +7,9 @@ import (
   "testing"
 
   "github.com/jimmc/jracemango/dbrepo"
-  dbtest "github.com/jimmc/jracemango/dbrepo/test"
+
+  goldenbase "github.com/jimmc/golden/base"
+  _ "github.com/mattn/go-sqlite3"
 )
 
 func TestClientVisibleReports(t *testing.T) {
@@ -34,7 +36,7 @@ func TestClientVisibleReports(t *testing.T) {
   if err := f.Close(); err != nil {
     t.Fatalf("Error closing outfile: %v", err)
   }
-  if err := dbtest.CompareOutToGolden(outfile, goldenfile); err != nil {
+  if err := goldenbase.CompareOutToGolden(outfile, goldenfile); err != nil {
     t.Fatalf("Error comparing to golden: %v", err)
   }
 }

@@ -6,6 +6,8 @@ import (
   "github.com/jimmc/jracemango/api/report"
   "github.com/jimmc/jracemango/dbrepo"
   dbtest "github.com/jimmc/jracemango/dbrepo/test"
+
+  goldenhttp "github.com/jimmc/golden/http"
 )
 
 func StartReportToGolden(basename string, callback func() (*http.Request, error)) error {
@@ -27,7 +29,7 @@ func StartReportDbToGoldenWithRoots(dbbasename, basename string, roots []string,
   }
   defer repos.Close()
 
-  return SetupDbToGolden(repos, handler, dbbasename, basename, callback)
+  return goldenhttp.SetupDbToGolden(repos.DB(), handler, dbbasename, basename, callback)
 }
 
 // StartReportToSetup initializes the database and the http handler for api/report.

@@ -6,6 +6,8 @@ import (
 
   dbtest "github.com/jimmc/jracemango/dbrepo/test"
   "github.com/jimmc/jracemango/dbrepo/strsql"
+
+  goldendb "github.com/jimmc/golden/db"
 )
 
 type testRow struct {
@@ -141,7 +143,7 @@ func TestQueryIntHappy(t *testing.T) {
 }
 
 func TestQueryIntError(t *testing.T) {
-  db, err := dbtest.EmptyDb()
+  db, err := goldendb.EmptyDb()
   if err != nil {
     t.Fatal(err.Error())
   }
@@ -179,7 +181,7 @@ func TestQueryStringHappy(t *testing.T) {
 }
 
 func TestQueryStringError(t *testing.T) {
-  db, err := dbtest.EmptyDb()
+  db, err := goldendb.EmptyDb()
   if err != nil {
     t.Fatal(err.Error())
   }

@@ -3,46 +3,13 @@ package test
 
 import (
   "database/sql"
-  "io/ioutil"
 
   "github.com/jimmc/jracemango/dbrepo"
-  "github.com/jimmc/jracemango/dbrepo/strsql"
+
+  goldendb "github.com/jimmc/golden/db"
 
   _ "github.com/mattn/go-sqlite3"
 )
-
-func EmptyDb() (*sql.DB, error) {
-  return sql.Open("sqlite3", ":memory:")
-}
-
-func LoadSetupFile(db *sql.DB, filename string) error {
-  setupSql, err := ioutil.ReadFile(filename)
-  if err != nil {
-    return err
-  }
-  return strsql.ExecMulti(db, string(setupSql))
-}
-
-func DbWithSetupFile(filename string) (*sql.DB, error) {
-  setupString, err := ioutil.ReadFile(filename)
-  if err != nil {
-    return nil, err
-  }
-  return DbWithSetupString(string(setupString))
-}
-
-func DbWithSetupString(setupSql string) (*sql.DB, error) {
-  db, err := EmptyDb()
-  if err != nil {
-    return nil, err
-  }
-  err = strsql.ExecMulti(db, setupSql)
-  if err != nil {
-    db.Close()
-    return nil, err
-  }
-  return db, nil
-}
 
 // Struct TestRecord matches the format of the test table
 // created by DbWithTestTable.
@@ -54,7 +21,7 @@ type TestRecord struct {
 }
 
 func DbWithTestTable() (*sql.DB, error) {
-  return DbWithSetupString(`
+  return goldendb.DbWithSetupString(`
 CREATE table test(id string, n int, s string, s2 string);
 
 INSERT into test(id, n, s, s2)
@@ -71,7 +38,7 @@ func ReposWithSetupFile(filename string) (*dbrepo.Repos, error) {
   if err != nil {
     return nil, err
   }
-  if err := LoadSetupFile(dbr.DB(), filename); err != nil {
+  if err := goldendb.LoadSetupFile(dbr.DB(), filename); err != nil {
     return nil, err
   }
   return dbr, nil

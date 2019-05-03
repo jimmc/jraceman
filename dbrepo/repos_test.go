@@ -7,6 +7,8 @@ import (
 
   "github.com/jimmc/jracemango/dbrepo"
   dbtest "github.com/jimmc/jracemango/dbrepo/test"
+
+  goldenbase "github.com/jimmc/golden/base"
 )
 
 func TestOpenNormal(t *testing.T) {
@@ -171,7 +173,7 @@ func TestExport(t *testing.T) {
     t.Fatalf("Error exporting: %v", err)
   }
 
-  if err := dbtest.CompareOutToGolden(outfilename, goldenfilename); err != nil {
+  if err := goldenbase.CompareOutToGolden(outfilename, goldenfilename); err != nil {
     t.Error(err.Error())
   }
 }

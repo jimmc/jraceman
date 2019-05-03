@@ -6,6 +6,8 @@ import (
 
   dbtest "github.com/jimmc/jracemango/dbrepo/test"
   "github.com/jimmc/jracemango/dbrepo/structsql"
+
+  goldendb "github.com/jimmc/golden/db"
 )
 
 func TestColumnSpec(t *testing.T) {
@@ -35,7 +37,7 @@ func TestColumnSpec(t *testing.T) {
 }
 
 func TestTableExistsFalse(t *testing.T) {
-  db, err := dbtest.EmptyDb()
+  db, err := goldendb.EmptyDb()
   if err != nil {
     t.Fatal(err.Error())
   }
@@ -70,7 +72,7 @@ func TestTableColumns(t *testing.T) {
     structsql.ColumnInfo{Name:"fooid", Type:"string", Required:false, IsForeignKey:true, FKTable:"foo"},
     structsql.ColumnInfo{Name:"amtpaid", Type:"int", Required:false, IsForeignKey:false, FKTable:""},
   }
-  db, err := dbtest.DbWithSetupString(`
+  db, err := goldendb.DbWithSetupString(`
       CREATE table test(id string, n int, s string, fooid string references foo(id), amtpaid int);
       `)
   if err != nil {

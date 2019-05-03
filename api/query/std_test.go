@@ -6,6 +6,8 @@ import (
   "testing"
 
   apitest "github.com/jimmc/jracemango/api/test"
+
+  goldenhttp "github.com/jimmc/golden/http"
 )
 
 func TestGetColumnsDefault(t *testing.T) {
@@ -65,7 +67,7 @@ func TestPostRowsDefault(t *testing.T) {
   request := func() (*http.Request, error) {
     return http.NewRequest("POST", "/api/query/site/", payloadfile)
   }
-  if err := apitest.SetupToGolden(repos, handler, "site-get-rows-where", request);
+  if err := goldenhttp.SetupToGolden(repos.DB(), handler, "site-get-rows-where", request);
        err != nil {
     t.Error(err.Error())
   }
@@ -88,7 +90,7 @@ func TestPostRows(t *testing.T) {
   request := func() (*http.Request, error) {
     return http.NewRequest("POST", "/api/query/site/row/", payloadfile)
   }
-  if err := apitest.SetupToGolden(repos, handler, "site-get-rows-where", request);
+  if err := goldenhttp.SetupToGolden(repos.DB(), handler, "site-get-rows-where", request);
        err != nil {
     t.Error(err.Error())
   }

@@ -6,6 +6,8 @@ import (
   "github.com/jimmc/jracemango/api/query"
   "github.com/jimmc/jracemango/dbrepo"
   dbtest "github.com/jimmc/jracemango/dbrepo/test"
+
+  goldenhttp "github.com/jimmc/golden/http"
 )
 
 func StartQueryToGolden(basename string, callback func() (*http.Request, error)) error {
@@ -15,7 +17,7 @@ func StartQueryToGolden(basename string, callback func() (*http.Request, error))
   }
   defer repos.Close()
 
-  return SetupToGolden(repos, handler, basename, callback)
+  return goldenhttp.SetupToGolden(repos.DB(), handler, basename, callback)
 }
 
 // StartQueryToSetup initializes the database and the http handler for api/query.

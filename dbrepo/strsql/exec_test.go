@@ -6,8 +6,9 @@ import (
   "reflect"
   "testing"
 
-  dbtest "github.com/jimmc/jracemango/dbrepo/test"
   "github.com/jimmc/jracemango/dbrepo/strsql"
+
+  goldendb "github.com/jimmc/golden/db"
 )
 
 type eTestRow struct {
@@ -31,7 +32,7 @@ func collectETestRows(db *sql.DB, query string) ([]*eTestRow, error) {
 }
 
 func setupAndCollectETestRows(setup, query string) ([]*eTestRow, error) {
-  db, err := dbtest.EmptyDb()
+  db, err := goldendb.EmptyDb()
   if err != nil {
     return nil, fmt.Errorf("error opening test database: %v", err)
   }
@@ -97,7 +98,7 @@ INSERT into test(n, s)
 
 func TestExecErrors(t *testing.T) {
   setup := "invalid sql"
-  db, err := dbtest.EmptyDb()
+  db, err := goldendb.EmptyDb()
   if err != nil {
     t.Fatalf("error opening test database: %v", err)
   }

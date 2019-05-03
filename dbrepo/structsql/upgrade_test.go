@@ -6,6 +6,8 @@ import (
 
   dbtest "github.com/jimmc/jracemango/dbrepo/test"
   "github.com/jimmc/jracemango/dbrepo/structsql"
+
+  goldendb "github.com/jimmc/golden/db"
 )
 
 func TestCreateOrUpdateTableSqlExists(t *testing.T) {
@@ -23,7 +25,7 @@ func TestCreateOrUpdateTableSqlExists(t *testing.T) {
 }
 
 func TestCreateOrUpdateTableSqlNotExists(t *testing.T) {
-  db, err := dbtest.EmptyDb()
+  db, err := goldendb.EmptyDb()
   if err != nil {
     t.Fatal(err.Error())
   }
@@ -37,7 +39,7 @@ func TestCreateOrUpdateTableSqlNotExists(t *testing.T) {
 }
 
 func TestUpgradeTableSql(t *testing.T) {
-  db, err := dbtest.DbWithSetupString(`
+  db, err := goldendb.DbWithSetupString(`
     CREATE TABLE foo(id string primary key, num int not null, required string not null)
   `)
   if err != nil {

@@ -9,7 +9,8 @@ import (
 
   "github.com/jimmc/gtrepgen/gen"
   "github.com/jimmc/jracemango/dbrepo"
-  dbtest "github.com/jimmc/jracemango/dbrepo/test"
+
+  goldenbase "github.com/jimmc/golden/base"
 
   "github.com/golang/glog"
 )
@@ -72,7 +73,7 @@ func TestStandardReports(t *testing.T) {
         t.Fatal(err)
       }
       goldenfile := "testdata/" + tt.reportName + ".golden"
-      if err := dbtest.CompareOutToGolden(outfile, goldenfile); err != nil {
+      if err := goldenbase.CompareOutToGolden(outfile, goldenfile); err != nil {
         t.Fatal(err)
       }
     })

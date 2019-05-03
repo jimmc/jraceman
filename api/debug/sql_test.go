@@ -6,6 +6,8 @@ import (
   "testing"
 
   apitest "github.com/jimmc/jracemango/api/test"
+
+  goldenhttp "github.com/jimmc/golden/http"
 )
 
 func TestGet(t *testing.T) {
@@ -39,7 +41,7 @@ func TestPost(t *testing.T) {
     req.Header.Set("Content-Type", "application/json")
     return req, nil
   }
-  if err := apitest.SetupToGolden(repos, handler, "simple-sql", request);
+  if err := goldenhttp.SetupToGolden(repos.DB(), handler, "simple-sql", request);
        err != nil {
     t.Error(err.Error())
   }

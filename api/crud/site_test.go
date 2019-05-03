@@ -6,6 +6,8 @@ import (
   "testing"
 
   apitest "github.com/jimmc/jracemango/api/test"
+
+  goldenhttp "github.com/jimmc/golden/http"
 )
 
 // TODO: Update, Delete, Patch
@@ -30,14 +32,14 @@ func TestListLimit(t *testing.T) {
   request1 := func() (*http.Request, error) {
     return http.NewRequest("GET", "/api/crud/site/?limit=1&offset=1", nil)
   }
-  if err := apitest.SetupToGolden(repos, handler, "site-list-limit-1", request1); err != nil {
+  if err := goldenhttp.SetupToGolden(repos.DB(), handler, "site-list-limit-1", request1); err != nil {
     t.Fatal(err.Error())
   }
 
   request2 := func() (*http.Request, error) {
     return http.NewRequest("GET", "/api/crud/site/?limit=2&offset=2", nil)
   }
-  if err := apitest.SetupToGolden(repos, handler, "site-list-limit-2", request2); err != nil {
+  if err := goldenhttp.SetupToGolden(repos.DB(), handler, "site-list-limit-2", request2); err != nil {
     t.Fatal(err.Error())
   }
 }
@@ -68,7 +70,7 @@ func TestCreateWithID(t *testing.T) {
   request := func() (*http.Request, error) {
     return http.NewRequest("POST", "/api/crud/site/", payloadfile)
   }
-  if err := apitest.SetupToGolden(repos, handler, "site-create-id", request);
+  if err := goldenhttp.SetupToGolden(repos.DB(), handler, "site-create-id", request);
        err != nil {
     t.Error(err.Error())
   }
@@ -76,7 +78,7 @@ func TestCreateWithID(t *testing.T) {
   requestGet := func() (*http.Request, error) {
     return http.NewRequest("GET", "/api/crud/site/S10", nil)
   }
-  if err := apitest.SetupToGolden(repos, handler, "site-create-id-get", requestGet);
+  if err := goldenhttp.SetupToGolden(repos.DB(), handler, "site-create-id-get", requestGet);
        err != nil {
     t.Error(err.Error())
   }
