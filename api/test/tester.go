@@ -17,6 +17,15 @@ import (
 )
 
 // Tester provides the structure for running API unit tests.
+// For a single test, the typical calling sequence is:
+//   r := NewTester(handlerCreateFunc)
+//   r.Run(t, basename, callback)
+// For multiple tests, maintaining the database state across tests as it changes:
+//   r := NewTester(handlerCreateFunc)
+//   r.Init()
+//   r.RunTest(t, basename, callback)
+//   r.RunTest(t, basename2, callback2)
+//   r.Close()
 type Tester struct {
   goldenbase.Tester
 
@@ -31,14 +40,18 @@ type Tester struct {
   repos *dbrepo.Repos
 }
 
-// NewTester creates a new instance of a Tester that will call the specified
-// callback as the test function.
-func NewTester(basename string, createHandler func(r *Tester) http.Handler, callback func() (*http.Request, error)) *Tester {
+// NewTester creates a new instance of a Tester that will use the specified
+// function to create an http.Handler.
+func NewTester(createHandler func(r *Tester) http.Handler) *Tester {
   r := &Tester{}
-  r.BaseName = basename
   r.CreateHandler = createHandler
-  r.Callback = callback
   return r
+}
+
+// Reinit resets the basename and callback of the Tester in preparation for running a test.
+func (r *Tester) Reinit(basename string, callback func() (*http.Request, error)) {
+  r.BaseName = basename
+  r.Callback = callback
 }
 
 // SetupFilePath returns the complete path to the setup file.
@@ -148,4 +161,25 @@ func (r *Tester) Close() {
 func (r *Tester) Finish() error {
   r.Close()
   return r.Assert()
+}
+
+func (r *Tester) Init(t *testing.T) {
+  if err := r.SetupDb(); err != nil {
+    t.Fatalf("Error in SetupDb: %v", err)
+  }
+}
+
+// RunTest runs a test using the specified basename and callback.
+// This can be used multiple times within a Tester. The database state is maintained across tests,
+// allowing a sequence of calls that builds up and modifies a database.
+func (r *Tester) RunTest(t *testing.T, basename string, callback func() (*http.Request, error)) {
+  r.Reinit(basename, callback)
+  r.LoadActAssertT(t)
+}
+
+// Run initializes the tester, runs a test, and closes it, calling Fatalf on any error.
+func (r *Tester) Run(t *testing.T, basename string, callback func() (*http.Request, error)) {
+  r.Init(t)
+  r.RunTest(t, basename, callback)
+  r.Close()
 }

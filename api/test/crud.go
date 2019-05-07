@@ -14,6 +14,6 @@ func CreateCrudHandler(r *Tester) http.Handler {
   return crud.NewHandler(config)
 }
 
-func NewCrudTester(basename string, callback func() (*http.Request, error)) *Tester {
-  return NewTester(basename, CreateCrudHandler, callback)
+func NewCrudTester() *Tester {
+  return NewTester(CreateCrudHandler)
 }
