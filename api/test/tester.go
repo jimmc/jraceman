@@ -146,6 +146,7 @@ func (r *Tester) LoadActAssert() error {
 
 // LoadActAssertT runs LoadActAssert and calls Fatalf on error.
 func (r *Tester) LoadActAssertT(t *testing.T) {
+  t.Helper()
   if err := r.LoadActAssert(); err != nil {
     t.Fatalf("Error running LoadActAssert: %v", err)
   }
@@ -164,6 +165,7 @@ func (r *Tester) Finish() error {
 }
 
 func (r *Tester) Init(t *testing.T) {
+  t.Helper()
   if err := r.SetupDb(); err != nil {
     t.Fatalf("Error in SetupDb: %v", err)
   }
@@ -173,12 +175,14 @@ func (r *Tester) Init(t *testing.T) {
 // This can be used multiple times within a Tester. The database state is maintained across tests,
 // allowing a sequence of calls that builds up and modifies a database.
 func (r *Tester) RunTest(t *testing.T, basename string, callback func() (*http.Request, error)) {
+  t.Helper()
   r.Reinit(basename, callback)
   r.LoadActAssertT(t)
 }
 
 // Run initializes the tester, runs a test, and closes it, calling Fatalf on any error.
 func (r *Tester) Run(t *testing.T, basename string, callback func() (*http.Request, error)) {
+  t.Helper()
   r.Init(t)
   r.RunTest(t, basename, callback)
   r.Close()
