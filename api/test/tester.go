@@ -62,8 +62,8 @@ func (r *Tester) SetupFilePath() string {
 // Init does all of the setup from base.Tester, and sets up the database.
 func (r *Tester) Init(t *testing.T) {
   t.Helper()
-  if err := r.Tester.Setup(); err != nil {
-    t.Fatalf("Error in base.Tester.Setup: %v", err)
+  if err := r.Tester.Init(); err != nil {
+    t.Fatalf("Error in base.Tester.Init: %v", err)
   }
   repos, err := dbtest.ReposEmpty()
   if err != nil {
@@ -79,6 +79,9 @@ func (r *Tester) Arrange() error {
   if err := goldendb.LoadSetupFile(r.repos.DB(), setupfilepath); err != nil {
     r.repos.Close()
     return fmt.Errorf("error loading setup file %v: %v", setupfilepath, err)
+  }
+  if err := r.Tester.Arrange(); err != nil {
+    return err
   }
   return nil
 }
@@ -115,7 +118,7 @@ func (r *Tester) Act() error {
 
 // Assert closes the output file and compares it to the golden file.
 func (r *Tester) Assert() error {
-  return r.Tester.Finish()
+  return r.Tester.Assert()
 }
 
 // RunTest loads a new setup file, runs the test, and compares the output.
