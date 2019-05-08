@@ -23,8 +23,8 @@ import (
 // For multiple tests, maintaining the database state across tests as it changes:
 //   r := NewTester(handlerCreateFunc)
 //   r.Init()
-//   r.RunTest(t, basename, callback)
-//   r.RunTest(t, basename2, callback2)
+//   r.RunTestWith(t, basename, callback)
+//   r.RunTestWith(t, basename2, callback2)
 //   r.Close()
 type Tester struct {
   goldenbase.Tester
@@ -48,8 +48,8 @@ func NewTester(createHandler func(r *Tester) http.Handler) *Tester {
   return r
 }
 
-// Reinit resets the basename and callback of the Tester in preparation for running a test.
-func (r *Tester) Reinit(basename string, callback func() (*http.Request, error)) {
+// SetBaseNameAndCallback resets the basename and callback of the Tester in preparation for running a test.
+func (r *Tester) SetBaseNameAndCallback(basename string, callback func() (*http.Request, error)) {
   r.BaseName = basename
   r.Callback = callback
 }
@@ -59,31 +59,22 @@ func (r *Tester) SetupFilePath() string {
   return r.GetFilePath(r.SetupPath, r.SetupBaseName, "setup")
 }
 
-// Setup does all of the setup from base.Tester, and sets up the db
-// and loads the setup file as calculated from the Tester.
-func (r *Tester) Setup() error {
-  if err := r.SetupDb(); err != nil {
-    return err
-  }
-  return r.LoadSetupFile()
-}
-
-// Setup does all of the setup from base.Tester, and sets up the database.
-func (r *Tester) SetupDb() error {
+// Init does all of the setup from base.Tester, and sets up the database.
+func (r *Tester) Init(t *testing.T) {
+  t.Helper()
   if err := r.Tester.Setup(); err != nil {
-    return err
+    t.Fatalf("Error in base.Tester.Setup: %v", err)
   }
   repos, err := dbtest.ReposEmpty()
   if err != nil {
-    return err
+    t.Fatalf("Error creating Repos: %v", err)
   }
   r.repos = repos
-  return nil
 }
 
-// LoadSetupFile loads a setup file into the database. The caller should update the
+// Arrange loads a setup file into the database. The caller should update the
 // SetupBaseName or SetupPath fields before calling this function.
-func (r *Tester) LoadSetupFile() error {
+func (r *Tester) Arrange() error {
   setupfilepath := r.SetupFilePath()
   if err := goldendb.LoadSetupFile(r.repos.DB(), setupfilepath); err != nil {
     r.repos.Close()
@@ -127,63 +118,43 @@ func (r *Tester) Assert() error {
   return r.Tester.Finish()
 }
 
-// LoadActAssert loads a new setup file, runs the test, and compares the output.
+// RunTest loads a new setup file, runs the test, and compares the output.
 // This function can be used in a test where there are multiple files to be loaded.
-// A typical calling sequence for that scenario is to call SetupDb,
-// then LoadActAssert multiple times, and finally Close() when done with all tests.
-func (r *Tester) LoadActAssert() error {
-  if err := r.LoadSetupFile(); err != nil {
-    return err
+// A typical calling sequence for that scenario is to call Init,
+// then RunTest multiple times, and finally Close when done with all tests.
+func (r *Tester) RunTest(t *testing.T) {
+  t.Helper()
+  if err := r.Arrange(); err != nil {
+    t.Fatalf("Error loading setup file: %v", err)
   }
   if err := r.Act(); err != nil {
-    return err
+    t.Fatalf("Error running test: %v", err)
   }
   if err := r.Assert(); err != nil {
-    return err
-  }
-  return nil
-}
-
-// LoadActAssertT runs LoadActAssert and calls Fatalf on error.
-func (r *Tester) LoadActAssertT(t *testing.T) {
-  t.Helper()
-  if err := r.LoadActAssert(); err != nil {
-    t.Fatalf("Error running LoadActAssert: %v", err)
+    t.Fatal(err)
   }
 }
 
+// Close closes our database.
 func (r *Tester) Close() {
   if r.repos != nil {
     r.repos.Close()
   }
 }
 
-// Finish closes the database and the output file and checks the output.
-func (r *Tester) Finish() error {
-  r.Close()
-  return r.Assert()
-}
-
-func (r *Tester) Init(t *testing.T) {
-  t.Helper()
-  if err := r.SetupDb(); err != nil {
-    t.Fatalf("Error in SetupDb: %v", err)
-  }
-}
-
-// RunTest runs a test using the specified basename and callback.
+// RunTestWith runs a test using the specified basename and callback.
 // This can be used multiple times within a Tester. The database state is maintained across tests,
 // allowing a sequence of calls that builds up and modifies a database.
-func (r *Tester) RunTest(t *testing.T, basename string, callback func() (*http.Request, error)) {
+func (r *Tester) RunTestWith(t *testing.T, basename string, callback func() (*http.Request, error)) {
   t.Helper()
-  r.Reinit(basename, callback)
-  r.LoadActAssertT(t)
+  r.SetBaseNameAndCallback(basename, callback)
+  r.RunTest(t)
 }
 
 // Run initializes the tester, runs a test, and closes it, calling Fatalf on any error.
 func (r *Tester) Run(t *testing.T, basename string, callback func() (*http.Request, error)) {
   t.Helper()
   r.Init(t)
-  r.RunTest(t, basename, callback)
+  r.RunTestWith(t, basename, callback)
   r.Close()
 }

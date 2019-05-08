@@ -20,11 +20,11 @@ func TestListLimit(t *testing.T) {
   r := apitest.NewCrudTester()
   r.Init(t)
 
-  r.RunTest(t, "site-list-limit-1", func() (*http.Request, error) {
+  r.RunTestWith(t, "site-list-limit-1", func() (*http.Request, error) {
     return http.NewRequest("GET", "/api/crud/site/?limit=1&offset=1", nil)
   })
 
-  r.RunTest(t, "site-list-limit-2", func() (*http.Request, error) {
+  r.RunTestWith(t, "site-list-limit-2", func() (*http.Request, error) {
     return http.NewRequest("GET", "/api/crud/site/?limit=2&offset=2", nil)
   })
 
@@ -47,11 +47,11 @@ func TestCreateWithID(t *testing.T) {
   }
   defer payloadfile.Close()
 
-  r.RunTest(t, "site-create-id", func() (*http.Request, error) {
+  r.RunTestWith(t, "site-create-id", func() (*http.Request, error) {
     return http.NewRequest("POST", "/api/crud/site/", payloadfile)
   })
 
-  r.RunTest(t, "site-create-id-get", func() (*http.Request, error) {
+  r.RunTestWith(t, "site-create-id-get", func() (*http.Request, error) {
     return http.NewRequest("GET", "/api/crud/site/S10", nil)
   })
 
