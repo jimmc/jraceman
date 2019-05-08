@@ -152,10 +152,13 @@ func Open(repoPath string) (*Repos, error) {
   if err != nil {
     return nil, err
   }
+  return OpenDB(db)
+}
 
+// OpenDB opens a Repos on an already-opened database.
+func OpenDB(db *sql.DB) (*Repos, error) {
   // Open the database for real
-  err = db.Ping()
-  if err != nil {
+  if err := db.Ping(); err != nil {
     return nil, err
   }
 
@@ -200,7 +203,7 @@ func Open(repoPath string) (*Repos, error) {
   }
   r.tableMap = tableMap
 
-  return r, err
+  return r, nil
 }
 
 func (r *Repos) TableRepo(name string) (TableRepo, error) {

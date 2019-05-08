@@ -10,9 +10,7 @@ import (
   "testing"
 
   "github.com/jimmc/jracemango/dbrepo"
-  dbtest "github.com/jimmc/jracemango/dbrepo/test"
 
-  goldenbase "github.com/jimmc/golden/base"
   goldendb "github.com/jimmc/golden/db"
 )
 
@@ -27,12 +25,7 @@ import (
 //   r.RunTestWith(t, basename2, callback2)
 //   r.Close()
 type Tester struct {
-  goldenbase.Tester
-
-  // Base name for the test setup file; if not set, uses BaseName.
-  SetupBaseName string
-  // Path to the test setup file; if not set, uses SetupBaseName.
-  SetupPath string
+  goldendb.Tester
 
   CreateHandler func(r *Tester) http.Handler
   Callback func() (*http.Request, error)
@@ -54,36 +47,17 @@ func (r *Tester) SetBaseNameAndCallback(basename string, callback func() (*http.
   r.Callback = callback
 }
 
-// SetupFilePath returns the complete path to the setup file.
-func (r *Tester) SetupFilePath() string {
-  return r.GetFilePath(r.SetupPath, r.SetupBaseName, "setup")
-}
-
-// Init does all of the setup from base.Tester, and sets up the database.
+// Init does all of the setup from goldendb.Tester, and sets up the database.
 func (r *Tester) Init(t *testing.T) {
   t.Helper()
   if err := r.Tester.Init(); err != nil {
     t.Fatalf("Error in base.Tester.Init: %v", err)
   }
-  repos, err := dbtest.ReposEmpty()
+  repos, err := dbrepo.OpenDB(r.Tester.DB)
   if err != nil {
     t.Fatalf("Error creating Repos: %v", err)
   }
   r.repos = repos
-}
-
-// Arrange loads a setup file into the database. The caller should update the
-// SetupBaseName or SetupPath fields before calling this function.
-func (r *Tester) Arrange() error {
-  setupfilepath := r.SetupFilePath()
-  if err := goldendb.LoadSetupFile(r.repos.DB(), setupfilepath); err != nil {
-    r.repos.Close()
-    return fmt.Errorf("error loading setup file %v: %v", setupfilepath, err)
-  }
-  if err := r.Tester.Arrange(); err != nil {
-    return err
-  }
-  return nil
 }
 
 // Act sets up the handler, calls the request, and records the result to the output file.
@@ -116,9 +90,12 @@ func (r *Tester) Act() error {
   return nil
 }
 
-// Assert closes the output file and compares it to the golden file.
-func (r *Tester) Assert() error {
-  return r.Tester.Assert()
+// Close closes our database.
+func (r *Tester) Close() {
+  if r.repos != nil {
+    r.repos.Close()
+  }
+  r.Tester.Close()
 }
 
 // RunTest loads a new setup file, runs the test, and compares the output.
@@ -135,13 +112,6 @@ func (r *Tester) RunTest(t *testing.T) {
   }
   if err := r.Assert(); err != nil {
     t.Fatal(err)
-  }
-}
-
-// Close closes our database.
-func (r *Tester) Close() {
-  if r.repos != nil {
-    r.repos.Close()
   }
 }
 
