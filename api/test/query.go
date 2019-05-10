@@ -2,34 +2,28 @@ package test
 
 import (
   "net/http"
+  "testing"
 
   "github.com/jimmc/jracemango/api/query"
-  "github.com/jimmc/jracemango/dbrepo"
-  dbtest "github.com/jimmc/jracemango/dbrepo/test"
-
-  goldenhttp "github.com/jimmc/golden/http"
 )
 
-func StartQueryToGolden(basename string, callback func() (*http.Request, error)) error {
-  repos, handler, err := StartQueryToSetup()
-  if err != nil{
-    return err
-  }
-  defer repos.Close()
-
-  return goldenhttp.SetupToGolden(repos.DB(), handler, basename, callback)
-}
-
-// StartQueryToSetup initializes the database and the http handler for api/query.
-func StartQueryToSetup() (*dbrepo.Repos, http.Handler, error) {
-  repos, err := dbtest.ReposEmpty()
-  if err != nil {
-    return nil, nil, err
-  }
+// CreateQueryHandler create an http handler for our query calls.
+func CreateQueryHandler(r *Tester) http.Handler {
   config := &query.Config{
     Prefix: "/api/query/",
-    DomainRepos: repos,
+    DomainRepos: r.repos,
   }
-  handler := query.NewHandler(config)
-  return repos, handler, nil
+  return query.NewHandler(config)
+}
+
+// NewQueryTester returns a new Tester for testing our query calls.
+func NewQueryTester() *Tester {
+  return NewTester(CreateQueryHandler)
+}
+
+// RunQueryTest creates a new Tester and runs a test for a query call.
+func RunQueryTest(t *testing.T, basename string, callback func() (*http.Request, error)) {
+  t.Helper()
+  r := NewQueryTester()
+  r.Run(t, basename, callback)
 }

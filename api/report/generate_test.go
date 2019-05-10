@@ -3,12 +3,9 @@ package report_test
 import (
   "net/http"
   "os"
-  "strings"
   "testing"
 
   apitest "github.com/jimmc/jracemango/api/test"
-
-  goldenhttp "github.com/jimmc/golden/http"
 )
 
 var testRoots = []string{"testdata", "../../report/template"}
@@ -17,18 +14,10 @@ func TestGet(t *testing.T) {
   request := func() (*http.Request, error) {
     return http.NewRequest("GET", "/api/report/generate/?name=site-report&data=S2", nil)
   }
-  if err := apitest.StartReportToGoldenWithRoots("site-report", testRoots, request); err != nil {
-    t.Error(err.Error())
-  }
+  apitest.RunReportTest(t, "site-report", testRoots, request)
 }
 
 func TestPost(t *testing.T) {
-  repos, handler, err := apitest.StartReportToSetupWithRoots(testRoots)
-  if err != nil{
-    t.Fatal(err.Error())
-  }
-  defer repos.Close()
-
   payloadfile, err := os.Open("testdata/site-report.payload")
   if err != nil {
     t.Fatal(err.Error())
@@ -43,19 +32,16 @@ func TestPost(t *testing.T) {
     req.Header.Set("Content-Type", "application/json")
     return req, nil
   }
-  if err := goldenhttp.SetupToGolden(repos.DB(), handler, "site-report", request);
-       err != nil {
-    t.Error(err.Error())
-  }
+  apitest.RunReportTest(t, "site-report", testRoots, request)
 }
 
 func TestOrderbyName(t *testing.T) {
   request := func() (*http.Request, error) {
     return http.NewRequest("GET", "/api/report/generate/?name=site-all-report&orderby=name", nil)
   }
-  if err := apitest.StartReportDbToGoldenWithRoots("site-report", "site-orderby-name", testRoots, request); err != nil {
-    t.Error(err.Error())
-  }
+  r := apitest.NewReportTester(testRoots)
+  r.SetupBaseName = "site-report"
+  r.Run(t, "site-orderby-name", request)
 }
 
 /* TODO: need to define default order-by as "name".
@@ -64,9 +50,9 @@ func TestOrderbyNone(t *testing.T) {
   request := func() (*http.Request, error) {
     return http.NewRequest("GET", "/api/report/generate/?name=site-all-report", nil)
   }
-  if err := apitest.StartReportDbToGoldenWithRoots("site-report", "site-orderby-name", testRoots, request); err != nil {
-    t.Error(err.Error())
-  }
+  r := apitest.NewReportTester(testRoots)
+  r.SetupBaseName = "site-report"
+  r.Run(t, "site-orderby-name", request)
 }
 */
 
@@ -74,31 +60,32 @@ func TestOrderbyCity(t *testing.T) {
   request := func() (*http.Request, error) {
     return http.NewRequest("GET", "/api/report/generate/?name=site-all-report&orderby=city", nil)
   }
-  if err := apitest.StartReportDbToGoldenWithRoots("site-report", "site-orderby-city", testRoots, request); err != nil {
-    t.Error(err.Error())
-  }
+  r := apitest.NewReportTester(testRoots)
+  r.SetupBaseName = "site-report"
+  r.Run(t, "site-orderby-city", request)
 }
 
 func TestOrderbyInvalid(t *testing.T) {
   request := func() (*http.Request, error) {
     return http.NewRequest("GET", "/api/report/generate/?name=site-all-report&orderby=invalid", nil)
   }
-  err := apitest.StartReportDbToGoldenWithRoots("site-report", "site-orderby-city", testRoots, request)
+  r := apitest.NewReportTester(testRoots)
+  r.SetupBaseName = "site-report"
+  if err := r.Init(); err != nil {
+    t.Fatal(err)
+  }
+  r.SetBaseNameAndCallback("site-orderby-city", request)
+  if err := r.Arrange(); err != nil {
+    t.Fatal(err)
+  }
+  err := r.Act()
   if err == nil {
     t.Fatalf("Expected error for invalid sort key")
   }
-  if !strings.Contains(err.Error(), "invalid orderby") {
-    t.Errorf("Expected error about invalid orderby, but got something else: %v", err)
-  }
+  r.Close()
 }
 
 func TestWherePost(t *testing.T) {
-  repos, handler, err := apitest.StartReportToSetupWithRoots(testRoots)
-  if err != nil{
-    t.Fatal(err.Error())
-  }
-  defer repos.Close()
-
   payloadfile, err := os.Open("testdata/site-report-where.payload")
   if err != nil {
     t.Fatal(err.Error())
@@ -113,8 +100,8 @@ func TestWherePost(t *testing.T) {
     req.Header.Set("Content-Type", "application/json")
     return req, nil
   }
-  if err := goldenhttp.SetupDbToGolden(repos.DB(), handler, "site-report", "site-report-where", request);
-       err != nil {
-    t.Error(err.Error())
-  }
+
+  r := apitest.NewReportTester(testRoots)
+  r.SetupBaseName = "site-report"
+  r.Run(t, "site-report-where", request)
 }

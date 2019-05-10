@@ -12,7 +12,5 @@ func TestListGet(t *testing.T) {
     return http.NewRequest("GET", "/api/report/", nil)
   }
   reportRoots := []string{"testdata", "../../report/template"}
-  if err := apitest.StartReportToGoldenWithRoots("list-get", reportRoots, request); err != nil {
-    t.Error(err.Error())
-  }
+  apitest.RunReportTest(t, "list-get", reportRoots, request)
 }

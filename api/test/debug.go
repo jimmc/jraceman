@@ -2,34 +2,28 @@ package test
 
 import (
   "net/http"
+  "testing"
 
   "github.com/jimmc/jracemango/api/debug"
-  "github.com/jimmc/jracemango/dbrepo"
-  dbtest "github.com/jimmc/jracemango/dbrepo/test"
-
-  goldenhttp "github.com/jimmc/golden/http"
 )
 
-func StartDebugToGolden(basename string, callback func() (*http.Request, error)) error {
-  repos, handler, err := StartDebugToSetup()
-  if err != nil{
-    return err
-  }
-  defer repos.Close()
-
-  return goldenhttp.SetupToGolden(repos.DB(), handler, basename, callback)
-}
-
-// StartDebugToSetup initializes the database and the http handler for api/debug.
-func StartDebugToSetup() (*dbrepo.Repos, http.Handler, error) {
-  repos, err := dbtest.ReposEmpty()
-  if err != nil {
-    return nil, nil, err
-  }
+// CreateDebugHandler create an http handler for our debug calls.
+func CreateDebugHandler(r *Tester) http.Handler {
   config := &debug.Config{
     Prefix: "/api/debug/",
-    DomainRepos: repos,
+    DomainRepos: r.repos,
   }
-  handler := debug.NewHandler(config)
-  return repos, handler, nil
+  return debug.NewHandler(config)
+}
+
+// NewDebugTester returns a new Tester for testing our debug calls.
+func NewDebugTester() *Tester {
+  return NewTester(CreateDebugHandler)
+}
+
+// RunDebugTest creates a new Tester and runs a test for a debug call.
+func RunDebugTest(t *testing.T, basename string, callback func() (*http.Request, error)) {
+  t.Helper()
+  r := NewDebugTester()
+  r.Run(t, basename, callback)
 }
