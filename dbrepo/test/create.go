@@ -32,14 +32,3 @@ values('T1', 1, 'a', 'A'), ('T2', 2, 'b', null), ('T3', 3, 'c', 'C');
 func ReposEmpty() (*dbrepo.Repos, error) {
   return dbrepo.Open("sqlite3::memory:")
 }
-
-func ReposWithSetupFile(filename string) (*dbrepo.Repos, error) {
-  dbr, err := ReposEmpty()
-  if err != nil {
-    return nil, err
-  }
-  if err := goldendb.LoadSetupFile(dbr.DB(), filename); err != nil {
-    return nil, err
-  }
-  return dbr, nil
-}
