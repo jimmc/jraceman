@@ -6,7 +6,7 @@ import (
 
   "github.com/jimmc/jracemango/dbrepo"
 
-  goldenhttp "github.com/jimmc/golden/http"
+  goldenhttpdb "github.com/jimmc/golden/httpdb"
 )
 
 // Tester provides the structure for running API unit tests.
@@ -20,7 +20,7 @@ import (
 //   r.RunTestWith(basename2, callback2)
 //   r.Close()
 type Tester struct {
-  goldenhttp.Tester
+  goldenhttpdb.Tester
 
   repos *dbrepo.Repos
 }
@@ -29,13 +29,13 @@ type Tester struct {
 // function to create an http.Handler.
 func NewTester(createHandler func(r *Tester) http.Handler) *Tester {
   r := &Tester{}
-  r.Tester.CreateHandler = func(*goldenhttp.Tester) http.Handler {
+  r.Tester.CreateHandler = func(*goldenhttpdb.Tester) http.Handler {
     return createHandler(r)
   }
   return r
 }
 
-// Init does all of the setup from goldenhttp.Tester, and sets up the database.
+// Init does all of the setup from goldenhttpdb.Tester, and sets up the database.
 func (r *Tester) Init() error {
   if err := r.Tester.Init(); err != nil {
     return fmt.Errorf("error in base.Tester.Init: %v", err)
