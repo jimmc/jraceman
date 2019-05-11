@@ -6,40 +6,42 @@ import (
   "testing"
 
   apitest "github.com/jimmc/jracemango/api/test"
+
+  goldenbase "github.com/jimmc/golden/base"
 )
 
 // TODO: Update, Delete, Patch
 
 func TestList(t *testing.T) {
-  apitest.RunCrudTest(t, "site-list", func() (*http.Request, error) {
+  goldenbase.FatalIfError(t, apitest.RunCrudTest("site-list", func() (*http.Request, error) {
     return http.NewRequest("GET", "/api/crud/site/", nil)
-  })
+  }), "RunCrudTest")
 }
 
 func TestListLimit(t *testing.T) {
   r := apitest.NewCrudTester()
-  r.InitT(t)
+  goldenbase.FatalIfError(t, r.Init(), "Init")
 
-  r.RunTestWith(t, "site-list-limit-1", func() (*http.Request, error) {
+  goldenbase.FatalIfError(t, r.RunTestWith("site-list-limit-1", func() (*http.Request, error) {
     return http.NewRequest("GET", "/api/crud/site/?limit=1&offset=1", nil)
-  })
+  }), "RunTestWith")
 
-  r.RunTestWith(t, "site-list-limit-2", func() (*http.Request, error) {
+  goldenbase.FatalIfError(t, r.RunTestWith("site-list-limit-2", func() (*http.Request, error) {
     return http.NewRequest("GET", "/api/crud/site/?limit=2&offset=2", nil)
-  })
+  }), "RunTestWith")
 
   r.Close()
 }
 
 func TestGet(t *testing.T) {
-  apitest.RunCrudTest(t, "site-get", func() (*http.Request, error) {
+  goldenbase.FatalIfError(t, apitest.RunCrudTest("site-get", func() (*http.Request, error) {
     return http.NewRequest("GET", "/api/crud/site/S2", nil)
-  })
+  }), "RunCrudTest")
 }
 
 func TestCreateWithID(t *testing.T) {
   r := apitest.NewCrudTester()
-  r.InitT(t)
+  goldenbase.FatalIfError(t, r.Init(), "Init")
 
   payloadfile, err := os.Open("testdata/site-create-id.payload")
   if err != nil {
@@ -47,13 +49,13 @@ func TestCreateWithID(t *testing.T) {
   }
   defer payloadfile.Close()
 
-  r.RunTestWith(t, "site-create-id", func() (*http.Request, error) {
+  goldenbase.FatalIfError(t, r.RunTestWith("site-create-id", func() (*http.Request, error) {
     return http.NewRequest("POST", "/api/crud/site/", payloadfile)
-  })
+  }), "RunTestWith")
 
-  r.RunTestWith(t, "site-create-id-get", func() (*http.Request, error) {
+  goldenbase.FatalIfError(t, r.RunTestWith("site-create-id-get", func() (*http.Request, error) {
     return http.NewRequest("GET", "/api/crud/site/S10", nil)
-  })
+  }), "RunTestWith")
 
   r.Close()
 }

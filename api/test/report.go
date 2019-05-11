@@ -2,7 +2,6 @@ package test
 
 import (
   "net/http"
-  "testing"
 
   "github.com/jimmc/jracemango/api/report"
 )
@@ -25,8 +24,7 @@ func NewReportTester(reportRoots []string) *Tester {
 }
 
 // RunReportTest creates a new Tester and runs a test for a report call.
-func RunReportTest(t *testing.T, basename string, reportRoots []string, callback func() (*http.Request, error)) {
-  t.Helper()
+func RunReportTest(basename string, reportRoots []string, callback func() (*http.Request, error)) error {
   r := NewReportTester(reportRoots)
-  r.Run(t, basename, callback)
+  return r.Run(basename, callback)
 }

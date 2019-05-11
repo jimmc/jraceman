@@ -5,6 +5,8 @@ import (
   "testing"
 
   apitest "github.com/jimmc/jracemango/api/test"
+
+  goldenbase "github.com/jimmc/golden/base"
 )
 
 func TestListGet(t *testing.T) {
@@ -12,5 +14,5 @@ func TestListGet(t *testing.T) {
     return http.NewRequest("GET", "/api/report/", nil)
   }
   reportRoots := []string{"testdata", "../../report/template"}
-  apitest.RunReportTest(t, "list-get", reportRoots, request)
+  goldenbase.FatalIfError(t, apitest.RunReportTest("list-get", reportRoots, request), "RunReportTest")
 }

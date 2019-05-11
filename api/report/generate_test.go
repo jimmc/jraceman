@@ -6,6 +6,8 @@ import (
   "testing"
 
   apitest "github.com/jimmc/jracemango/api/test"
+
+  goldenbase "github.com/jimmc/golden/base"
 )
 
 var testRoots = []string{"testdata", "../../report/template"}
@@ -14,7 +16,7 @@ func TestGet(t *testing.T) {
   request := func() (*http.Request, error) {
     return http.NewRequest("GET", "/api/report/generate/?name=site-report&data=S2", nil)
   }
-  apitest.RunReportTest(t, "site-report", testRoots, request)
+  goldenbase.FatalIfError(t, apitest.RunReportTest("site-report", testRoots, request), "RunReportTest")
 }
 
 func TestPost(t *testing.T) {
@@ -32,7 +34,7 @@ func TestPost(t *testing.T) {
     req.Header.Set("Content-Type", "application/json")
     return req, nil
   }
-  apitest.RunReportTest(t, "site-report", testRoots, request)
+  goldenbase.FatalIfError(t, apitest.RunReportTest("site-report", testRoots, request), "RunReportTest")
 }
 
 func TestOrderbyName(t *testing.T) {
@@ -41,7 +43,7 @@ func TestOrderbyName(t *testing.T) {
   }
   r := apitest.NewReportTester(testRoots)
   r.SetupBaseName = "site-report"
-  r.Run(t, "site-orderby-name", request)
+  goldenbase.FatalIfError(t, r.Run("site-orderby-name", request), "Run")
 }
 
 /* TODO: need to define default order-by as "name".
@@ -52,7 +54,7 @@ func TestOrderbyNone(t *testing.T) {
   }
   r := apitest.NewReportTester(testRoots)
   r.SetupBaseName = "site-report"
-  r.Run(t, "site-orderby-name", request)
+  goldenbase.FatalIfError(t, r.Run("site-orderby-name", request), "Run")
 }
 */
 
@@ -62,7 +64,7 @@ func TestOrderbyCity(t *testing.T) {
   }
   r := apitest.NewReportTester(testRoots)
   r.SetupBaseName = "site-report"
-  r.Run(t, "site-orderby-city", request)
+  goldenbase.FatalIfError(t, r.Run("site-orderby-city", request), "Run")
 }
 
 func TestOrderbyInvalid(t *testing.T) {
@@ -103,5 +105,5 @@ func TestWherePost(t *testing.T) {
 
   r := apitest.NewReportTester(testRoots)
   r.SetupBaseName = "site-report"
-  r.Run(t, "site-report-where", request)
+  goldenbase.FatalIfError(t, r.Run("site-report-where", request), "Run")
 }

@@ -50,7 +50,7 @@ func TestExportTable(t *testing.T) {
     return e.ExportTableFromStruct(outfile, "test", &testEntity{})
   }
   r := goldendb.NewTester("exporttable", callback)
-  goldenbase.RunT(t, r)
+  goldenbase.FatalIfError(t, goldenbase.Run(r), "Run")
 }
 
 func TestExportEmptyTable(t *testing.T) {
@@ -59,5 +59,5 @@ func TestExportEmptyTable(t *testing.T) {
     return e.ExportTableFromStruct(outfile, "test", &testEntity{})
   }
   r := goldendb.NewTester("exportemptytable", callback)
-  goldenbase.RunT(t, r)
+  goldenbase.FatalIfError(t, goldenbase.Run(r), "Run")
 }

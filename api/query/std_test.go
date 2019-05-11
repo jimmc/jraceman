@@ -6,30 +6,32 @@ import (
   "testing"
 
   apitest "github.com/jimmc/jracemango/api/test"
+
+  goldenbase "github.com/jimmc/golden/base"
 )
 
 func TestGetColumnsDefault(t *testing.T) {
-  apitest.RunQueryTest(t, "site-get-columns", func() (*http.Request, error) {
+  goldenbase.FatalIfError(t, apitest.RunQueryTest("site-get-columns", func() (*http.Request, error) {
     return http.NewRequest("GET", "/api/query/site/", nil)
-  })
+  }), "RunQueryTest")
 }
 
 func TestGetColumns(t *testing.T) {
-  apitest.RunQueryTest(t, "site-get-columns", func() (*http.Request, error) {
+  goldenbase.FatalIfError(t, apitest.RunQueryTest("site-get-columns", func() (*http.Request, error) {
     return http.NewRequest("GET", "/api/query/site/column/", nil)
-  })
+  }), "RunQueryTest")
 }
 
 func TestPostColumns(t *testing.T) {
-  apitest.RunQueryTest(t, "site-get-columns", func() (*http.Request, error) {
+  goldenbase.FatalIfError(t, apitest.RunQueryTest("site-get-columns", func() (*http.Request, error) {
     return http.NewRequest("POST", "/api/query/site/column/", nil)
-  })
+  }), "RunQueryTest")
 }
 
 func TestGetRows(t *testing.T) {
-  apitest.RunQueryTest(t, "site-get-rows", func() (*http.Request, error) {
+  goldenbase.FatalIfError(t, apitest.RunQueryTest("site-get-rows", func() (*http.Request, error) {
     return http.NewRequest("GET", "/api/query/site/row/", nil)
-  })
+  }), "RunQueryTest")
 }
 
 func TestPostRowsDefault(t *testing.T) {
@@ -40,9 +42,9 @@ func TestPostRowsDefault(t *testing.T) {
   defer payloadfile.Close()
 
   // Test the path as the default POST operation.
-  apitest.RunQueryTest(t, "site-get-rows-where", func() (*http.Request, error) {
+  goldenbase.FatalIfError(t, apitest.RunQueryTest("site-get-rows-where", func() (*http.Request, error) {
     return http.NewRequest("POST", "/api/query/site/", payloadfile)
-  })
+  }), "RunQueryTest")
 }
 
 func TestPostRows(t *testing.T) {
@@ -53,13 +55,13 @@ func TestPostRows(t *testing.T) {
   defer payloadfile.Close()
 
   // Test the path as the default POST operation.
-  apitest.RunQueryTest(t, "site-get-rows-where", func() (*http.Request, error) {
+  goldenbase.FatalIfError(t, apitest.RunQueryTest("site-get-rows-where", func() (*http.Request, error) {
     return http.NewRequest("POST", "/api/query/site/row/", payloadfile)
-  })
+  }), "RunQueryTest")
 }
 
 func TestGetSummaries(t *testing.T) {
-  apitest.RunQueryTest(t, "site-get-summary", func() (*http.Request, error) {
+  goldenbase.FatalIfError(t, apitest.RunQueryTest("site-get-summary", func() (*http.Request, error) {
     return http.NewRequest("GET", "/api/query/site/summary/", nil)
-  })
+  }), "RunQueryTest")
 }

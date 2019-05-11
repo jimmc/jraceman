@@ -2,7 +2,6 @@ package test
 
 import (
   "net/http"
-  "testing"
 
   "github.com/jimmc/jracemango/api/debug"
 )
@@ -22,8 +21,7 @@ func NewDebugTester() *Tester {
 }
 
 // RunDebugTest creates a new Tester and runs a test for a debug call.
-func RunDebugTest(t *testing.T, basename string, callback func() (*http.Request, error)) {
-  t.Helper()
+func RunDebugTest(basename string, callback func() (*http.Request, error)) error {
   r := NewDebugTester()
-  r.Run(t, basename, callback)
+  return r.Run(basename, callback)
 }

@@ -3,7 +3,6 @@ package test
 import (
   "fmt"
   "net/http"
-  "testing"
 
   "github.com/jimmc/jracemango/dbrepo"
 
@@ -13,12 +12,12 @@ import (
 // Tester provides the structure for running API unit tests.
 // For a single test, the typical calling sequence is:
 //   r := NewTester(handlerCreateFunc)
-//   r.Run(t, basename, callback)
+//   r.Run(basename, callback)
 // For multiple tests, maintaining the database state across tests as it changes:
 //   r := NewTester(handlerCreateFunc)
 //   r.Init()
-//   r.RunTestWith(t, basename, callback)
-//   r.RunTestWith(t, basename2, callback2)
+//   r.RunTestWith(basename, callback)
+//   r.RunTestWith(basename2, callback2)
 //   r.Close()
 type Tester struct {
   goldenhttp.Tester
@@ -49,12 +48,6 @@ func (r *Tester) Init() error {
   return nil
 }
 
-func (r *Tester) InitT(t *testing.T) {
-  if err := r.Init(); err != nil {
-    t.Fatal(err)
-  }
-}
-
 // Close closes our database.
 func (r *Tester) Close() error {
   if r.repos != nil {
@@ -65,11 +58,12 @@ func (r *Tester) Close() error {
 }
 
 // Run initializes the tester, runs a test, and closes it, calling Fatalf on any error.
-func (r *Tester) Run(t *testing.T, basename string, callback func() (*http.Request, error)) {
-  t.Helper()
+func (r *Tester) Run(basename string, callback func() (*http.Request, error)) error {
   if err := r.Init(); err != nil {
-    t.Fatal(err)
+    return err
   }
-  r.RunTestWith(t, basename, callback)
-  r.Close()
+  if err := r.RunTestWith(basename, callback); err != nil {
+    return err
+  }
+  return r.Close()
 }

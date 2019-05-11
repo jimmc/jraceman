@@ -2,7 +2,6 @@ package test
 
 import (
   "net/http"
-  "testing"
 
   "github.com/jimmc/jracemango/api/query"
 )
@@ -22,8 +21,7 @@ func NewQueryTester() *Tester {
 }
 
 // RunQueryTest creates a new Tester and runs a test for a query call.
-func RunQueryTest(t *testing.T, basename string, callback func() (*http.Request, error)) {
-  t.Helper()
+func RunQueryTest(basename string, callback func() (*http.Request, error)) error {
   r := NewQueryTester()
-  r.Run(t, basename, callback)
+  return r.Run(basename, callback)
 }
