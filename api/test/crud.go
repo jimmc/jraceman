@@ -23,5 +23,5 @@ func NewCrudTester() *Tester {
 // RunCrudTest creates a new Tester and runs a test for a crud call.
 func RunCrudTest(basename string, callback func() (*http.Request, error)) error {
   r := NewCrudTester()
-  return r.Run(basename, callback)
+  return RunOneWith(r, basename, callback)
 }

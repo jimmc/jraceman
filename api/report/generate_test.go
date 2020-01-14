@@ -8,6 +8,7 @@ import (
   apitest "github.com/jimmc/jracemango/api/test"
 
   goldenbase "github.com/jimmc/golden/base"
+  goldenhttp "github.com/jimmc/golden/http"
 )
 
 var testRoots = []string{"testdata", "../../report/template"}
@@ -43,7 +44,7 @@ func TestOrderbyName(t *testing.T) {
   }
   r := apitest.NewReportTester(testRoots)
   r.SetupBaseName = "site-report"
-  goldenbase.FatalIfError(t, r.Run("site-orderby-name", request), "Run")
+  goldenbase.FatalIfError(t, goldenhttp.RunOneWith(r, "site-orderby-name", request), "Run")
 }
 
 /* TODO: need to define default order-by as "name".
@@ -54,7 +55,7 @@ func TestOrderbyNone(t *testing.T) {
   }
   r := apitest.NewReportTester(testRoots)
   r.SetupBaseName = "site-report"
-  goldenbase.FatalIfError(t, r.Run("site-orderby-name", request), "Run")
+  goldenbase.FatalIfError(t, goldenhttp.RunOneWith(r, "site-orderby-name", request), "Run")
 }
 */
 
@@ -64,7 +65,7 @@ func TestOrderbyCity(t *testing.T) {
   }
   r := apitest.NewReportTester(testRoots)
   r.SetupBaseName = "site-report"
-  goldenbase.FatalIfError(t, r.Run("site-orderby-city", request), "Run")
+  goldenbase.FatalIfError(t, goldenhttp.RunOneWith(r, "site-orderby-city", request), "Run")
 }
 
 func TestOrderbyInvalid(t *testing.T) {
@@ -105,5 +106,5 @@ func TestWherePost(t *testing.T) {
 
   r := apitest.NewReportTester(testRoots)
   r.SetupBaseName = "site-report"
-  goldenbase.FatalIfError(t, r.Run("site-report-where", request), "Run")
+  goldenbase.FatalIfError(t, goldenhttp.RunOneWith(r, "site-report-where", request), "Run")
 }

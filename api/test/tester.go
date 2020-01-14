@@ -58,11 +58,11 @@ func (r *Tester) Close() error {
 }
 
 // Run initializes the tester, runs a test, and closes it, calling Fatalf on any error.
-func (r *Tester) Run(basename string, callback func() (*http.Request, error)) error {
+func RunOneWith(r *Tester, basename string, callback func() (*http.Request, error)) error {
   if err := r.Init(); err != nil {
     return err
   }
-  if err := r.RunTestWith(basename, callback); err != nil {
+  if err := goldenhttpdb.RunTestWith(r, basename, callback); err != nil {
     return err
   }
   return r.Close()

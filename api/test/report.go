@@ -26,5 +26,5 @@ func NewReportTester(reportRoots []string) *Tester {
 // RunReportTest creates a new Tester and runs a test for a report call.
 func RunReportTest(basename string, reportRoots []string, callback func() (*http.Request, error)) error {
   r := NewReportTester(reportRoots)
-  return r.Run(basename, callback)
+  return RunOneWith(r, basename, callback)
 }

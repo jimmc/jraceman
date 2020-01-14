@@ -8,6 +8,7 @@ import (
   apitest "github.com/jimmc/jracemango/api/test"
 
   goldenbase "github.com/jimmc/golden/base"
+  goldenhttp "github.com/jimmc/golden/http"
 )
 
 // TODO: Update, Delete, Patch
@@ -22,11 +23,11 @@ func TestListLimit(t *testing.T) {
   r := apitest.NewCrudTester()
   goldenbase.FatalIfError(t, r.Init(), "Init")
 
-  goldenbase.FatalIfError(t, r.RunTestWith("site-list-limit-1", func() (*http.Request, error) {
+  goldenbase.FatalIfError(t, goldenhttp.RunTestWith(r, "site-list-limit-1", func() (*http.Request, error) {
     return http.NewRequest("GET", "/api/crud/site/?limit=1&offset=1", nil)
   }), "RunTestWith")
 
-  goldenbase.FatalIfError(t, r.RunTestWith("site-list-limit-2", func() (*http.Request, error) {
+  goldenbase.FatalIfError(t, goldenhttp.RunTestWith(r, "site-list-limit-2", func() (*http.Request, error) {
     return http.NewRequest("GET", "/api/crud/site/?limit=2&offset=2", nil)
   }), "RunTestWith")
 
@@ -49,11 +50,11 @@ func TestCreateWithID(t *testing.T) {
   }
   defer payloadfile.Close()
 
-  goldenbase.FatalIfError(t, r.RunTestWith("site-create-id", func() (*http.Request, error) {
+  goldenbase.FatalIfError(t, goldenhttp.RunTestWith(r, "site-create-id", func() (*http.Request, error) {
     return http.NewRequest("POST", "/api/crud/site/", payloadfile)
   }), "RunTestWith")
 
-  goldenbase.FatalIfError(t, r.RunTestWith("site-create-id-get", func() (*http.Request, error) {
+  goldenbase.FatalIfError(t, goldenhttp.RunTestWith(r, "site-create-id-get", func() (*http.Request, error) {
     return http.NewRequest("GET", "/api/crud/site/S10", nil)
   }), "RunTestWith")
 

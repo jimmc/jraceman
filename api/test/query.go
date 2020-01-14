@@ -23,5 +23,5 @@ func NewQueryTester() *Tester {
 // RunQueryTest creates a new Tester and runs a test for a query call.
 func RunQueryTest(basename string, callback func() (*http.Request, error)) error {
   r := NewQueryTester()
-  return r.Run(basename, callback)
+  return RunOneWith(r, basename, callback)
 }

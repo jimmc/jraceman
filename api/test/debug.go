@@ -23,5 +23,5 @@ func NewDebugTester() *Tester {
 // RunDebugTest creates a new Tester and runs a test for a debug call.
 func RunDebugTest(basename string, callback func() (*http.Request, error)) error {
   r := NewDebugTester()
-  return r.Run(basename, callback)
+  return RunOneWith(r, basename, callback)
 }
