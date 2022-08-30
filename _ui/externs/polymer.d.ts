@@ -23,7 +23,7 @@ interface CustomElementRegistry {
 }
 
 interface ElementDefinitionOptions {
-  extends: string;
+  extends?: string;
 }
 
 interface PolymerTemplate extends Node {
@@ -89,7 +89,7 @@ declare module Polymer {
     shift(path: string, value: any): any;
     splice(path: string, start: number, deleteCount: number, ...items: any[]): any;
     static template: PolymerTemplate;
-    toggleAttribute(name: string, bool: boolean, node?: HTMLElement): void;
+    toggleAttribute(name: string, bool?: boolean, node?: HTMLElement): boolean;
     toggleClass(name: string, bool: boolean, node?: HTMLElement): void;
     transform(transform: string, node?: HTMLElement): void;
     translate3d(x: any, y: any, z: any, node?: HTMLElement): void;

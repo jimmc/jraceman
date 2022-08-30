@@ -3,6 +3,7 @@ package strsql
 import (
   "database/sql"
   "fmt"
+  "strings"
 )
 
 // QueryResults provides generic results for an SQL query.
@@ -52,7 +53,7 @@ func QueryStarAndCollect(db *sql.DB, sql string, queryValues ...interface{}) (*Q
   }
   columnInfo := make([]*ColumnInfo, len(columnTypes))
   for c, col := range columnTypes {
-    dbType := col.DatabaseTypeName()
+    dbType := strings.ToLower(col.DatabaseTypeName())
     if isStringType(dbType) {
       dbType = "string"
     }
@@ -75,7 +76,7 @@ func QueryStarAndCollect(db *sql.DB, sql string, queryValues ...interface{}) (*Q
       return nil, err
     }
     for c, col := range columnTypes {
-      colDbTypeName := col.DatabaseTypeName()
+      colDbTypeName := strings.ToLower(col.DatabaseTypeName())
       // sqlite returns blank type names on pragma commands,
       // so try to convert those to strings when that works.
       if isStringType(colDbTypeName) || colDbTypeName == "" {

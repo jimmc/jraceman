@@ -37,6 +37,6 @@
     "vaadin-split-layout": "vaadin/vaadin-split-layout#^3.0.1"
   },
   "devDependencies": {
-    "web-component-tester": "~6.3.0",
+    "web-component-tester": "~6.3.0"
   }
 }

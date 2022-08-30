@@ -46,7 +46,7 @@ func TableExists(db *sql.DB, tableName string) (bool, error) {
 // for the specified table, and returns them in the same form as ColumnInfos.
 func TableColumns(db *sql.DB, tableName string) ([]ColumnInfo, error) {
   // TODO - this is specific to SQLite
-  colSql := `select name, type, "notnull", pk from pragma_table_info(?)`
+  colSql := `select name, lower(type), "notnull", pk from pragma_table_info(?)`
   results, err := strsql.QueryStarAndCollect(db, colSql, tableName)
   if err != nil {
     return nil, fmt.Errorf("error getting column info for table %s: %v", tableName, err)

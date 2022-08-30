@@ -5,6 +5,10 @@ The UI is implemented in Polyer + Typescript + Annotations.
 
 ## Building the UI
 
+### Install bower modules
+
+    bower install
+
 ### Build
 
 To compile the UI:
