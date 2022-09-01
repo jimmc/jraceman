@@ -125,7 +125,7 @@ func importFile(config *config, dbRepos *dbrepo.Repos) error {
 func runHttpServer(config *config, dbRepos *dbrepo.Repos) {
   mux := http.NewServeMux()
 
-  uiFileHandler := http.FileServer(http.Dir(config.uiRoot))
+  uiFileHandler := newImportResolver(http.FileServer(http.Dir(config.uiRoot)))
   apiPrefix := "/api/"
   apiHandler := api.NewHandler(&api.Config{
     Prefix: apiPrefix,

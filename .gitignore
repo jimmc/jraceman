@@ -2,3 +2,4 @@ jracemango
 report/testdata/*.html
 *.swp
 **/*.out
+_private
