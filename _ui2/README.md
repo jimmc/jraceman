@@ -7,9 +7,10 @@ The UI is implemented in Lit + Typescript.
 
 ### Install Lit
 
-The first time only, install a local copy of the Lit package:
+The first time only, install a local copy of the Lit and Vaadin components packages:
 
     npm install lit
+    npm install @vaadin/vaadin-core
 
 ### Build
 

@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@vaadin/vaadin-core": "^23.1.7",
     "lit": "^2.3.1"
   }
 }
