@@ -45,11 +45,12 @@ Follow the instructions in the [\_ui](./_ui) directory.
 Select a location for your database, for example $HOME/jrdb, then run the jraceman binary
 specifying that database:
 
-    ./jracemango -db sqlite3:$HOME/jrdb -create
+    mkdir _private      # Put files here you don't want to checkin to git
+    ./jracemango -db sqlite3:_private/jrdb-test -create
 
 ### Run the server
 
-    ./jracemango -db sqlite3:$HOME/jrdb
+    ./jracemango -db sqlite3:_private/jrdb-test
 
 ## Documentation
 

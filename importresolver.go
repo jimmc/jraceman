@@ -40,7 +40,7 @@ func (ir importResolver) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
         rw: rw,
         customReplacements: defaultReplacements,
     }
-    // glog.V(1).Infof("in importResolver with request=%v", req)
+    glog.V(3).Infof("in importResolver with request=%v", req)
     ir.fileHandler.ServeHTTP(responseWriterWrapper, req)
 }
 
@@ -56,12 +56,12 @@ type resolverResponseWriter struct {
 
 func (rrw resolverResponseWriter) Header() http.Header {
     hdr := rrw.rw.Header()
-    // glog.V(2).Infof("in resolveResponseWriter.Header with header=%v", hdr)
+    glog.V(3).Infof("in resolveResponseWriter.Header with header=%v", hdr)
     return hdr
 }
 
 func (rrw resolverResponseWriter) WriteHeader(status int) {
-    // glog.V(2).Infof("in resolveResponseWriter.WriteHeader with status=%v", status)
+    glog.V(2).Infof("in resolveResponseWriter.WriteHeader with status=%v", status)
     // We might change the size of the content we are returning, so don't send
     // that value, and instead set chunked transfer.
     rrw.Header().Del("Content-length")
@@ -70,11 +70,12 @@ func (rrw resolverResponseWriter) WriteHeader(status int) {
 }
 
 func (rrw resolverResponseWriter) Write(p []byte) (int, error) {
-    // glog.V(2).Infof("in resolveResponseWriter.Write with bytes=%v", p)
+    glog.V(3).Infof("in resolveResponseWriter.Write with bytes=%v", p)
     hdr := rrw.rw.Header()
     contentType := hdr.Get("content-type");
-    // glog.V(2).Infof("in resolveResponseWriter.Write content-type=%v", contentType)
-    if strings.HasPrefix(contentType, "text/javascript") {
+    glog.V(2).Infof("in resolveResponseWriter.Write content-type=%v", contentType)
+    if strings.HasPrefix(contentType, "text/javascript") ||
+      strings.HasPrefix(contentType, "application/javascript") {
         glog.V(2).Infof("Checking javascript from URL=%v", rrw.req.URL)
         p = []byte(rrw.fixImports(string(p)))
         p = []byte(rrw.fixExports(string(p)))
