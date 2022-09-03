@@ -1,6 +1,8 @@
 import {LitElement, html, css} from 'lit';
 import {customElement} from 'lit/decorators.js';
+import './competition-table.js'
 import './jraceman-tabs.js'
+import './table-queryedit.js'
 
 /**
  * sport-setup is the tab content that contains other tabs for sport setup.
@@ -16,9 +18,9 @@ export class SportSetup extends LitElement {
     return html`
         <jraceman-tabs>
             <h3 slot="tab">Competitions</h2>
-            <section slot="panel">Content for Competitions</section>
+            <section slot="panel"><competition-table></competition-table></section>
             <h3 slot="tab">Levels</h2>
-            <section slot="panel">Content for Levels</section>
+            <section slot="panel"><table-queryedit tableName="levels"></table-queryedit></section>
             <h3 slot="tab">Genders</h2>
             <section slot="panel">Content for Genders</section>
             <h3 slot="tab">Progressions</h2>
