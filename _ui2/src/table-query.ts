@@ -27,32 +27,37 @@ export class TableQuery extends LitElement {
   @property({type: String})
   selectedOp: string = '';
 
-  // getSelectValue gets the value of a <select> element.
-  getSelectValue(selector: string) {
-    console.log("getSelectorValue", selector)
-    var e = this.querySelector(selector)
-    if (e == null) {
-      console.log(" ... returns null")
+  // getSelectElement gets an HTMLSelectElement by selector.
+  getSelectElement(selector: string) {
+    var shadowRoot = this.shadowRoot
+    if (shadowRoot == null) {
+      console.error("shadowRoot is null")
       return null
     }
-    var sel = e as HTMLSelectElement
-      console.log(" ... returns", sel.value)
+    return shadowRoot.querySelector(selector) as HTMLSelectElement
+  }
+
+  // getSelectValue gets the value of a <select> element.
+  getSelectValue(selector: string) {
+    var sel = this.getSelectElement(selector)
+    if (sel == null) {
+      console.error("select element is null in getSelectValue")
+      return null
+    }
     return sel.value
   }
 
   // setSelectValue sets the value of a <select> element.
   setSelectValue(selector: string, val: string) {
-    var e = this.querySelector(selector)
-    if (e == null) {
+    var sel = this.getSelectElement(selector)
+    if (sel == null) {
+      console.error("select element is null in setSelectValue")
       return
     }
-    var sel = e as HTMLSelectElement
     sel.value = val
-    console.log("setSelectValue", val)
   }
 
   clear() {
-    console.log("in TableQuery.clear()");
     for (let col of this.tableDesc['Columns']) {
       const name = col.Name;
       this.setSelectValue("#val_"+name, '');
@@ -87,7 +92,6 @@ export class TableQuery extends LitElement {
       if (result && !result.Table) {
         result.Table = this.tableDesc.Table;
       }
-      console.log(result);
       this.queryResults = result;
     } catch(e) {
       this.queryResults = {
@@ -95,6 +99,8 @@ export class TableQuery extends LitElement {
         Error: e        // TODO: figure out type so we can just return responseText
       }
     }
+    console.log("queryResults", this.queryResults);
+    // TODO - display queryResults in results tab
   }
 
   isStringColumn(colType: string) {
@@ -103,10 +109,11 @@ export class TableQuery extends LitElement {
 
   render() {
     console.log("in TableQuery.render tableDesc is", this.tableDesc)
+    console.log("this", this)
     return html`
         <form>
-          <vaadin-button @click="${() => this.search()}">Search</vaadin-button>
-          <vaadin-button @click="${() => this.clear()}">Clear</vaadin-button>
+          <vaadin-button @click="${this.search.bind(this)}">Search</vaadin-button>
+          <vaadin-button @click="${this.clear.bind(this)}">Clear</vaadin-button>
           <table>
             ${repeat(this.tableDesc.Columns, (col /*, colIndex*/) => html`
               <tr>
