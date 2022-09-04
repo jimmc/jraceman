@@ -1,7 +1,8 @@
 import {LitElement, html} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 
-import "./table-desc.js"
+import { ApiManager } from "./api-manager.js"
+import { TableDesc, TableDescSupport, FKItem } from "./table-desc.js"
 import "./table-query.js"
 
 /**
@@ -10,33 +11,34 @@ import "./table-query.js"
 @customElement('table-queryedit')
 export class TableQueryedit extends LitElement {
 
-  @property({
-    type: String,
-    hasChanged(newName: String, oldName: String): boolean {
-      console.log("TableQueryedit.hasChanged", newName, oldName)
-      if (newName != oldName) {
-        if (newName && newName[0]!='(') {
-          console.log("Need to call loadColumns here")
-          //TableQueryedit.this.loadColumns()      // Kick off loading the columns
-            //TODO - figure out how to start loadColumns as a background task
-        }
-        console.log("TableQueryedit.hasChanged true")
-        return true
-      }
-      return false
-    }
-  })
+  @property({type: String})
   tableName = "(unset-in-table-queryedit-name)"
 
   //@property({type: Object})
   tableDesc: TableDesc = {
     Table: "(unset-in-table-queryedit-desc)",
-    Columns: []
+    Columns: [
+      {
+        Name: "id",             // For debugging, assume we have an ID column
+        Type: "string",
+        Label: "ID",
+        FKTable: "",
+        FKItems: [],
+      }
+    ]
   };
+
+  // Once everything has had a chance to get set up, we kick off loadColumns.
+  firstUpdated(changedProperties: Map<string,any>) {
+    console.log("in TableQueryedit.firstUpdated")
+    super.firstUpdated(changedProperties)
+    setTimeout(this.loadColumns.bind(this), 0)  // Start loadColumns "in the background"
+  }
 
   // Loads our column info from the API, builds a new TableDesc, and sets it
   // into this.tableDesc.
   async loadColumns() {
+    console.log("in TableQueryedit.loadColumns for", this.tableName)
     var td = {
       Table: this.tableName,
       Columns: []       // We will fill this in later
@@ -51,7 +53,8 @@ export class TableQueryedit extends LitElement {
         this.loadFKChoices(td, i, col.FKTable)
       }
     }
-    this.tableDesc = td         // TODO: do we need to schedule an update?
+    this.tableDesc = td
+    this.requestUpdate()        // Our columns have been changed, update the screen
   }
 
   async loadFKChoices(td: TableDesc, i: number, table: string) {

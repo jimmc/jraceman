@@ -4,7 +4,8 @@ import {repeat} from 'lit/directives/repeat.js';
 import {when} from 'lit/directives/when.js';
 import '@vaadin/button/vaadin-button.js';
 
-import './table-desc.js'
+import { ApiManager, XhrOptions } from './api-manager.js'
+import { TableDesc } from './table-desc.js'
 
 /**
  * table-query provides a form to do a query on a table.
@@ -28,12 +29,15 @@ export class TableQuery extends LitElement {
 
   // getSelectValue gets the value of a <select> element.
   getSelectValue(selector: string) {
+    console.log("getSelectorValue", selector)
     var e = this.querySelector(selector)
     if (e == null) {
+      console.log(" ... returns null")
       return null
     }
-    //return e.value    // TODO - cast e to appropriate type so we can get the value field
-    return "nuthin"
+    var sel = e as HTMLSelectElement
+      console.log(" ... returns", sel.value)
+    return sel.value
   }
 
   // setSelectValue sets the value of a <select> element.
@@ -42,11 +46,13 @@ export class TableQuery extends LitElement {
     if (e == null) {
       return
     }
-    //e.value = val     // TODO
+    var sel = e as HTMLSelectElement
+    sel.value = val
     console.log("setSelectValue", val)
   }
 
   clear() {
+    console.log("in TableQuery.clear()");
     for (let col of this.tableDesc['Columns']) {
       const name = col.Name;
       this.setSelectValue("#val_"+name, '');
@@ -99,14 +105,13 @@ export class TableQuery extends LitElement {
     console.log("in TableQuery.render tableDesc is", this.tableDesc)
     return html`
         <form>
-          <vaadin-button on-click="this.search()">Search</vaadin-button>
-          <vaadin-button on-click="this.clear()">Clear</vaadin-button>
+          <vaadin-button @click="${() => this.search()}">Search</vaadin-button>
+          <vaadin-button @click="${() => this.clear()}">Clear</vaadin-button>
           <table>
             ${repeat(this.tableDesc.Columns, (col /*, colIndex*/) => html`
               <tr>
                 <td>${col.Label}</td>
                 <td>
-                  <!-- Initially used paper-dropdown-menu, but it was too big and ugly. -->
                   <select id="op_${col.Name}">
                     <option value="eq">=</option>
                     <option value="ne">!=</option>
@@ -120,14 +125,18 @@ export class TableQuery extends LitElement {
                   </select>
                 </td>
                 <td>
+                  <!-- $when seems to not quite work: it inserts "false" before rendering
+                       its subexpression, and it doesn't render the false leg of a
+                       when expresion with both true and false functions. -->
+                  ${when(!col.FKTable, ()=>html`
+                    <input type=text id="val_${col.Name}" name=${col.Name} label=${col.Name}></input>
+                  `)}
                   ${when(col.FKTable, ()=>html`
                     <select id="val_${col.Name}">
                       ${repeat(col.FKItems, (keyitem) => html`
                         <option value="${keyitem.ID}">${keyitem.Summary}</option>
                       `)}
                     </select>
-                  `,()=>html`
-                    <input type=text id="val_${col.Name}" name=${col.Name} label=${col.Name}></input>
                   `)}
                 </td>
               </tr>

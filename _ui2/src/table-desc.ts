@@ -1,4 +1,4 @@
-interface ColumnDesc {
+export interface ColumnDesc {
   Name: string;
   Label: string;
   Type: string;
@@ -6,17 +6,17 @@ interface ColumnDesc {
   FKItems: FKItem[];
 }
 
-interface TableDesc {
+export interface TableDesc {
   Table: string;
   Columns: ColumnDesc[];
 }
 
-interface FKItem {
+export interface FKItem {
   ID: string;
   Summary: string;
 }
 
-class TableDescSupport {
+export class TableDescSupport {
   static tableDescToCols(tableDesc: TableDesc): ColumnDesc[] {
     const cols = tableDesc.Columns;
     for (let c=0; c<cols.length; c++) {

@@ -20,7 +20,7 @@ export class SportSetup extends LitElement {
             <h3 slot="tab">Competitions</h2>
             <section slot="panel"><competition-table></competition-table></section>
             <h3 slot="tab">Levels</h2>
-            <section slot="panel"><table-queryedit tableName="levels"></table-queryedit></section>
+            <section slot="panel"><table-queryedit tableName="level"></table-queryedit></section>
             <h3 slot="tab">Genders</h2>
             <section slot="panel">Content for Genders</section>
             <h3 slot="tab">Progressions</h2>
