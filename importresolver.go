@@ -1,6 +1,7 @@
 package main
 
 import (
+    "errors"
     "net/http"
     "regexp"
     "strings"
@@ -19,6 +20,8 @@ var (
         "lit-element/development": "lit-element/development/index.js",
         "lit-html": "lit-html/lit-html.js",
     }
+
+    errInvalidWrite = errors.New("invalid write result")
 )
 
 /** importResolver looks for .js files in an http request, then intercepts
@@ -70,7 +73,10 @@ func (rrw resolverResponseWriter) WriteHeader(status int) {
 }
 
 func (rrw resolverResponseWriter) Write(p []byte) (int, error) {
+    nr := len(p)        // Number of bytes passed to us.
     glog.V(3).Infof("in resolveResponseWriter.Write with bytes=%v", p)
+    glog.V(2).Infof("in resolveResponseWriter.Write for %q, content length before replacement is %d",
+      rrw.req.URL, len(p))
     hdr := rrw.rw.Header()
     contentType := hdr.Get("content-type");
     glog.V(2).Infof("in resolveResponseWriter.Write content-type=%v", contentType)
@@ -80,8 +86,19 @@ func (rrw resolverResponseWriter) Write(p []byte) (int, error) {
         p = []byte(rrw.fixImports(string(p)))
         p = []byte(rrw.fixExports(string(p)))
     }
-    n, err := rrw.rw.Write(p)
-    return n, err
+    glog.V(2).Infof("in resolveResponseWriter.Write for %q, content length after replacement is %d",
+      rrw.req.URL, len(p))
+    nw, err := rrw.rw.Write(p)
+    // We are being called from the io.Copy function (io.go:copyBuffer), which checks the
+    // return value of bytes written to make sure it matches the value for bytes read from
+    // the copy source. If we return a value other than the length of p, our caller treats it
+    // as an error and aborts the write. So we need to return nr rather than nw.
+    // This bug only shows up with files larger than 32KB, because copyBuffer uses a loop
+    // with a buffer size defined as "size := 32 * 1024" bytes.
+    if nw != len(p) {
+      return nw, errInvalidWrite
+    }
+    return nr, err
 }
 
 /** fixImports looks for base module imports and rewrites them.
