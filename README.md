@@ -48,6 +48,11 @@ specifying that database:
     mkdir _private      # Put files here you don't want to checkin to git
     ./jracemango -db sqlite3:_private/jrdb-test -create
 
+You can import a jraceman data file. For example, if you have the jraceman v1
+source files in $JRACEMAN, you can load the USACK sports definition:
+
+    ./jracemango -db sqlite3:_private/jrdb-test -import $JRACEMAN/data/usack-sports.txt
+
 ### Run the server
 
     ./jracemango -db sqlite3:_private/jrdb-test

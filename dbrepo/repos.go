@@ -260,8 +260,8 @@ func (r *Repos) UpgradeTable(tableName string, dryrun bool) (bool, string, error
   return false, "", fmt.Errorf("no such table %s", tableName)
 }
 
-// Import reads in the specified text file and loads our tables.
-func (r *Repos) Import(in io.Reader) (ixport.ImporterCounts, error) {
+// Import reads in the specified text file by filename and loads our tables.
+func (r *Repos) ImportFile(fileName string) (ixport.ImporterCounts, error) {
   rr, err := NewRowRepoWithTx(r)
   if err != nil {
     return ixport.ImporterCounts{}, err
@@ -273,7 +273,7 @@ func (r *Repos) Import(in io.Reader) (ixport.ImporterCounts, error) {
     }
   }()
   im := ixport.NewImporter(rr)
-  err = im.Import(in)
+  err = im.ImportFile(fileName)
   if err == nil {
     err = rr.Commit()
     committed = true

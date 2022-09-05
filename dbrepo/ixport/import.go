@@ -4,6 +4,8 @@ import (
   "bufio"
   "fmt"
   "io"
+  "os"
+  "path/filepath"
   "strconv"
   "strings"
 
@@ -29,6 +31,7 @@ func (i ImporterCounts) Unchanged() int {
 }
 
 type Importer struct {
+  fileName string       // The current source filename.
   rowRepo RowRepo
   lineno int
   tableName string
@@ -69,7 +72,23 @@ func (im *Importer) Counts() ImporterCounts {
   return im.counts
 }
 
-func (im *Importer) Import(reader io.Reader) error {
+func (im *Importer) ImportFile(importFile string) error {
+  oldFileName := im.fileName
+  defer func(){ im.fileName = oldFileName }()
+  im.fileName = importFile
+  inFile, err := os.Open(importFile)
+  if err != nil {
+    return fmt.Errorf("error opening import input file %s: %v", importFile, err)
+  }
+  defer inFile.Close()
+
+  glog.Infof("Importing from %s\n", importFile)
+  err = im.importReader(inFile)
+  glog.Infof("Done importing from %s\n", importFile)
+  return err
+}
+
+func (im *Importer) importReader(reader io.Reader) error {
   im.reset()
   scanner := bufio.NewScanner(reader)
   for scanner.Scan() {
@@ -129,8 +148,9 @@ func (im *Importer) importModeLine(line string) error {
     return im.setTable(words[1])
   case "columns":
     return im.setColumns(words[1])
-  /* TODO - implement include, maybe sql, sqlexpect, sqlcheck
   case "include":
+    return im.importInclude(words[1])
+  /* TODO - implement maybe sql, sqlexpect, sqlcheck
   case "sql":
   case "sqlexpect":
   case "sqlcheck":
@@ -301,6 +321,18 @@ func (im *Importer) importDataLine(line string) error {
   }
 
   return nil
+}
+
+// ImportInclude processes the !include directive to import a nested file.
+func (im *Importer) importInclude(fileName string) error {
+  if !filepath.IsAbs(fileName) {
+    // If the included fileName is not absolute, make it relative to the current file.
+    fileName = filepath.Join(filepath.Dir(im.fileName), fileName)
+  }
+  // Restore the line number in the current file after importing the included file.
+  currentLineNo := im.lineno
+  defer func(){ im.lineno = currentLineNo }()
+  return im.ImportFile(fileName)
 }
 
 func fieldChanged(newVal interface{}, oldVal interface{}) bool {

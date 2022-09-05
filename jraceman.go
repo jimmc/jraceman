@@ -31,6 +31,11 @@ type config struct {
 }
 
 func main() {
+  os.Exit(doMain())
+}
+
+// doMain returns 0 if no errors.
+func doMain() int {
   config := &config{}
 
   // Configuration flags
@@ -47,12 +52,14 @@ func main() {
   flag.Parse()
 
   if config.db == "" {
-    glog.Fatal("-db is required")
+    glog.Error("-db is required")
+    return 1
   }
 
   dbRepos, err := dbrepo.Open(config.db)
   if err != nil {
-    glog.Fatalf("Failed to open repository: %v", err)
+    glog.Errorf("Failed to open repository: %v", err)
+    return 1
   }
   defer dbRepos.Close()
 
@@ -62,31 +69,36 @@ func main() {
     glog.Info("Creating database tables")
     err = dbRepos.CreateTables()
     if err != nil {
-      glog.Fatalf("Failed to create repository tables: %v", err)
+      glog.Errorf("Failed to create repository tables: %v", err)
+      return 1
     }
     actionTaken = true
   }
 
   if config.exportFile != "" {
     if err := exportFile(config, dbRepos); err != nil {
-      glog.Fatalf(err.Error())
+      glog.Error(err.Error())
+      return 1
     }
     actionTaken = true;
   }
 
   if config.importFile != "" {
     if err := importFile(config, dbRepos); err != nil {
-      glog.Fatalf(err.Error())
+      glog.Error(err.Error())
+      return 1
     }
     actionTaken = true;
   }
 
   _ = app.Placeholder{}       // Just to use the app package
 
-  if !actionTaken {
-    runHttpServer(config, dbRepos)
-    // Doesn't return.
+  if actionTaken {
+    return 0
   }
+
+  runHttpServer(config, dbRepos)
+  return 1      // runHttpServer shouldn't return.
 }
 
 func exportFile(config *config, dbRepos *dbrepo.Repos) error {
@@ -106,14 +118,8 @@ func exportFile(config *config, dbRepos *dbrepo.Repos) error {
 }
 
 func importFile(config *config, dbRepos *dbrepo.Repos) error {
-  inFile, err := os.Open(config.importFile)
-  if err != nil {
-    return fmt.Errorf("error opening import input file %s: %v", config.importFile, err)
-  }
-  defer inFile.Close()
-
   glog.Infof("Importing from %s\n", config.importFile)
-  counts, err := dbRepos.Import(inFile)
+  counts, err := dbRepos.ImportFile(config.importFile)
   if err != nil {
     return fmt.Errorf("error importing from %s: %v", config.importFile, err)
   }
@@ -139,7 +145,8 @@ func runHttpServer(config *config, dbRepos *dbrepo.Repos) {
   mux.HandleFunc("/", redirectToUi)
 
   fmt.Printf("jraceman serving on port %v\n", config.port)
-  glog.Fatal(http.ListenAndServe(":"+strconv.Itoa(config.port), mux))
+  glog.Error(http.ListenAndServe(":"+strconv.Itoa(config.port), mux))
+  // If we return, that's an error.
 }
 
 func redirectToUi(w http.ResponseWriter, r *http.Request) {
