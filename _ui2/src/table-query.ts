@@ -5,7 +5,7 @@ import {when} from 'lit/directives/when.js';
 import '@vaadin/button/vaadin-button.js';
 
 import { ApiManager, XhrOptions } from './api-manager.js'
-import { TableDesc } from './table-desc.js'
+import { TableDesc, QueryResultsEvent } from './table-desc.js'
 
 /**
  * table-query provides a form to do a query on a table.
@@ -66,13 +66,13 @@ export class TableQuery extends LitElement {
   }
 
   async search() {
-    console.log("in TableQuery.search()");
+    console.log("TableQuery.search begin");
     let params = [];
     for (let col of this.tableDesc['Columns']) {
       const name = col.Name;
       const colVal = this.getSelectValue("#val_"+name)
       const colOp = this.getSelectValue("#op_"+name)
-      console.log(name, colOp, colVal)
+      console.log("TableQuery.search",name, colOp, colVal)
       if (colVal && colOp) {
         const colParams = {
           name: name,
@@ -99,8 +99,17 @@ export class TableQuery extends LitElement {
         Error: e        // TODO: figure out type so we can just return responseText
       }
     }
-    console.log("queryResults", this.queryResults);
-    // TODO - display queryResults in results tab
+    console.log("TableQuery.search results", this.queryResults);
+    // Now tell results tab to display this data.
+    let event = new CustomEvent<QueryResultsEvent>('jracemanQueryResultsEvent', {
+      detail: {
+        message: 'Query results for table '+this.tableDesc.Table,
+        results: this.queryResults
+      } as QueryResultsEvent
+    });
+    // Dispatch the event to the document so any element can listen for it.
+    console.log("TableQuery dispatching event", event)
+    document.dispatchEvent(event);
   }
 
   isStringColumn(colType: string) {
@@ -108,12 +117,10 @@ export class TableQuery extends LitElement {
   }
 
   render() {
-    console.log("in TableQuery.render tableDesc is", this.tableDesc)
-    console.log("this", this)
     return html`
         <form>
-          <vaadin-button @click="${this.search.bind(this)}">Search</vaadin-button>
-          <vaadin-button @click="${this.clear.bind(this)}">Clear</vaadin-button>
+          <vaadin-button @click="${this.search}">Search</vaadin-button>
+          <vaadin-button @click="${this.clear}">Clear</vaadin-button>
           <table>
             ${repeat(this.tableDesc.Columns, (col /*, colIndex*/) => html`
               <tr>

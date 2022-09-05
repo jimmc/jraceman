@@ -16,6 +16,18 @@ export interface FKItem {
   Summary: string;
 }
 
+export interface QueryResultsData {
+  Error?: string;
+  Table: string;
+  Columns: object[];
+  Rows: any[][];
+}
+
+export interface QueryResultsEvent {
+  message: string;
+  results: QueryResultsData;
+}
+
 export class TableDescSupport {
   static tableDescToCols(tableDesc: TableDesc): ColumnDesc[] {
     const cols = tableDesc.Columns;

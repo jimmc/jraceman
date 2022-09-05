@@ -2,6 +2,7 @@ import {LitElement, html, css} from 'lit';
 import {customElement} from 'lit/decorators.js';
 import '@vaadin/vaadin-split-layout/vaadin-split-layout.js';
 import './jraceman-tabs.js'
+import './query-results.js'
 import './sport-setup.js'
 
 /**
@@ -45,7 +46,16 @@ export class JracemanApp extends LitElement {
             </jraceman-tabs>
           </div>
           <div id="bottom" class="tab-container">
-            BOTTOM
+            <jraceman-tabs>
+                <h3 slot="tab">Messages</h2>
+                <section slot="panel">Messages content</section>
+                <h3 slot="tab">Query Results</h2>
+                <section slot="panel"><query-results></query-results></section>
+                <h3 slot="tab">Report Results</h2>
+                <section slot="panel">Report Results content</section>
+                <h3 slot="tab">Help</h2>
+                <section slot="panel">Help is not yet implemented</section>
+            </jraceman-tabs>
           </div>
       </vaadin-split-layout>
       <slot></slot>

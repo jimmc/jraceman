@@ -30,7 +30,6 @@ export class TableQueryedit extends LitElement {
 
   // Once everything has had a chance to get set up, we kick off loadColumns.
   firstUpdated(changedProperties: Map<string,any>) {
-    console.log("in TableQueryedit.firstUpdated")
     super.firstUpdated(changedProperties)
     setTimeout(this.loadColumns.bind(this), 0)  // Start loadColumns "in the background"
   }
@@ -70,12 +69,11 @@ export class TableQueryedit extends LitElement {
       }
       td.Columns[i].FKItems = newFKItems
     } catch(e) {
-      console.log("Error: ", e)         // TODO
+      console.error("Error: ", e)         // TODO
     }
   }
 
   render() {
-    console.log("in TableQueryedit tableDesc for", this.tableName, "is", this.tableDesc)
     return html`
         <jraceman-tabs>
             <h3 slot="tab">Query</h2>
