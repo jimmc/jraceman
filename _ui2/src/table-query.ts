@@ -129,28 +129,26 @@ export class TableQuery extends LitElement {
                   <select id="op_${col.Name}">
                     <option value="eq">=</option>
                     <option value="ne">!=</option>
-                    <template is="dom-if" if="${!col.FKTable}">
+                    ${when(!col.FKTable, ()=>html`
                       <option value="gt">&gt;</option>
                       <option value="ge">&gt;=</option>
                       <option value="lt">&lt;</option>
                       <option value="le">&lt;=</option>
-                      <option value="like" hidden="${!this.isStringColumn(col.Type)}">LIKE</option>
-                    </template>
+                      ${when(this.isStringColumn(col.Type), ()=>html`
+                        <option value="like">LIKE</option>
+                      `)}
+                    `)}
                   </select>
                 </td>
                 <td>
-                  <!-- $when seems to not quite work: it inserts "false" before rendering
-                       its subexpression, and it doesn't render the false leg of a
-                       when expresion with both true and false functions. -->
-                  ${when(!col.FKTable, ()=>html`
-                    <input type=text id="val_${col.Name}" name=${col.Name} label=${col.Name}></input>
-                  `)}
                   ${when(col.FKTable, ()=>html`
                     <select id="val_${col.Name}">
                       ${repeat(col.FKItems, (keyitem) => html`
                         <option value="${keyitem.ID}">${keyitem.Summary}</option>
                       `)}
                     </select>
+                  `, ()=>html`
+                    <input type=text id="val_${col.Name}" name=${col.Name} label=${col.Name}></input>
                   `)}
                 </td>
               </tr>
