@@ -1,9 +1,11 @@
 import {LitElement, html, css} from 'lit';
 import {customElement} from 'lit/decorators.js';
 import '@vaadin/vaadin-split-layout/vaadin-split-layout.js';
-import './jraceman-tabs.js'
+
 import './query-results.js'
 import './sport-setup.js'
+import { JracemanTabs} from './jraceman-tabs.js'
+import { QueryResultsEvent } from './table-desc.js'
 
 /**
  * jraceman-app is the top-level component that contains the entire JRaceman application.
@@ -23,6 +25,30 @@ export class JracemanApp extends LitElement {
       color: black;
     }
   `;
+
+  constructor() {
+    super()
+    // We add a listener for query results so that we can make
+    // the query results tab visible.
+    document.addEventListener("jracemanQueryResultsEvent", this.handleQueryResultsEvent.bind(this))
+  }
+
+  // When we get a query-results event, make the query-results tab visible.
+  handleQueryResultsEvent(e:Event) {
+    const evt = e as CustomEvent<QueryResultsEvent>
+    console.log("JracemanApp got updated results", evt.detail.results)
+    const shadowRoot = this.shadowRoot
+    if (shadowRoot == null) {
+      console.error("can't find shadowRoot")
+      return
+    }
+    const bottomTabs = shadowRoot.querySelector("#bottom-tabs") as JracemanTabs
+    if (bottomTabs == null) {
+      console.error("Can't find bottom-tabs")
+      return
+    }
+    bottomTabs.selectTabById("query-results")
+  }
 
   render() {
     return html`
@@ -46,10 +72,10 @@ export class JracemanApp extends LitElement {
             </jraceman-tabs>
           </div>
           <div id="bottom" class="tab-container">
-            <jraceman-tabs>
+            <jraceman-tabs id="bottom-tabs">
                 <span slot="tab">Messages</span>
                 <section slot="panel">Messages content</section>
-                <span slot="tab">Query Results</span>
+                <span slot="tab" id="query-results">Query Results</span>
                 <section slot="panel"><query-results></query-results></section>
                 <span slot="tab">Report Results</span>
                 <section slot="panel">Report Results content</section>

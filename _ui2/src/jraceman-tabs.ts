@@ -43,6 +43,18 @@ export class JracemanTabs extends LitElement {
     this.selectTab(0)
   }
 
+  // selectTabById can be called from another element to select a tab by
+  // the id of that tab slot.
+  selectTabById(id: string) {
+    const tab = this.querySelector("#"+id)
+    if (tab == null) {
+      console.error("can't find tab", id)
+      return
+    }
+    const index = this.tabs.indexOf(tab)
+    this.selectTab(index)
+  }
+
   selectTab(tabIndex: number) {
     this.tabs.forEach((tab:Element) => tab.removeAttribute("selected"))
     this.tabs[tabIndex].setAttribute("selected", "")
