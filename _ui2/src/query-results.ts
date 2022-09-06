@@ -23,7 +23,10 @@ export class QueryResults extends LitElement {
 
   @property({type: Object})
   queryResults: QueryResultsData = {
-  /* Sample data looks something like this:*/
+    Table: "",
+    Columns: [],
+    Rows: [],
+  /* Sample data looks something like this:
     Table: "fake",
     Columns: [
       {
@@ -39,7 +42,8 @@ export class QueryResults extends LitElement {
       [ "aaa", 123 ],
       [ "bbb", 456 ],
       [ "ccc", 789 ]
-    ]
+    ],
+    */
   };
 
   constructor() {
@@ -53,15 +57,34 @@ export class QueryResults extends LitElement {
     this.queryResults = evt.detail.results
   }
 
+  // vaadin-grid needs a path within each row item passed to it, so we
+  // convert each row to a map using the column names as field names.
+  queryResultsAsMaps(queryResults: QueryResultsData) {
+    let res = []
+    for (let row of queryResults.Rows) {
+      let rr = {}
+      let cx = 0
+      for (let col of queryResults.Columns) {
+        let cc = col as ColumnDesc
+        // With javascript, we could use rr[cc.Name]=row[cx]
+        // and access that using a field op such as rr.F where F=cc.Name,
+        // but typescript won't let us do that, so we resort to using eval instead.
+        let ev = "rr." + cc.Name + "=JSON.parse('" + JSON.stringify(row[cx]) + "')"
+        eval(ev)        // rr.F = row[cx]   where F=cc.Name
+        cx++
+      }
+      res.push(rr)
+    }
+    return res
+  }
+
   render() {
-    console.log("QueryResults render")
     return html`
-      Query Results here
       ${this.queryResults.Error}
-        <vaadin-grid id="grid" items="${JSON.stringify(this.queryResults.Rows)}">
+        <vaadin-grid id="grid" items="${JSON.stringify(this.queryResultsAsMaps(this.queryResults))}">
           ${/*@ts-ignore*/
             repeat(this.queryResults.Columns, (col:ColumnDesc, colIndex) => html`
-            <vaadin-grid-column header="${col.Name}" path="[colIndex]">
+            <vaadin-grid-column header="${col.Name}" path="${col.Name}">
             </vaadin-grid-column>
           `)}
         </vaadin-grid>
