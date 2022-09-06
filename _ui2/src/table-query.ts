@@ -29,7 +29,7 @@ export class TableQuery extends LitElement {
 
   // getSelectElement gets an HTMLSelectElement by selector.
   getSelectElement(selector: string) {
-    var shadowRoot = this.shadowRoot
+    const shadowRoot = this.shadowRoot
     if (shadowRoot == null) {
       console.error("shadowRoot is null")
       return null
@@ -39,7 +39,7 @@ export class TableQuery extends LitElement {
 
   // getSelectValue gets the value of a <select> element.
   getSelectValue(selector: string) {
-    var sel = this.getSelectElement(selector)
+    const sel = this.getSelectElement(selector)
     if (sel == null) {
       console.error("select element is null in getSelectValue")
       return null
@@ -49,7 +49,7 @@ export class TableQuery extends LitElement {
 
   // setSelectValue sets the value of a <select> element.
   setSelectValue(selector: string, val: string) {
-    var sel = this.getSelectElement(selector)
+    const sel = this.getSelectElement(selector)
     if (sel == null) {
       console.error("select element is null in setSelectValue")
       return
@@ -101,7 +101,7 @@ export class TableQuery extends LitElement {
     }
     console.log("TableQuery.search results", this.queryResults);
     // Now tell results tab to display this data.
-    let event = new CustomEvent<QueryResultsEvent>('jracemanQueryResultsEvent', {
+    const event = new CustomEvent<QueryResultsEvent>('jracemanQueryResultsEvent', {
       detail: {
         message: 'Query results for table '+this.tableDesc.Table,
         results: this.queryResults

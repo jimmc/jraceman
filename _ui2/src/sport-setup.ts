@@ -1,6 +1,5 @@
 import {LitElement, html, css} from 'lit';
 import {customElement} from 'lit/decorators.js';
-import './competition-table.js'
 import './jraceman-tabs.js'
 import './table-queryedit.js'
 
@@ -18,7 +17,7 @@ export class SportSetup extends LitElement {
     return html`
         <jraceman-tabs>
             <h3 slot="tab">Competitions</h2>
-            <section slot="panel"><competition-table></competition-table></section>
+            <section slot="panel"><table-queryedit tableName="competition"></table-queryedit></section>
             <h3 slot="tab">Levels</h2>
             <section slot="panel"><table-queryedit tableName="level"></table-queryedit></section>
             <h3 slot="tab">Genders</h2>

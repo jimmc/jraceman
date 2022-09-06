@@ -3,6 +3,7 @@ export interface XhrOptions {
   params?: any;
 }
 
+// ApiManager provides assistance for calling our back end services.
 export class ApiManager {
   public static async xhrJson(url: string, options?: XhrOptions) {
     const response = await this.xhrText(url, options);

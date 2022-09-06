@@ -65,11 +65,11 @@ export class QueryResults extends LitElement {
       let rr = {}
       let cx = 0
       for (let col of queryResults.Columns) {
-        let cc = col as ColumnDesc
+        const cc = col as ColumnDesc
         // With javascript, we could use rr[cc.Name]=row[cx]
         // and access that using a field op such as rr.F where F=cc.Name,
         // but typescript won't let us do that, so we resort to using eval instead.
-        let ev = "rr." + cc.Name + "=JSON.parse('" + JSON.stringify(row[cx]) + "')"
+        const ev = "rr." + cc.Name + "=JSON.parse('" + JSON.stringify(row[cx]) + "')"
         eval(ev)        // rr.F = row[cx]   where F=cc.Name
         cx++
       }
@@ -80,6 +80,7 @@ export class QueryResults extends LitElement {
 
   render() {
     return html`
+      Table: ${this.queryResults.Table}<br/>
       ${this.queryResults.Error}
         <vaadin-grid id="grid" items="${JSON.stringify(this.queryResultsAsMaps(this.queryResults))}">
           ${/*@ts-ignore*/

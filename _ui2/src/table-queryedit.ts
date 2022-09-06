@@ -17,15 +17,7 @@ export class TableQueryedit extends LitElement {
   //@property({type: Object})
   tableDesc: TableDesc = {
     Table: "(unset-in-table-queryedit-desc)",
-    Columns: [
-      {
-        Name: "id",             // For debugging, assume we have an ID column
-        Type: "string",
-        Label: "ID",
-        FKTable: "",
-        FKItems: [],
-      }
-    ]
+    Columns: [],
   };
 
   // Once everything has had a chance to get set up, we kick off loadColumns.
@@ -38,14 +30,14 @@ export class TableQueryedit extends LitElement {
   // into this.tableDesc.
   async loadColumns() {
     console.log("in TableQueryedit.loadColumns for", this.tableName)
-    var td = {
+    const td = {
       Table: this.tableName,
       Columns: []       // We will fill this in later
     } as TableDesc
     const result: TableDesc = await ApiManager.xhrJson('/api/query/' + this.tableName + '/')
     const cols = TableDescSupport.tableDescToCols(result);
     td.Columns = cols;
-    for (var i = 0; i<cols.length; i++) {
+    for (let i = 0; i<cols.length; i++) {
       const col = cols[i]
       if (col.FKTable) {
         td.Columns[i].FKItems = [{ID: "", Summary: ""} as FKItem];
