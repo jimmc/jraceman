@@ -16,21 +16,21 @@ export class SportSetup extends LitElement {
   render() {
     return html`
         <jraceman-tabs>
-            <h3 slot="tab">Competitions</h2>
+            <span slot="tab">Competitions</span>
             <section slot="panel"><table-queryedit tableName="competition"></table-queryedit></section>
-            <h3 slot="tab">Levels</h2>
+            <span slot="tab">Levels</span>
             <section slot="panel"><table-queryedit tableName="level"></table-queryedit></section>
-            <h3 slot="tab">Genders</h2>
+            <span slot="tab">Genders</span>
             <section slot="panel">Content for Genders</section>
-            <h3 slot="tab">Progressions</h2>
+            <span slot="tab">Progressions</span>
             <section slot="panel">Content for Progressions</section>
-            <h3 slot="tab">Scoring System</h2>
+            <span slot="tab">Scoring System</span>
             <section slot="panel">Content for Scoring System</section>
-            <h3 slot="tab">Scoring Rules</h2>
+            <span slot="tab">Scoring Rules</span>
             <section slot="panel">Content for Scoring Rules</section>
-            <h3 slot="tab">Stages</h2>
+            <span slot="tab">Stages</span>
             <section slot="panel">Content for Stages</section>
-            <h3 slot="tab">Exceptions</h2>
+            <span slot="tab">Exceptions</span>
             <section slot="panel">Content for Exceptions</section>
         </jraceman-tabs>
     `;

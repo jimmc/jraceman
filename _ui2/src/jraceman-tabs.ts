@@ -15,11 +15,14 @@ export class JracemanTabs extends LitElement {
       display: flex;
     }
     nav > ::slotted([slot="tab"]) {
-      padding: 1rem 2rem;
+      padding: 0.1rem 0.2rem;
+      margin: 0.1rem 0.1rem;
       flex: 1 1 auto;
       color: var(--color-darkGrey);
       border-bottom: 2px solid lightgrey;
       text-align: center;
+      font-size: large;
+      font-weight: bold;
     }
     nav > ::slotted([slot="tab"][selected]) {
       border-color: black;

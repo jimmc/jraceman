@@ -30,16 +30,16 @@ export class JracemanApp extends LitElement {
       <vaadin-split-layout id="main" orientation="vertical" vertical>
           <div id="top" class="tab-container">
             <jraceman-tabs>
-                <h3 slot="tab">Sport Setup</h2>
+                <span slot="tab">Sport Setup</span>
                 <section slot="panel"><sport-setup></sport-setup></section>
-                <h3 slot="tab">Tab 2</h2>
+                <span slot="tab">Tab 2</span>
                 <section slot="panel">Content for tab 2</section>
-                <h3 slot="tab">Tab 3</h2>
+                <span slot="tab">Tab 3</span>
                 <section slot="panel">
                     <jraceman-tabs>
-                        <h3 slot="tab">Tab 3.1</h2>
+                        <span slot="tab">Tab 3.1</span>
                         <section slot="panel">Content for tab 3.1</section>
-                        <h3 slot="tab">Tab 3.2</h2>
+                        <span slot="tab">Tab 3.2</span>
                         <section slot="panel">Content for tab 3.2</section>
                     </jraceman-tabs>
                 </section>
@@ -47,13 +47,13 @@ export class JracemanApp extends LitElement {
           </div>
           <div id="bottom" class="tab-container">
             <jraceman-tabs>
-                <h3 slot="tab">Messages</h2>
+                <span slot="tab">Messages</span>
                 <section slot="panel">Messages content</section>
-                <h3 slot="tab">Query Results</h2>
+                <span slot="tab">Query Results</span>
                 <section slot="panel"><query-results></query-results></section>
-                <h3 slot="tab">Report Results</h2>
+                <span slot="tab">Report Results</span>
                 <section slot="panel">Report Results content</section>
-                <h3 slot="tab">Help</h2>
+                <span slot="tab">Help</span>
                 <section slot="panel">Help is not yet implemented</section>
             </jraceman-tabs>
           </div>
