@@ -28,6 +28,11 @@ export interface QueryResultsEvent {
   results: QueryResultsData;
 }
 
+export interface SelectedResult {
+  Table: string;
+  ID: string;
+}
+
 export class TableDescSupport {
   static tableDescToCols(tableDesc: TableDesc): ColumnDesc[] {
     const cols = tableDesc.Columns;

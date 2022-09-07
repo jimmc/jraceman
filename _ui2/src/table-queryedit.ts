@@ -3,6 +3,7 @@ import {customElement, property} from 'lit/decorators.js';
 
 import { ApiManager } from "./api-manager.js"
 import { TableDesc, TableDescSupport, FKItem } from "./table-desc.js"
+import "./table-edit.js"
 import "./table-query.js"
 
 /**
@@ -74,7 +75,9 @@ export class TableQueryedit extends LitElement {
               <table-query tableDesc=${JSON.stringify(this.tableDesc)}></table-query>
             </section>
             <span slot="tab">Edit</span>
-            <section slot="panel">Content for Edit</section>
+            <section slot="panel">
+              <table-edit tableDesc=${JSON.stringify(this.tableDesc)}></table-edit>
+            </section>
         </jraceman-tabs>
     `;
   }
