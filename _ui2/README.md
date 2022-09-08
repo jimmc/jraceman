@@ -11,6 +11,7 @@ The first time only, install a local copy of the Lit and Vaadin components packa
 
     npm install lit
     npm install @vaadin/vaadin-core
+    npm install carbon-web-components
 
 ### Build
 
