@@ -4,13 +4,6 @@ import {repeat} from 'lit/directives/repeat.js';
 
 import { ColumnDesc, QueryResultsData, QueryResultsEvent } from './table-desc.js'
 
-/*
-interface SelectedResult {
-  Table: string;
-  ID: string;
-}
-*/
-
 /**
  * query-results provides a form to do a query on a table.
  */
@@ -53,10 +46,10 @@ export class QueryResults extends LitElement {
 
   constructor() {
     super()
-    document.addEventListener("jracemanQueryResultsEvent", this.handleQueryResultsEvent.bind(this))
+    document.addEventListener("jracemanQueryResultsEvent", this.onQueryResultsEvent.bind(this))
   }
 
-  handleQueryResultsEvent(e:Event) {
+  onQueryResultsEvent(e:Event) {
     const evt = e as CustomEvent<QueryResultsEvent>
     console.log("QueryResults got updated results", evt.detail.results)
     this.queryResults = evt.detail.results

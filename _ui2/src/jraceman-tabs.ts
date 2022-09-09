@@ -62,7 +62,7 @@ export class JracemanTabs extends LitElement {
     this.panels[tabIndex].setAttribute("selected", "")
   }
 
-  handleSelect(e:Event) {
+  onSelect(e:Event) {
     const index = this.tabs.indexOf(e.target as Element)
     this.selectTab(index)
   }
@@ -70,7 +70,7 @@ export class JracemanTabs extends LitElement {
   render() {
     return html`
       <nav>
-        <slot name="tab" @click=${(e:Event) => this.handleSelect(e)}></slot>
+        <slot name="tab" @click=${(e:Event) => this.onSelect(e)}></slot>
       </nav>
       <slot name="panel"></slot>
     `;
