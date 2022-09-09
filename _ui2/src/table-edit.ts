@@ -5,7 +5,7 @@ import {when} from 'lit/directives/when.js';
 import '@vaadin/button/vaadin-button.js';
 
 import { ApiManager, XhrOptions } from './api-manager.js'
-import { TableDesc, ColumnDesc, SelectedResult } from './table-desc.js'
+import { TableDesc, ColumnDesc, RequestEditEvent } from './table-desc.js'
 
 /**
  * table-edit provides a form to edit one record of a table.
@@ -21,12 +21,6 @@ export class TableEdit extends LitElement {
     Columns:[],
   };
 
-  @property({type: Object})
-  selectedResult: SelectedResult = {
-    Table: '',
-    ID: '',
-  };
-
   // If we are editing a new record, this value is blank.
   @property({type: String})
   recordId: string = '';
@@ -37,19 +31,27 @@ export class TableEdit extends LitElement {
   // databaseResult holds the result of the database query to load a record.
   databaseResult: any;
 
-  // Call this function when the selctedResult data changes.
-  async selectedResultChanged() {
-    if (!this.selectedResult || this.selectedResult.Table != this.tableDesc.Table) {
-      return;   // Not our record
+  constructor() {
+    super()
+    // We add a listener for edit requests.
+    document.addEventListener("jraceman-request-edit-event", this.onRequestEditEvent.bind(this))
+  }
+
+  // This function gets called when someone is asking for a row to be edited.
+  async onRequestEditEvent(e:Event) {
+    const evt = e as CustomEvent<RequestEditEvent>
+    const req:RequestEditEvent = evt.detail
+    if (!req || req.Table != this.tableDesc.Table) {
+      return;   // Not our table
     }
-    if (!this.selectedResult.ID) {
+    if (!req.ID) {
       return;   // No ID specified
     }
-    console.log("table-edit edit", this.selectedResult.Table, this.selectedResult.ID);
+    console.log("table-edit edit", req.Table, req.ID);
     // Build a query expression to select that row based on the ID
     const name = this.tableDesc.Columns[0].Name         // Typically "id"
     const colOp = 'eq';
-    const colVal = this.selectedResult.ID;
+    const colVal = req.ID;
     const colParams = {
       name: name,
       op: colOp,

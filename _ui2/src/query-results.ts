@@ -2,7 +2,7 @@ import {LitElement, html, css} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import {repeat} from 'lit/directives/repeat.js';
 
-import { ColumnDesc, QueryResultsData, QueryResultsEvent } from './table-desc.js'
+import { ColumnDesc, QueryResultsData, QueryResultsEvent, RequestEditEvent } from './table-desc.js'
 
 /**
  * query-results provides a form to do a query on a table.
@@ -29,14 +29,10 @@ export class QueryResults extends LitElement {
       },
       {
         Name: "col2",
-        Type: "string"
+        Type: "int"
       },
     ],
-    Rows: [
-      [ "aaa", 123 ],
-      [ "bbb", 456 ],
-      [ "ccc", 789 ]
-    ],
+    Rows: [ "aaa", 123 ],
     */
   };
 
@@ -76,7 +72,26 @@ export class QueryResults extends LitElement {
     console.log("QueryResults.selectRowByIndex", rowIndex)      // TODO - implement this
     this.selectedRowIndex = rowIndex
     this.requestUpdate()
-    // TODO - send request-edit event
+
+    // Get the ID for the selected row
+    const row = this.queryResults.Rows[rowIndex]
+    const idColumnIndex = this.queryResults.Columns.findIndex(col => col.Name == "id")
+    if (idColumnIndex < 0) {
+      console.warn("QueryResults.selectRowByIndex: no id field found in row", rowIndex)
+      return
+    }
+    const rowId = row[idColumnIndex]
+
+    // send request-edit event
+    const event = new CustomEvent<RequestEditEvent>('jraceman-request-edit-event', {
+      detail: {
+        Table: this.queryResults.Table,
+        ID: rowId
+      } as RequestEditEvent
+    });
+    // Dispatch the event to the document so any element can listen for it.
+    console.log("QueryResults dispatching event", event)
+    document.dispatchEvent(event);
   }
 
   render() {

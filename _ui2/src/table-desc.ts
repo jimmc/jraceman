@@ -16,10 +16,15 @@ export interface FKItem {
   Summary: string;
 }
 
+export interface QueryResultsColumnDesc {
+  Name: string;
+  Type: string;
+}
+
 export interface QueryResultsData {
   Error?: string;
   Table: string;
-  Columns: object[];
+  Columns: QueryResultsColumnDesc[];
   Rows: any[][];
 }
 
@@ -28,7 +33,7 @@ export interface QueryResultsEvent {
   results: QueryResultsData;
 }
 
-export interface SelectedResult {
+export interface RequestEditEvent {
   Table: string;
   ID: string;
 }
