@@ -30,7 +30,7 @@ export class JracemanApp extends LitElement {
     super()
     // We add a listener for query results so that we can make
     // the query results tab visible.
-    document.addEventListener("jracemanQueryResultsEvent", this.onQueryResultsEvent.bind(this))
+    document.addEventListener("jraceman-query-results-event", this.onQueryResultsEvent.bind(this))
   }
 
   // When we get a query-results event, make the query-results tab visible.

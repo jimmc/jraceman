@@ -42,7 +42,7 @@ export class QueryResults extends LitElement {
 
   constructor() {
     super()
-    document.addEventListener("jracemanQueryResultsEvent", this.onQueryResultsEvent.bind(this))
+    document.addEventListener("jraceman-query-results-event", this.onQueryResultsEvent.bind(this))
   }
 
   onQueryResultsEvent(e:Event) {
@@ -69,7 +69,7 @@ export class QueryResults extends LitElement {
   }
 
   selectRowByIndex(rowIndex: number) {
-    console.log("QueryResults.selectRowByIndex", rowIndex)      // TODO - implement this
+    console.log("QueryResults.selectRowByIndex", rowIndex)
     this.selectedRowIndex = rowIndex
     this.requestUpdate()
 

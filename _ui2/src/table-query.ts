@@ -101,7 +101,7 @@ export class TableQuery extends LitElement {
     }
     console.log("TableQuery.search results", this.queryResults);
     // Now tell results tab to display this data.
-    const event = new CustomEvent<QueryResultsEvent>('jracemanQueryResultsEvent', {
+    const event = new CustomEvent<QueryResultsEvent>('jraceman-query-results-event', {
       detail: {
         message: 'Query results for table '+this.tableDesc.Table,
         results: this.queryResults
