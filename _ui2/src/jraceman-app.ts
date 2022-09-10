@@ -2,8 +2,12 @@ import {LitElement, html, css} from 'lit';
 import {customElement} from 'lit/decorators.js';
 import '@vaadin/vaadin-split-layout/vaadin-split-layout.js';
 
+import './meet-setup.js'
+import './plan-setup.js'
 import './query-results.js'
 import './sport-setup.js'
+import './team-setup.js'
+import './venue-setup.js'
 import { JracemanTabs} from './jraceman-tabs.js'
 import { QueryResultsEvent } from './table-desc.js'
 
@@ -58,17 +62,22 @@ export class JracemanApp extends LitElement {
             <jraceman-tabs>
                 <span slot="tab">Sport Setup</span>
                 <section slot="panel"><sport-setup></sport-setup></section>
-                <span slot="tab">Tab 2</span>
-                <section slot="panel">Content for tab 2</section>
-                <span slot="tab">Tab 3</span>
-                <section slot="panel">
-                    <jraceman-tabs>
-                        <span slot="tab">Tab 3.1</span>
-                        <section slot="panel">Content for tab 3.1</section>
-                        <span slot="tab">Tab 3.2</span>
-                        <section slot="panel">Content for tab 3.2</section>
-                    </jraceman-tabs>
-                </section>
+                <span slot="tab">Plan Setup</span>
+                <section slot="panel"><plan-setup></sport-setup></section>
+                <span slot="tab">Venue Setup</span>
+                <section slot="panel"><venue-setup></sport-setup></section>
+                <span slot="tab">Team Setup</span>
+                <section slot="panel"><team-setup></sport-setup></section>
+                <span slot="tab">Meet Setup</span>
+                <section slot="panel"><meet-setup></sport-setup></section>
+                <span slot="tab">By Event</span>
+                <section slot="panel">By Event is not yet implemented</section>
+                <span slot="tab">Reports</span>
+                <section slot="panel">Reports is not yet implemented</section>
+                <span slot="tab">Database</span>
+                <section slot="panel">Database is not yet implemented</section>
+                <span slot="tab">Debug</span>
+                <section slot="panel">Debug is not yet implemented</section>
             </jraceman-tabs>
           </div>
           <div id="bottom" class="tab-container">
