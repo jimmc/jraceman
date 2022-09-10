@@ -67,12 +67,27 @@ export class JracemanTabs extends LitElement {
     this.selectTab(index)
   }
 
+  onRequestDisplay(e:Event) {
+    console.log("JracemanTabs onRequestDisplay", e)
+    const target = e.target
+    console.log("JracemanTabs onRequestDisplay target", target)
+    const panelIndex = this.panels.findIndex(p => p.children[0]==target)
+    if (panelIndex < 0) {
+      console.error("can't find panel", target)
+      return
+    }
+    this.selectTab(panelIndex)  // Display the tab at this level.
+    // Let the event propagate up to containing tabs as well.
+  }
+
   render() {
     return html`
       <nav>
         <slot name="tab" @click=${(e:Event) => this.onSelect(e)}></slot>
       </nav>
-      <slot name="panel"></slot>
+      <div @jraceman-request-display-event=${(e:Event) => this.onRequestDisplay(e)}>
+        <slot name="panel"></slot>
+      </div>
     `;
   }
 }

@@ -81,7 +81,17 @@ export class TableEdit extends LitElement {
     this.reset();
     this.editIdLabel = '[' + (this.recordId || 'New') + ']';
     // Make this tab visible
-    //this.selectThisTab(); // TODO
+    this.displayThisTab();
+  }
+
+  displayThisTab() {
+    const event = new Event('jraceman-request-display-event', {
+      bubbles: true,
+      composed: true
+    })
+    // Dispatch the request up our element chain.
+    console.log("TableEdit dispatching event", event)
+    this.dispatchEvent(event)
   }
 
   // getSelectElement gets an HTMLSelectElement by selector.
