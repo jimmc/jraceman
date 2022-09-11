@@ -42,7 +42,7 @@ export class TableQueryedit extends LitElement {
       const col = cols[i]
       if (col.FKTable) {
         td.Columns[i].FKItems = [{ID: "", Summary: ""} as FKItem];
-        this.loadFKChoices(td, i, col.FKTable)
+        await this.loadFKChoices(td, i, col.FKTable)
       }
     }
     this.tableDesc = td
