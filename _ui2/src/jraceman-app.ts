@@ -8,6 +8,7 @@ import './meet-setup.js'
 import './message-log.js'
 import './plan-setup.js'
 import './query-results.js'
+import './reports-pane.js'
 import './sport-setup.js'
 import './team-setup.js'
 import './venue-setup.js'
@@ -124,7 +125,7 @@ export class JracemanApp extends LitElement {
                 <span slot="tab">By Event</span>
                 <section slot="panel">By Event is not yet implemented</section>
                 <span slot="tab">Reports</span>
-                <section slot="panel">Reports is not yet implemented</section>
+                <section slot="panel"><reports-pane></reports-pane></section>
                 <span slot="tab">Database</span>
                 <section slot="panel">Database is not yet implemented</section>
                 <span slot="tab">Debug</span>
