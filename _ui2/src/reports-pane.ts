@@ -55,6 +55,15 @@ interface KeyTableItem {
   Summary: string;
 }
 
+export interface ReportResultsData {
+  HTML: string;
+}
+
+export interface ReportResultsEvent {
+  message: string;
+  results: ReportResultsData;
+}
+
 const opDisplayMap: {[key:string]:string} = {
   "eq": "=",
   "ne": "!=",
@@ -226,6 +235,16 @@ export class ReportsPane extends LitElement {
     try {
       const result = await ApiManager.xhrJson(path, options)
       this.reportResults = result
+      // Now tell report results tab to display this data.
+      const event = new CustomEvent<ReportResultsEvent>('jraceman-report-results-event', {
+        detail: {
+          message: 'Report results for report '+ reportName,
+          results: this.reportResults
+        } as ReportResultsEvent
+      });
+      // Dispatch the event to the document so any element can listen for it.
+      console.log("ReportsPane dispatching event", event)
+      document.dispatchEvent(event);
     } catch(e) {
       this.reportResults = {
         Error: e//.responseText         // TODO - get repsonseText only

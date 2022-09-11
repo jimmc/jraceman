@@ -9,10 +9,12 @@ import './message-log.js'
 import './plan-setup.js'
 import './query-results.js'
 import './reports-pane.js'
+import './report-results.js'
 import './sport-setup.js'
 import './team-setup.js'
 import './venue-setup.js'
 import { JracemanTabs} from './jraceman-tabs.js'
+import { ReportResultsEvent } from './reports-pane.js'
 import { QueryResultsEvent } from './table-desc.js'
 
 /**
@@ -42,19 +44,20 @@ export class JracemanApp extends LitElement {
     // We add a listener for query results so that we can make
     // the query results tab visible.
     document.addEventListener("jraceman-query-results-event", this.onQueryResultsEvent.bind(this))
+    document.addEventListener("jraceman-report-results-event", this.onReportResultsEvent.bind(this))
     document.addEventListener("jraceman-post-message-event", this.onPostMessage.bind(this))
   }
 
-  // Get a pointer to the message-log-panel
+  // Get a pointer to the message-log-pane
   getMessageLogPanel() {
     const shadowRoot = this.shadowRoot
     if (!shadowRoot) {
       console.error("no shadow root")
       return null
     }
-    const panel = shadowRoot.querySelector("#message-log-panel")
+    const panel = shadowRoot.querySelector("#message-log-pane")
     if (!panel) {
-      console.error("Can't find message-log-panel")
+      console.error("Can't find message-log-pane")
       return null
     }
     return panel
@@ -74,7 +77,15 @@ export class JracemanApp extends LitElement {
       console.error("Can't find bottom-tabs")
       return
     }
-    bottomTabs.selectTabById("query-results")
+    bottomTabs.selectTabById("query-results-tab")
+  }
+
+  // When we get a report-results event, make the report-results tab visible.
+  onReportResultsEvent(e:Event) {
+    const evt = e as CustomEvent<ReportResultsEvent>
+    console.log("JracemanApp got updated results", evt.detail.results)
+    const bottomTabs = this.shadowRoot!.querySelector("#bottom-tabs")! as JracemanTabs
+    bottomTabs.selectTabById("report-results-tab")
   }
 
   // WHen we get a post-message event, count it.
@@ -101,6 +112,7 @@ export class JracemanApp extends LitElement {
     }
     if (!messageLogPanel.hasAttribute("selected")) {
       console.log("message panel is not selected")
+      return
     }
     // The message panel is selected, clear the unviewed count
     this.unviewedMessageCount = 0
@@ -137,11 +149,11 @@ export class JracemanApp extends LitElement {
                 <span slot="tab">Messages${when(this.unviewedMessageCount>0,
                   ()=>html` [+${this.unviewedMessageCount}]`
                 )}</span>
-                <section slot="panel" id="message-log-panel"><message-log></message-log></section>
-                <span slot="tab" id="query-results">Query Results</span>
+                <section slot="panel" id="message-log-pane"><message-log></message-log></section>
+                <span slot="tab" id="query-results-tab">Query Results</span>
                 <section slot="panel"><query-results></query-results></section>
-                <span slot="tab">Report Results</span>
-                <section slot="panel">Report Results content</section>
+                <span slot="tab" id="report-results-tab">Report Results</span>
+                <section slot="panel"><report-results></report-results></section>
                 <span slot="tab">Help</span>
                 <section slot="panel">Help is not yet implemented</section>
             </jraceman-tabs>
