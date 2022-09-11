@@ -1,5 +1,6 @@
 import {LitElement, html, css} from 'lit';
-import {customElement} from 'lit/decorators.js';
+import {customElement, property} from 'lit/decorators.js';
+import {when} from 'lit/directives/when.js';
 import '@vaadin/vaadin-split-layout/vaadin-split-layout.js';
 
 import './debug-pane.js'
@@ -32,11 +33,30 @@ export class JracemanApp extends LitElement {
     }
   `;
 
-  constructor() {
-    super()
+  @property()
+  unviewedMessageCount = 0
+
+  connectedCallback() {
+    super.connectedCallback()
     // We add a listener for query results so that we can make
     // the query results tab visible.
     document.addEventListener("jraceman-query-results-event", this.onQueryResultsEvent.bind(this))
+    document.addEventListener("jraceman-post-message-event", this.onPostMessage.bind(this))
+  }
+
+  // Get a pointer to the message-log-panel
+  getMessageLogPanel() {
+    const shadowRoot = this.shadowRoot
+    if (!shadowRoot) {
+      console.error("no shadow root")
+      return null
+    }
+    const panel = shadowRoot.querySelector("#message-log-panel")
+    if (!panel) {
+      console.error("Can't find message-log-panel")
+      return null
+    }
+    return panel
   }
 
   // When we get a query-results event, make the query-results tab visible.
@@ -54,6 +74,35 @@ export class JracemanApp extends LitElement {
       return
     }
     bottomTabs.selectTabById("query-results")
+  }
+
+  // WHen we get a post-message event, count it.
+  onPostMessage(e:Event) {
+    console.log("JracemanApp.onPostMessage", e)
+    const messageLogPanel = this.getMessageLogPanel()
+    if (!messageLogPanel) {
+      return    // console.error already called
+    }
+    if (messageLogPanel.hasAttribute("selected")) {
+      console.log("message panel is selected")
+      return    // Messages are being viewed
+    }
+    // The message panel is not currently selected
+    this.unviewedMessageCount++
+  }
+
+  // When a tab is selected, see if we need to clear the message count.
+  onTabSelected(e:Event) {
+    console.log("JracemanApp.onTabSelected", e)
+    const messageLogPanel = this.getMessageLogPanel()
+    if (!messageLogPanel) {
+      return    // console.error already called
+    }
+    if (!messageLogPanel.hasAttribute("selected")) {
+      console.log("message panel is not selected")
+    }
+    // The message panel is selected, clear the unviewed count
+    this.unviewedMessageCount = 0
   }
 
   render() {
@@ -83,9 +132,11 @@ export class JracemanApp extends LitElement {
             </jraceman-tabs>
           </div>
           <div id="bottom" class="tab-container">
-            <jraceman-tabs id="bottom-tabs">
-                <span slot="tab">Messages</span>
-                <section slot="panel"><message-log></message-log></section>
+            <jraceman-tabs @jraceman-tab-selected-event=${this.onTabSelected} id="bottom-tabs">
+                <span slot="tab">Messages${when(this.unviewedMessageCount>0,
+                  ()=>html` [+${this.unviewedMessageCount}]`
+                )}</span>
+                <section slot="panel" id="message-log-panel"><message-log></message-log></section>
                 <span slot="tab" id="query-results">Query Results</span>
                 <section slot="panel"><query-results></query-results></section>
                 <span slot="tab">Report Results</span>

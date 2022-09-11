@@ -60,6 +60,13 @@ export class JracemanTabs extends LitElement {
     this.tabs[tabIndex].setAttribute("selected", "")
     this.panels.forEach((panel:Element) => panel.removeAttribute("selected"))
     this.panels[tabIndex].setAttribute("selected", "")
+    // Dispatch an event so others can take action when a tab changes.
+    const event = new Event('jraceman-tab-selected-event', {
+      bubbles: true,
+      composed: true
+    })
+    console.log("JracemanTabs dispatch tab-changed event", event)
+    this.dispatchEvent(event)
   }
 
   onSelect(e:Event) {

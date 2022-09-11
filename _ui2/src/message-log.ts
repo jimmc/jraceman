@@ -26,8 +26,8 @@ export function PostMessage(source: string, level: string, text: string) {
         message: m,
       } as PostMessageEvent
     });
-    // Dispatch the event to the document so any element can listen for it.
-    document.dispatchEvent(event);
+  // Dispatch the event to the document so any element can listen for it.
+  document.dispatchEvent(event);
 }
 
 // MessageLog collects and displays log messages.
