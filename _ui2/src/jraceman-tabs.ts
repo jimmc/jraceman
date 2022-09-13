@@ -70,6 +70,10 @@ export class JracemanTabs extends LitElement {
 
   onSelect(e:Event) {
     const index = this.tabs.indexOf(e.target as Element)
+    if (index<0) {
+      // Not our tab, assume it's some nested element in the tab that we can ignore.
+      return
+    }
     this.selectTab(index)
   }
 
