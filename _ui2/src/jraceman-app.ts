@@ -30,11 +30,24 @@ export class JracemanApp extends LitElement {
   static styles = css`
     :host {
       display: block;
+      height: 100vh;
+      width: 100vw;
+      display: flex;
+      flex-direction: column;
     }
     .title-bar {
       width: "100%";
       background-color: lightgray;
       color: black;
+    }
+    main {
+      flex-grow: 1;
+    }
+    top {
+      height: "50%";
+    }
+    bottom {
+      height: "50%";
     }
   `;
 
