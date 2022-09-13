@@ -13,14 +13,20 @@ export class DebugPane extends LitElement {
   render() {
     return html`
       <jraceman-tabs>
-          <span slot="tab">Messages</span>
-          <section slot="panel">
-            <button @click=${this.onClick.bind(this,"info","Sample info message")}>Post Info message</button>
-            <button @click=${this.onClick.bind(this,"warning","A warning message")}>Post Warning message</button>
-            <button @click=${this.onClick.bind(this,"error","Error message")}>Post Error message</button>
-          </section>
-          <span slot="tab">SQL Query</span>
-          <section slot="panel"><sql-query></sql-query></section>
+        <span slot="tab">Messages</span>
+        <section slot="panel">
+          <button @click=${this.onClick.bind(this,"info","Sample info message")}>Post Info message</button>
+          <button @click=${this.onClick.bind(this,"warning","A warning message")}>Post Warning message</button>
+          <button @click=${this.onClick.bind(this,"error","Error message")}>Post Error message</button>
+        </section>
+        <span slot="tab">SQL Query</span>
+        <section slot="panel"><sql-query></sql-query></section>
+        <span slot="tab">Options</span>
+        <section slot="panel"><table-queryedit tableName="option"></table-queryedit></section>
+        <span slot="tab">Races</span>
+        <section slot="panel"><table-queryedit tableName="race"></table-queryedit></section>
+        <span slot="tab">Lanes</span>
+        <section slot="panel"><table-queryedit tableName="lane"></table-queryedit></section>
       </jraceman-tabs>
     `;
   }
