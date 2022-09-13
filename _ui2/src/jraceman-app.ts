@@ -3,6 +3,7 @@ import {customElement, property} from 'lit/decorators.js';
 import {when} from 'lit/directives/when.js';
 import '@vaadin/vaadin-split-layout/vaadin-split-layout.js';
 
+import './database-menu.js'
 import './database-pane.js'
 import './debug-pane.js'
 import './meet-setup.js'
@@ -139,7 +140,7 @@ export class JracemanApp extends LitElement {
                 <section slot="panel">By Event is not yet implemented</section>
                 <span slot="tab">Reports</span>
                 <section slot="panel"><reports-pane></reports-pane></section>
-                <span slot="tab">Database</span>
+                <span slot="tab"><database-menu></database-menu>Database</span>
                 <section slot="panel"><database-pane></database-pane></section>
                 <span slot="tab">Debug</span>
                 <section slot="panel"><debug-pane></debug-pane></section>
