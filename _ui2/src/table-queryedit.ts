@@ -30,7 +30,6 @@ export class TableQueryedit extends LitElement {
   // Loads our column info from the API, builds a new TableDesc, and sets it
   // into this.tableDesc.
   async loadColumns() {
-    console.log("in TableQueryedit.loadColumns for", this.tableName)
     const td = {
       Table: this.tableName,
       Columns: []       // We will fill this in later
@@ -50,7 +49,6 @@ export class TableQueryedit extends LitElement {
   }
 
   async loadFKChoices(td: TableDesc, i: number, table: string) {
-    console.log("In loadFKChoices for", table)
     const path = '/api/query/' + table + "/summary/"
     const options = {}
     try {

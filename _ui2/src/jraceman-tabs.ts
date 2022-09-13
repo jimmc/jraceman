@@ -65,7 +65,6 @@ export class JracemanTabs extends LitElement {
       bubbles: true,
       composed: true
     })
-    console.log("JracemanTabs dispatch tab-changed event", event)
     this.dispatchEvent(event)
   }
 
@@ -75,9 +74,7 @@ export class JracemanTabs extends LitElement {
   }
 
   onRequestDisplay(e:Event) {
-    console.log("JracemanTabs onRequestDisplay", e)
     const target = e.target
-    console.log("JracemanTabs onRequestDisplay target", target)
     const panelIndex = this.panels.findIndex(p => p.children[0]==target)
     if (panelIndex < 0) {
       console.error("can't find panel", target)

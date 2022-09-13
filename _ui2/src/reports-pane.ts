@@ -191,7 +191,6 @@ export class ReportsPane extends LitElement {
   }
 
   async loadKeyChoices(i: number, table: string) {
-    console.log("In loadKeyChoices for", table)
     const path = '/api/query/' + table + "/summary/"
     const options = {}
     try {
