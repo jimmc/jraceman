@@ -129,6 +129,7 @@ export class ReportsPane extends LitElement {
 
   reportNameChanged() {
     const reportName = (this.shadowRoot!.querySelector("#reportName") as HTMLSelectElement)!.value;
+    console.log("Report name changed to", reportName)
     this.updateOrderByList(reportName)
     this.updateWhereList(reportName)
     this.updateKeyChoices()
@@ -280,7 +281,7 @@ export class ReportsPane extends LitElement {
           </div>
           <div>
             Available reports:
-            <select id="reportName" on-change="reportNameChanged">
+            <select id="reportName" @change="${this.reportNameChanged}">
               ${repeat(this.reportList, (report)=>html`
                 <option value="${report.Name}">${report.Display}</option>
               `)}

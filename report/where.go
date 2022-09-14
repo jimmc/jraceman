@@ -62,6 +62,7 @@ var whereGroups = map[string][]string {
   "event": { "event_id", "event_name", "event_number" },
   "meet": { "meet_id" },
   "person": { "person_id" },
+  "race": { "race_id", "race_number", "race_round" },
   "team": { "team_id", "team_shortname", "team_name" },
 }
 
@@ -83,6 +84,12 @@ var stdWheres = map[string]whereDetails {
     table: "event",
     column: "number",
   },
+  "event_race_entry_scratched": whereDetails{
+    display: "Scratched",
+    table: "event",     // We look in all three tables; see the field value
+    column: "scratched",
+    field: "(event.scratched OR race.scratched OR entry.scratched)",
+  },
   "meet_id": whereDetails{
     display: "Meet",
     table: "meet",
@@ -93,6 +100,22 @@ var stdWheres = map[string]whereDetails {
     table: "person",
     column: "id",
   },
+  "race_id": whereDetails{
+    display: "Race",
+    table: "race",
+    column: "id",
+  },
+  "race_number": whereDetails{
+    display: "Race Number",
+    table: "race",
+    column: "number",
+  },
+  "race_round": whereDetails{
+    display: "Race Round",
+    table: "race",
+    column: "round",
+  },
+  // TODO: add race_startdate, add it to race whereGroup
   "site_id": whereDetails{
     display: "Site",
     table: "site",
