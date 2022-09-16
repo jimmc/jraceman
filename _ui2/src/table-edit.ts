@@ -2,7 +2,6 @@ import {LitElement, html, css} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import {repeat} from 'lit/directives/repeat.js';
 import {when} from 'lit/directives/when.js';
-import '@vaadin/button/vaadin-button.js';
 
 import { ApiManager, XhrOptions } from './api-manager.js'
 import { TableDesc, ColumnDesc, RequestEditEvent } from './table-desc.js'
@@ -236,11 +235,11 @@ export class TableEdit extends LitElement {
   render() {
     return html`
         <form>
-          <vaadin-button @click="${this.save}">Save</vaadin-button>
+          <button type=button @click="${this.save}">Save</button>
           ${when(this.recordId, ()=>html`
-            <vaadin-button @click="${this.reset}">Reset</vaadin-button>
+            <button type=button @click="${this.reset}">Reset</button>
           `)}
-          <vaadin-button @click="${this.newRecord}">New</vaadin-button>
+          <button type=button @click="${this.newRecord}">New</button>
           &nbsp;&nbsp; Record: ${this.editIdLabel}
 
           <table>

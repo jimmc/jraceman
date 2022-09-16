@@ -2,7 +2,6 @@ import {LitElement, html, css} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import {repeat} from 'lit/directives/repeat.js';
 import {when} from 'lit/directives/when.js';
-import '@vaadin/button/vaadin-button.js';
 
 import { ApiManager, XhrOptions } from './api-manager.js'
 import { TableDesc, QueryResultsEvent } from './table-desc.js'
@@ -119,8 +118,8 @@ export class TableQuery extends LitElement {
   render() {
     return html`
         <form>
-          <vaadin-button @click="${this.search}">Search</vaadin-button>
-          <vaadin-button @click="${this.clear}">Clear</vaadin-button>
+          <button type=button @click="${this.search}">Search</button>
+          <button  type=button @click="${this.clear}">Clear</button>
           <table>
             ${repeat(this.tableDesc.Columns, (col /*, colIndex*/) => html`
               <tr>
