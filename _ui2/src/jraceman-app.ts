@@ -1,8 +1,8 @@
 import {LitElement, html, css} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import {when} from 'lit/directives/when.js';
-import '@vaadin/vaadin-split-layout/vaadin-split-layout.js';
 
+import './jraceman-split.js'
 import './database-menu.js'
 import './database-pane.js'
 import './debug-pane.js'
@@ -32,22 +32,21 @@ export class JracemanApp extends LitElement {
       display: block;
       height: 100vh;
       width: 100vw;
+      margin: 0;
+      padding: 0;
       display: flex;
       flex-direction: column;
     }
     .title-bar {
+      height: 16px
       width: "100%";
       background-color: lightgray;
       color: black;
+      flex: 0 0 auto;
     }
-    main {
-      flex-grow: 1;
-    }
-    top {
-      height: "50%";
-    }
-    bottom {
-      height: "50%";
+    #main {
+      height: 0;        /* Let flex fill the size; this prevents it from resizing when content changes. */
+      flex: 1 1 0;
     }
   `;
 
@@ -136,8 +135,8 @@ export class JracemanApp extends LitElement {
   render() {
     return html`
       <div class="title-bar">JRaceman</div>
-      <vaadin-split-layout id="main" orientation="vertical" vertical>
-          <div id="top" class="tab-container">
+      <jraceman-split id="main" orientation="vertical" vertical>
+          <div id="top" slot="top" class="tab-container">
             <jraceman-tabs>
                 <span slot="tab">Sport Setup</span>
                 <section slot="panel"><sport-setup></sport-setup></section>
@@ -159,7 +158,7 @@ export class JracemanApp extends LitElement {
                 <section slot="panel"><debug-pane></debug-pane></section>
             </jraceman-tabs>
           </div>
-          <div id="bottom" class="tab-container">
+          <div id="bottom" slot="bottom" class="tab-container">
             <jraceman-tabs @jraceman-tab-selected-event=${this.onTabSelected} id="bottom-tabs">
                 <span slot="tab">Messages${when(this.unviewedMessageCount>0,
                   ()=>html` [+${this.unviewedMessageCount}]`
@@ -173,8 +172,7 @@ export class JracemanApp extends LitElement {
                 <section slot="panel">Help is not yet implemented</section>
             </jraceman-tabs>
           </div>
-      </vaadin-split-layout>
-      <slot></slot>
+      </jraceman-split>
     `;
   }
 }
