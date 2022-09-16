@@ -7,11 +7,9 @@ The UI is implemented in Lit + Typescript.
 
 ### Install Lit
 
-The first time only, install a local copy of the Lit and Vaadin components packages:
+The first time only, install a local copy of the Lit package:
 
     npm install lit
-    npm install @vaadin/vaadin-core
-    npm install carbon-web-components
 
 ### Build
 
