@@ -69,7 +69,7 @@ export class SqlQuery extends LitElement {
     return html`
       <div id="main">
         <textarea id="sqlText" cols="60" autofocus="true"
-            placeholder="Enter SQL text" on-keydown="checkEnter"></textarea>
+            placeholder="Enter SQL text" @keypress="${this.checkEnter}"></textarea>
         <div id="buttons">
           <button @click="${this.execute}">Execute</button>
           <button @click="${this.clear}">Clear</button>
