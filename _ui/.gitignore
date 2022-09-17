@@ -1,6 +1,0 @@
-bower_components
-build
-components/*/*.js
-components/*/*.js.map
-test/*/*.js
-test/*/*.js.map
