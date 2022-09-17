@@ -41,7 +41,7 @@ func doMain() int {
   // Configuration flags
   flag.IntVar(&config.port, "port", 8080, "port on which to listen for connections")
   flag.StringVar(&config.reportRoot, "reportroot", "report/template", "location of report templates")
-  flag.StringVar(&config.uiRoot, "uiroot", "_ui/build/default", "location of ui root (build/default)")
+  flag.StringVar(&config.uiRoot, "uiroot", "_ui/", "location of ui root")
   flag.StringVar(&config.db, "db", "", "location of database, in the form driver:name")
 
   // Action flags
