@@ -1,6 +1,7 @@
 package report
 
 import (
+  "fmt"
   "strings"
 
   "github.com/jimmc/gtrepgen/dbsource"
@@ -44,6 +45,9 @@ func GenerateResults(db dbsource.DBQuery, reportRoots []string, templateName str
     "attrs": func() interface{} { return attrs },
     "options": func() interface{} { return options },
     "computed": func() interface{} { return computed },
+    "colByName": colByName,
+    "join": join,
+    "split": split,
   })
   if err := g.FromTemplate(reportRoots, options.Data); err != nil {
     return nil, err
@@ -52,4 +56,37 @@ func GenerateResults(db dbsource.DBQuery, reportRoots []string, templateName str
   return &ReportResults{
     HTML: w.String(),
   }, nil
+}
+
+// colByName accepts a slice of rows and extracts one named field
+// from each row, returning the result as a simple array.
+func colByName(colName string, rows []map[string]any) []any {
+    r := make([]any, 0, len(rows))
+    for _, v := range rows {
+        f := v[colName]
+        r = append(r,f)
+    }
+    return r
+}
+
+// join works like strings.Join, except that it takes an array of any data type.
+func join(column []any, sep string) interface{} {
+    var sb strings.Builder
+    for i, c := range column {
+        if i>0 {
+            sb.WriteString(sep)
+        }
+        switch v := c.(type) {
+        case string:
+            sb.WriteString(fmt.Sprintf("%q",v))
+        default:
+            sb.WriteString(fmt.Sprintf("%v",v))
+        }
+    }
+    return sb.String()
+}
+
+// split works like strings.Split
+func split(s string, sep string) interface{} {
+    return strings.Split(s, sep)
 }

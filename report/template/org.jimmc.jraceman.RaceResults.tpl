@@ -43,22 +43,25 @@
     </tr>
 {{ $laneRows := rows (printf `
     SELECT lane.lane as Lane,
-        (person.firstname || ' ' || person.lastname) as Person,
+        GROUP_CONCAT((person.firstname || ' ' || person.lastname ||
+            (CASE WHEN COALESCE(entry.alternate,false) THEN '(alt)' ELSE '' END)),',') as Person,
         team.shortname as Team,
         ROUND(lane.result,3) as Result,
-        lane.place as Place,
+        COALESCE(lane.place,exception.shortname) as Place,
         lane.ScorePlace as ScorePlace
     FROM lane
     LEFT JOIN race on lane.raceid = race.id
     LEFT JOIN entry on lane.entryid = entry.id
     LEFT JOIN person on entry.personid = person.id
     LEFT JOIN team on person.teamid = team.id
-    WHERE lane.raceid = '%s'
-    ORDER BY Place` .raceid) -}}
+    LEFT JOIN exception on lane.exceptionid = exception.id
+    WHERE lane.raceid = '%s' AND lane.lane >= 0
+    GROUP BY Place
+    ORDER BY Place, Person` .raceid) -}}
 {{ range $laneRows }}
     <tr class="rowParity{{ evenodd .rowindex "0" "1" }}">
       <td align=center>{{.Lane}}</td>
-      <td>{{.Person}}</td>
+      <td>{{ range (split .Person ",")}}{{.}}<br/>{{end}}</td>
       <td>{{.Team}}</td>
       <td align=right>{{.Result}}</td>
       <td align=center>{{.Place}}</td>
