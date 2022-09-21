@@ -59,6 +59,8 @@
             '<br>' ELSE '' END) ||
         COALESCE(event.eventComment,'')
     )` -}}
+{{ $raceTitleTemplate := `
+    <h3>{{.eventInfo}}<br/>{{.raceNumberInfo}}</h3>` -}}
 {{ return (mkmap
     "stageSubCountTable" $stageSubCountTable
     "raceTables" $raceTables
@@ -68,4 +70,5 @@
     "raceNumberInfo" $raceNumberInfo
     "raceNumberTitleInfo" $raceNumberTitleInfo
     "raceEventCommentInfo" $raceEventCommentInfo
+    "raceTitleTemplate" $raceTitleTemplate
     ) -}}

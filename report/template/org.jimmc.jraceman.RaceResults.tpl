@@ -30,7 +30,7 @@
   <center>
 {{ range $raceRows -}}
   <div class="titleArea">
-    <h3>{{.eventInfo}}, {{.raceNumberInfo}}</h3>
+    {{ evalTemplate $RaceInfo.raceTitleTemplate . }}
   </div>
   <table class="main" border=1>
     <tr class="rowHeader">
