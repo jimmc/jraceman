@@ -20,8 +20,9 @@
 {{ $raceRows := rows (printf `
     SELECT %s
     FROM %s
+    WHERE event.number>0
     %s %s
-` $RaceInfo.raceColumns $RaceInfo.raceTables $comp.Where.WhereClause $comp.OrderBy.Clause) . -}}
+` $RaceInfo.raceColumns $RaceInfo.raceTables $comp.Where.AndClause $comp.OrderBy.Clause) . -}}
 <html>
 <body>
   <div class="header">

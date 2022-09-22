@@ -3,7 +3,7 @@
         THEN (CASE WHEN stage.isFinal
              THEN substring('ABCDEFGHIJK',race.section,1)
              ELSE race.section END)
-        ELSE '' END) as sectionSuffix` -}}
+        ELSE '' END)` -}}
 {{ $stageSubCountTable := `
     SELECT race.eventid as eventid, race.round as round, count(*) as sectionCount
     FROM race JOIN stage on race.stageid=stage.id
@@ -23,14 +23,15 @@
     COALESCE(event.name,(
         competition.name || ' ' || level.name || ' ' || gender.name)))
     as eventInfo` -}}
-{{ $raceInfo := `
-    (COALESCE(('Race #' || race.number || ': '),'') || stage.name || ' ' || race.round)
-    as raceInfo` -}}
-{{ $raceColumns := printf `%s,
+{{ $raceInfo := printf `
+    (COALESCE(('Race #' || race.number || ': '),'') || stage.name || ' ' || %s)
+    as raceInfo` $sectionSuffix -}}
+{{ $raceColumns := printf `
     race.id as raceid, race.number, stage.name, race.round, race.section, race.eventid,
-    race.scratched as raceScratched, event.scratched as eventScratched,
+    race.scratched as raceScratched,
+    event.scratched as eventScratched,
     SectionsPerRound.sectionCount,%s,%s`
-    $eventInfo $sectionSuffix $raceInfo -}}
+    $eventInfo $raceInfo -}}
 {{ $eventTitleInfo := `(
 	    COALESCE(('Event #' || event.number || ': '),'') ||
 	    COALESCE(event.name,(
