@@ -19,40 +19,24 @@
     LEFT JOIN (%s) as SectionsPerRound
         on race.round=SectionsPerRound.round and race.eventid=SectionsPerRound.eventid` $stageSubCountTable -}}
 {{ $eventInfo := `
-	    ((CASE WHEN event.scratched THEN '<strike>' ELSE '' END) ||
-	    COALESCE(('Event #' || event.number || ': '),'') ||
-	    COALESCE(event.name,(
-		competition.name || ' ' || level.name || ' ' || gender.name)) ||
-	    (CASE WHEN event.scratched THEN '</strike>' ELSE ''END))
-	as eventInfo` -}}
-{{ $raceNumberInfo := `(CASE WHEN COALESCE(race.number,0)=0 THEN '0' ELSE
-	(
-	    (CASE WHEN race.scratched THEN '<strike>' ELSE '' END) ||
-	    'Race #' || (CASE WHEN race.number=ROUND(race.number) THEN
-		ROUND(race.number) ELSE race.number END) || ', ' ||
-	    (CASE WHEN race.scratched THEN '</strike>' ELSE '' END)
-	)
-    END) as raceNumberInfo` -}}
+    (COALESCE(('Event #' || event.number || ': '),'') ||
+    COALESCE(event.name,(
+        competition.name || ' ' || level.name || ' ' || gender.name)))
+    as eventInfo` -}}
+{{ $raceInfo := `
+    (COALESCE(('Race #' || race.number || ': '),'') || stage.name || ' ' || race.round)
+    as raceInfo` -}}
 {{ $raceColumns := printf `%s,
     race.id as raceid, race.number, stage.name, race.round, race.section, race.eventid,
+    race.scratched as raceScratched, event.scratched as eventScratched,
     SectionsPerRound.sectionCount,%s,%s`
-    $eventInfo $sectionSuffix $raceNumberInfo -}}
+    $eventInfo $sectionSuffix $raceInfo -}}
 {{ $eventTitleInfo := `(
 	    COALESCE(('Event #' || event.number || ': '),'') ||
 	    COALESCE(event.name,(
 		competition.name || ' ' || level.name || ' ' || gender.name)) ||
 	    (CASE WHEN event.scratched THEN ' (SCR)' ELSE '' END)
 	)` -}}
-{{ $raceNumberTitleInfo := `
-    (CASE WHEN COALESCE(race.number,0)=0 THEN '0' ELSE
-	(
-	    'Race #' ||
-	    (CASE WHEN race.number=ROUND(race.number) THEN
-		ROUND(race.number) ELSE race.number END) ||
-	    (CASE WHEN race.scratched THEN ' (SCR)' ELSE '' END) ||
-	    ', '
-	)
-    END)` -}}
 {{ $raceEventCommentInfo := `(
         COALESCE(race.raceComment,'') ||
         (CASE WHEN race.raceComment is not null AND event.eventComment is not null THEN
@@ -60,15 +44,17 @@
         COALESCE(event.eventComment,'')
     )` -}}
 {{ $raceTitleTemplate := `
-    <h3>{{.eventInfo}}<br/>{{.raceNumberInfo}}</h3>` -}}
+    <h3>
+        {{ if .eventScratched }}<strike>{{end}}{{.eventInfo}}{{if .eventScratched}}</strike>{{end}}<br/>
+        {{ if .raceScratched }}<strike>{{end}}{{.raceInfo}}{{if .raceScratched}}</strike>{{end}}
+    </h3>` -}}
 {{ return (mkmap
     "stageSubCountTable" $stageSubCountTable
     "raceTables" $raceTables
     "raceColumns" $raceColumns
     "eventInfo" $eventInfo
     "eventTitleInfo" $eventTitleInfo
-    "raceNumberInfo" $raceNumberInfo
-    "raceNumberTitleInfo" $raceNumberTitleInfo
+    "raceInfo" $raceInfo
     "raceEventCommentInfo" $raceEventCommentInfo
     "raceTitleTemplate" $raceTitleTemplate
     ) -}}
