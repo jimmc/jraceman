@@ -57,8 +57,7 @@
       CASE WHEN entry.scratched THEN '<strike>' ELSE '' END
         || person.lastname,', ',person.firstname
         || CASE WHEN entry.scratched THEN '</strike>' ELSE '' END
-      as Person,
-      null as rowParity
+      as Person
   FROM lane 
       LEFT JOIN entry on lane.entryId=entry.id
       LEFT JOIN person on entry.personId=person.id
