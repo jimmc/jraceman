@@ -1,6 +1,6 @@
 {{/*GT: {
-  "display": "Race Results",
-  "description": "Results for a Race, sorted by finish order",
+  "display": "Race Results with Score",
+  "description": "Results for a Race, sorted by finish order and including score points",
   "where": [ "event", "race" ],
   "orderby": [
     {
@@ -41,6 +41,7 @@
       <th width=80>Result</th>
       <th width=60>Place</th>
       <th width=60>Score Place</th>
+      <th width=60>Score</th>
     </tr>
 {{ $laneRows := rows (printf `
     SELECT lane.lane as Lane,
@@ -49,7 +50,8 @@
         team.shortname as Team,
         ROUND(lane.result,3) as Result,
         COALESCE(lane.place,exception.shortname) as Place,
-        lane.ScorePlace as ScorePlace
+        lane.ScorePlace as ScorePlace,
+        lane.score as Score
     FROM lane
     LEFT JOIN race on lane.raceid = race.id
     LEFT JOIN entry on lane.entryid = entry.id
@@ -58,7 +60,7 @@
     LEFT JOIN exception on lane.exceptionid = exception.id
     WHERE lane.raceid = '%s' AND lane.lane >= 0
     GROUP BY Place, entry.groupname
-    ORDER BY Place, Person` .raceid) -}}
+    ORDER BY (CASE WHEN COALESCE(Place,0)=0 THEN 9999 ELSE Place END), Person` .raceid) -}}
 {{ range $laneRows }}
     <tr class="rowParity{{ evenodd .rowindex "0" "1" }}">
       <td align=center>{{.Lane}}</td>
@@ -67,6 +69,7 @@
       <td align=right>{{.Result}}</td>
       <td align=center>{{.Place}}</td>
       <td align=center>{{.ScorePlace}}</td>
+      <td align=center>{{.Score}}</td>
     </tr>
 {{ end }}
   </table>
