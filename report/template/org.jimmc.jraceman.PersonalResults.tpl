@@ -72,40 +72,22 @@
     </tr>
 {{ $personResults := rows (printf `
     SELECT 
-        (
-	    CASE WHEN Event.scratched THEN '<strike>' ELSE '' END ||
-	    '#' || Event.number || ' ' || Event.name ||
-	    CASE WHEN Event.scratched THEN '</strike>' ELSE '' END
-        ) as Event,
-        (
-	    CASE WHEN Race.scratched THEN '<strike>' ELSE '' END ||
-	    '#' ||
-            Race.number ||
-	    ' ' ||Stage.name || ' ' ||
+        Event.scratched as eventScratched,
+        Race.scratched as raceScratched,
+        Entry.scratched as entryScratched,
+        Event.scratched OR Race.scratched OR Entry.scratched as anyScratched,
+        ('#' || Event.number || ' ' || Event.name) as Event,
+        ( '#' || Race.number || ' ' ||Stage.name || ' ' ||
 	    CASE WHEN SectionsPerRound.sectionCount>1 THEN 
-	    	CASE WHEN Stage.isFinal THEN substring('ABCDEFGHIJK',Race.section,1) ELSE Race.section END ELSE '' END ||
-	    CASE WHEN Race.scratched THEN '</strike>' ELSE '' END
-        ) as Race,
+	    	CASE WHEN Stage.isFinal THEN substring('ABCDEFGHIJK',Race.section,1) ELSE Race.section END ELSE '' END) as Race,
         Race.scheduledStart as RaceTime,
-	(
-	    CASE WHEN Entry.scratched THEN '<strike>' ELSE '' END ||
-	    Lane.lane ||
-	    CASE WHEN Entry.scratched THEN '</strike>' ELSE '' END
-	) as Lane,
+        Lane.lane as Lane,
         Lane.exceptionId,
         Exception.shortName as Exception,
         ROUND(Lane.result,3) as Result,
         Lane.place as Place,
-	(
-	    CASE WHEN Event.scratched OR Race.scratched OR Entry.scratched THEN '<strike>' ELSE '' END ||
-	    Lane.scorePlace ||
-	    CASE WHEN Event.scratched OR Race.scratched OR Entry.scratched THEN '</strike>' ELSE '' END
-	) as ScorePlace,
-	(
-	    CASE WHEN Event.scratched OR Race.scratched OR Entry.scratched THEN '<strike>' ELSE '' END ||
-	    Lane.score ||
-	    CASE WHEN Event.scratched OR Race.scratched OR Entry.scratched THEN '</strike>' ELSE '' END
-	) as Score
+        Lane.scorePlace as ScorePlace,
+        Lane.score as Score
     FROM Person
       LEFT JOIN Team on Person.teamId=Team.id
       LEFT JOIN Entry on Person.id=Entry.personId
@@ -124,14 +106,14 @@
     $sectionCountTable .personId .meetId) -}}
 {{ range $personResults -}}
     <tr class="rowParity{rowParity}">
-      <td>{{.Event}}</td>
-      <td>{{.Race}}</td>
+      <td>{{if .eventScratched}}<strike>{{end}}{{.Event}}{{if .eventScratched}}</strike>{{end}}</td>
+      <td>{{if .raceScratched}}<strike>{{end}}{{.Race}}{{if .raceScratched}}</strike>{{end}}</td>
       <td>{{.RaceTime}}</td>
-      <td>{{.Lane}}</td>
-      <td>{{.Result}},{{.Exception}}</td>
+      <td>{{if .entryScratched}}<strike>{{end}}{{.Lane}}{{if .entryScratched}}</strike>{{end}}</td>
+      <td>{{if .Exception}}{{.Exception}}{{else}}{{.Result}}{{end}}</td>
       <td>{{.Place}}</td>
-      <td>{{.ScorePlace}}</td>
-      <td>{{.Score}}</td>
+      <td>{{if .anyScratched}}<strike>{{end}}{{.ScorePlace}}{{if .anyScratched}}</strike>{{end}}</td>
+      <td>{{if .anyScratched}}<strike>{{end}}{{.Score}}{{if .anyScratched}}</strike>{{end}}</td>
     </tr>
 {{ end -}}
   </table>
