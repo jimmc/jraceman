@@ -3,6 +3,7 @@ import {customElement, property} from 'lit/decorators.js';
 import {when} from 'lit/directives/when.js';
 
 import './jraceman-split.js'
+import './auth-setup.js'
 import './database-menu.js'
 import './database-pane.js'
 import './debug-pane.js'
@@ -138,6 +139,8 @@ export class JracemanApp extends LitElement {
       <jraceman-split id="main" orientation="vertical" vertical>
           <div id="top" slot="top" class="tab-container">
             <jraceman-tabs>
+                <span slot="tab">Auth Setup</span>
+                <section slot="panel"><auth-setup></auth-setup></section>
                 <span slot="tab">Sport Setup</span>
                 <section slot="panel"><sport-setup></sport-setup></section>
                 <span slot="tab">Plan Setup</span>

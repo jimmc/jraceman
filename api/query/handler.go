@@ -37,11 +37,14 @@ func NewHandler(c *Config) http.Handler {
   mux.HandleFunc(h.queryPrefix("level"), h.level)
   mux.HandleFunc(h.queryPrefix("meet"), h.meet)
   mux.HandleFunc(h.queryPrefix("option"), h.option)
+  mux.HandleFunc(h.queryPrefix("permission"), h.permission)
   mux.HandleFunc(h.queryPrefix("person"), h.person)
   mux.HandleFunc(h.queryPrefix("progression"), h.progression)
   mux.HandleFunc(h.queryPrefix("race"), h.race)
   mux.HandleFunc(h.queryPrefix("registration"), h.registration)
   mux.HandleFunc(h.queryPrefix("registrationfee"), h.registrationfee)
+  mux.HandleFunc(h.queryPrefix("role"), h.role)
+  mux.HandleFunc(h.queryPrefix("rolepermission"), h.rolepermission)
   mux.HandleFunc(h.queryPrefix("scoringrule"), h.scoringrule)
   mux.HandleFunc(h.queryPrefix("scoringsystem"), h.scoringsystem)
   mux.HandleFunc(h.queryPrefix("seedinglist"), h.seedinglist)
@@ -52,6 +55,8 @@ func NewHandler(c *Config) http.Handler {
   mux.HandleFunc(h.queryPrefix("site"), h.site)
   mux.HandleFunc(h.queryPrefix("stage"), h.stage)
   mux.HandleFunc(h.queryPrefix("team"), h.team)
+  mux.HandleFunc(h.queryPrefix("user"), h.user)
+  mux.HandleFunc(h.queryPrefix("userrole"), h.userrole)
   return mux
 }
 

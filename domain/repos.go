@@ -20,11 +20,14 @@ type Repos interface {
   Level() LevelRepo
   Meet() MeetRepo
   Option() OptionRepo
+  Permission() PermissionRepo
   Person() PersonRepo
   Progression() ProgressionRepo
   Race() RaceRepo
   Registration() RegistrationRepo
   RegistrationFee() RegistrationFeeRepo
+  Role() RoleRepo
+  RolePermission() RolePermissionRepo
   ScoringRule() ScoringRuleRepo
   ScoringSystem() ScoringSystemRepo
   SeedingList() SeedingListRepo
@@ -35,4 +38,6 @@ type Repos interface {
   Site() SiteRepo
   Stage() StageRepo
   Team() TeamRepo
+  User() UserRepo
+  UserRole() UserRoleRepo
 }

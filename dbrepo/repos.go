@@ -32,11 +32,14 @@ type Repos struct {
   dbLevel *DBLevelRepo
   dbMeet *DBMeetRepo
   dbOption *DBOptionRepo
+  dbPermission *DBPermissionRepo
   dbPerson *DBPersonRepo
   dbProgression *DBProgressionRepo
   dbRace *DBRaceRepo
   dbRegistration *DBRegistrationRepo
   dbRegistrationFee *DBRegistrationFeeRepo
+  dbRole *DBRoleRepo
+  dbRolePermission *DBRolePermissionRepo
   dbSeedingList *DBSeedingListRepo
   dbSeedingPlan *DBSeedingPlanRepo
   dbScoringRule *DBScoringRuleRepo
@@ -47,6 +50,8 @@ type Repos struct {
   dbSite *DBSiteRepo
   dbStage *DBStageRepo
   dbTeam *DBTeamRepo
+  dbUser *DBUserRepo
+  dbUserRole *DBUserRoleRepo
 }
 
 type TableRepo interface {
@@ -65,6 +70,11 @@ func (r *Repos) TableEntries() []TableEntry {
   return []TableEntry{
     // The tables in this list are ordered so that tables that are the target
     // of foreign keys are created/updated before the tables that reference them.
+    {"user", r.dbUser},
+    {"role", r.dbRole},
+    {"permission", r.dbPermission},
+    {"userrole", r.dbUserRole},
+    {"rolepermission", r.dbRolePermission},
     {"option", r.dbOption},
     {"competition", r.dbCompetition},
     {"complan", r.dbComplan},
@@ -119,11 +129,14 @@ func (r *Repos) LaneOrder() domain.LaneOrderRepo { return r.dbLaneOrder }
 func (r *Repos) Level() domain.LevelRepo { return r.dbLevel }
 func (r *Repos) Meet() domain.MeetRepo { return r.dbMeet }
 func (r *Repos) Option() domain.OptionRepo { return r.dbOption }
+func (r *Repos) Permission() domain.PermissionRepo { return r.dbPermission }
 func (r *Repos) Person() domain.PersonRepo { return r.dbPerson }
 func (r *Repos) Progression() domain.ProgressionRepo { return r.dbProgression }
 func (r *Repos) Race() domain.RaceRepo { return r.dbRace }
 func (r *Repos) Registration() domain.RegistrationRepo { return r.dbRegistration }
 func (r *Repos) RegistrationFee() domain.RegistrationFeeRepo { return r.dbRegistrationFee }
+func (r *Repos) Role() domain.RoleRepo { return r.dbRole }
+func (r *Repos) RolePermission() domain.RolePermissionRepo { return r.dbRolePermission }
 func (r *Repos) ScoringRule() domain.ScoringRuleRepo { return r.dbScoringRule }
 func (r *Repos) ScoringSystem() domain.ScoringSystemRepo { return r.dbScoringSystem }
 func (r *Repos) SeedingList() domain.SeedingListRepo { return r.dbSeedingList }
@@ -134,6 +147,8 @@ func (r *Repos) SimplanStage() domain.SimplanStageRepo { return r.dbSimplanStage
 func (r *Repos) Site() domain.SiteRepo { return r.dbSite }
 func (r *Repos) Stage() domain.StageRepo { return r.dbStage }
 func (r *Repos) Team() domain.TeamRepo { return r.dbTeam }
+func (r *Repos) User() domain.UserRepo { return r.dbUser }
+func (r *Repos) UserRole() domain.UserRoleRepo { return r.dbUserRole }
 
 // Open opens a database repository.
 // The repoPath argument is of the form dbtype:dbinfo,
@@ -180,11 +195,14 @@ func OpenDB(db *sql.DB) (*Repos, error) {
     dbLevel: &DBLevelRepo{db},
     dbMeet: &DBMeetRepo{db},
     dbOption: &DBOptionRepo{db},
+    dbPermission: &DBPermissionRepo{db},
     dbPerson: &DBPersonRepo{db},
     dbProgression: &DBProgressionRepo{db},
     dbRace: &DBRaceRepo{db},
     dbRegistration: &DBRegistrationRepo{db},
     dbRegistrationFee: &DBRegistrationFeeRepo{db},
+    dbRole: &DBRoleRepo{db},
+    dbRolePermission: &DBRolePermissionRepo{db},
     dbScoringRule: &DBScoringRuleRepo{db},
     dbScoringSystem: &DBScoringSystemRepo{db},
     dbSeedingList: &DBSeedingListRepo{db},
@@ -195,6 +213,8 @@ func OpenDB(db *sql.DB) (*Repos, error) {
     dbSite: &DBSiteRepo{db},
     dbStage: &DBStageRepo{db},
     dbTeam: &DBTeamRepo{db},
+    dbUser: &DBUserRepo{db},
+    dbUserRole: &DBUserRoleRepo{db},
   }
 
   tableMap := make(map[string]TableRepo)

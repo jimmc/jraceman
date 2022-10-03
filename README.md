@@ -36,6 +36,12 @@ Run the unit tests:
 
     go test ./...
 
+If you want to check the unit test coverage:
+
+    go test ./... -coverprofile=cover.out
+    go tool cover -html=cover.out -o cover.html
+    # Open cover.html in your browser
+
 ### Build the UI pages
 
 Follow the instructions in the [\_ui](./_ui) directory.
