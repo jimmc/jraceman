@@ -24,12 +24,12 @@ func (sc *contextoptionCrud) Save(entity interface{}) (string, error) {
 }
 
 func (sc *contextoptionCrud) List(offset, limit int) ([]interface{}, error) {
-  sites, err := sc.h.config.DomainRepos.ContextOption().List(offset, limit)
+  contextoptions, err := sc.h.config.DomainRepos.ContextOption().List(offset, limit)
   if err != nil {
     return nil, err
   }
-  a := make([]interface{}, len(sites))
-  for i, contextoption := range sites {
+  a := make([]interface{}, len(contextoptions))
+  for i, contextoption := range contextoptions {
     a[i] = contextoption
   }
   return a, nil

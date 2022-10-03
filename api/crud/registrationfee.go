@@ -24,12 +24,12 @@ func (sc *registrationfeeCrud) Save(entity interface{}) (string, error) {
 }
 
 func (sc *registrationfeeCrud) List(offset, limit int) ([]interface{}, error) {
-  sites, err := sc.h.config.DomainRepos.RegistrationFee().List(offset, limit)
+  registrationfees, err := sc.h.config.DomainRepos.RegistrationFee().List(offset, limit)
   if err != nil {
     return nil, err
   }
-  a := make([]interface{}, len(sites))
-  for i, registrationfee := range sites {
+  a := make([]interface{}, len(registrationfees))
+  for i, registrationfee := range registrationfees {
     a[i] = registrationfee
   }
   return a, nil

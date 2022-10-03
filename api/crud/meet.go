@@ -24,12 +24,12 @@ func (sc *meetCrud) Save(entity interface{}) (string, error) {
 }
 
 func (sc *meetCrud) List(offset, limit int) ([]interface{}, error) {
-  sites, err := sc.h.config.DomainRepos.Meet().List(offset, limit)
+  meets, err := sc.h.config.DomainRepos.Meet().List(offset, limit)
   if err != nil {
     return nil, err
   }
-  a := make([]interface{}, len(sites))
-  for i, meet := range sites {
+  a := make([]interface{}, len(meets))
+  for i, meet := range meets {
     a[i] = meet
   }
   return a, nil

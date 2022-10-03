@@ -24,12 +24,12 @@ func (sc *challengeCrud) Save(entity interface{}) (string, error) {
 }
 
 func (sc *challengeCrud) List(offset, limit int) ([]interface{}, error) {
-  sites, err := sc.h.config.DomainRepos.Challenge().List(offset, limit)
+  challenges, err := sc.h.config.DomainRepos.Challenge().List(offset, limit)
   if err != nil {
     return nil, err
   }
-  a := make([]interface{}, len(sites))
-  for i, challenge := range sites {
+  a := make([]interface{}, len(challenges))
+  for i, challenge := range challenges {
     a[i] = challenge
   }
   return a, nil

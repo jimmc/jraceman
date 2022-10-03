@@ -24,12 +24,12 @@ func (sc *scoringruleCrud) Save(entity interface{}) (string, error) {
 }
 
 func (sc *scoringruleCrud) List(offset, limit int) ([]interface{}, error) {
-  sites, err := sc.h.config.DomainRepos.ScoringRule().List(offset, limit)
+  scoringrules, err := sc.h.config.DomainRepos.ScoringRule().List(offset, limit)
   if err != nil {
     return nil, err
   }
-  a := make([]interface{}, len(sites))
-  for i, scoringrule := range sites {
+  a := make([]interface{}, len(scoringrules))
+  for i, scoringrule := range scoringrules {
     a[i] = scoringrule
   }
   return a, nil

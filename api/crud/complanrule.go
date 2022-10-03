@@ -24,12 +24,12 @@ func (sc *complanruleCrud) Save(entity interface{}) (string, error) {
 }
 
 func (sc *complanruleCrud) List(offset, limit int) ([]interface{}, error) {
-  sites, err := sc.h.config.DomainRepos.ComplanRule().List(offset, limit)
+  complanrules, err := sc.h.config.DomainRepos.ComplanRule().List(offset, limit)
   if err != nil {
     return nil, err
   }
-  a := make([]interface{}, len(sites))
-  for i, complanrule := range sites {
+  a := make([]interface{}, len(complanrules))
+  for i, complanrule := range complanrules {
     a[i] = complanrule
   }
   return a, nil

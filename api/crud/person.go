@@ -24,12 +24,12 @@ func (sc *personCrud) Save(entity interface{}) (string, error) {
 }
 
 func (sc *personCrud) List(offset, limit int) ([]interface{}, error) {
-  sites, err := sc.h.config.DomainRepos.Person().List(offset, limit)
+  people, err := sc.h.config.DomainRepos.Person().List(offset, limit)
   if err != nil {
     return nil, err
   }
-  a := make([]interface{}, len(sites))
-  for i, person := range sites {
+  a := make([]interface{}, len(people))
+  for i, person := range people {
     a[i] = person
   }
   return a, nil

@@ -24,12 +24,12 @@ func (sc *areaCrud) Save(entity interface{}) (string, error) {
 }
 
 func (sc *areaCrud) List(offset, limit int) ([]interface{}, error) {
-  sites, err := sc.h.config.DomainRepos.Area().List(offset, limit)
+  areas, err := sc.h.config.DomainRepos.Area().List(offset, limit)
   if err != nil {
     return nil, err
   }
-  a := make([]interface{}, len(sites))
-  for i, area := range sites {
+  a := make([]interface{}, len(areas))
+  for i, area := range areas {
     a[i] = area
   }
   return a, nil

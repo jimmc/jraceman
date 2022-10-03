@@ -24,12 +24,12 @@ func (sc *raceCrud) Save(entity interface{}) (string, error) {
 }
 
 func (sc *raceCrud) List(offset, limit int) ([]interface{}, error) {
-  sites, err := sc.h.config.DomainRepos.Race().List(offset, limit)
+  races, err := sc.h.config.DomainRepos.Race().List(offset, limit)
   if err != nil {
     return nil, err
   }
-  a := make([]interface{}, len(sites))
-  for i, race := range sites {
+  a := make([]interface{}, len(races))
+  for i, race := range races {
     a[i] = race
   }
   return a, nil

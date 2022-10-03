@@ -24,12 +24,12 @@ func (sc *teamCrud) Save(entity interface{}) (string, error) {
 }
 
 func (sc *teamCrud) List(offset, limit int) ([]interface{}, error) {
-  sites, err := sc.h.config.DomainRepos.Team().List(offset, limit)
+  teams, err := sc.h.config.DomainRepos.Team().List(offset, limit)
   if err != nil {
     return nil, err
   }
-  a := make([]interface{}, len(sites))
-  for i, team := range sites {
+  a := make([]interface{}, len(teams))
+  for i, team := range teams {
     a[i] = team
   }
   return a, nil

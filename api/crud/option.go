@@ -24,12 +24,12 @@ func (sc *optionCrud) Save(entity interface{}) (string, error) {
 }
 
 func (sc *optionCrud) List(offset, limit int) ([]interface{}, error) {
-  sites, err := sc.h.config.DomainRepos.Option().List(offset, limit)
+  options, err := sc.h.config.DomainRepos.Option().List(offset, limit)
   if err != nil {
     return nil, err
   }
-  a := make([]interface{}, len(sites))
-  for i, option := range sites {
+  a := make([]interface{}, len(options))
+  for i, option := range options {
     a[i] = option
   }
   return a, nil

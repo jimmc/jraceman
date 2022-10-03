@@ -24,12 +24,12 @@ func (sc *eventCrud) Save(entity interface{}) (string, error) {
 }
 
 func (sc *eventCrud) List(offset, limit int) ([]interface{}, error) {
-  sites, err := sc.h.config.DomainRepos.Event().List(offset, limit)
+  events, err := sc.h.config.DomainRepos.Event().List(offset, limit)
   if err != nil {
     return nil, err
   }
-  a := make([]interface{}, len(sites))
-  for i, event := range sites {
+  a := make([]interface{}, len(events))
+  for i, event := range events {
     a[i] = event
   }
   return a, nil

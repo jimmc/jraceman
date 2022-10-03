@@ -24,12 +24,12 @@ func (sc *laneorderCrud) Save(entity interface{}) (string, error) {
 }
 
 func (sc *laneorderCrud) List(offset, limit int) ([]interface{}, error) {
-  sites, err := sc.h.config.DomainRepos.LaneOrder().List(offset, limit)
+  laneorders, err := sc.h.config.DomainRepos.LaneOrder().List(offset, limit)
   if err != nil {
     return nil, err
   }
-  a := make([]interface{}, len(sites))
-  for i, laneorder := range sites {
+  a := make([]interface{}, len(laneorders))
+  for i, laneorder := range laneorders {
     a[i] = laneorder
   }
   return a, nil

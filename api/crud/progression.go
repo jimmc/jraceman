@@ -24,12 +24,12 @@ func (sc *progressionCrud) Save(entity interface{}) (string, error) {
 }
 
 func (sc *progressionCrud) List(offset, limit int) ([]interface{}, error) {
-  sites, err := sc.h.config.DomainRepos.Progression().List(offset, limit)
+  progressions, err := sc.h.config.DomainRepos.Progression().List(offset, limit)
   if err != nil {
     return nil, err
   }
-  a := make([]interface{}, len(sites))
-  for i, progression := range sites {
+  a := make([]interface{}, len(progressions))
+  for i, progression := range progressions {
     a[i] = progression
   }
   return a, nil

@@ -24,12 +24,12 @@ func (sc *exceptionCrud) Save(entity interface{}) (string, error) {
 }
 
 func (sc *exceptionCrud) List(offset, limit int) ([]interface{}, error) {
-  sites, err := sc.h.config.DomainRepos.Exception().List(offset, limit)
+  exceptions, err := sc.h.config.DomainRepos.Exception().List(offset, limit)
   if err != nil {
     return nil, err
   }
-  a := make([]interface{}, len(sites))
-  for i, exception := range sites {
+  a := make([]interface{}, len(exceptions))
+  for i, exception := range exceptions {
     a[i] = exception
   }
   return a, nil

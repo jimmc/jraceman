@@ -24,12 +24,12 @@ func (sc *genderCrud) Save(entity interface{}) (string, error) {
 }
 
 func (sc *genderCrud) List(offset, limit int) ([]interface{}, error) {
-  sites, err := sc.h.config.DomainRepos.Gender().List(offset, limit)
+  genders, err := sc.h.config.DomainRepos.Gender().List(offset, limit)
   if err != nil {
     return nil, err
   }
-  a := make([]interface{}, len(sites))
-  for i, gender := range sites {
+  a := make([]interface{}, len(genders))
+  for i, gender := range genders {
     a[i] = gender
   }
   return a, nil

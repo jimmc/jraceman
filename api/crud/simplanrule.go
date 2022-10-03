@@ -24,12 +24,12 @@ func (sc *simplanruleCrud) Save(entity interface{}) (string, error) {
 }
 
 func (sc *simplanruleCrud) List(offset, limit int) ([]interface{}, error) {
-  sites, err := sc.h.config.DomainRepos.SimplanRule().List(offset, limit)
+  simplanrules, err := sc.h.config.DomainRepos.SimplanRule().List(offset, limit)
   if err != nil {
     return nil, err
   }
-  a := make([]interface{}, len(sites))
-  for i, simplanrule := range sites {
+  a := make([]interface{}, len(simplanrules))
+  for i, simplanrule := range simplanrules {
     a[i] = simplanrule
   }
   return a, nil

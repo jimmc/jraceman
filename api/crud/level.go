@@ -24,12 +24,12 @@ func (sc *levelCrud) Save(entity interface{}) (string, error) {
 }
 
 func (sc *levelCrud) List(offset, limit int) ([]interface{}, error) {
-  sites, err := sc.h.config.DomainRepos.Level().List(offset, limit)
+  levels, err := sc.h.config.DomainRepos.Level().List(offset, limit)
   if err != nil {
     return nil, err
   }
-  a := make([]interface{}, len(sites))
-  for i, level := range sites {
+  a := make([]interface{}, len(levels))
+  for i, level := range levels {
     a[i] = level
   }
   return a, nil

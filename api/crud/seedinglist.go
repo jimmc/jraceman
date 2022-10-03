@@ -24,12 +24,12 @@ func (sc *seedinglistCrud) Save(entity interface{}) (string, error) {
 }
 
 func (sc *seedinglistCrud) List(offset, limit int) ([]interface{}, error) {
-  sites, err := sc.h.config.DomainRepos.SeedingList().List(offset, limit)
+  seedinglists, err := sc.h.config.DomainRepos.SeedingList().List(offset, limit)
   if err != nil {
     return nil, err
   }
-  a := make([]interface{}, len(sites))
-  for i, seedinglist := range sites {
+  a := make([]interface{}, len(seedinglists))
+  for i, seedinglist := range seedinglists {
     a[i] = seedinglist
   }
   return a, nil

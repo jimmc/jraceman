@@ -24,12 +24,12 @@ func (sc *simplanstageCrud) Save(entity interface{}) (string, error) {
 }
 
 func (sc *simplanstageCrud) List(offset, limit int) ([]interface{}, error) {
-  sites, err := sc.h.config.DomainRepos.SimplanStage().List(offset, limit)
+  simplanstages, err := sc.h.config.DomainRepos.SimplanStage().List(offset, limit)
   if err != nil {
     return nil, err
   }
-  a := make([]interface{}, len(sites))
-  for i, simplanstage := range sites {
+  a := make([]interface{}, len(simplanstages))
+  for i, simplanstage := range simplanstages {
     a[i] = simplanstage
   }
   return a, nil
