@@ -216,6 +216,122 @@
 		]
 	},
 	{
+		"Name": "org.jimmc.jraceman.EntryCountPerEventNS",
+		"Display": "Entry Count Per Event non-scoring",
+		"Description": "The number of Entries and Teams entered, including non-scoring counts, for each Event.",
+		"OrderBy": [
+			{
+				"Name": "event",
+				"Display": "Event"
+			},
+			{
+				"Name": "teamcount",
+				"Display": "#Teams"
+			},
+			{
+				"Name": "entrycount",
+				"Display": "#Entries"
+			},
+			{
+				"Name": "nsentries",
+				"Display": "#NS-Entries"
+			},
+			{
+				"Name": "groupcount",
+				"Display": "#Groups"
+			}
+		],
+		"Where": [
+			{
+				"Name": "event_id",
+				"Display": "Event",
+				"Ops": [
+					"eq"
+				],
+				"KeyTable": "event"
+			},
+			{
+				"Name": "event_name",
+				"Display": "Event Name",
+				"Ops": [
+					"eq",
+					"ne",
+					"gt",
+					"ge",
+					"lt",
+					"le",
+					"like"
+				],
+				"KeyTable": ""
+			},
+			{
+				"Name": "event_number",
+				"Display": "Event Number",
+				"Ops": [
+					"eq",
+					"ne",
+					"gt",
+					"ge",
+					"lt",
+					"le"
+				],
+				"KeyTable": ""
+			},
+			{
+				"Name": "meet_id",
+				"Display": "Meet",
+				"Ops": [
+					"eq"
+				],
+				"KeyTable": "meet"
+			},
+			{
+				"Name": "person_id",
+				"Display": "Person",
+				"Ops": [
+					"eq"
+				],
+				"KeyTable": "person"
+			},
+			{
+				"Name": "team_id",
+				"Display": "Team",
+				"Ops": [
+					"eq"
+				],
+				"KeyTable": "team"
+			},
+			{
+				"Name": "team_shortname",
+				"Display": "Team Short Name",
+				"Ops": [
+					"eq",
+					"ne",
+					"gt",
+					"ge",
+					"lt",
+					"le",
+					"like"
+				],
+				"KeyTable": ""
+			},
+			{
+				"Name": "team_name",
+				"Display": "Team Name",
+				"Ops": [
+					"eq",
+					"ne",
+					"gt",
+					"ge",
+					"lt",
+					"le",
+					"like"
+				],
+				"KeyTable": ""
+			}
+		]
+	},
+	{
 		"Name": "org.jimmc.jraceman.EntryCountPerLevel",
 		"Display": "Entry Count Per Level",
 		"Description": "The number of Entries and Teams entered for each Level.",
@@ -548,10 +664,641 @@
 		]
 	},
 	{
-		"Name": "org.jimmc.jraceman.Lanes",
-		"Display": "Lanes",
-		"Description": "",
-		"OrderBy": [],
-		"Where": []
+		"Name": "org.jimmc.jraceman.LaneAssignments",
+		"Display": "Lane Assignments",
+		"Description": "Lane Assignments.",
+		"OrderBy": [
+			{
+				"Name": "event",
+				"Display": "Event, Race, Lane, Person"
+			},
+			{
+				"Name": "race",
+				"Display": "Race, Lane, Person"
+			},
+			{
+				"Name": "teamPerson",
+				"Display": "Team, Person"
+			},
+			{
+				"Name": "teamRace",
+				"Display": "Team, Race, Person"
+			},
+			{
+				"Name": "person",
+				"Display": "Person, Race"
+			}
+		],
+		"Where": [
+			{
+				"Name": "event_id",
+				"Display": "Event",
+				"Ops": [
+					"eq"
+				],
+				"KeyTable": "event"
+			},
+			{
+				"Name": "event_name",
+				"Display": "Event Name",
+				"Ops": [
+					"eq",
+					"ne",
+					"gt",
+					"ge",
+					"lt",
+					"le",
+					"like"
+				],
+				"KeyTable": ""
+			},
+			{
+				"Name": "event_number",
+				"Display": "Event Number",
+				"Ops": [
+					"eq",
+					"ne",
+					"gt",
+					"ge",
+					"lt",
+					"le"
+				],
+				"KeyTable": ""
+			},
+			{
+				"Name": "race_id",
+				"Display": "Race",
+				"Ops": [
+					"eq"
+				],
+				"KeyTable": "race"
+			},
+			{
+				"Name": "race_number",
+				"Display": "Race Number",
+				"Ops": [
+					"eq",
+					"ne",
+					"gt",
+					"ge",
+					"lt",
+					"le"
+				],
+				"KeyTable": ""
+			},
+			{
+				"Name": "race_round",
+				"Display": "Race Round",
+				"Ops": [
+					"eq",
+					"ne",
+					"gt",
+					"ge",
+					"lt",
+					"le"
+				],
+				"KeyTable": ""
+			},
+			{
+				"Name": "race_start",
+				"Display": "Race Start",
+				"Ops": [
+					"eq",
+					"ne",
+					"gt",
+					"ge",
+					"lt",
+					"le",
+					"like"
+				],
+				"KeyTable": ""
+			},
+			{
+				"Name": "team_id",
+				"Display": "Team",
+				"Ops": [
+					"eq"
+				],
+				"KeyTable": "team"
+			},
+			{
+				"Name": "team_shortname",
+				"Display": "Team Short Name",
+				"Ops": [
+					"eq",
+					"ne",
+					"gt",
+					"ge",
+					"lt",
+					"le",
+					"like"
+				],
+				"KeyTable": ""
+			},
+			{
+				"Name": "team_name",
+				"Display": "Team Name",
+				"Ops": [
+					"eq",
+					"ne",
+					"gt",
+					"ge",
+					"lt",
+					"le",
+					"like"
+				],
+				"KeyTable": ""
+			},
+			{
+				"Name": "person_id",
+				"Display": "Person",
+				"Ops": [
+					"eq"
+				],
+				"KeyTable": "person"
+			},
+			{
+				"Name": "event_race_entry_scratched",
+				"Display": "Scratched",
+				"Ops": [
+					"eq",
+					"ne",
+					"gt",
+					"ge",
+					"lt",
+					"le"
+				],
+				"KeyTable": ""
+			}
+		]
+	},
+	{
+		"Name": "org.jimmc.jraceman.MedalCount",
+		"Display": "Medal Count",
+		"Description": "The number of medals received by each team",
+		"OrderBy": [
+			{
+				"Name": "team",
+				"Display": "Team"
+			}
+		],
+		"Where": [
+			{
+				"Name": "meet_id",
+				"Display": "Meet",
+				"Ops": [
+					"eq"
+				],
+				"KeyTable": "meet"
+			},
+			{
+				"Name": "event_id",
+				"Display": "Event",
+				"Ops": [
+					"eq"
+				],
+				"KeyTable": "event"
+			},
+			{
+				"Name": "event_name",
+				"Display": "Event Name",
+				"Ops": [
+					"eq",
+					"ne",
+					"gt",
+					"ge",
+					"lt",
+					"le",
+					"like"
+				],
+				"KeyTable": ""
+			},
+			{
+				"Name": "event_number",
+				"Display": "Event Number",
+				"Ops": [
+					"eq",
+					"ne",
+					"gt",
+					"ge",
+					"lt",
+					"le"
+				],
+				"KeyTable": ""
+			},
+			{
+				"Name": "team_id",
+				"Display": "Team",
+				"Ops": [
+					"eq"
+				],
+				"KeyTable": "team"
+			},
+			{
+				"Name": "team_shortname",
+				"Display": "Team Short Name",
+				"Ops": [
+					"eq",
+					"ne",
+					"gt",
+					"ge",
+					"lt",
+					"le",
+					"like"
+				],
+				"KeyTable": ""
+			},
+			{
+				"Name": "team_name",
+				"Display": "Team Name",
+				"Ops": [
+					"eq",
+					"ne",
+					"gt",
+					"ge",
+					"lt",
+					"le",
+					"like"
+				],
+				"KeyTable": ""
+			},
+			{
+				"Name": "person_id",
+				"Display": "Person",
+				"Ops": [
+					"eq"
+				],
+				"KeyTable": "person"
+			}
+		]
+	},
+	{
+		"Name": "org.jimmc.jraceman.PersonalResults",
+		"Display": "Personal Results",
+		"Description": "Personal results for each person collected on one page per person, sorted by team and last name",
+		"OrderBy": [
+			{
+				"Name": "team",
+				"Display": "Team"
+			},
+			{
+				"Name": "person",
+				"Display": "Person"
+			}
+		],
+		"Where": [
+			{
+				"Name": "meet_id",
+				"Display": "Meet",
+				"Ops": [
+					"eq"
+				],
+				"KeyTable": "meet"
+			},
+			{
+				"Name": "team_id",
+				"Display": "Team",
+				"Ops": [
+					"eq"
+				],
+				"KeyTable": "team"
+			},
+			{
+				"Name": "team_shortname",
+				"Display": "Team Short Name",
+				"Ops": [
+					"eq",
+					"ne",
+					"gt",
+					"ge",
+					"lt",
+					"le",
+					"like"
+				],
+				"KeyTable": ""
+			},
+			{
+				"Name": "team_name",
+				"Display": "Team Name",
+				"Ops": [
+					"eq",
+					"ne",
+					"gt",
+					"ge",
+					"lt",
+					"le",
+					"like"
+				],
+				"KeyTable": ""
+			},
+			{
+				"Name": "person_id",
+				"Display": "Person",
+				"Ops": [
+					"eq"
+				],
+				"KeyTable": "person"
+			}
+		]
+	},
+	{
+		"Name": "org.jimmc.jraceman.RaceLanes",
+		"Display": "Race Lanes",
+		"Description": "Lane assignments for a Race",
+		"OrderBy": [
+			{
+				"Name": "event",
+				"Display": "Event, Race"
+			},
+			{
+				"Name": "race",
+				"Display": "Race"
+			}
+		],
+		"Where": [
+			{
+				"Name": "event_id",
+				"Display": "Event",
+				"Ops": [
+					"eq"
+				],
+				"KeyTable": "event"
+			},
+			{
+				"Name": "event_name",
+				"Display": "Event Name",
+				"Ops": [
+					"eq",
+					"ne",
+					"gt",
+					"ge",
+					"lt",
+					"le",
+					"like"
+				],
+				"KeyTable": ""
+			},
+			{
+				"Name": "event_number",
+				"Display": "Event Number",
+				"Ops": [
+					"eq",
+					"ne",
+					"gt",
+					"ge",
+					"lt",
+					"le"
+				],
+				"KeyTable": ""
+			},
+			{
+				"Name": "race_id",
+				"Display": "Race",
+				"Ops": [
+					"eq"
+				],
+				"KeyTable": "race"
+			},
+			{
+				"Name": "race_number",
+				"Display": "Race Number",
+				"Ops": [
+					"eq",
+					"ne",
+					"gt",
+					"ge",
+					"lt",
+					"le"
+				],
+				"KeyTable": ""
+			},
+			{
+				"Name": "race_round",
+				"Display": "Race Round",
+				"Ops": [
+					"eq",
+					"ne",
+					"gt",
+					"ge",
+					"lt",
+					"le"
+				],
+				"KeyTable": ""
+			},
+			{
+				"Name": "race_start",
+				"Display": "Race Start",
+				"Ops": [
+					"eq",
+					"ne",
+					"gt",
+					"ge",
+					"lt",
+					"le",
+					"like"
+				],
+				"KeyTable": ""
+			}
+		]
+	},
+	{
+		"Name": "org.jimmc.jraceman.RaceResults",
+		"Display": "Race Results",
+		"Description": "Results for a Race, sorted by finish order",
+		"OrderBy": [
+			{
+				"Name": "event",
+				"Display": "Event, Race"
+			},
+			{
+				"Name": "race",
+				"Display": "Race"
+			}
+		],
+		"Where": [
+			{
+				"Name": "event_id",
+				"Display": "Event",
+				"Ops": [
+					"eq"
+				],
+				"KeyTable": "event"
+			},
+			{
+				"Name": "event_name",
+				"Display": "Event Name",
+				"Ops": [
+					"eq",
+					"ne",
+					"gt",
+					"ge",
+					"lt",
+					"le",
+					"like"
+				],
+				"KeyTable": ""
+			},
+			{
+				"Name": "event_number",
+				"Display": "Event Number",
+				"Ops": [
+					"eq",
+					"ne",
+					"gt",
+					"ge",
+					"lt",
+					"le"
+				],
+				"KeyTable": ""
+			},
+			{
+				"Name": "race_id",
+				"Display": "Race",
+				"Ops": [
+					"eq"
+				],
+				"KeyTable": "race"
+			},
+			{
+				"Name": "race_number",
+				"Display": "Race Number",
+				"Ops": [
+					"eq",
+					"ne",
+					"gt",
+					"ge",
+					"lt",
+					"le"
+				],
+				"KeyTable": ""
+			},
+			{
+				"Name": "race_round",
+				"Display": "Race Round",
+				"Ops": [
+					"eq",
+					"ne",
+					"gt",
+					"ge",
+					"lt",
+					"le"
+				],
+				"KeyTable": ""
+			},
+			{
+				"Name": "race_start",
+				"Display": "Race Start",
+				"Ops": [
+					"eq",
+					"ne",
+					"gt",
+					"ge",
+					"lt",
+					"le",
+					"like"
+				],
+				"KeyTable": ""
+			}
+		]
+	},
+	{
+		"Name": "org.jimmc.jraceman.RaceScore",
+		"Display": "Race Results with Score",
+		"Description": "Results for a Race, sorted by finish order and including score points",
+		"OrderBy": [
+			{
+				"Name": "event",
+				"Display": "Event, Race"
+			},
+			{
+				"Name": "race",
+				"Display": "Race"
+			}
+		],
+		"Where": [
+			{
+				"Name": "event_id",
+				"Display": "Event",
+				"Ops": [
+					"eq"
+				],
+				"KeyTable": "event"
+			},
+			{
+				"Name": "event_name",
+				"Display": "Event Name",
+				"Ops": [
+					"eq",
+					"ne",
+					"gt",
+					"ge",
+					"lt",
+					"le",
+					"like"
+				],
+				"KeyTable": ""
+			},
+			{
+				"Name": "event_number",
+				"Display": "Event Number",
+				"Ops": [
+					"eq",
+					"ne",
+					"gt",
+					"ge",
+					"lt",
+					"le"
+				],
+				"KeyTable": ""
+			},
+			{
+				"Name": "race_id",
+				"Display": "Race",
+				"Ops": [
+					"eq"
+				],
+				"KeyTable": "race"
+			},
+			{
+				"Name": "race_number",
+				"Display": "Race Number",
+				"Ops": [
+					"eq",
+					"ne",
+					"gt",
+					"ge",
+					"lt",
+					"le"
+				],
+				"KeyTable": ""
+			},
+			{
+				"Name": "race_round",
+				"Display": "Race Round",
+				"Ops": [
+					"eq",
+					"ne",
+					"gt",
+					"ge",
+					"lt",
+					"le"
+				],
+				"KeyTable": ""
+			},
+			{
+				"Name": "race_start",
+				"Display": "Race Start",
+				"Ops": [
+					"eq",
+					"ne",
+					"gt",
+					"ge",
+					"lt",
+					"le",
+					"like"
+				],
+				"KeyTable": ""
+			}
+		]
 	}
 ]

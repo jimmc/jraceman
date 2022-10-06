@@ -89,11 +89,7 @@ func TestCreateTablesAreaError(t *testing.T) {
 }
 
 func TestImport(t *testing.T) {
-  infile, err := os.Open("testdata/import.txt")
-  if err != nil {
-    t.Fatalf("Error opening import file: %v", err)
-  }
-  defer infile.Close()
+  filename := "testdata/import.txt"
   dbr, err := dbtest.ReposEmpty()
   if err != nil {
     t.Errorf("Failed to open test database: %v", err)
@@ -103,7 +99,7 @@ func TestImport(t *testing.T) {
     t.Errorf("Error creating tables: %v", err)
   }
 
-  counts, err := dbr.Import(infile)
+  counts, err := dbr.ImportFile(filename)
   if err != nil {
     t.Errorf("Error importing file: %v", err)
   }
@@ -117,12 +113,8 @@ func TestImport(t *testing.T) {
     t.Errorf("Unchanged count, got %d, want %d", got, want)
   }
 
-  infile2, err := os.Open("testdata/import2.txt")
-  if err != nil {
-    t.Fatalf("Error opening import file (2): %v", err)
-  }
-  defer infile2.Close()
-  counts, err = dbr.Import(infile2)
+  filename2 := "testdata/import2.txt"
+  counts, err = dbr.ImportFile(filename2)
   if err != nil {
     t.Errorf("Error importing file: %v", err)
   }
@@ -138,11 +130,7 @@ func TestImport(t *testing.T) {
 }
 
 func TestExport(t *testing.T) {
-  infile, err := os.Open("testdata/import.txt")
-  if err != nil {
-    t.Fatalf("Error opening import file: %v", err)
-  }
-  defer infile.Close()
+  filename := "testdata/import.txt"
   dbr, err := dbtest.ReposEmpty()
   if err != nil {
     t.Errorf("Failed to open test database: %v", err)
@@ -152,7 +140,7 @@ func TestExport(t *testing.T) {
     t.Errorf("Error creating tables: %v", err)
   }
 
-  _, err = dbr.Import(infile)
+  _, err = dbr.ImportFile(filename)
   if err != nil {
     t.Errorf("Error importing file: %v", err)
   }

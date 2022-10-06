@@ -219,7 +219,7 @@ func TestImportv2(t *testing.T) {
 "T1","widget",2
 "T2","gadget",4
 `
-  if err := im.Import(strings.NewReader(source)); err != nil {
+  if err := im.ImportReader(strings.NewReader(source)); err != nil {
     t.Fatalf("Importing string: %v", err)
   }
   if got, want := im.TableName(), "thing"; got != want {

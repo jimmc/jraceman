@@ -3,6 +3,26 @@
 !appInfo JRaceman v2.0.0
 !type database
 
+!table user
+!columns "id","username","cryptword"
+#no rows
+
+!table role
+!columns "id","name","description"
+#no rows
+
+!table permission
+!columns "id","name","description"
+#no rows
+
+!table userrole
+!columns "id","userid","roleid"
+#no rows
+
+!table rolepermission
+!columns "id","roleid","permissionid"
+#no rows
+
 !table option
 !columns "name","value"
 #no rows

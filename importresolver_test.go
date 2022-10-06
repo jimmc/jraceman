@@ -25,7 +25,7 @@ func TestImportRegexp(t *testing.T) {
     {
       name: "import file single quote",
       str: "import 'foo';",
-      expectResult: [][]int{{0,13,7,12}},
+      expectResult: [][]int{{0,13,-1,-1,7,12}},
     },
     {
       name: "import file relative path",
@@ -35,7 +35,7 @@ func TestImportRegexp(t *testing.T) {
     {
       name: "import file double quote",
       str: `import "foo";`,
-      expectResult: [][]int{{0,13,7,12}},
+      expectResult: [][]int{{0,13,-1,-1,7,12}},
     },
     {
       name: "import file absolute path",
@@ -45,17 +45,17 @@ func TestImportRegexp(t *testing.T) {
     {
       name: "two import files",
       str: `import "foo"; import "bar" ;`,
-      expectResult: [][]int{{0,13,7,12},{14,28,21,26}},
+      expectResult: [][]int{{0,13,-1,-1,7,12},{14,28,-1,-1,21,26}},
     },
     {
       name: "import names",
       str: `import {a,b,c} from "foo";`,
-      expectResult: [][]int{{0,26,20,25}},
+      expectResult: [][]int{{0,26,7,14,20,25}},
     },
     {
       name: "import names no spaces",
       str: `import{a,b,c}from"foo";`,
-      expectResult: [][]int{{0,23,17,22}},
+      expectResult: [][]int{{0,23,6,13,17,22}},
     },
     {
       name: "default import",
@@ -65,7 +65,7 @@ func TestImportRegexp(t *testing.T) {
     {
       name: "wildcard import",
       str: `import * as dflt from "foo";`,
-      expectResult: [][]int{{0, 27, 7, 17, 22, 27}},
+      expectResult: [][]int{{0, 28, 7, 17, 22, 27}},
     },
   }
   for _, tc := range tests {

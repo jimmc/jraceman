@@ -83,12 +83,12 @@ func (im *Importer) ImportFile(importFile string) error {
   defer inFile.Close()
 
   glog.Infof("Importing from %s\n", importFile)
-  err = im.importReader(inFile)
+  err = im.ImportReader(inFile)
   glog.Infof("Done importing from %s\n", importFile)
   return err
 }
 
-func (im *Importer) importReader(reader io.Reader) error {
+func (im *Importer) ImportReader(reader io.Reader) error {
   im.reset()
   scanner := bufio.NewScanner(reader)
   for scanner.Scan() {

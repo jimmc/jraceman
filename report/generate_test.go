@@ -3,7 +3,6 @@ package report
 import (
   "fmt"
   "io/ioutil"
-  "os"
   "testing"
   "time"
 
@@ -41,7 +40,6 @@ func TestStandardReports(t *testing.T) {
     options *ReportOptions
   } {
       { "test1", "empty", "test1", roots2, "test1", &ReportOptions{Data:"<topdata>"} },
-      { "lanes", "empty", "lanes-test", roots2, "lanes-test", &ReportOptions{Data:"EV123"} },
       { "entries", "sample1", "entries-test", roots1, "org.jimmc.jraceman.Entries",
         &ReportOptions{
           OrderBy: "team",
@@ -91,14 +89,8 @@ func openAndLoad(setupfile string) (*dbrepo.Repos, error) {
     return nil, fmt.Errorf("failed to create repository tables: %v", err)
   }
 
-  inFile, err := os.Open(setupfile)
-  if err != nil {
-    return nil, fmt.Errorf("error opening import input file %s: %v", setupfile, err)
-  }
-  defer inFile.Close()
-
   glog.Infof("Importing from %s\n", setupfile)
-  counts, err := dbRepos.Import(inFile)
+  counts, err := dbRepos.ImportFile(setupfile)
   if err != nil {
     return nil, fmt.Errorf("error importing from %s: %v", setupfile, err)
   }
