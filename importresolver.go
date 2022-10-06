@@ -10,7 +10,9 @@ import (
 )
 
 var (
-    importPattern = regexp.MustCompile(`import *(?:{[^}]*} *from *)?("[^\./][^"]*"|'[^\./][^']*') *;`)
+    importPattern = regexp.MustCompile(`import *(?:({[^}]*}|[?:(\* * as *)a-zA-Z0-9]+) *from *)?("[^\./][^"]*"|'[^\./][^']*') *;`)
+    importFirstMatchIndex = 4   // Index of match value at start of what we want to change.
+    importLastMatchIndex = 5    // Index of match value at end of what we want to change.
     exportPattern = regexp.MustCompile(`export *\* *from *("[^\./][^"]*"|'[^\./][^']*') *;`)
 
     defaultReplacements = map[string]string {
@@ -116,14 +118,14 @@ func (rrw resolverResponseWriter) fixImports(p string) string {
     }
     carat := 0
     var sb strings.Builder
-    // Our pattern contains one submatch, so each matched import has 4 indexes.
+    // Our pattern contains three submatches (parens), so each matched import has 6 indexes.
     matchCount := len(importLocations)
     for m:=0; m<matchCount; m++ {
         matchM := importLocations[m]
-        // We have one subpattern, so we use indexes 2 and 3.
+        // We have one subpattern we are looking for in order to replace that text.
         // Our subpattern includes the quotes, so we adjust the locations inwards to skip those.
-        start := matchM[2] + 1
-        end := matchM[3] - 1
+        start := matchM[importFirstMatchIndex] + 1
+        end := matchM[importLastMatchIndex] - 1
         filename := p[start:end]
         resolvedFilename := rrw.resolveFilename(filename)
         glog.V(2).Infof("Replaced %q by %q", filename, resolvedFilename)

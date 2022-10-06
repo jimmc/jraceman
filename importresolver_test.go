@@ -57,6 +57,16 @@ func TestImportRegexp(t *testing.T) {
       str: `import{a,b,c}from"foo";`,
       expectResult: [][]int{{0,23,17,22}},
     },
+    {
+      name: "default import",
+      str: `import dflt from"foo";`,
+      expectResult: [][]int{{0, 22, 7, 12, 16, 21}},
+    },
+    {
+      name: "wildcard import",
+      str: `import * as dflt from "foo";`,
+      expectResult: [][]int{{0, 27, 7, 17, 22, 27}},
+    },
   }
   for _, tc := range tests {
     t.Run(tc.name, func(t *testing.T) {

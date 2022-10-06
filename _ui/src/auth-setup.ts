@@ -21,7 +21,7 @@ export class AuthSetup extends LitElement {
             <span slot="tab">Roles</span>
             <section slot="panel"><table-queryedit tableName="role"></table-queryedit></section>
             <span slot="tab">Permissions</span>
-            <section slot="panel"><table-queryedit tableName="permissions"></table-queryedit></section>
+            <section slot="panel"><table-queryedit tableName="permission"></table-queryedit></section>
             <span slot="tab">User Roles</span>
             <section slot="panel"><table-queryedit tableName="userrole"></table-queryedit></section>
             <span slot="tab">Role Permissions</span>

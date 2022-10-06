@@ -17,7 +17,6 @@ Compile the typescript code into the build directory:
 
     tsc
 
-
 ### Run
 
 Run the jracemango program with appropriate command line arguments,

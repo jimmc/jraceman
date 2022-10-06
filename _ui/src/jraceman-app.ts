@@ -2,11 +2,12 @@ import {LitElement, html, css} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import {when} from 'lit/directives/when.js';
 
-import './jraceman-split.js'
 import './auth-setup.js'
 import './database-menu.js'
 import './database-pane.js'
 import './debug-pane.js'
+import './jraceman-login.js'
+import './jraceman-split.js'
 import './meet-setup.js'
 import './message-log.js'
 import './plan-setup.js'
@@ -49,10 +50,19 @@ export class JracemanApp extends LitElement {
       height: 0;        /* Let flex fill the size; this prevents it from resizing when content changes. */
       flex: 1 1 0;
     }
+    #login {
+      display: block;
+    }
+    [hidden=true] {
+      display: none !important;
+    }
   `;
 
   @property()
   unviewedMessageCount = 0
+
+  @property()
+  loggedIn = false
 
   connectedCallback() {
     super.connectedCallback()
@@ -136,7 +146,8 @@ export class JracemanApp extends LitElement {
   render() {
     return html`
       <div class="title-bar">JRaceman</div>
-      <jraceman-split id="main" orientation="vertical" vertical>
+      <jraceman-login id="login" hidden=${this.loggedIn}></jraceman-login>
+      <jraceman-split id="main" orientation="vertical" vertical hidden=${!this.loggedIn}>
           <div id="top" slot="top" class="tab-container">
             <jraceman-tabs>
                 <span slot="tab">Auth Setup</span>

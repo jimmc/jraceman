@@ -9,6 +9,7 @@ import (
 
   "github.com/jimmc/jracemango/api"
   "github.com/jimmc/jracemango/app"
+  "github.com/jimmc/jracemango/auth"
   "github.com/jimmc/jracemango/dbrepo"
 
   "github.com/golang/glog"
@@ -23,6 +24,7 @@ type config struct {
   reportRoot string
   uiRoot string
   db string
+  maxClockSkewSeconds int
 
   // actions
   create bool
@@ -43,6 +45,8 @@ func doMain() int {
   flag.StringVar(&config.reportRoot, "reportroot", "report/template", "location of report templates")
   flag.StringVar(&config.uiRoot, "uiroot", "_ui/", "location of ui root")
   flag.StringVar(&config.db, "db", "", "location of database, in the form driver:name")
+  flag.IntVar(&config.maxClockSkewSeconds, "maxClockSkewSeconds", 5,
+        "max seconds of clock skew allowed between client and server")
 
   // Action flags
   flag.BoolVar(&config.create, "create", false, "true to create the database specified by -db")
@@ -130,6 +134,7 @@ func importFile(config *config, dbRepos *dbrepo.Repos) error {
 
 func runHttpServer(config *config, dbRepos *dbrepo.Repos) {
   mux := http.NewServeMux()
+  authHandler := auth.NewHandler(config.maxClockSkewSeconds)
 
   uiFileHandler := newImportResolver(http.FileServer(http.Dir(config.uiRoot)))
   apiPrefix := "/api/"
@@ -139,9 +144,9 @@ func runHttpServer(config *config, dbRepos *dbrepo.Repos) {
     ReportRoots: []string{config.reportRoot},
   })
   mux.Handle("/ui/", http.StripPrefix("/ui/", uiFileHandler))
-  mux.Handle(apiPrefix, apiHandler)
-  // mux.Handle(apiPrefix, authHandler.RequireAuth(apiHandler))
-  // mux.Handle("/auth/", authHandler.ApiHandler)
+  //mux.Handle(apiPrefix, apiHandler)
+  mux.Handle(apiPrefix, authHandler.RequireAuth(apiHandler))
+  mux.Handle("/auth/", authHandler.ApiHandler)
   mux.HandleFunc("/", redirectToUi)
 
   fmt.Printf("jraceman serving on port %v\n", config.port)
