@@ -6,7 +6,7 @@ import './auth-setup.js'
 import './database-menu.js'
 import './database-pane.js'
 import './debug-pane.js'
-import './jraceman-login.js'
+import { JracemanLogin } from './jraceman-login.js'
 import './jraceman-split.js'
 import './meet-setup.js'
 import './message-log.js'
@@ -20,6 +20,7 @@ import './venue-setup.js'
 import { JracemanTabs} from './jraceman-tabs.js'
 import { ReportResultsEvent } from './reports-pane.js'
 import { QueryResultsEvent } from './table-desc.js'
+import { LoginChangedEvent } from './jraceman-login.js'
 
 /**
  * jraceman-app is the top-level component that contains the entire JRaceman application.
@@ -46,6 +47,9 @@ export class JracemanApp extends LitElement {
       color: black;
       flex: 0 0 auto;
     }
+    .right {
+        float: right;
+    }
     #main {
       height: 0;        /* Let flex fill the size; this prevents it from resizing when content changes. */
       flex: 1 1 0;
@@ -62,7 +66,7 @@ export class JracemanApp extends LitElement {
   unviewedMessageCount = 0
 
   @property()
-  loggedIn = false
+  loggedIn = true
 
   connectedCallback() {
     super.connectedCallback()
@@ -71,6 +75,7 @@ export class JracemanApp extends LitElement {
     document.addEventListener("jraceman-query-results-event", this.onQueryResultsEvent.bind(this))
     document.addEventListener("jraceman-report-results-event", this.onReportResultsEvent.bind(this))
     document.addEventListener("jraceman-post-message-event", this.onPostMessage.bind(this))
+    document.addEventListener("jraceman-login-changed-event", this.onLoginChanged.bind(this))
   }
 
   // Get a pointer to the message-log-pane
@@ -86,6 +91,13 @@ export class JracemanApp extends LitElement {
       return null
     }
     return panel
+  }
+
+  // When we get a post-message event, count it.
+  onLoginChanged(e:Event) {
+    const evt = e as CustomEvent<LoginChangedEvent>
+    console.log("JracemanApp.onLoginChanged", evt)
+    this.loggedIn = evt.detail.State
   }
 
   // When we get a query-results event, make the query-results tab visible.
@@ -113,7 +125,7 @@ export class JracemanApp extends LitElement {
     bottomTabs.selectTabById("report-results-tab")
   }
 
-  // WHen we get a post-message event, count it.
+  // When we get a post-message event, count it.
   onPostMessage(e:Event) {
     console.log("JracemanApp.onPostMessage", e)
     const messageLogPanel = this.getMessageLogPanel()
@@ -143,9 +155,14 @@ export class JracemanApp extends LitElement {
     this.unviewedMessageCount = 0
   }
 
+  logout() {
+    (this.shadowRoot!.querySelector("#login") as JracemanLogin).logout()
+    console.log("logged out")
+  }
+
   render() {
     return html`
-      <div class="title-bar">JRaceman</div>
+      <div class="title-bar">JRaceman <span class="right" xhidden=${!this.loggedIn} @click="${this.logout}">Logout</span></div>
       <jraceman-login id="login" hidden=${this.loggedIn}></jraceman-login>
       <jraceman-split id="main" orientation="vertical" vertical hidden=${!this.loggedIn}>
           <div id="top" slot="top" class="tab-container">

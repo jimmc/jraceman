@@ -5,6 +5,10 @@ import {PropertyValues} from 'lit-element';
 import { ApiManager } from "./api-manager.js"
 import { hash as sha256hash } from "./sha256.js"
 
+export interface LoginChangedEvent {
+  State: boolean;
+}
+
 /**
  * jraceman-login is the login screen that shows up when the user is not logged in.
  */
@@ -31,7 +35,7 @@ export class JracemanLogin extends LitElement {
   @property()
   loginError = ""
 
-  loggedIn: boolean = false;    // TODO - propagate up to jraceman-app
+  loggedIn: boolean = true;
 
   permissions: string[] = [];
   username?: HTMLInputElement
@@ -66,11 +70,12 @@ export class JracemanLogin extends LitElement {
       const response = await ApiManager.xhrJson(loginUrl, options);
       this.loggedIn = true;
       console.log("Login succeeded, response:", response);
-      location.reload();
+      //location.reload();
     } catch (e) {
       this.loggedIn = false;
       this.loginError = "Login failed";
     }
+    this.sendLoginEvent()
   }
 
   async logout() {
@@ -81,10 +86,11 @@ export class JracemanLogin extends LitElement {
       this.loggedIn = false;
       this.permissions = [];
       console.log("Logout succeeded");
-      location.reload();
+      //location.reload();
     } catch (e) {
       console.error("Logout failed");
     }
+    this.sendLoginEvent()
   }
 
   // CheckStatus checks to see if we are logged in and sets our loggedIn flag
@@ -97,7 +103,7 @@ export class JracemanLogin extends LitElement {
       this.loggedIn = response.LoggedIn;
       if (this.loggedIn != oldStatus && !this.loggedIn) {
         console.error("not logged in");
-        location.reload();    // TODO - use a dialog to relogin without reload
+        //location.reload();    // TODO - use a dialog to relogin without reload
       }
       if (this.loggedIn) {
         this.permissions = response.Permissions.split(',');
@@ -105,6 +111,19 @@ export class JracemanLogin extends LitElement {
     } catch (e) {
       console.error("auth status call failed");
     }
+    this.sendLoginEvent()
+  }
+
+  sendLoginEvent() {
+    // Dispatch an event so others can take action when the login state changes.
+    const event = new CustomEvent<LoginChangedEvent>('jraceman-login-changed-event', {
+      bubbles: true,
+      composed: true,
+      detail: {
+        State: this.loggedIn
+      } as LoginChangedEvent
+    })
+    this.dispatchEvent(event)
   }
 
   hasPermission(perm: string) {
