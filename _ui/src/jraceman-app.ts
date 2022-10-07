@@ -48,7 +48,7 @@ export class JracemanApp extends LitElement {
       flex: 0 0 auto;
     }
     .right {
-        float: right;
+      float: right;
     }
     #main {
       height: 0;        /* Let flex fill the size; this prevents it from resizing when content changes. */
@@ -66,7 +66,7 @@ export class JracemanApp extends LitElement {
   unviewedMessageCount = 0
 
   @property()
-  loggedIn = true
+  loggedIn = false
 
   connectedCallback() {
     super.connectedCallback()
@@ -76,6 +76,7 @@ export class JracemanApp extends LitElement {
     document.addEventListener("jraceman-report-results-event", this.onReportResultsEvent.bind(this))
     document.addEventListener("jraceman-post-message-event", this.onPostMessage.bind(this))
     document.addEventListener("jraceman-login-state-event", this.onLoginState.bind(this))
+    JracemanLogin.AnnounceLoginState()  // See if we are logged in.
   }
 
   // Get a pointer to the message-log-pane
@@ -169,46 +170,48 @@ export class JracemanApp extends LitElement {
         `)}
       </div>
       <jraceman-login id="login" hidden=${this.loggedIn} logged-in=${this.loggedIn}></jraceman-login>
-      <jraceman-split id="main" orientation="vertical" vertical hidden=${!this.loggedIn}>
+      ${when(this.loggedIn,()=>html`
+        <jraceman-split id="main">
           <div id="top" slot="top" class="tab-container">
             <jraceman-tabs>
-                <span slot="tab">Auth Setup</span>
-                <section slot="panel"><auth-setup></auth-setup></section>
-                <span slot="tab">Sport Setup</span>
-                <section slot="panel"><sport-setup></sport-setup></section>
-                <span slot="tab">Plan Setup</span>
-                <section slot="panel"><plan-setup></sport-setup></section>
-                <span slot="tab">Venue Setup</span>
-                <section slot="panel"><venue-setup></sport-setup></section>
-                <span slot="tab">Team Setup</span>
-                <section slot="panel"><team-setup></sport-setup></section>
-                <span slot="tab">Meet Setup</span>
-                <section slot="panel"><meet-setup></sport-setup></section>
-                <span slot="tab">By Event</span>
-                <section slot="panel">By Event is not yet implemented</section>
-                <span slot="tab">Reports</span>
-                <section slot="panel"><reports-pane></reports-pane></section>
-                <span slot="tab"><database-menu></database-menu>Database</span>
-                <section slot="panel"><database-pane></database-pane></section>
-                <span slot="tab">Debug</span>
-                <section slot="panel"><debug-pane></debug-pane></section>
+              <span slot="tab">Auth Setup</span>
+              <section slot="panel"><auth-setup></auth-setup></section>
+              <span slot="tab">Sport Setup</span>
+              <section slot="panel"><sport-setup></sport-setup></section>
+              <span slot="tab">Plan Setup</span>
+              <section slot="panel"><plan-setup></sport-setup></section>
+              <span slot="tab">Venue Setup</span>
+              <section slot="panel"><venue-setup></sport-setup></section>
+              <span slot="tab">Team Setup</span>
+              <section slot="panel"><team-setup></sport-setup></section>
+              <span slot="tab">Meet Setup</span>
+              <section slot="panel"><meet-setup></sport-setup></section>
+              <span slot="tab">By Event</span>
+              <section slot="panel">By Event is not yet implemented</section>
+              <span slot="tab">Reports</span>
+              <section slot="panel"><reports-pane></reports-pane></section>
+              <span slot="tab"><database-menu></database-menu>Database</span>
+              <section slot="panel"><database-pane></database-pane></section>
+              <span slot="tab">Debug</span>
+              <section slot="panel"><debug-pane></debug-pane></section>
             </jraceman-tabs>
           </div>
           <div id="bottom" slot="bottom" class="tab-container">
             <jraceman-tabs @jraceman-tab-selected-event=${this.onTabSelected} id="bottom-tabs">
-                <span slot="tab">Messages${when(this.unviewedMessageCount>0,
+              <span slot="tab">Messages${when(this.unviewedMessageCount>0,
                   ()=>html` [+${this.unviewedMessageCount}]`
-                )}</span>
-                <section slot="panel" id="message-log-pane"><message-log></message-log></section>
-                <span slot="tab" id="query-results-tab">Query Results</span>
-                <section slot="panel"><query-results></query-results></section>
-                <span slot="tab" id="report-results-tab">Report Results</span>
-                <section slot="panel"><report-results></report-results></section>
-                <span slot="tab">Help</span>
-                <section slot="panel">Help is not yet implemented</section>
+              )}</span>
+              <section slot="panel" id="message-log-pane"><message-log></message-log></section>
+              <span slot="tab" id="query-results-tab">Query Results</span>
+              <section slot="panel"><query-results></query-results></section>
+              <span slot="tab" id="report-results-tab">Report Results</span>
+              <section slot="panel"><report-results></report-results></section>
+              <span slot="tab">Help</span>
+              <section slot="panel">Help is not yet implemented</section>
             </jraceman-tabs>
           </div>
-      </jraceman-split>
+        </jraceman-split>
+      `)}
     `;
   }
 }
