@@ -17,11 +17,10 @@ import './report-results.js'
 import './sport-setup.js'
 import './team-setup.js'
 import './venue-setup.js'
-import { JracemanLogin } from './jraceman-login.js'
+import { JracemanLogin, LoginStateEvent } from './jraceman-login.js'
 import { JracemanTabs} from './jraceman-tabs.js'
 import { ReportResultsEvent } from './reports-pane.js'
 import { QueryResultsEvent } from './table-desc.js'
-import { LoginStateEvent } from './api-manager.js'
 
 /**
  * jraceman-app is the top-level component that contains the entire JRaceman application.

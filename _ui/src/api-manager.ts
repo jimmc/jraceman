@@ -3,13 +3,16 @@ export interface XhrOptions {
   params?: any;
 }
 
-export interface LoginStateEvent {
-  State: boolean;
-  Permissions: string;
-}
-
 // ApiManager provides assistance for calling our back end services.
 export class ApiManager {
+  // We don't want ApiManager to depend on any other modules, but we want
+  // to allow someone else to take action when we get an authorization error,
+  // as can happen when our authentication has timed out, so we add a
+  // callback to allow that, and initialize it to a nop in case we happen
+  // to call it before it has been set up.
+  static nop(){}
+  public static AuthErrorCallback = ApiManager.nop
+
   public static async xhrJson(url: string, options?: XhrOptions) {
     const response = await this.xhrText(url, options);
     return JSON.parse(response || 'null');
@@ -33,7 +36,7 @@ export class ApiManager {
             }
           } else if (request.status == 401 && request.responseText == "Invalid token\n") {
             reject(request);
-            ApiManager.AnnounceLoginStatus()
+            ApiManager.AuthErrorCallback()
           } else {
             reject(request);
           }
@@ -51,31 +54,4 @@ export class ApiManager {
       request.send(params)
     })
   }
-
-  // AnnounceLoginStatus gets our current login status and dispatches a LoginStateEvent.
-  public static async AnnounceLoginStatus() {
-    try {
-      const statusUrl = "/auth/status/"
-      const response = await ApiManager.xhrJson(statusUrl)
-      const loggedIn = response.LoggedIn
-      const permissions = response.Permissions
-      ApiManager.SendLoginStateEvent(loggedIn, permissions)
-    } catch (e) {
-      console.error("auth status call failed")
-    }
-  }
-
-  public static SendLoginStateEvent(loggedIn: boolean, permissions: string) {
-    // Dispatch an event so others can take action when the login state changes.
-    const event = new CustomEvent<LoginStateEvent>('jraceman-login-state-event', {
-      bubbles: true,
-      composed: true,
-      detail: {
-        State: loggedIn,
-        Permissions: permissions
-      } as LoginStateEvent
-    })
-    document.dispatchEvent(event)
-  }
-
 }

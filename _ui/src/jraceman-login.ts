@@ -5,6 +5,11 @@ import {PropertyValues} from 'lit-element';
 import { ApiManager } from "./api-manager.js"
 import { hash as sha256hash } from "./sha256.js"
 
+export interface LoginStateEvent {
+  State: boolean;
+  Permissions: string;
+}
+
 /**
  * jraceman-login is the login screen that shows up when the user is not logged in.
  */
@@ -31,11 +36,14 @@ export class JracemanLogin extends LitElement {
   @property()
   loginError = ""
 
-  loggedIn: boolean = true;
-
   permissions: string[] = [];
   username?: HTMLInputElement
   password?: HTMLInputElement
+
+  constructor() {
+    super()
+    ApiManager.AuthErrorCallback = JracemanLogin.AnnounceLoginState
+  }
 
   firstUpdated(changedProperties:PropertyValues<this>) {
     super.firstUpdated(changedProperties);
@@ -44,6 +52,32 @@ export class JracemanLogin extends LitElement {
     this.username!.addEventListener('keydown', this.keydown.bind(this));
     this.password!.addEventListener('keydown', this.keydown.bind(this));
     setTimeout(() => { this.username!.focus(); }, 0);
+  }
+
+  // AnnounceLoginState gets our current login state and dispatches a LoginStateEvent.
+  public static async AnnounceLoginState() {
+    try {
+      const statusUrl = "/auth/status/"
+      const response = await ApiManager.xhrJson(statusUrl)
+      const loggedIn = response.LoggedIn
+      const permissions = response.Permissions
+      JracemanLogin.SendLoginStateEvent(loggedIn, permissions)
+    } catch (e) {
+      console.error("auth status call failed")
+    }
+  }
+
+  public static SendLoginStateEvent(loggedIn: boolean, permissions: string) {
+    // Dispatch an event so others can take action when the login state changes.
+    const event = new CustomEvent<LoginStateEvent>('jraceman-login-state-event', {
+      bubbles: true,
+      composed: true,
+      detail: {
+        State: loggedIn,
+        Permissions: permissions
+      } as LoginStateEvent
+    })
+    document.dispatchEvent(event)
   }
 
   async login() {
@@ -64,14 +98,12 @@ export class JracemanLogin extends LitElement {
         params: formData,
       };
       const response = await ApiManager.xhrJson(loginUrl, options);
-      this.loggedIn = true;
       console.log("Login succeeded, response:", response);
       //location.reload();
     } catch (e) {
-      this.loggedIn = false;
       this.loginError = "Login failed";
     }
-    this.sendLoginEvent()
+    JracemanLogin.AnnounceLoginState()
   }
 
   async logout() {
@@ -79,39 +111,13 @@ export class JracemanLogin extends LitElement {
       const loginUrl = "/auth/logout/";
       const response = await ApiManager.xhrJson(loginUrl);
       console.log("logout response", response)  // TODO remove this
-      this.loggedIn = false;
       this.permissions = [];
       console.log("Logout succeeded");
       //location.reload();
     } catch (e) {
       console.error("Logout failed");
     }
-    this.sendLoginEvent()
-  }
-
-  // CheckStatus checks to see if we are logged in and sets our loggedIn flag
-  // accordingly.
-  async checkStatus() {
-    try {
-      const oldStatus = this.loggedIn;
-      const statusUrl = "/auth/status/";
-      const response = await ApiManager.xhrJson(statusUrl);
-      this.loggedIn = response.LoggedIn;
-      if (this.loggedIn != oldStatus && !this.loggedIn) {
-        console.error("not logged in");
-        //location.reload();    // TODO - use a dialog to relogin without reload
-      }
-      if (this.loggedIn) {
-        this.permissions = response.Permissions.split(',');
-      }
-    } catch (e) {
-      console.error("auth status call failed");
-    }
-    this.sendLoginEvent()
-  }
-
-  sendLoginEvent() {
-    ApiManager.SendLoginStateEvent(this.loggedIn, this.permissions.join(","))
+    JracemanLogin.AnnounceLoginState()
   }
 
   hasPermission(perm: string) {
