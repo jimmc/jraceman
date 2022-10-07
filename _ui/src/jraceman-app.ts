@@ -166,7 +166,7 @@ export class JracemanApp extends LitElement {
     return html`
       <div class="title-bar">JRaceman
         ${when(this.loggedIn,()=>html`
-          <span class="right" @click="${this.logout}">Logout</span>
+          <a href="#" class="right" @click="${this.logout}">Logout</a>
         `)}
       </div>
       <jraceman-login id="login" hidden=${this.loggedIn} logged-in=${this.loggedIn}></jraceman-login>

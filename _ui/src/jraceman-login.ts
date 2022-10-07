@@ -26,6 +26,13 @@ export class JracemanLogin extends LitElement {
         left: 50%;
         transform: translate(-50%, -50%);
         padding: 15px;
+        display: table;
+      }
+      #container > div {
+        display: table-row;
+      }
+      #container > div > span, input {
+        display: table-cell;
       }
       .error {
         color: red;
@@ -39,6 +46,7 @@ export class JracemanLogin extends LitElement {
   permissions: string[] = [];
   username?: HTMLInputElement
   password?: HTMLInputElement
+  focused = ''
 
   constructor() {
     super()
@@ -97,9 +105,10 @@ export class JracemanLogin extends LitElement {
         method: "POST",
         params: formData,
       };
-      const response = await ApiManager.xhrJson(loginUrl, options);
-      console.log("Login succeeded, response:", response);
-      //location.reload();
+      /* const response = */ await ApiManager.xhrJson(loginUrl, options);
+      console.log("Login succeeded")
+      this.username!.value = '' // Clear out username and password fields.
+      this.password!.value = ''
     } catch (e) {
       this.loginError = "Login failed";
     }
@@ -109,11 +118,9 @@ export class JracemanLogin extends LitElement {
   async logout() {
     try {
       const loginUrl = "/auth/logout/";
-      const response = await ApiManager.xhrJson(loginUrl);
-      console.log("logout response", response)  // TODO remove this
+      /* const response = */ await ApiManager.xhrJson(loginUrl);
       this.permissions = [];
       console.log("Logout succeeded");
-      //location.reload();
     } catch (e) {
       console.error("Logout failed");
     }
@@ -127,9 +134,9 @@ export class JracemanLogin extends LitElement {
   keydown(e: any) {
     this.loginError = "";
     if (e.key == "Enter") {
-      if (this.username == document.activeElement) {
+      if (this.focused == 'username') {
         this.password!.focus();
-      } else if (this.password == document.activeElement) {
+      } else if (this.focused == 'password') {
         this.login();
       }
     }
@@ -147,12 +154,26 @@ export class JracemanLogin extends LitElement {
     }).join('')
   }
 
+  onFocus(fname: string) {
+    this.focused = fname
+  }
+
+  onBlur() {
+    this.focused = ''
+  }
+
   render() {
     return html`
       <div id="container">
 
-        Username: <input type=text id="username"></input><br/>
-        Password: <input type=password id="password"></input>
+        <div>
+          <span class=label>Username:</span>
+          <input type=text id="username" @focus="${this.onFocus.bind(this,'username')}" @blur="${this.onBlur}"></input>
+        </div>
+        <div>
+          <span class=label>Password:</span>
+          <input type=password id="password" @focus="${this.onFocus.bind(this,'password')}" @blur="${this.onBlur}"></input>
+        </div>
 
         <div class="buttons">
           <button type=button raised class="primary" @click="${this.login}">
