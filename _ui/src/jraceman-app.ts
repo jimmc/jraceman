@@ -6,7 +6,7 @@ import './auth-setup.js'
 import './database-menu.js'
 import './database-pane.js'
 import './debug-pane.js'
-import { JracemanLogin } from './jraceman-login.js'
+import './jraceman-login.js'
 import './jraceman-split.js'
 import './meet-setup.js'
 import './message-log.js'
@@ -17,10 +17,11 @@ import './report-results.js'
 import './sport-setup.js'
 import './team-setup.js'
 import './venue-setup.js'
+import { JracemanLogin } from './jraceman-login.js'
 import { JracemanTabs} from './jraceman-tabs.js'
 import { ReportResultsEvent } from './reports-pane.js'
 import { QueryResultsEvent } from './table-desc.js'
-import { LoginChangedEvent } from './jraceman-login.js'
+import { LoginStateEvent } from './api-manager.js'
 
 /**
  * jraceman-app is the top-level component that contains the entire JRaceman application.
@@ -57,7 +58,7 @@ export class JracemanApp extends LitElement {
     #login {
       display: block;
     }
-    [hidden=true] {
+    [hidden="true"] {
       display: none !important;
     }
   `;
@@ -75,7 +76,7 @@ export class JracemanApp extends LitElement {
     document.addEventListener("jraceman-query-results-event", this.onQueryResultsEvent.bind(this))
     document.addEventListener("jraceman-report-results-event", this.onReportResultsEvent.bind(this))
     document.addEventListener("jraceman-post-message-event", this.onPostMessage.bind(this))
-    document.addEventListener("jraceman-login-changed-event", this.onLoginChanged.bind(this))
+    document.addEventListener("jraceman-login-state-event", this.onLoginState.bind(this))
   }
 
   // Get a pointer to the message-log-pane
@@ -94,9 +95,9 @@ export class JracemanApp extends LitElement {
   }
 
   // When we get a post-message event, count it.
-  onLoginChanged(e:Event) {
-    const evt = e as CustomEvent<LoginChangedEvent>
-    console.log("JracemanApp.onLoginChanged", evt)
+  onLoginState(e:Event) {
+    const evt = e as CustomEvent<LoginStateEvent>
+    console.log("JracemanApp.onLoginState", evt)
     this.loggedIn = evt.detail.State
   }
 
@@ -156,14 +157,19 @@ export class JracemanApp extends LitElement {
   }
 
   logout() {
-    (this.shadowRoot!.querySelector("#login") as JracemanLogin).logout()
-    console.log("logged out")
+    console.log("Logging out")
+    const jl = this.shadowRoot!.querySelector("#login") as JracemanLogin
+    jl.logout()
   }
 
   render() {
     return html`
-      <div class="title-bar">JRaceman <span class="right" xhidden=${!this.loggedIn} @click="${this.logout}">Logout</span></div>
-      <jraceman-login id="login" hidden=${this.loggedIn}></jraceman-login>
+      <div class="title-bar">JRaceman
+        ${when(this.loggedIn,()=>html`
+          <span class="right" @click="${this.logout}">Logout</span>
+        `)}
+      </div>
+      <jraceman-login id="login" hidden=${this.loggedIn} logged-in=${this.loggedIn}></jraceman-login>
       <jraceman-split id="main" orientation="vertical" vertical hidden=${!this.loggedIn}>
           <div id="top" slot="top" class="tab-container">
             <jraceman-tabs>

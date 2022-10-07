@@ -5,10 +5,6 @@ import {PropertyValues} from 'lit-element';
 import { ApiManager } from "./api-manager.js"
 import { hash as sha256hash } from "./sha256.js"
 
-export interface LoginChangedEvent {
-  State: boolean;
-}
-
 /**
  * jraceman-login is the login screen that shows up when the user is not logged in.
  */
@@ -115,15 +111,7 @@ export class JracemanLogin extends LitElement {
   }
 
   sendLoginEvent() {
-    // Dispatch an event so others can take action when the login state changes.
-    const event = new CustomEvent<LoginChangedEvent>('jraceman-login-changed-event', {
-      bubbles: true,
-      composed: true,
-      detail: {
-        State: this.loggedIn
-      } as LoginChangedEvent
-    })
-    this.dispatchEvent(event)
+    ApiManager.SendLoginStateEvent(this.loggedIn, this.permissions.join(","))
   }
 
   hasPermission(perm: string) {

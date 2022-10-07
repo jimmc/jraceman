@@ -3,6 +3,11 @@ export interface XhrOptions {
   params?: any;
 }
 
+export interface LoginStateEvent {
+  State: boolean;
+  Permissions: string;
+}
+
 // ApiManager provides assistance for calling our back end services.
 export class ApiManager {
   public static async xhrJson(url: string, options?: XhrOptions) {
@@ -26,6 +31,9 @@ export class ApiManager {
             } catch (e) {
               reject(e);
             }
+          } else if (request.status == 401 && request.responseText == "Invalid token\n") {
+            reject(request);
+            ApiManager.AnnounceLoginStatus()
           } else {
             reject(request);
           }
@@ -43,4 +51,31 @@ export class ApiManager {
       request.send(params)
     })
   }
+
+  // AnnounceLoginStatus gets our current login status and dispatches a LoginStateEvent.
+  public static async AnnounceLoginStatus() {
+    try {
+      const statusUrl = "/auth/status/"
+      const response = await ApiManager.xhrJson(statusUrl)
+      const loggedIn = response.LoggedIn
+      const permissions = response.Permissions
+      ApiManager.SendLoginStateEvent(loggedIn, permissions)
+    } catch (e) {
+      console.error("auth status call failed")
+    }
+  }
+
+  public static SendLoginStateEvent(loggedIn: boolean, permissions: string) {
+    // Dispatch an event so others can take action when the login state changes.
+    const event = new CustomEvent<LoginStateEvent>('jraceman-login-state-event', {
+      bubbles: true,
+      composed: true,
+      detail: {
+        State: loggedIn,
+        Permissions: permissions
+      } as LoginStateEvent
+    })
+    document.dispatchEvent(event)
+  }
+
 }
