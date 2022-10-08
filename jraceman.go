@@ -11,6 +11,7 @@ import (
   "github.com/jimmc/jracemango/app"
   "github.com/jimmc/jracemango/auth"
   "github.com/jimmc/jracemango/dbrepo"
+  "github.com/jimmc/jracemango/dbrepo/strsql"
 
   "github.com/golang/glog"
 
@@ -31,6 +32,7 @@ type config struct {
   create bool
   exportFile string
   importFile string
+  sql string
   updatePassword string
 }
 
@@ -55,6 +57,7 @@ func doMain() int {
   flag.BoolVar(&config.create, "create", false, "true to create the database specified by -db")
   flag.StringVar(&config.exportFile, "export", "", "export the database to a text file")
   flag.StringVar(&config.importFile, "import", "", "import a text file to the database")
+  flag.StringVar(&config.sql, "sql", "", "execute sql statement")
   flag.StringVar(&config.updatePassword, "updatePassword", "", "update password for named user")
 
   flag.Parse()
@@ -101,7 +104,7 @@ func doMain() int {
 
   if config.updatePassword != "" {
     var err error
-    authHandler := auth.NewHandler(config.maxClockSkewSeconds)
+    authHandler := auth.NewHandler(dbRepos.DB(), config.maxClockSkewSeconds)
     if config.password == "" {
       err = authHandler.UpdateUserPassword(config.updatePassword)
     } else {
@@ -112,6 +115,17 @@ func doMain() int {
       return 1
     }
     fmt.Printf("Password updated for user %s\n", config.updatePassword)
+    actionTaken = true
+  }
+
+  if config.sql != "" {
+    db := dbRepos.DB()
+    result, err := strsql.QueryStarAndCollect(db, config.sql)
+    if err != nil {
+      fmt.Printf("Error executing sql: %v\n", err)
+    } else {
+      fmt.Printf("Results:\n%v\n", result)
+    }
     actionTaken = true
   }
 
@@ -154,7 +168,7 @@ func importFile(config *config, dbRepos *dbrepo.Repos) error {
 
 func runHttpServer(config *config, dbRepos *dbrepo.Repos) {
   mux := http.NewServeMux()
-  authHandler := auth.NewHandler(config.maxClockSkewSeconds)
+  authHandler := auth.NewHandler(dbRepos.DB(), config.maxClockSkewSeconds)
 
   uiFileHandler := newImportResolver(http.FileServer(http.Dir(config.uiRoot)))
   apiPrefix := "/api/"
@@ -164,7 +178,6 @@ func runHttpServer(config *config, dbRepos *dbrepo.Repos) {
     ReportRoots: []string{config.reportRoot},
   })
   mux.Handle("/ui/", http.StripPrefix("/ui/", uiFileHandler))
-  //mux.Handle(apiPrefix, apiHandler)
   mux.Handle(apiPrefix, authHandler.RequireAuth(apiHandler))
   mux.Handle("/auth/", authHandler.ApiHandler)
   mux.HandleFunc("/", redirectToUi)

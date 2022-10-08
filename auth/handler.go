@@ -1,14 +1,15 @@
 package auth
 
 import (
+  "database/sql"
+
   authlib "github.com/jimmc/auth/auth"
-  "github.com/jimmc/auth/store"
 )
 
 // NewHandler returns our auth handler, which in turn wraps other
 // handlers when auth is required.
-func NewHandler(maxClockSkewSeconds int) authlib.Handler {
-  authStore := store.NewPwFile("/tmp/jracemagopw.txt")  // TODO - use our DB
+func NewHandler(db *sql.DB, maxClockSkewSeconds int) authlib.Handler {
+  authStore := NewPwDB(db)
   authHandler := authlib.NewHandler(&authlib.Config{
     Prefix: "/auth/",
     Store: authStore,
