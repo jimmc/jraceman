@@ -59,9 +59,21 @@ source files in $JRACEMAN, you can load the USACK sports definition:
 
     ./jracemango -db sqlite3:_private/jrdb-test -import $JRACEMAN/data/usack-sports.txt
 
+### Add a user
+
+You need at last one user in order to log in. Add one:
+
+    ./jracemango -db sqlite3:_private/jrdb-test -updatePassword user1
+
+This will prompt you for a password and ask again for confirmation, then
+create or update the named user with the new password. Once you have one
+user, you can then log in and use the Auth Setup tabs to add more users.
+You can also use the command line option `-password` to give the password
+on the command line rather than typing it in twice.
+
 ### Run the server
 
-    ./jracemango -db sqlite3:_private/jrdb-test
+    ./jracemango -db sqlite3:_private/jrdb-test -logtostderr
 
 ## Documentation
 
