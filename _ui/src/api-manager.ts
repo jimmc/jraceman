@@ -1,6 +1,7 @@
 export interface XhrOptions {
   method?: string;
   params?: any;
+  encoding?: string;    // 'direct' or 'json'; default is 'json'
 }
 
 // ApiManager provides assistance for calling our back end services.
@@ -44,14 +45,14 @@ export class ApiManager {
       };
       const method = (options && options.method) || "GET";
       request.open(method, url);
+      const encoding = (options && options.encoding) || 'json';
       const params = (options && options.params) || {};
-      /*
-      if (params) {
+      if (params && encoding=='json') {
         request.setRequestHeader("Content-Type", "application/json");
         request.send(JSON.stringify(params));
+      } else {
+        request.send(params)
       }
-      */
-      request.send(params)
     })
   }
 }

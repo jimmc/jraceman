@@ -104,6 +104,7 @@ export class JracemanLogin extends LitElement {
       const options = {
         method: "POST",
         params: formData,
+        encoding: 'direct',
       };
       /* const response = */ await ApiManager.xhrJson(loginUrl, options);
       console.log("Login succeeded")
