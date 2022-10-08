@@ -25,11 +25,13 @@ type config struct {
   uiRoot string
   db string
   maxClockSkewSeconds int
+  password string
 
   // actions
   create bool
   exportFile string
   importFile string
+  updatePassword string
 }
 
 func main() {
@@ -47,11 +49,13 @@ func doMain() int {
   flag.StringVar(&config.db, "db", "", "location of database, in the form driver:name")
   flag.IntVar(&config.maxClockSkewSeconds, "maxClockSkewSeconds", 5,
         "max seconds of clock skew allowed between client and server")
+  flag.StringVar(&config.password, "password", "", "password for update (for testing)")
 
   // Action flags
   flag.BoolVar(&config.create, "create", false, "true to create the database specified by -db")
   flag.StringVar(&config.exportFile, "export", "", "export the database to a text file")
   flag.StringVar(&config.importFile, "import", "", "import a text file to the database")
+  flag.StringVar(&config.updatePassword, "updatePassword", "", "update password for named user")
 
   flag.Parse()
 
@@ -84,7 +88,7 @@ func doMain() int {
       glog.Error(err.Error())
       return 1
     }
-    actionTaken = true;
+    actionTaken = true
   }
 
   if config.importFile != "" {
@@ -92,7 +96,23 @@ func doMain() int {
       glog.Error(err.Error())
       return 1
     }
-    actionTaken = true;
+    actionTaken = true
+  }
+
+  if config.updatePassword != "" {
+    var err error
+    authHandler := auth.NewHandler(config.maxClockSkewSeconds)
+    if config.password == "" {
+      err = authHandler.UpdateUserPassword(config.updatePassword)
+    } else {
+      err = authHandler.UpdatePassword(config.updatePassword, config.password)
+    }
+    if err != nil {
+      glog.Errorf("Error updating password for %s: %v", config.updatePassword, err)
+      return 1
+    }
+    fmt.Printf("Password updated for user %s\n", config.updatePassword)
+    actionTaken = true
   }
 
   _ = app.Placeholder{}       // Just to use the app package
