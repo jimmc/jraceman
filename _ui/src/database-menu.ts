@@ -12,6 +12,10 @@ export class DatabaseMenu extends LitElement {
     jraceman-dropdown {
       display: inline-block;    /* Make our menu on same line as the tab label */
     }
+
+    .menu {
+      cursor: context-menu;
+    }
   `;
 
   onExportClick() {
@@ -86,7 +90,7 @@ export class DatabaseMenu extends LitElement {
   render() {
     return html`
       <jraceman-dropdown>
-        <span slot="control">[M]</span>
+        <span slot="control" class="menu">☰</span>
         <div slot="content">
           <button @click="${this.onExportClick}">Export JRaceman data file</button>
           <button @click="${this.onImportClick}">Import JRaceman data file</button>
