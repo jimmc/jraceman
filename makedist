@@ -1,0 +1,46 @@
+#!/bin/bash -
+#
+# Run this script from this directory to create the distribution.
+# This script does three things:
+# 1. If it exists, delete the "dist" directory
+# 2. Create the "dist" directory and copy all runtime files into it
+# 3. Create a zip file
+
+# Make sure we are in the directory containing this script.
+HERE=$(dirname $0)
+cd $HERE
+
+DIST="dist"     # name of distribution directo'ry
+VERSION=$(grep Version version.go | awk '{print $3}' | sed -e 's/\"//g')
+DISTV=${DIST}/jraceman-${VERSION}
+
+errExit() {
+    echo "$@" 1>&2
+    exit 1
+}
+
+# Step 1: delete dist if it exists
+if [ -d $DIST ]; then
+    echo "Removing old $DIST directory"
+    sleep 2
+    rm -rf $DIST || errExit "Error (status $?) deleing old $DIST directory"
+fi
+
+# Step 2a: create the dist directory and subdirectories
+mkdir $DIST || errExit "Error (status $?) creating $DIST directory"
+mkdir $DISTV || errExit "Error (status $?) creating $DISTV"
+mkdir $DISTV/_ui || errExit "Error (statuc $?) creating $DISTV/_ui"
+mkdir $DISTV/report || errExit "Error (status $?) creating $DIST/report"
+
+# Step 2b: copy all the files to the fist dir
+cp -p jracemango $DISTV || errExit "Error (status $?) copying jracemango"
+cp -p _ui/index.html $DISTV/_ui || errExit "Error (status $?) copying index.html"
+cp -rp _ui/build $DISTV/_ui/ || errExit "Error (status $?) copying _ui/build"
+cp -rp _ui/node_modules $DISTV/_ui/ || errExit "Error (status $?) copying _ui/node_modules"
+cp -rp report/template $DISTV/report/ || errExit "Error (status $?) copying report/template"
+echo "$VERSION" > $DISTV/VERSION || errExit "Error (status $?) creating VERSION file"
+
+# Step 3: create the zip file
+(cd $DIST; zip --quiet -r "jraceman-${VERSION}.zip" "jraceman-${VERSION}")
+
+ls -lh $DIST/jraceman-${VERSION}.zip
