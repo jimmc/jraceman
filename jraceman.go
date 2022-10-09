@@ -34,6 +34,7 @@ type config struct {
   importFile string
   sql string
   updatePassword string
+  version bool
 }
 
 func main() {
@@ -59,8 +60,14 @@ func doMain() int {
   flag.StringVar(&config.importFile, "import", "", "import a text file to the database")
   flag.StringVar(&config.sql, "sql", "", "execute sql statement")
   flag.StringVar(&config.updatePassword, "updatePassword", "", "update password for named user")
+  flag.BoolVar(&config.version, "version", false, "print the version")
 
   flag.Parse()
+
+  if config.version {
+    fmt.Printf("jraceman version %s\n", Version)
+    return 1
+  }
 
   if config.db == "" {
     glog.Error("-db is required")
