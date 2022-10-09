@@ -188,6 +188,7 @@ func runHttpServer(config *config, dbRepos *dbrepo.Repos) {
   mux.Handle(apiPrefix, authHandler.RequireAuth(apiHandler))
   mux.Handle("/auth/", authHandler.ApiHandler)
   mux.HandleFunc("/", redirectToUi)
+  mux.Handle("/api0/", api.NewHandler0("/api0/", Version))
 
   fmt.Printf("jraceman serving on port %v\n", config.port)
   glog.Error(http.ListenAndServe(":"+strconv.Itoa(config.port), mux))

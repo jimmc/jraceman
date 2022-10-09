@@ -17,6 +17,7 @@ import './report-results.js'
 import './sport-setup.js'
 import './team-setup.js'
 import './venue-setup.js'
+import { ApiManager } from './api-manager.js'
 import { JracemanLogin, LoginStateEvent } from './jraceman-login.js'
 import { JracemanTabs} from './jraceman-tabs.js'
 import { ReportResultsEvent } from './reports-pane.js'
@@ -63,6 +64,9 @@ export class JracemanApp extends LitElement {
   `;
 
   @property()
+  jracemanVersion = ''
+
+  @property()
   unviewedMessageCount = 0
 
   @property()
@@ -77,6 +81,21 @@ export class JracemanApp extends LitElement {
     document.addEventListener("jraceman-post-message-event", this.onPostMessage.bind(this))
     document.addEventListener("jraceman-login-state-event", this.onLoginState.bind(this))
     JracemanLogin.AnnounceLoginState()  // See if we are logged in.
+
+    this.loadVersion()
+  }
+
+  async loadVersion() {
+    const queryPath = "/api0/version"
+    const options = {}
+    let result
+    try {
+      result = await ApiManager.xhrJson(queryPath, options);
+    } catch(e) {
+      console.error("Error from /api/query:", e/*.responseText*/);
+      return
+    }
+    this.jracemanVersion = result as string
   }
 
   // Get a pointer to the message-log-pane
@@ -164,7 +183,7 @@ export class JracemanApp extends LitElement {
 
   render() {
     return html`
-      <div class="title-bar">JRaceman
+      <div class="title-bar">JRaceman ${this.jracemanVersion}
         ${when(this.loggedIn,()=>html`
           <a href="#" class="right" @click="${this.logout}">Logout</a>
         `)}
