@@ -29,11 +29,13 @@ type config struct {
   password string
 
   // actions
+  checkUpgrade bool
   create bool
   exportFile string
   importFile string
   sql string
   updatePassword string
+  upgrade bool
   version bool
 }
 
@@ -55,11 +57,13 @@ func doMain() int {
   flag.StringVar(&config.password, "password", "", "password for update (for testing)")
 
   // Action flags
+  flag.BoolVar(&config.checkUpgrade, "checkUpgrade", false, "true to check for upgrade the database specified by -db")
   flag.BoolVar(&config.create, "create", false, "true to create the database specified by -db")
   flag.StringVar(&config.exportFile, "export", "", "export the database to a text file")
   flag.StringVar(&config.importFile, "import", "", "import a text file to the database")
   flag.StringVar(&config.sql, "sql", "", "execute sql statement")
   flag.StringVar(&config.updatePassword, "updatePassword", "", "update password for named user")
+  flag.BoolVar(&config.upgrade, "upgrade", false, "true to upgrade the database specified by -db")
   flag.BoolVar(&config.version, "version", false, "print the version")
 
   flag.Parse()
@@ -84,10 +88,28 @@ func doMain() int {
   actionTaken := false
 
   if config.create {
-    glog.Info("Creating database tables")
     err = dbRepos.CreateTables()
     if err != nil {
       glog.Errorf("Failed to create repository tables: %v", err)
+      return 1
+    }
+    actionTaken = true
+  }
+
+  if config.checkUpgrade {
+    err = dbRepos.UpgradeTables(true/*dryrun*/)
+    if err != nil {
+      glog.Errorf("Error checking for upgrading database: %v", err)
+      return 1
+    }
+    actionTaken = true
+  }
+
+  if config.upgrade {
+    glog.Info("Upgrading database")
+    err = dbRepos.UpgradeTables(false/*dryrun*/)
+    if err != nil {
+      glog.Errorf("Error upgrading database: %v", err)
       return 1
     }
     actionTaken = true

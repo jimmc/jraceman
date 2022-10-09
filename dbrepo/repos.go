@@ -255,6 +255,37 @@ func (r *Repos) CreateTables() error {
   return nil
 }
 
+// UpgradeTables upgrades all of the tables in a new database.
+// If dryrun is true, it reports which tables would be upgraded,
+// but does not take any action.
+func (r *Repos) UpgradeTables(dryrun bool) error {
+  if dryrun {
+    glog.Infof("Checking for database upgrades\n")
+  } else {
+    glog.Infof("Upgrading database\n")
+  }
+  for _, entry := range r.TableEntries() {
+    nop, message, err := entry.Table.UpgradeTable(dryrun)
+    if err != nil {
+      if dryrun {
+        return fmt.Errorf("error checking table %s: %v", entry.Name, err)
+      } else {
+        return fmt.Errorf("error upgrading table %s: %v", entry.Name, err)
+      }
+    } else {
+      if !nop {
+        glog.Infof("%s\n", message)
+      }
+    }
+  }
+  if dryrun {
+    glog.Infof("Done checking for database upgrades\n")
+  } else {
+    glog.Infof("Done upgrading database\n")
+  }
+  return nil
+}
+
 func (r *Repos) TableNames() []string {
   tableEntries := r.TableEntries();
   tableNames := make([]string, len(tableEntries))
