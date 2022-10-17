@@ -27,6 +27,8 @@ type config struct {
   db string
   maxClockSkewSeconds int
   password string
+  sslCert string
+  sslKey string
 
   // actions
   checkUpgrade bool
@@ -55,6 +57,8 @@ func doMain() int {
   flag.IntVar(&config.maxClockSkewSeconds, "maxClockSkewSeconds", 5,
         "max seconds of clock skew allowed between client and server")
   flag.StringVar(&config.password, "password", "", "password for update (for testing)")
+  flag.StringVar(&config.sslCert, "sslcert", "", "path to file containing SSL certificate chain")
+  flag.StringVar(&config.sslKey, "sslkey", "", "path to file containing SSL private key")
 
   // Action flags
   flag.BoolVar(&config.checkUpgrade, "checkUpgrade", false, "true to check for upgrade the database specified by -db")
@@ -164,6 +168,10 @@ func doMain() int {
     return 0
   }
 
+  if (config.sslCert != "") != (config.sslKey != "") {
+    fmt.Printf("You must specify both -sslcert and -sslkey or neither\n")
+    return 1
+  }
   runHttpServer(config, dbRepos)
   return 1      // runHttpServer shouldn't return.
 }
@@ -212,9 +220,17 @@ func runHttpServer(config *config, dbRepos *dbrepo.Repos) {
   mux.HandleFunc("/", redirectToUi)
   mux.Handle("/api0/", api.NewHandler0("/api0/", Version))
 
-  fmt.Printf("jraceman serving on port %v\n", config.port)
-  glog.Error(http.ListenAndServe(":"+strconv.Itoa(config.port), mux))
+  listenAddr := ":"+strconv.Itoa(config.port)
+  var err error
+  if config.sslCert != "" {
+    fmt.Printf("jraceman serving TLS on port %v\n", config.port)
+    err = http.ListenAndServeTLS(listenAddr, config.sslCert, config.sslKey, mux)
+  } else {
+    fmt.Printf("jraceman serving on port %v\n", config.port)
+    err = http.ListenAndServe(listenAddr, mux)
+  }
   // If we return, that's an error.
+  glog.Error(err)
 }
 
 func redirectToUi(w http.ResponseWriter, r *http.Request) {
