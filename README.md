@@ -1,6 +1,12 @@
 # jracemango
 
-Jracemango is a rewrite of JRaceman as a web app with a golang server.
+JRaceman is an open-source canoe and kayak regatta management system
+(Jimmc's RACE MANager).
+
+The original version of JRaceman was written in Java to run as a standalone
+program or as a server with a thick client and first released in 2002.
+This is version 2, rewritten using Go and Lit as a web server that
+requires no local installation for client users of the system.
 
 ## Quick start
 
@@ -117,42 +123,5 @@ Then open [localhost:6060](http://localhost:6060/) in your browser.
 
 ## Development
 
-### Logging
-
-jracemango uses [glog](https://github.com/golang/glog) for logging.
-For details, see the [User Guide](https://github.com/google/glog#user-guide)
-or the [glog source](https://github.com/golang/glog/blob/master/glog.go).
-
-* Log messages are written to files in `/tmp`, with filenames starting with `jracemango`,
-  divided into separate files per level, date-time, and pid
-* For convenience, the symlinks `/tmp/jracemango.{INFO,WARNING,ERROR,FATAL}` point to the latest
-  log files for each level
-* Log messages at severity levels ERROR and FATAL are also sent to stderr
-
-You can change the behavior of logging by specifying the appropriate command line option
-when starting jracemango:
-
-* To send all messages to stderr instead of the log files, use `--logtostderr`
-* To send all messages to stderr in addition to the log files, use `--alsologtostderr`
-* To enable verbose debugging, use `--v=N`, where `N` is a verbosity level such as 1 or 2
-* To enable verbose debugging for some packages, use `--vmodule=pattern1=N1,pattern2=N2,pattern3=N3`,
-  where `pattern1` and the others are source file names (without the directory or `.go` extension)
-  or prefixes with an asterisk,
-  and the `N` numbers are the verbosity levels for the matching files
-
-### Sources
-
-The sources for jracemango are available on github in multiple repositories
-under [jimmc](http://github.com/jimmc):
-
-* [jracemango](http://github.com/jimmc/jracemango) (this repo)
-* [golden](http://github.com/jimmc/golden) - Support for unit tests using golden reference files
-* [gtrepgen](http://github.com/jimmc/gtrepgen) - Go-Template REport GENerator
-
-If you want to make changes to golden or gtrepgen while working on jracemango,
-add these lines to the go.mod file here in jraceman.go:
-
-```
-replace github.com/jimmc/golden => ../golden
-replace github.com/jimmc/gtrepgen => ../gtrepgen
-```
+For information about developing additional code for JRaceman,
+see [README-dev.md](./README-dev.md).
