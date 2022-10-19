@@ -13,6 +13,7 @@ The sources for jracemango are available on github in multiple repositories
 under [jimmc](http://github.com/jimmc):
 
 * [jracemango](http://github.com/jimmc/jracemango) (this repo)
+* [auth](http://github.com/jimmc/auth) - Support for authentication (login) and authorization (permissions)
 * [golden](http://github.com/jimmc/golden) - Support for unit tests using golden reference files
 * [gtrepgen](http://github.com/jimmc/gtrepgen) - Go-Template REport GENerator
 
@@ -29,7 +30,7 @@ replace github.com/jimmc/gtrepgen => ../gtrepgen
 ## Logging
 
 jracemango uses [glog](https://github.com/golang/glog) for logging.
-For details, see the [User Guide](https://github.com/google/glog#user-guide)
+For details, see the [glog User Guide](https://github.com/google/glog#user-guide)
 or the [glog source](https://github.com/golang/glog/blob/master/glog.go).
 
 * Log messages are written to files in `/tmp`, with filenames starting with `jracemango`,
