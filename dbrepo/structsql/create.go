@@ -48,6 +48,7 @@ func CreateTableSql(tableName string, entity interface{}) string {
 func CreateTableSqlWithUpdater(tableName string, entity interface{}, updater ColumnInfosUpdater) string {
   columnInfos := ColumnInfos(entity)
   if updater != nil {   // Pass a nil interface value to skip doing this update
+    glog.V(2).Infof("CreateTableSql calling UpdateColumnInfo for table %s", tableName)
     columnInfos = updater.UpdateColumnInfos(columnInfos)
   }
   return CreateTableSqlFromColumnInfos(tableName, columnInfos)

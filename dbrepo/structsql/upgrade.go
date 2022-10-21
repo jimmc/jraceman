@@ -47,6 +47,7 @@ func CreateOrUpgradeTableSql(db *sql.DB, tableName string, entity interface{}, t
   }
   columnInfos := ColumnInfos(entity)
   if updater != nil {
+    glog.V(2).Infof("CreateTableSql calling UpdateColumnInfo for table %s", tableName)
     tableColumns = updater.UpdateColumnInfos(tableColumns)
     columnInfos = updater.UpdateColumnInfos(columnInfos)
   }

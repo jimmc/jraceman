@@ -33,7 +33,7 @@ func (h *handler) stdcrud(w http.ResponseWriter, r *http.Request, st std) {
   // TODO - check authorization
   entityType := st.EntityTypeName()
   entityID := strings.TrimPrefix(r.URL.Path, h.crudPrefix(entityType))
-  glog.Infof("%s %s '%s'", r.Method, entityType, entityID);
+  glog.Infof("%s %s ID='%s'", r.Method, entityType, entityID);
   switch r.Method {
     case http.MethodGet:
       if entityID == "" {

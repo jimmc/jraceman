@@ -18,12 +18,23 @@ func (r *DBRoleRoleRepo) New() interface{} {
   return domain.RoleRole{}
 }
 
+func (r *DBRoleRoleRepo) UpdateColumnInfos(columnInfos []structsql.ColumnInfo) []structsql.ColumnInfo {
+  // We have two foreign key columns to the role table, so we need
+  // to special-case our columninfo creation.
+  for c, col := range columnInfos {
+    if col.Name == "hasroleid" {
+      columnInfos[c].FKTable = "role"
+    }
+  }
+  return columnInfos
+}
+
 func (r *DBRoleRoleRepo) CreateTable() error {
-  return structsql.CreateTable(r.db, "rolerole", domain.RoleRole{})
+  return structsql.CreateTableWithUpdater(r.db, "rolerole", domain.RoleRole{}, r)
 }
 
 func (r *DBRoleRoleRepo) UpgradeTable(dryrun bool) (bool, string, error) {
-  return structsql.UpgradeTable(r.db, "rolerole", domain.RoleRole{}, dryrun)
+  return structsql.UpgradeTableWithUpdater(r.db, "rolerole", domain.RoleRole{}, dryrun, r)
 }
 
 func (r *DBRoleRoleRepo) FindByID(ID string) (*domain.RoleRole, error) {

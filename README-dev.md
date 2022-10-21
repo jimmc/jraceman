@@ -65,6 +65,7 @@ When selecting table and column names, follow these conventions:
 * The primary key column must be named "ID" and be a string
 * Foreign key columns must have a name that is the foreign key table name followed by id
   (example: Area.SiteID is a foreign key from the Area table to the Site table; see domain/area.go)
+  * If this is not the case, see the note below about using the `UpdateColumnInfos` method
 
 ### Add server code
 
@@ -74,25 +75,30 @@ table name is two or more words, to get capitalization right). In each of the fo
 directories, copy that file to the corresponding file with your new table name, and edit
 the new file appropriately.
 
-* api/crud
-* api/query
-  * Look at the SummaryQuery() method and create an appropriate summary string
+* `api/crud`
+* `api/query`
+  * Look at the `SummaryQuery` method and create an appropriate summary string
     for your new type
-* dbrepo
-  * When editing this file, look at the Save() method and select an appropriate
-    ID prefix in the call to structsql.UniqueID(). Look at some of the other
+* `dbrepo`
+  * When editing this file, look at the `Save` method and select an appropriate
+    ID prefix in the call to `structsql.UniqueID`. Look at some of the other
     tables for examples.
-* domain
+  * If you have any special case columns, such as a foreign key column that does
+    not match the standard pattern, define the `UpdateColumnInfos` method in
+    your Repo class, and call the `WithUpdate` versions of `CreateTable` and
+    `UpgradeTable` from your functions of those names.
+    See `dbrepo/simplanrule.go` for an example.
+* `domain`
   * This is where you define the columns of your table
   * If you want a column value to be optional, make it a pointer in this struct
 
 In addition, edit the following files, look for the table name you are using
 as your source template, then copy that line for your new table:
 
-* api/crud/handler.go
-* api/query/handler.go
-* dbrepo/repos.go (four places)
-* domain/repos.do
+* `api/crud/handler.go`
+* `api/query/handler.go`
+* `dbrepo/repos.go` (four places)
+* `domain/repos.do`
 
 ### Add UI code
 
