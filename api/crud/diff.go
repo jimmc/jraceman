@@ -7,7 +7,7 @@ import (
   "encoding/json"
   "fmt"
 
-  "github.com/jimmc/jracemango/domain"
+  "github.com/jimmc/jraceman/domain"
 
   "github.com/golang/glog"
   "gopkg.in/d4l3k/messagediff.v1"

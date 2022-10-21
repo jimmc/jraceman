@@ -4,7 +4,7 @@ import (
   "fmt"
   "net/http"
 
-  apihttp "github.com/jimmc/jracemango/api/http"
+  apihttp "github.com/jimmc/jraceman/api/http"
 )
 
 // handler0 is the handler for api0 calls, which are api calls

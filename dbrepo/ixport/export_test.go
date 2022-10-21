@@ -6,7 +6,7 @@ import (
   "os"
   "testing"
 
-  "github.com/jimmc/jracemango/dbrepo/ixport"
+  "github.com/jimmc/jraceman/dbrepo/ixport"
 
   goldenbase "github.com/jimmc/golden/base"
   goldendb "github.com/jimmc/golden/db"

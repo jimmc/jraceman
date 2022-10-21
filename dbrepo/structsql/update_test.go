@@ -4,8 +4,8 @@ import (
   "reflect"
   "testing"
 
-  dbtest "github.com/jimmc/jracemango/dbrepo/test"
-  "github.com/jimmc/jracemango/dbrepo/structsql"
+  dbtest "github.com/jimmc/jraceman/dbrepo/test"
+  "github.com/jimmc/jraceman/dbrepo/structsql"
 )
 
 func TestModsToSql(t *testing.T) {

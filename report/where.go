@@ -4,8 +4,8 @@ import (
   "fmt"
   "strings"
 
-  "github.com/jimmc/jracemango/dbrepo"
-  "github.com/jimmc/jracemango/dbrepo/structsql"
+  "github.com/jimmc/jraceman/dbrepo"
+  "github.com/jimmc/jraceman/dbrepo/structsql"
 
   "github.com/golang/glog"
 )

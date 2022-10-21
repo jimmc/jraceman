@@ -7,7 +7,7 @@ import (
   "time"
 
   "github.com/jimmc/gtrepgen/gen"
-  "github.com/jimmc/jracemango/dbrepo"
+  "github.com/jimmc/jraceman/dbrepo"
 
   goldenbase "github.com/jimmc/golden/base"
 

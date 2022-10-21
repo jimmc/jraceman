@@ -1,4 +1,4 @@
-module github.com/jimmc/jracemango
+module github.com/jimmc/jraceman
 
 go 1.18
 

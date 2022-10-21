@@ -7,11 +7,11 @@ import (
   "os"
   "strconv"
 
-  "github.com/jimmc/jracemango/api"
-  "github.com/jimmc/jracemango/app"
-  "github.com/jimmc/jracemango/auth"
-  "github.com/jimmc/jracemango/dbrepo"
-  "github.com/jimmc/jracemango/dbrepo/strsql"
+  "github.com/jimmc/jraceman/api"
+  "github.com/jimmc/jraceman/app"
+  "github.com/jimmc/jraceman/auth"
+  "github.com/jimmc/jraceman/dbrepo"
+  "github.com/jimmc/jraceman/dbrepo/strsql"
 
   "github.com/golang/glog"
 

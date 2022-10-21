@@ -3,7 +3,7 @@ package structsql_test
 import (
   "testing"
 
-  "github.com/jimmc/jracemango/dbrepo/structsql"
+  "github.com/jimmc/jraceman/dbrepo/structsql"
 )
 
 func TestSelectSql(t *testing.T) {

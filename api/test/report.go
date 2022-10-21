@@ -3,7 +3,7 @@ package test
 import (
   "net/http"
 
-  "github.com/jimmc/jracemango/api/report"
+  "github.com/jimmc/jraceman/api/report"
 )
 
 // CreateReportHandler create an http handler for our report calls.

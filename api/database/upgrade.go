@@ -5,8 +5,8 @@ import (
   "net/http"
   "strings"
 
-  apihttp "github.com/jimmc/jracemango/api/http"
-  "github.com/jimmc/jracemango/dbrepo"
+  apihttp "github.com/jimmc/jraceman/api/http"
+  "github.com/jimmc/jraceman/dbrepo"
 )
 
 func (h *handler) upgrade(w http.ResponseWriter, r *http.Request) {

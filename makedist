@@ -33,7 +33,7 @@ mkdir $DISTV/_ui || errExit "Error (statuc $?) creating $DISTV/_ui"
 mkdir $DISTV/report || errExit "Error (status $?) creating $DIST/report"
 
 # Step 2b: copy all the files to the fist dir
-cp -p jracemango $DISTV || errExit "Error (status $?) copying jracemango"
+cp -p jraceman $DISTV || errExit "Error (status $?) copying jraceman"
 cp -p _ui/index.html $DISTV/_ui || errExit "Error (status $?) copying index.html"
 cp -rp _ui/build $DISTV/_ui/ || errExit "Error (status $?) copying _ui/build"
 cp -rp _ui/node_modules $DISTV/_ui/ || errExit "Error (status $?) copying _ui/node_modules"

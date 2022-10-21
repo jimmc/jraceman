@@ -4,7 +4,7 @@ import (
   "reflect"
   "testing"
 
-  "github.com/jimmc/jracemango/dbrepo/ixport"
+  "github.com/jimmc/jraceman/dbrepo/ixport"
 )
 
 func TestQuotedScannerEmpty(t *testing.T) {

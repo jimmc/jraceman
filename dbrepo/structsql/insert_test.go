@@ -3,8 +3,8 @@ package structsql_test
 import (
   "testing"
 
-  dbtest "github.com/jimmc/jracemango/dbrepo/test"
-  "github.com/jimmc/jracemango/dbrepo/structsql"
+  dbtest "github.com/jimmc/jraceman/dbrepo/test"
+  "github.com/jimmc/jraceman/dbrepo/structsql"
 )
 
 func TestInsertSql(t *testing.T) {

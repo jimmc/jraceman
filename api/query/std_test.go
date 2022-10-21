@@ -5,7 +5,7 @@ import (
   "os"
   "testing"
 
-  apitest "github.com/jimmc/jracemango/api/test"
+  apitest "github.com/jimmc/jraceman/api/test"
 
   goldenbase "github.com/jimmc/golden/base"
 )

@@ -7,8 +7,8 @@ import (
   "strconv"
   "strings"
 
-  "github.com/jimmc/jracemango/domain"
-  apihttp "github.com/jimmc/jracemango/api/http"
+  "github.com/jimmc/jraceman/domain"
+  apihttp "github.com/jimmc/jraceman/api/http"
 
   "github.com/golang/glog"
 )

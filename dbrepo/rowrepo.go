@@ -6,7 +6,7 @@ import (
   "strings"
 
   // TODO - We only need structsql for requireOneResult, maybe that can go elsewhere
-  "github.com/jimmc/jracemango/dbrepo/structsql"
+  "github.com/jimmc/jraceman/dbrepo/structsql"
 )
 
 // dbRowRepo implements the RowRepo interface for use by Importer.

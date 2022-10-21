@@ -4,7 +4,7 @@ import (
   "errors"
   "testing"
 
-  "github.com/jimmc/jracemango/dbrepo/structsql"
+  "github.com/jimmc/jraceman/dbrepo/structsql"
 )
 
 type oneResultTester struct {

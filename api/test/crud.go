@@ -3,7 +3,7 @@ package test
 import (
   "net/http"
 
-  "github.com/jimmc/jracemango/api/crud"
+  "github.com/jimmc/jraceman/api/crud"
 )
 
 // CreateCrudHandler create an http handler for our crud calls.

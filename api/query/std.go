@@ -6,10 +6,10 @@ import (
   "net/http"
   "strings"
 
-  apihttp "github.com/jimmc/jracemango/api/http"
-  "github.com/jimmc/jracemango/dbrepo"
-  "github.com/jimmc/jracemango/dbrepo/strsql"
-  "github.com/jimmc/jracemango/dbrepo/structsql"
+  apihttp "github.com/jimmc/jraceman/api/http"
+  "github.com/jimmc/jraceman/dbrepo"
+  "github.com/jimmc/jraceman/dbrepo/strsql"
+  "github.com/jimmc/jraceman/dbrepo/structsql"
 
   "github.com/golang/glog"
 )

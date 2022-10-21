@@ -5,8 +5,8 @@ import (
   "strings"
   "testing"
 
-  "github.com/jimmc/jracemango/dbrepo"
-  dbtest "github.com/jimmc/jracemango/dbrepo/test"
+  "github.com/jimmc/jraceman/dbrepo"
+  dbtest "github.com/jimmc/jraceman/dbrepo/test"
 
   goldenbase "github.com/jimmc/golden/base"
 )

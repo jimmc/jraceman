@@ -4,8 +4,8 @@ import (
   "reflect"
   "testing"
 
-  dbtest "github.com/jimmc/jracemango/dbrepo/test"
-  "github.com/jimmc/jracemango/dbrepo/strsql"
+  dbtest "github.com/jimmc/jraceman/dbrepo/test"
+  "github.com/jimmc/jraceman/dbrepo/strsql"
 
   goldendb "github.com/jimmc/golden/db"
 )

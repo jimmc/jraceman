@@ -5,7 +5,7 @@ import (
   "strings"
   "testing"
 
-  "github.com/jimmc/jracemango/dbrepo/ixport"
+  "github.com/jimmc/jraceman/dbrepo/ixport"
 )
 
 // TestRowRepo implements the RowRepo interface with methods that capture

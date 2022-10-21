@@ -5,7 +5,7 @@ import (
   "net/http"
   "strings"
 
-  "github.com/jimmc/jracemango/domain"
+  "github.com/jimmc/jraceman/domain"
 )
 
 type handler struct {

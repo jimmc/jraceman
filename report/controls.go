@@ -1,7 +1,7 @@
 package report
 
 import (
-  "github.com/jimmc/jracemango/dbrepo"
+  "github.com/jimmc/jraceman/dbrepo"
 
   "github.com/golang/glog"
 )

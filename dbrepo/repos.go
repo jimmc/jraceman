@@ -6,8 +6,8 @@ import (
   "io"
   "strings"
 
-  "github.com/jimmc/jracemango/dbrepo/ixport"
-  "github.com/jimmc/jracemango/domain"
+  "github.com/jimmc/jraceman/dbrepo/ixport"
+  "github.com/jimmc/jraceman/domain"
 
   "github.com/golang/glog"
 )

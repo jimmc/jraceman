@@ -4,7 +4,7 @@ import (
   "fmt"
   "net/http"
 
-  "github.com/jimmc/jracemango/domain"
+  "github.com/jimmc/jraceman/domain"
 )
 
 type handler struct {

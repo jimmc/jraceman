@@ -3,7 +3,7 @@ package query
 import (
   "net/http"
 
-  "github.com/jimmc/jracemango/domain"
+  "github.com/jimmc/jraceman/domain"
 )
 
 type areaQuery struct{

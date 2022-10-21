@@ -3,7 +3,7 @@ package test
 import (
   "net/http"
 
-  "github.com/jimmc/jracemango/api/query"
+  "github.com/jimmc/jraceman/api/query"
 )
 
 // CreateQueryHandler create an http handler for our query calls.

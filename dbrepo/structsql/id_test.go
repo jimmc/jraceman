@@ -3,8 +3,8 @@ package structsql_test
 import (
   "testing"
 
-  "github.com/jimmc/jracemango/dbrepo/structsql"
-  dbtest "github.com/jimmc/jracemango/dbrepo/test"
+  "github.com/jimmc/jraceman/dbrepo/structsql"
+  dbtest "github.com/jimmc/jraceman/dbrepo/test"
 )
 
 func TestUniqueId(t *testing.T) {

@@ -1,4 +1,4 @@
-# jracemango
+# jraceman
 
 JRaceman is an open-source canoe and kayak regatta management system
 (Jimmc's RACE MANager).
@@ -18,25 +18,25 @@ See if the go compiler is already installed on your system:
 
 If not, [install Go](https://go.dev/doc/install).
 
-### Get the jracemango sources
+### Get the jraceman sources
 
 Once the Go compiler is installed, it can do this for you automatically:
 
-    go get github.com/jimmc/jracemango
+    go get github.com/jimmc/jraceman
 
 ### Build
 
 #### Compile the Go code
 
-Change your working directory to the jracemango directory:
+Change your working directory to the jraceman directory:
 
-    cd ~/go/src/github.com/jimmc/jracemango
+    cd ~/go/src/github.com/jimmc/jraceman
 
 Compile jraceman:
 
     go build
 
-This creates the executable `jracemango` in the jracemango directory.
+This creates the executable `jraceman` in the jraceman directory.
 
 #### Test the Go code
 
@@ -60,13 +60,13 @@ JRaceman uses the [glog](https://github.com/golang/glog)
 logging package, which by default sends output
 to files in /tmp. During setup, it is typically simpler to direct this
 output to stderr so that it comes directly to the terminal. To do this,
-add the `-logtostderr` command line option to all of the `jracemango`
+add the `-logtostderr` command line option to all of the `jraceman`
 commands in this section.
 
 #### Choose a location for your database
 
 Select a location for your database, such a `$HOME/jrdb`, and pass that
-value to  the `-db` option to `jracemango` when you run it. The
+value to  the `-db` option to `jraceman` when you run it. The
 commands in this section assume you have set the `JRDB` environment
 variable to point to the location of your database. If your database
 is located at `$HOME/jrdb`, you can use the following line to `sh`:
@@ -78,12 +78,12 @@ is located at `$HOME/jrdb`, you can use the following line to `sh`:
 Select a location for your database, for example $HOME/jrdb, then run the jraceman binary
 specifying that database:
 
-    ./jracemango -db sqlite3:$JRDB -create
+    ./jraceman -db sqlite3:$JRDB -create
 
 You can import a jraceman data file. For example, if you have the jraceman v1
 source files in $JRACEMAN, you can load the USACK sports definition:
 
-    ./jracemango -db sqlite3:$JRDB -import $JRACEMAN/data/usack-sports.txt
+    ./jraceman -db sqlite3:$JRDB -import $JRACEMAN/data/usack-sports.txt
 
 #### Upgrade the database
 
@@ -91,17 +91,17 @@ If you did not use the latest JRaceman v2 data file to create your database,
 upgrade it so that it includes all the tables it needs. You can start with
 a dry run:
 
-    ./jracemango -db sqlite3:$JRDB -checkUpgrade
+    ./jraceman -db sqlite3:$JRDB -checkUpgrade
 
 Then do the upgrade:
 
-    ./jracemango -db sqlite3:$JRDB -upgrade
+    ./jraceman -db sqlite3:$JRDB -upgrade
 
 #### Add a user
 
 You need at least one user in order to log in. Add one:
 
-    ./jracemango -db sqlite3:$JRDB -updatePassword user1
+    ./jraceman -db sqlite3:$JRDB -updatePassword user1
 
 This will prompt you for a password and ask again for confirmation, then
 create or update the named user with the new password. Once you have one
@@ -111,7 +111,7 @@ on the command line rather than typing it in twice.
 
 ### Run the server
 
-    ./jracemango -db sqlite3:$JRDB -logtostderr
+    ./jraceman -db sqlite3:$JRDB -logtostderr
 
 ## Documentation
 

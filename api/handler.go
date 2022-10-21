@@ -4,12 +4,12 @@ import (
   "fmt"
   "net/http"
 
-  "github.com/jimmc/jracemango/api/crud"
-  apidb "github.com/jimmc/jracemango/api/database"
-  apidebug "github.com/jimmc/jracemango/api/debug"
-  "github.com/jimmc/jracemango/api/query"
-  apireport "github.com/jimmc/jracemango/api/report"
-  "github.com/jimmc/jracemango/domain"
+  "github.com/jimmc/jraceman/api/crud"
+  apidb "github.com/jimmc/jraceman/api/database"
+  apidebug "github.com/jimmc/jraceman/api/debug"
+  "github.com/jimmc/jraceman/api/query"
+  apireport "github.com/jimmc/jraceman/api/report"
+  "github.com/jimmc/jraceman/domain"
 )
 
 type handler struct {

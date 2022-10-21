@@ -4,12 +4,12 @@ import (
   "bytes"
   "testing"
 
-  "github.com/jimmc/jracemango/dbrepo"
-  dbtest "github.com/jimmc/jracemango/dbrepo/test"
-  "github.com/jimmc/jracemango/dbrepo/ixport"
-  "github.com/jimmc/jracemango/dbrepo/strsql"
-  "github.com/jimmc/jracemango/dbrepo/structsql"
-  "github.com/jimmc/jracemango/domain"
+  "github.com/jimmc/jraceman/dbrepo"
+  dbtest "github.com/jimmc/jraceman/dbrepo/test"
+  "github.com/jimmc/jraceman/dbrepo/ixport"
+  "github.com/jimmc/jraceman/dbrepo/strsql"
+  "github.com/jimmc/jraceman/dbrepo/structsql"
+  "github.com/jimmc/jraceman/domain"
 )
 
 type areaDiffs struct {}

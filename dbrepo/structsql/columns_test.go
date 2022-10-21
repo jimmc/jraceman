@@ -4,7 +4,7 @@ import (
   "reflect"
   "testing"
 
-  "github.com/jimmc/jracemango/dbrepo/structsql"
+  "github.com/jimmc/jraceman/dbrepo/structsql"
 )
 
 func TestColumnNames(t *testing.T) {

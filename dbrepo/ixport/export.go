@@ -6,7 +6,7 @@ import (
   "io"
   "strings"
 
-  "github.com/jimmc/jracemango/dbrepo/structsql"
+  "github.com/jimmc/jraceman/dbrepo/structsql"
 )
 
 type Exporter struct{

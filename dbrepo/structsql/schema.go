@@ -5,7 +5,7 @@ import (
   "fmt"
   "strings"
 
-  "github.com/jimmc/jracemango/dbrepo/strsql"
+  "github.com/jimmc/jraceman/dbrepo/strsql"
 )
 
 // ColumnSpec generates an sql column specification, suitable for use

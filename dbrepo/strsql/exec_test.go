@@ -6,7 +6,7 @@ import (
   "reflect"
   "testing"
 
-  "github.com/jimmc/jracemango/dbrepo/strsql"
+  "github.com/jimmc/jraceman/dbrepo/strsql"
 
   goldendb "github.com/jimmc/golden/db"
 )

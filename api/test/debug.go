@@ -3,7 +3,7 @@ package test
 import (
   "net/http"
 
-  "github.com/jimmc/jracemango/api/debug"
+  "github.com/jimmc/jraceman/api/debug"
 )
 
 // CreateDebugHandler create an http handler for our debug calls.

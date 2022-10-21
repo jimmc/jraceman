@@ -3,9 +3,9 @@ package report
 import (
   "net/http"
 
-  apihttp "github.com/jimmc/jracemango/api/http"
-  "github.com/jimmc/jracemango/dbrepo"
-  "github.com/jimmc/jracemango/report"
+  apihttp "github.com/jimmc/jraceman/api/http"
+  "github.com/jimmc/jraceman/dbrepo"
+  "github.com/jimmc/jraceman/report"
 )
 
 func (h *handler) list(w http.ResponseWriter, r *http.Request) {

@@ -5,9 +5,9 @@ import (
   "net/http"
   "strings"
 
-  apihttp "github.com/jimmc/jracemango/api/http"
-  "github.com/jimmc/jracemango/dbrepo"
-  reportmain "github.com/jimmc/jracemango/report"
+  apihttp "github.com/jimmc/jraceman/api/http"
+  "github.com/jimmc/jraceman/dbrepo"
+  reportmain "github.com/jimmc/jraceman/report"
 
   "github.com/golang/glog"
 )

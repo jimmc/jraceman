@@ -4,7 +4,7 @@ package test
 import (
   "database/sql"
 
-  "github.com/jimmc/jracemango/dbrepo"
+  "github.com/jimmc/jraceman/dbrepo"
 
   goldendb "github.com/jimmc/golden/db"
 

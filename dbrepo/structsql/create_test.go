@@ -3,7 +3,7 @@ package structsql_test
 import (
   "testing"
 
-  "github.com/jimmc/jracemango/dbrepo/structsql"
+  "github.com/jimmc/jraceman/dbrepo/structsql"
 
   goldendb "github.com/jimmc/golden/db"
 )

@@ -7,7 +7,7 @@ import (
   "strings"
   "unicode"
 
-  "github.com/jimmc/jracemango/dbrepo/strsql"
+  "github.com/jimmc/jraceman/dbrepo/strsql"
 )
 
 // UniqueID returns a unique id within the table, following the

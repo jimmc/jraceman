@@ -4,10 +4,10 @@ import (
   "database/sql"
   "io"
 
-  "github.com/jimmc/jracemango/dbrepo/ixport"
-  "github.com/jimmc/jracemango/dbrepo/strsql"
-  "github.com/jimmc/jracemango/dbrepo/structsql"
-  "github.com/jimmc/jracemango/domain"
+  "github.com/jimmc/jraceman/dbrepo/ixport"
+  "github.com/jimmc/jraceman/dbrepo/strsql"
+  "github.com/jimmc/jraceman/dbrepo/structsql"
+  "github.com/jimmc/jraceman/domain"
 )
 
 type DBUserRoleRepo struct {

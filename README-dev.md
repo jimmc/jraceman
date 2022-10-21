@@ -9,15 +9,15 @@ please see the instructions in [README.md](./README.md).
 
 ## Sources
 
-The sources for jracemango are available on github in multiple repositories
+The sources for jraceman are available on github in multiple repositories
 under [jimmc](http://github.com/jimmc):
 
-* [jracemango](http://github.com/jimmc/jracemango) (this repo)
+* [jraceman](http://github.com/jimmc/jraceman) (this repo)
 * [auth](http://github.com/jimmc/auth) - Support for authentication (login) and authorization (permissions)
 * [golden](http://github.com/jimmc/golden) - Support for unit tests using golden reference files
 * [gtrepgen](http://github.com/jimmc/gtrepgen) - Go-Template REport GENerator
 
-If you want to make changes to auth, golden, or gtrepgen while working on jracemango,
+If you want to make changes to auth, golden, or gtrepgen while working on jraceman,
 clone that repository from github.com
 add one or more of these lines to the go.mod file here:
 
@@ -29,18 +29,18 @@ replace github.com/jimmc/gtrepgen => ../gtrepgen
 
 ## Logging
 
-jracemango uses [glog](https://github.com/golang/glog) for logging.
+jraceman uses [glog](https://github.com/golang/glog) for logging.
 For details, see the [glog User Guide](https://github.com/google/glog#user-guide)
 or the [glog source](https://github.com/golang/glog/blob/master/glog.go).
 
-* Log messages are written to files in `/tmp`, with filenames starting with `jracemango`,
+* Log messages are written to files in `/tmp`, with filenames starting with `jraceman`,
   divided into separate files per level, date-time, and pid
-* For convenience, the symlinks `/tmp/jracemango.{INFO,WARNING,ERROR,FATAL}` point to the latest
+* For convenience, the symlinks `/tmp/jraceman.{INFO,WARNING,ERROR,FATAL}` point to the latest
   log files for each level
 * Log messages at severity levels ERROR and FATAL are also sent to stderr
 
 You can change the behavior of logging by specifying the appropriate command line option
-when starting jracemango:
+when starting jraceman:
 
 * To send all messages to stderr instead of the log files, use `--logtostderr`
 * To send all messages to stderr in addition to the log files, use `--alsologtostderr`

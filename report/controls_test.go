@@ -6,7 +6,7 @@ import (
   "os"
   "testing"
 
-  "github.com/jimmc/jracemango/dbrepo"
+  "github.com/jimmc/jraceman/dbrepo"
 
   goldenbase "github.com/jimmc/golden/base"
   _ "github.com/mattn/go-sqlite3"

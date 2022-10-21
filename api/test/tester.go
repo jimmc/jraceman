@@ -4,7 +4,7 @@ import (
   "fmt"
   "net/http"
 
-  "github.com/jimmc/jracemango/dbrepo"
+  "github.com/jimmc/jraceman/dbrepo"
 
   goldenhttpdb "github.com/jimmc/golden/httpdb"
 )

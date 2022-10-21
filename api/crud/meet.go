@@ -3,7 +3,7 @@ package crud
 import (
   "net/http"
 
-  "github.com/jimmc/jracemango/domain"
+  "github.com/jimmc/jraceman/domain"
 )
 
 type meetCrud struct{
