@@ -45,6 +45,7 @@ func NewHandler(c *Config) http.Handler {
   mux.HandleFunc(h.crudPrefix("registrationfee"), h.registrationfee)
   mux.HandleFunc(h.crudPrefix("role"), h.role)
   mux.HandleFunc(h.crudPrefix("rolepermission"), h.rolepermission)
+  mux.HandleFunc(h.crudPrefix("rolerole"), h.rolerole)
   mux.HandleFunc(h.crudPrefix("scoringrule"), h.scoringrule)
   mux.HandleFunc(h.crudPrefix("scoringsystem"), h.scoringsystem)
   mux.HandleFunc(h.crudPrefix("seedinglist"), h.seedinglist)

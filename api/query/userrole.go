@@ -20,7 +20,7 @@ func (sc *userroleQuery) NewEntity() interface{} {
 
 func (sc *userroleQuery) SummaryQuery() string {
   return "select userrole.ID as ID, "+
-          "user.Username || '[' || user.ID || ']' || " +
+          "user.Username || '[' || user.ID || '] has ' || " +
           " role.Name || '[' || role.ID || ']' as summary " +
           "from userrole join user on userrole.userid = user.id" +
           " join role on userrole.roleid = role.id"

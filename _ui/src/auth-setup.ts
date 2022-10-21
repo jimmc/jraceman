@@ -26,6 +26,8 @@ export class AuthSetup extends LitElement {
             <section slot="panel"><table-queryedit tableName="userrole"></table-queryedit></section>
             <span slot="tab">Role Permissions</span>
             <section slot="panel"><table-queryedit tableName="rolepermission"></table-queryedit></section>
+            <span slot="tab">Role Roles</span>
+            <section slot="panel"><table-queryedit tableName="rolerole"></table-queryedit></section>
         </jraceman-tabs>
     `;
   }

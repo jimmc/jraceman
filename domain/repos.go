@@ -28,6 +28,7 @@ type Repos interface {
   RegistrationFee() RegistrationFeeRepo
   Role() RoleRepo
   RolePermission() RolePermissionRepo
+  RoleRole() RoleRoleRepo
   ScoringRule() ScoringRuleRepo
   ScoringSystem() ScoringSystemRepo
   SeedingList() SeedingListRepo

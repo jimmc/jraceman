@@ -20,7 +20,7 @@ func (sc *rolepermissionQuery) NewEntity() interface{} {
 
 func (sc *rolepermissionQuery) SummaryQuery() string {
   return "select rolepermission.ID as ID, "+
-          "role.Name || '[' || role.ID || ']' || " +
+          "role.Name || '[' || role.ID || '] has ' || " +
           " permission.Name || '[' || permission.ID || ']' as summary " +
           "from rolepermission join role on rolepermission.roleid = role.id" +
           " join permission on rolepermission.permissionid = permission.id"

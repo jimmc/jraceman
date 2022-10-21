@@ -40,6 +40,7 @@ type Repos struct {
   dbRegistrationFee *DBRegistrationFeeRepo
   dbRole *DBRoleRepo
   dbRolePermission *DBRolePermissionRepo
+  dbRoleRole *DBRoleRoleRepo
   dbSeedingList *DBSeedingListRepo
   dbSeedingPlan *DBSeedingPlanRepo
   dbScoringRule *DBScoringRuleRepo
@@ -75,6 +76,7 @@ func (r *Repos) TableEntries() []TableEntry {
     {"permission", r.dbPermission},
     {"userrole", r.dbUserRole},
     {"rolepermission", r.dbRolePermission},
+    {"rolerole", r.dbRoleRole},
     {"option", r.dbOption},
     {"competition", r.dbCompetition},
     {"complan", r.dbComplan},
@@ -137,6 +139,7 @@ func (r *Repos) Registration() domain.RegistrationRepo { return r.dbRegistration
 func (r *Repos) RegistrationFee() domain.RegistrationFeeRepo { return r.dbRegistrationFee }
 func (r *Repos) Role() domain.RoleRepo { return r.dbRole }
 func (r *Repos) RolePermission() domain.RolePermissionRepo { return r.dbRolePermission }
+func (r *Repos) RoleRole() domain.RoleRoleRepo { return r.dbRoleRole }
 func (r *Repos) ScoringRule() domain.ScoringRuleRepo { return r.dbScoringRule }
 func (r *Repos) ScoringSystem() domain.ScoringSystemRepo { return r.dbScoringSystem }
 func (r *Repos) SeedingList() domain.SeedingListRepo { return r.dbSeedingList }
@@ -203,6 +206,7 @@ func OpenDB(db *sql.DB) (*Repos, error) {
     dbRegistrationFee: &DBRegistrationFeeRepo{db},
     dbRole: &DBRoleRepo{db},
     dbRolePermission: &DBRolePermissionRepo{db},
+    dbRoleRole: &DBRoleRoleRepo{db},
     dbScoringRule: &DBScoringRuleRepo{db},
     dbScoringSystem: &DBScoringSystemRepo{db},
     dbSeedingList: &DBSeedingListRepo{db},
