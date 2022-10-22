@@ -18,6 +18,9 @@ func ColumnSpec(colInfo ColumnInfo) string {
     if colInfo.Required {
       columnSpec = columnSpec + " not null"
     }
+    if colInfo.Unique {
+      columnSpec = columnSpec + " unique"
+    }
     if colInfo.HasDefault {
       columnSpec = columnSpec + " default " + colInfo.DefaultAsString
     }

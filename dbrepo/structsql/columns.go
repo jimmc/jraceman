@@ -12,6 +12,7 @@ type ColumnInfo struct {
   Name string
   Type string
   Required bool
+  Unique bool
   IsForeignKey bool
   FKTable string
   HasDefault bool

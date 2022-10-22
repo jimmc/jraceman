@@ -23,6 +23,10 @@
 !columns "id","roleid","permissionid"
 #no rows
 
+!table rolerole
+!columns "id","roleid","hasroleid"
+#no rows
+
 !table option
 !columns "name","value"
 #no rows

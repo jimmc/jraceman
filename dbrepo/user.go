@@ -18,12 +18,22 @@ func (r *DBUserRepo) New() interface{} {
   return domain.User{}
 }
 
+func (r *DBUserRepo) UpdateColumnInfos(columnInfos []structsql.ColumnInfo) []structsql.ColumnInfo {
+  // We need the username column to be unique.
+  for c, col := range columnInfos {
+    if col.Name == "username" {
+      columnInfos[c].Unique = true
+    }
+  }
+  return columnInfos
+}
+
 func (r *DBUserRepo) CreateTable() error {
-  return structsql.CreateTable(r.db, "user", domain.User{})
+  return structsql.CreateTableWithUpdater(r.db, "user", domain.User{}, r)
 }
 
 func (r *DBUserRepo) UpgradeTable(dryrun bool) (bool, string, error) {
-  return structsql.UpgradeTable(r.db, "user", domain.User{}, dryrun)
+  return structsql.UpgradeTableWithUpdater(r.db, "user", domain.User{}, dryrun, r)
 }
 
 func (r *DBUserRepo) FindByID(ID string) (*domain.User, error) {

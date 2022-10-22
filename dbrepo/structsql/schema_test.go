@@ -28,6 +28,10 @@ func TestColumnSpec(t *testing.T) {
       info: structsql.ColumnInfo{Name:"c", Type:"string", IsForeignKey:true, FKTable:"bar"},
       spec: "c string references bar(id)",
     },
+    {
+      info: structsql.ColumnInfo{Name:"d", Type:"string", Unique:true},
+      spec: "d string unique",
+    },
   }
   for _, e := range tests {
     if got, want := structsql.ColumnSpec(e.info), e.spec; got != want {
