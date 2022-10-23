@@ -25,9 +25,9 @@ export class DebugPane extends LitElement {
         <section slot="panel"><table-queryedit tableName="lane"></table-queryedit></section>
         <span slot="tab">Messages</span>
         <section slot="panel">
-          <button @click=${this.onClick.bind(this,"info","Sample info message")}>Post Info message</button>
-          <button @click=${this.onClick.bind(this,"warning","A warning message")}>Post Warning message</button>
-          <button @click=${this.onClick.bind(this,"error","Error message")}>Post Error message</button>
+          <button @click=${this.onClick.bind(this,"Info","Sample info message")}>Post Info message</button>
+          <button @click=${this.onClick.bind(this,"Warning","A warning message")}>Post Warning message</button>
+          <button @click=${this.onClick.bind(this,"Error","Error message")}>Post Error message</button>
         </section>
       </jraceman-tabs>
     `;

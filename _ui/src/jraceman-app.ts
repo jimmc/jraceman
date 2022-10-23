@@ -162,7 +162,7 @@ export class JracemanApp extends LitElement {
     this.unviewedMessageCount++
     const evt = e as CustomEvent<PostMessageEvent>
     const m:Message = evt.detail.message
-    if (m.level == "error") {
+    if (m.level.toLowerCase() == "error") {
       // If an error message is posted, display the Messages tab.
       const bottomTabs = this.shadowRoot!.querySelector("#bottom-tabs")! as JracemanTabs
       bottomTabs.selectTabById("message-log-tab")

@@ -4,6 +4,7 @@ import {repeat} from 'lit/directives/repeat.js';
 import {when} from 'lit/directives/when.js';
 
 import { ApiManager, XhrOptions } from './api-manager.js'
+import { PostError } from './message-log.js'
 import { TableDesc, QueryResultsEvent } from './table-desc.js'
 
 /**
@@ -93,10 +94,10 @@ export class TableQuery extends LitElement {
       }
       this.queryResults = result;
     } catch(e) {
-      this.queryResults = {
-        //Error: e.responseText
-        Error: e        // TODO: figure out type so we can just return responseText
-      }
+      const evt = e as XMLHttpRequest
+      PostError("query", evt.responseText)
+      console.log("Error in table query", e)
+      return    // Don't attempt to update the QueryResults tab.
     }
     console.log("TableQuery.search results", this.queryResults);
     // Now tell results tab to display this data.

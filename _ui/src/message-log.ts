@@ -92,7 +92,7 @@ export class MessageLog extends LitElement {
     return html`
       ${when(this.messages.length==0, ()=>html`(No messages)`)}
       ${repeat(this.messages, (message) => html`
-        <span class=${message.level}>${message.postTime}: [${message.level}](${message.source}) ${message.text}<span><br/>
+        <span class=${message.level.toLowerCase()}>${message.postTime}: [${message.level}](${message.source}) ${message.text}<span><br/>
       `)}
     `;
   }

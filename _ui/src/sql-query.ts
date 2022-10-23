@@ -2,6 +2,7 @@ import {LitElement, html, css} from 'lit';
 import {customElement} from 'lit/decorators.js';
 
 import { ApiManager } from "./api-manager.js"
+import { PostError } from "./message-log.js"
 import { QueryResultsEvent } from "./table-desc.js"
 
 // Allows the user to enter and execute an SQL query.
@@ -61,7 +62,9 @@ export class SqlQuery extends LitElement {
       console.log("SqlQuery dispatching event", event)
       document.dispatchEvent(event);
     } catch(e) {
-      console.log("Error",e)    // TODO - handle this better; extract responseText
+      const evt = e as XMLHttpRequest
+      PostError("sql", evt.responseText)
+      console.error("Error",e)
     }
   }
 
