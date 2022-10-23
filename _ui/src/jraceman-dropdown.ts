@@ -6,6 +6,7 @@ import {customElement} from 'lit/decorators.js';
 @customElement('jraceman-dropdown')
 export class JracemanDropdown extends LitElement {
   content: Element
+  onDocumentClickListener: (e:MouseEvent)=>void
 
   static styles = css`
     #dropdown {
@@ -30,18 +31,45 @@ export class JracemanDropdown extends LitElement {
     super()
     this.content = this.querySelector("[slot=content]")!
     this.content!.setAttribute("hidden","")
+    this.onDocumentClickListener = this.onDocumentClick.bind(this)
   }
 
-  onControlClick() {
+  onControlClick(e: Event) {
     if (this.content.hasAttribute("hidden")) {
-      this.content!.removeAttribute("hidden")
+      e.stopPropagation()       // Consume the click event
+      this.showPopup()
     } else {
-      this.content!.setAttribute("hidden","")
+      this.hidePopup()
     }
   }
 
   onContentClick() {
     this.content!.setAttribute("hidden","")
+  }
+
+  showPopup() {
+    this.content!.removeAttribute("hidden")
+    // Add an event listener that grabs clicks outside the popup
+    // and takes down the popup.
+    document.addEventListener("click", this.onDocumentClickListener)
+  }
+
+  // This listener gets added to the document when our dropdown
+  // becomes visible. It checks for clicks outside the dropdown
+  // and hides the dropdown when it sees one.
+  // Note that this does not prevent other listeners from taking their
+  // action based on the click.
+  onDocumentClick(e: MouseEvent) {
+    const isClosest = ((e!.target) as HTMLElement)!.closest("#dropdown");
+
+    if (!isClosest && !this.content.hasAttribute("hidden")) {
+      this.hidePopup()
+    }
+  }
+
+  hidePopup() {
+    this.content!.setAttribute("hidden","")
+    document.removeEventListener("click", this.onDocumentClickListener)
   }
 
   render() {
