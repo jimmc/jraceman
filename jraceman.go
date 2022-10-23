@@ -6,6 +6,7 @@ import (
   "net/http"
   "os"
   "strconv"
+  "strings"
 
   "github.com/jimmc/jraceman/api"
   "github.com/jimmc/jraceman/app"
@@ -22,7 +23,7 @@ import (
 type config struct {
   // configuration
   port int
-  reportRoot string
+  reportRoots string
   uiRoot string
   db string
   maxClockSkewSeconds int
@@ -51,7 +52,7 @@ func doMain() int {
 
   // Configuration flags
   flag.IntVar(&config.port, "port", 8080, "port on which to listen for connections")
-  flag.StringVar(&config.reportRoot, "reportroot", "report/template", "location of report templates")
+  flag.StringVar(&config.reportRoots, "reportroots", "report/template", "comma-separated list of locations of report templates")
   flag.StringVar(&config.uiRoot, "uiroot", "_ui/", "location of ui root")
   flag.StringVar(&config.db, "db", "", "location of database, in the form driver:name")
   flag.IntVar(&config.maxClockSkewSeconds, "maxClockSkewSeconds", 5,
@@ -212,7 +213,7 @@ func runHttpServer(config *config, dbRepos *dbrepo.Repos) {
   apiHandler := api.NewHandler(&api.Config{
     Prefix: apiPrefix,
     DomainRepos: dbRepos,
-    ReportRoots: []string{config.reportRoot},
+    ReportRoots: strings.Split(config.reportRoots,","),
   })
   mux.Handle("/ui/", http.StripPrefix("/ui/", uiFileHandler))
   mux.Handle(apiPrefix, authHandler.RequireAuth(apiHandler))
