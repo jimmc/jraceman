@@ -3,6 +3,7 @@ import {customElement, property} from 'lit/decorators.js';
 import {PropertyValues} from 'lit-element';
 
 import { ApiManager } from "./api-manager.js"
+import { PostError } from "./message-log.js"
 import { hash as sha256hash } from "./sha256.js"
 
 export interface LoginStateEvent {
@@ -71,7 +72,8 @@ export class JracemanLogin extends LitElement {
       const permissions = response.Permissions
       JracemanLogin.SendLoginStateEvent(loggedIn, permissions)
     } catch (e) {
-      console.error("auth status call failed")
+      PostError("login", "call to /auth/status failed: " + e)
+      console.error("auth status call failed", e)
     }
   }
 
@@ -123,7 +125,8 @@ export class JracemanLogin extends LitElement {
       this.permissions = [];
       console.log("Logout succeeded");
     } catch (e) {
-      console.error("Logout failed");
+      PostError("login", "Logout failed: " + e);
+      console.error("Logout failed", e);
     }
     JracemanLogin.AnnounceLoginState()
   }

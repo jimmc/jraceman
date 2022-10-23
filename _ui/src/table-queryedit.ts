@@ -2,6 +2,7 @@ import {LitElement, html} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 
 import { ApiManager } from "./api-manager.js"
+import { PostError } from "./message-log.js"
 import { TableDesc, TableDescSupport, FKItem } from "./table-desc.js"
 import "./table-edit.js"
 import "./table-query.js"
@@ -60,6 +61,7 @@ export class TableQueryedit extends LitElement {
       }
       td.Columns[i].FKItems = newFKItems
     } catch(e) {
+      PostError("queryedit", "Error loading foreign key choices: " + e)
       console.error("Error: ", e)         // TODO
     }
   }

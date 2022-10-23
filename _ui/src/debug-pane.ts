@@ -1,6 +1,6 @@
 import {LitElement, html, css} from 'lit';
 import {customElement} from 'lit/decorators.js';
-import { PostMessage } from './message-log.js'
+import { PostMessageParts } from './message-log.js'
 
 import "./sql-query.js"
 
@@ -34,7 +34,7 @@ export class DebugPane extends LitElement {
   }
 
   onClick(level: string, text: string) {
-    PostMessage("debug", level, text)
+    PostMessageParts("debug", level, text)      // "debug" is our source name.
   }
 }
 

@@ -14,13 +14,45 @@ export interface PostMessageEvent {
   message: Message;
 }
 
-export function PostMessage(source: string, level: string, text: string) {
+// PostError posts an error message event, which we listen for and display.
+export function PostError(source: string, text: string) {
+  PostMessageParts(source, "Error", text)
+}
+
+// PostWarning posts an warning message event, which we listen for and display.
+export function PostWarning(source: string, text: string) {
+  PostMessageParts(source, "Warning", text)
+}
+
+// PostInfo posts an info message event, which we listen for and display.
+export function PostInfo(source: string, text: string) {
+  PostMessageParts(source, "Info", text)
+}
+
+// PostDebug posts an debug message event, which we listen for and display.
+export function PostDebug(source: string, text: string) {
+  PostMessageParts(source, "Debug", text)
+}
+
+// PostMessageParts accepts separate fields describing a message,
+// collects them into a Message struct, and calls PostMessage.
+// Most application code should call PostError, PostWarning,
+// PostInfo, or PostDebug instead.
+export function PostMessageParts(source: string, level: string, text: string) {
   const m:Message = {
     source: source,
     level: level,
     text: text,
     postTime: Date().toString().substr(0, 24)        // TODO - better format
   }
+  PostMessage(m)
+}
+
+// PostMessage accepts a Message struct and dispatches a CustomEvent with that message.
+// Application code typically calls one of
+// PostError, PostWarning, PostInfo, or PostDebug instead,
+// which is turn call PostMessage.
+export function PostMessage(m: Message) {
   const event = new CustomEvent<PostMessageEvent>('jraceman-post-message-event', {
       detail: {
         message: m,

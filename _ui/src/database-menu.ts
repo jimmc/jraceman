@@ -3,7 +3,7 @@ import {customElement} from 'lit/decorators.js';
 
 import { ApiManager, XhrOptions} from "./api-manager.js"
 import "./jraceman-dropdown.js"
-import { PostMessage } from "./message-log.js"
+import { PostError, PostInfo } from "./message-log.js"
 
 // A drop-down menu for database operations.
 @customElement('database-menu')
@@ -47,11 +47,11 @@ export class DatabaseMenu extends LitElement {
       sections = await ApiManager.xhrJson(path);
     } catch (e) {
       console.error(e);
-      PostMessage("database", "error", "Error getting list of sections: " + e/*.responseText*/);
+      PostError("database", "Error getting list of sections: " + e/*.responseText*/);
       return;
     }
     const op = (dryrun ? "Upgrade checking " : "Upgrading ");
-    PostMessage("database", "info", op + sections.length + " sections")
+    PostInfo("database", op + sections.length + " sections")
     let numSectionsToUpgrade = 0;
     for (let i = 0; i < sections.length; i++) {
       const section = sections[i];
@@ -59,13 +59,13 @@ export class DatabaseMenu extends LitElement {
       const options : XhrOptions = {
         method: 'POST',
       };
-      // PostMessage("database", "info", "Updating " + section);
+      // PostInfo("database", "Updating " + section);
       let sectionResult;
       try {
         sectionResult = await ApiManager.xhrJson(sectionPath, options);
       } catch (e) {
         console.error("section error ", e);
-        PostMessage("database", "error", "Error in section " + section + ": " + e/*.responseText*/);
+        PostError("database", "Error in section " + section + ": " + e/*.responseText*/);
         if (!dryrun) {
           // If we are not doing a dryrun, stop after an error.
           return;
@@ -74,16 +74,16 @@ export class DatabaseMenu extends LitElement {
         }
       }
       if (sectionResult.Nop) {
-        // PostMessage("database", "info", "No change to " + section);
+        // PostInfo("database", "No change to " + section);
       } else {
-        PostMessage("database", "info", resultPrefix + sectionResult.Message);
+        PostInfo("database", resultPrefix + sectionResult.Message);
         numSectionsToUpgrade++;
       }
     }
     if (numSectionsToUpgrade == 0) {
-      PostMessage("database", "info", "Upgrade done, no changes");
+      PostInfo("database", "Upgrade done, no changes");
     } else {
-      PostMessage("database", "info", "Upgrade done");
+      PostInfo("database", "Upgrade done");
     }
   }
 

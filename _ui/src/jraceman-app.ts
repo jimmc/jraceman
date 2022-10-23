@@ -20,6 +20,7 @@ import './venue-setup.js'
 import { ApiManager } from './api-manager.js'
 import { JracemanLogin, LoginStateEvent } from './jraceman-login.js'
 import { JracemanTabs} from './jraceman-tabs.js'
+import { PostError } from './message-log.js'
 import { ReportResultsEvent } from './reports-pane.js'
 import { QueryResultsEvent } from './table-desc.js'
 
@@ -92,7 +93,8 @@ export class JracemanApp extends LitElement {
     try {
       result = await ApiManager.xhrJson(queryPath, options);
     } catch(e) {
-      console.error("Error from /api/query:", e/*.responseText*/);
+      PostError("jraceman-app", "Error from /api0/version: " + e/*.responseText*/);
+      console.error("Error getting version from /api0/version:", e/*.responseText*/);
       return
     }
     this.jracemanVersion = result as string
