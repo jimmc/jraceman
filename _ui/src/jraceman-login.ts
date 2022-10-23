@@ -72,7 +72,7 @@ export class JracemanLogin extends LitElement {
       const permissions = response.Permissions
       JracemanLogin.SendLoginStateEvent(loggedIn, permissions)
     } catch (e) {
-      PostError("login", "call to /auth/status failed: " + e)
+      PostError("login", "Call to /auth/status failed: " + e)
       console.error("auth status call failed", e)
     }
   }

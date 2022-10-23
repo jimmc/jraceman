@@ -20,7 +20,7 @@ import './venue-setup.js'
 import { ApiManager } from './api-manager.js'
 import { JracemanLogin, LoginStateEvent } from './jraceman-login.js'
 import { JracemanTabs} from './jraceman-tabs.js'
-import { PostError } from './message-log.js'
+import { Message, PostMessageEvent, PostError } from './message-log.js'
 import { ReportResultsEvent } from './reports-pane.js'
 import { QueryResultsEvent } from './table-desc.js'
 
@@ -160,6 +160,13 @@ export class JracemanApp extends LitElement {
     }
     // The message panel is not currently selected
     this.unviewedMessageCount++
+    const evt = e as CustomEvent<PostMessageEvent>
+    const m:Message = evt.detail.message
+    if (m.level == "error") {
+      // If an error message is posted, display the Messages tab.
+      const bottomTabs = this.shadowRoot!.querySelector("#bottom-tabs")! as JracemanTabs
+      bottomTabs.selectTabById("message-log-tab")
+    }
   }
 
   // When a tab is selected, see if we need to clear the message count.
@@ -219,7 +226,7 @@ export class JracemanApp extends LitElement {
           </div>
           <div id="bottom" slot="bottom" class="tab-container">
             <jraceman-tabs @jraceman-tab-selected-event=${this.onTabSelected} id="bottom-tabs">
-              <span slot="tab">Messages${when(this.unviewedMessageCount>0,
+              <span slot="tab" id="message-log-tab">Messages${when(this.unviewedMessageCount>0,
                   ()=>html` [+${this.unviewedMessageCount}]`
               )}</span>
               <section slot="panel" id="message-log-pane"><message-log></message-log></section>
