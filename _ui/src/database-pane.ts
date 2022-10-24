@@ -13,6 +13,8 @@ export class DatabasePane extends LitElement {
   render() {
     return html`
       <jraceman-tabs>
+        <span slot="tab">Checks</span>
+        <section slot="panel"><reports-pane apiName='check'></reports-pane></section>
         <span slot="tab">Context Options</span>
         <section slot="panel"><table-queryedit tableName="contextoption"></table-queryedit></section>
       </jraceman-tabs>

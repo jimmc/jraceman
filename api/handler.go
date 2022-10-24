@@ -22,6 +22,7 @@ type handler struct {
 type Config struct {
   Prefix string
   DomainRepos domain.Repos
+  CheckRoots []string
   ReportRoots []string
 }
 
@@ -54,6 +55,15 @@ func NewHandler(c *Config) http.Handler {
   debugHandler := apidebug.NewHandler(debugConfig)
   mux.Handle(debugPrefix, debugHandler)
 
+  checkPrefix := h.apiPrefix("check")
+  checkConfig := &apireport.Config{
+    Prefix: checkPrefix,
+    DomainRepos: c.DomainRepos,
+    ReportRoots: c.CheckRoots,
+  }
+  checkHandler := apireport.NewHandler(checkConfig)
+  mux.Handle(checkPrefix, checkHandler)
+
   reportPrefix := h.apiPrefix("report")
   reportConfig := &apireport.Config{
     Prefix: reportPrefix,
@@ -76,7 +86,7 @@ func NewHandler(c *Config) http.Handler {
 }
 
 func (h *handler) blank(w http.ResponseWriter, r *http.Request) {
-  http.Error(w, "Try one of /api/crud, /api/database, /api/debug, /api/report, /api/query",
+  http.Error(w, "Try one of /api/crud, /api/database, /api/debug, /api/check, /api/report, /api/query",
       http.StatusForbidden)
 }
 

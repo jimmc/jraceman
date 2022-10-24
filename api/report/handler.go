@@ -46,7 +46,7 @@ func (h *handler) root(w http.ResponseWriter, r *http.Request) {
   switch action {
   // case "attributes": h.attributesByName(w, r, reportName)
   case "generate": h.generateByName(w, r, reportName)
-  default: http.Error(w, "Try /api/report/\n", http.StatusForbidden)
+  default: http.Error(w, fmt.Sprintf("Try %s\n", h.config.Prefix), http.StatusForbidden)
   }
 }
 

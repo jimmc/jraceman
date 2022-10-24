@@ -23,6 +23,7 @@ import (
 type config struct {
   // configuration
   port int
+  checkRoots string
   reportRoots string
   uiRoot string
   db string
@@ -52,6 +53,7 @@ func doMain() int {
 
   // Configuration flags
   flag.IntVar(&config.port, "port", 8080, "port on which to listen for connections")
+  flag.StringVar(&config.checkRoots, "checkroots", "report/ctemplate", "comma-separated list of locations of check templates")
   flag.StringVar(&config.reportRoots, "reportroots", "report/template", "comma-separated list of locations of report templates")
   flag.StringVar(&config.uiRoot, "uiroot", "_ui/", "location of ui root")
   flag.StringVar(&config.db, "db", "", "location of database, in the form driver:name")
@@ -213,6 +215,7 @@ func runHttpServer(config *config, dbRepos *dbrepo.Repos) {
   apiHandler := api.NewHandler(&api.Config{
     Prefix: apiPrefix,
     DomainRepos: dbRepos,
+    CheckRoots: strings.Split(config.checkRoots,","),
     ReportRoots: strings.Split(config.reportRoots,","),
   })
   mux.Handle("/ui/", http.StripPrefix("/ui/", uiFileHandler))

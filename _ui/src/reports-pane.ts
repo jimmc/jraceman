@@ -4,6 +4,7 @@ import {repeat} from 'lit/directives/repeat.js';
 import {when} from 'lit/directives/when.js';
 
 import { ApiManager } from './api-manager.js'
+import { PostError } from './message-log.js'
 
 // ReportAttributes is what we get from the API for each report.
 interface ReportAttributes {
@@ -97,6 +98,9 @@ export class ReportsPane extends LitElement {
     }
   `;
 
+  @property({type: String})
+  apiName = "report"
+
   @property({type: Object})
   orderByList: OrderByControl[] = []
 
@@ -116,14 +120,15 @@ export class ReportsPane extends LitElement {
   }
 
   async loadReportList() {
-    console.log("In loadReportList")
-    const path = '/api/report/'
+    const path = '/api/' + this.apiName + '/'
     const options = {}
     try {
       const result = await ApiManager.xhrJson(path, options)
       this.reportList = result
     } catch(e) {
-      console.log("Error: ", e)         // TODO
+      console.error("Error getting list of reports: ", e)
+      const evt = e as XMLHttpRequest
+      PostError("reports", evt.responseText)
     }
   }
 
@@ -192,7 +197,7 @@ export class ReportsPane extends LitElement {
   }
 
   async loadKeyChoices(i: number, table: string) {
-    const path = '/api/query/' + table + "/summary/"
+    const path = '/api/query/' + table + '/summary/'
     const options = {}
     try {
       const result = await ApiManager.xhrJson(path, options)
@@ -204,7 +209,9 @@ export class ReportsPane extends LitElement {
       this.whereList[i].KeyItems = newKeyItems
       this.requestUpdate()
     } catch(e) {
-      console.log("Error: ", e)         // TODO
+      console.error("Error getting table summary: ", e)         // TODO
+      const evt = e as XMLHttpRequest
+      PostError("reports", evt.responseText)
     }
   }
 
@@ -222,7 +229,7 @@ export class ReportsPane extends LitElement {
     console.log("Generate")
     const reportName = (this.shadowRoot!.querySelector("#reportName") as HTMLSelectElement)!.value
     const orderBy = (this.shadowRoot!.querySelector("#orderBy") as HTMLSelectElement)!.value
-    const path = '/api/report/generate/'
+    const path = '/api/' + this.apiName + '/generate/'
     const formData = {
       name: reportName,
       orderby: orderBy,
@@ -246,9 +253,10 @@ export class ReportsPane extends LitElement {
       console.log("ReportsPane dispatching event", event)
       document.dispatchEvent(event);
     } catch(e) {
-      this.reportResults = {
-        Error: e//.responseText         // TODO - get repsonseText only
-      }
+      console.error("Error generating report: ", e)
+      const evt = e as XMLHttpRequest
+      PostError("report", evt.responseText)
+      // Don't try to update the report results.
     }
   }
 
