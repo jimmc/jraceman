@@ -19,15 +19,18 @@ export class DatabaseMenu extends LitElement {
   `;
 
   onExportClick() {
-    console.log("Export JRaceman is not yet implemented");
+    PostError("database-menu", "Export Jraceman is not yet implemented")
+    console.error("Export JRaceman is not yet implemented");
   }
 
   onImportClick() {
-    console.log("Import JRaceman is not yet implemented");
+    PostError("database-menu", "Import JRaceman is not yet implemented");
+    console.error("Import JRaceman is not yet implemented");
   }
 
   onLoadSqlClick() {
-    console.log("Load SQL is not yet implemented");
+    PostError("database-menu", "Load SQL is not yet implemented");
+    console.error("Load SQL is not yet implemented");
   }
 
   onCheckUpgradeClick() {
