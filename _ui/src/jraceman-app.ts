@@ -13,6 +13,7 @@ import './message-log.js'
 import './plan-setup.js'
 import './query-results.js'
 import './reports-pane.js'
+import './report-menu.js'
 import './report-results.js'
 import './sport-setup.js'
 import './team-setup.js'
@@ -232,7 +233,7 @@ export class JracemanApp extends LitElement {
               <section slot="panel" id="message-log-pane"><message-log></message-log></section>
               <span slot="tab" id="query-results-tab">Query Results</span>
               <section slot="panel"><query-results></query-results></section>
-              <span slot="tab" id="report-results-tab">Report Results</span>
+              <span slot="tab" id="report-results-tab"><report-menu></report-menu>Report</span>
               <section slot="panel"><report-results></report-results></section>
               <span slot="tab">Help</span>
               <section slot="panel">Help is not yet implemented</section>
