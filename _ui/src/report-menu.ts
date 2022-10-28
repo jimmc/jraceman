@@ -34,15 +34,23 @@ export class ReportMenu extends LitElement {
   }
 
   onOpenInNewTab() {
-    const newWindow = window.open();
-    newWindow!.document.title = "JRaceman report"
-    newWindow!.document.body.innerHTML = this.reportResultsHTML
+    const newWindow = window.open()!;
+    newWindow.document.title = "JRaceman report"
+    newWindow.document.body.innerHTML = this.reportResultsHTML
   }
 
   onOpenSourceInNewTab() {
-    const newWindow = window.open();
-    newWindow!.document.title = "JRaceman report source"
-    newWindow!.document.body.innerText = this.reportResultsHTML
+    const newWindow = window.open()!;
+    newWindow.document.title = "JRaceman report source"
+    newWindow.document.body.innerText = this.reportResultsHTML
+  }
+
+  onPrint() {
+    const newWindow = window.open('','_blank')!;
+    newWindow.document.title = "JRaceman report"
+    newWindow.document.body.innerHTML = this.reportResultsHTML
+    newWindow.print()
+    newWindow.close()
   }
 
   render() {
@@ -52,6 +60,7 @@ export class ReportMenu extends LitElement {
         <div slot="content">
           <button @click="${this.onOpenInNewTab}">View in new tab</button>
           <button @click="${this.onOpenSourceInNewTab}">View source in new tab</button>
+          <button @click="${this.onPrint}">Print</button>
         </div>
       </jraceman-dropdown>
     `;
