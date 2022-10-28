@@ -10,6 +10,7 @@ import './jraceman-login.js'
 import './jraceman-split.js'
 import './meet-setup.js'
 import './message-log.js'
+import './message-menu.js'
 import './plan-setup.js'
 import './query-menu.js'
 import './query-results.js'
@@ -228,7 +229,7 @@ export class JracemanApp extends LitElement {
           </div>
           <div id="bottom" slot="bottom" class="tab-container">
             <jraceman-tabs @jraceman-tab-selected-event=${this.onTabSelected} id="bottom-tabs">
-              <span slot="tab" id="message-log-tab">Messages${when(this.unviewedMessageCount>0,
+              <span slot="tab" id="message-log-tab"><message-menu></message-menu>Messages${when(this.unviewedMessageCount>0,
                   ()=>html` [+${this.unviewedMessageCount}]`
               )}</span>
               <section slot="panel" id="message-log-pane"><message-log></message-log></section>

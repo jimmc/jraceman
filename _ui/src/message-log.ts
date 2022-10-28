@@ -65,6 +65,8 @@ export function PostMessage(m: Message) {
 // MessageLog collects and displays log messages.
 @customElement('message-log')
 export class MessageLog extends LitElement {
+  // NOTE: if you change the styles here, you should also update
+  // MessageMenu.renderMessages().
   static styles = css`
     .error {
       color: darkred;
@@ -88,6 +90,9 @@ export class MessageLog extends LitElement {
     this.requestUpdate()
   }
 
+  // Render our messages.
+  // NOTE: if you change the formatting here, you should also update
+  // MessageMenu.renderMessages().
   render() {
     return html`
       ${when(this.messages.length==0, ()=>html`(No messages)`)}
