@@ -1,10 +1,8 @@
 import {LitElement, html, css, render} from 'lit';
 import {customElement} from 'lit/decorators.js';
-import {repeat} from 'lit/directives/repeat.js';
 
-import "./jraceman-dropdown.js"
-// import { PostError } from "./message-log.js"
-import { QueryResultsData, QueryResultsEvent } from "./table-desc.js"
+import './jraceman-dropdown.js'
+import { QueryResults } from './query-results.js'
 
 // A drop-down menu for query operations.
 @customElement('query-menu')
@@ -19,36 +17,10 @@ export class QueryMenu extends LitElement {
     }
   `;
 
-  queryResults: QueryResultsData = {
-    Table: "",
-    Columns: [],
-    Rows: [],
-  /* Sample data looks something like this:
-    Table: "fake",
-    Columns: [
-      {
-        Name: "col1",
-        Type: "string"
-      },
-      {
-        Name: "col2",
-        Type: "int"
-      },
-    ],
-    Rows: [ "aaa", 123 ],
-    */
-  };
+  queryResultsElement?: QueryResults
 
-  connectedCallback() {
-    super.connectedCallback()
-    document.addEventListener("jraceman-query-results-event", this.onQueryResultsEvent.bind(this))
-  }
-
-  onQueryResultsEvent(e:Event) {
-    const evt = e as CustomEvent<QueryResultsEvent>
-    console.log("QueryMenu got updated query results", evt.detail.results)
-    // Save the query results so we can write it out on request.
-    this.queryResults = evt.detail.results as QueryResultsData
+  setQueryResults(qr: QueryResults) {
+    this.queryResultsElement = qr
   }
 
   onViewInNewTab() {
@@ -63,16 +35,27 @@ export class QueryMenu extends LitElement {
     newWindow.document.body.innerText = this.renderSql()
   }
 
+  // Render the query results the same way as we do in the query-results tab.
+  renderQueryResults() {
+    return html`
+      <style>
+        ${QueryResults.styles}
+      </style>
+      ${this.queryResultsElement!.render()}
+    `;
+  }
+
   renderSql() {
+    const qr = this.queryResultsElement!.getQueryResults()
     let sql = ""
     sql += "-- Column types:"
-    const cols = this.queryResults.Columns
+    const cols = qr.Columns
     for (var col of cols) {
       sql += " "+col.Name+":"+col.Type
     }
     sql += "\n"
-    for (var row of this.queryResults.Rows) {
-      let sqlLine = "INSERT INTO " + this.queryResults.Table + "("
+    for (var row of qr.Rows) {
+      let sqlLine = "INSERT INTO " + qr.Table + "("
       let colsep = ""
       for (var col of cols) {
         sqlLine += colsep
@@ -81,7 +64,7 @@ export class QueryMenu extends LitElement {
       }
       sqlLine += ") VALUES("
       colsep = ""
-      for (let c = 0; c < this.queryResults.Columns.length; c++) {
+      for (let c = 0; c < qr.Columns.length; c++) {
         sqlLine += colsep
         colsep = ","
         if (cols[c].Type=="string") {
@@ -95,36 +78,6 @@ export class QueryMenu extends LitElement {
       sql += sqlLine
     }
     return sql
-  }
-
-  // This method should be identical to QueryResults.render(),
-  // except without any of the selection or interactive parts.
-  renderQueryResults() {
-    return html`
-      Table: ${this.queryResults.Table}<br/>
-      ${this.queryResults.Error}
-      <table>
-        <tr>
-          ${/*@ts-ignore*/
-            repeat(this.queryResults.Columns, (col:ColumnDesc/*, colIndex*/) => html`
-            <th>
-              ${col.Name}
-            </th>
-          `)}
-        </tr>
-        ${/*@ts-ignore*/
-          repeat(this.queryResults.Rows, (row:any[], rowIndex) => html`
-          <tr>
-          ${/*@ts-ignore*/
-            repeat(this.queryResults.Columns, (col:ColumnDesc, colIndex) => html`
-            <td rowIndex=${rowIndex}>
-              ${row[colIndex]}
-            </td>
-          `)}
-          </tr>
-        `)}
-      </table>
-    `;
   }
 
   sqlQuoteAndEscape(s: string) {

@@ -20,11 +20,14 @@ import './report-results.js'
 import './sport-setup.js'
 import './team-setup.js'
 import './venue-setup.js'
+
 import { ApiManager } from './api-manager.js'
 import { JracemanLogin, LoginStateEvent } from './jraceman-login.js'
 import { JracemanTabs} from './jraceman-tabs.js'
 import { Message, PostMessageEvent, PostError, MessageLog } from './message-log.js'
 import { MessageMenu } from './message-menu.js'
+import { QueryMenu } from './query-menu.js'
+import { QueryResults } from './query-results.js'
 import { ReportResultsEvent } from './reports-pane.js'
 import { QueryResultsEvent } from './table-desc.js'
 
@@ -93,10 +96,15 @@ export class JracemanApp extends LitElement {
   // After we are logged in, calling this method will set up links
   // to allow some of our components to directly access other components.
   linkComponents() {
-    // Give the MessageMenu a direct pointer to the MessageLog.
+    // Give the MessageMenu direct access to the MessageLog.
     const messageLog = this.shadowRoot!.querySelector("#message-log") as MessageLog
     const messageMenu = this.shadowRoot!.querySelector("#message-menu") as MessageMenu
     messageMenu!.setMessageLog(messageLog)
+
+    // Give the QueryMenu direct access to the QueryResults
+    const queryResults = this.shadowRoot!.querySelector("query-results") as QueryResults
+    const queryMenu = this.shadowRoot!.querySelector("query-menu") as QueryMenu
+    queryMenu!.setQueryResults(queryResults)
   }
 
   async loadVersion() {
@@ -254,8 +262,13 @@ export class JracemanApp extends LitElement {
               <section slot="panel" id="message-log-pane">
                 <message-log id="message-log"></message-log>
               </section>
-              <span slot="tab" id="query-results-tab"><query-menu></query-menu>Query Results</span>
-              <section slot="panel"><query-results></query-results></section>
+              <span slot="tab" id="query-results-tab">
+                <query-menu id="query-menu"></query-menu>
+                Query Results
+              </span>
+              <section slot="panel">
+                <query-results id="query-results"></query-results>
+              </section>
               <span slot="tab" id="report-results-tab"><report-menu></report-menu>Report</span>
               <section slot="panel"><report-results></report-results></section>
               <span slot="tab">Help</span>

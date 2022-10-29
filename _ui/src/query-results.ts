@@ -45,6 +45,11 @@ export class QueryResults extends LitElement {
     document.addEventListener("jraceman-query-results-event", this.onQueryResultsEvent.bind(this))
   }
 
+  // Provide our query results to query-menu.
+  getQueryResults() {
+    return this.queryResults
+  }
+
   onQueryResultsEvent(e:Event) {
     const evt = e as CustomEvent<QueryResultsEvent>
     console.log("QueryResults got updated results", evt.detail.results)
