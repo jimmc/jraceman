@@ -81,6 +81,11 @@ export class MessageLog extends LitElement {
     document.addEventListener("jraceman-post-message-event", this.onPostMessage.bind(this))
   }
 
+  clear() {
+    this.messages = []
+    this.requestUpdate()
+  }
+
   onPostMessage(e:Event) {
     const evt = e as CustomEvent<PostMessageEvent>
     const m:Message = evt.detail.message

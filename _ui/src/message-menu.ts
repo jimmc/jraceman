@@ -23,6 +23,10 @@ export class MessageMenu extends LitElement {
     this.messageLog = log
   }
 
+  onClear() {
+    this.messageLog!.clear()
+  }
+
   onViewInNewTab() {
     const newWindow = window.open()!;
     newWindow.document.title = "JRaceman messages"
@@ -46,6 +50,7 @@ export class MessageMenu extends LitElement {
         <span slot="control" class="menu">☰</span>
         <div slot="content">
           <button @click="${this.onViewInNewTab}">View in new tab</button>
+          <button @click="${this.onClear}">Clear</button>
         </div>
       </jraceman-dropdown>
     `;
