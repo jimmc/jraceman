@@ -75,6 +75,7 @@ export class MessageLog extends LitElement {
   `;
 
   messages: Message[] = []
+  clearedMessages: Message[] = []
 
   constructor() {
     super()
@@ -82,13 +83,28 @@ export class MessageLog extends LitElement {
   }
 
   clear() {
+    this.clearedMessages = this.messages
     this.messages = []
+    this.requestUpdate()
+  }
+
+  canUndoClear() {
+    return (this.clearedMessages.length > 0)
+  }
+
+  undoClear() {
+    if (this.messages.length > 0) {
+      return            // Can't undo clear if we have any messages
+    }
+    this.messages = this.clearedMessages
+    this.clearedMessages = []
     this.requestUpdate()
   }
 
   onPostMessage(e:Event) {
     const evt = e as CustomEvent<PostMessageEvent>
     const m:Message = evt.detail.message
+    this.clearedMessages = []   // No more Undo Clear once we get a new message.
     this.messages.push(m)    // TODO - limit size to a max size
     this.requestUpdate()
   }
