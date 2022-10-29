@@ -1,6 +1,6 @@
-import {LitElement, html, css} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
-import {when} from 'lit/directives/when.js';
+import { LitElement, html, css } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
+import { when } from 'lit/directives/when.js';
 
 import './auth-setup.js'
 import './database-menu.js'
@@ -23,7 +23,8 @@ import './venue-setup.js'
 import { ApiManager } from './api-manager.js'
 import { JracemanLogin, LoginStateEvent } from './jraceman-login.js'
 import { JracemanTabs} from './jraceman-tabs.js'
-import { Message, PostMessageEvent, PostError } from './message-log.js'
+import { Message, PostMessageEvent, PostError, MessageLog } from './message-log.js'
+import { MessageMenu } from './message-menu.js'
 import { ReportResultsEvent } from './reports-pane.js'
 import { QueryResultsEvent } from './table-desc.js'
 
@@ -89,6 +90,15 @@ export class JracemanApp extends LitElement {
     this.loadVersion()
   }
 
+  // After we are logged in, calling this method will set up links
+  // to allow some of our components to directly access other components.
+  linkComponents() {
+    // Give the MessageMenu a direct pointer to the MessageLog.
+    const messageLog = this.shadowRoot!.querySelector("#message-log") as MessageLog
+    const messageMenu = this.shadowRoot!.querySelector("#message-menu") as MessageMenu
+    messageMenu!.setMessageLog(messageLog)
+  }
+
   async loadVersion() {
     const queryPath = "/api0/version"
     const options = {}
@@ -120,9 +130,16 @@ export class JracemanApp extends LitElement {
 
   // When we get a post-message event, count it.
   onLoginState(e:Event) {
+    const previouslyLoggedIn = this.loggedIn
     const evt = e as CustomEvent<LoginStateEvent>
     console.log("JracemanApp.onLoginState", evt)
     this.loggedIn = evt.detail.State
+
+    if (this.loggedIn && !previouslyLoggedIn) {
+      // Once we are logged in, we can link our components to each other.
+      // But we have to wait for the change to loggedIn to propagate.
+      setTimeout(() => this.linkComponents(), 1)
+    }
   }
 
   // When we get a query-results event, make the query-results tab visible.
@@ -229,10 +246,14 @@ export class JracemanApp extends LitElement {
           </div>
           <div id="bottom" slot="bottom" class="tab-container">
             <jraceman-tabs @jraceman-tab-selected-event=${this.onTabSelected} id="bottom-tabs">
-              <span slot="tab" id="message-log-tab"><message-menu></message-menu>Messages${when(this.unviewedMessageCount>0,
+              <span slot="tab" id="message-log-tab">
+                <message-menu id="message-menu"></message-menu>
+                Messages${when(this.unviewedMessageCount>0,
                   ()=>html` [+${this.unviewedMessageCount}]`
-              )}</span>
-              <section slot="panel" id="message-log-pane"><message-log></message-log></section>
+                )}</span>
+              <section slot="panel" id="message-log-pane">
+                <message-log id="message-log"></message-log>
+              </section>
               <span slot="tab" id="query-results-tab"><query-menu></query-menu>Query Results</span>
               <section slot="panel"><query-results></query-results></section>
               <span slot="tab" id="report-results-tab"><report-menu></report-menu>Report</span>
