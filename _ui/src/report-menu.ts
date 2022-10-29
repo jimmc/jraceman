@@ -1,9 +1,8 @@
 import {LitElement, html, css} from 'lit';
 import {customElement} from 'lit/decorators.js';
 
-import "./jraceman-dropdown.js"
-// import { PostError } from "./message-log.js"
-import { ReportResultsData, ReportResultsEvent } from "./reports-pane.js"
+import './jraceman-dropdown.js'
+import { ReportResults } from './report-results.js'
 
 // A drop-down menu for report operations.
 @customElement('report-menu')
@@ -18,37 +17,28 @@ export class ReportMenu extends LitElement {
     }
   `;
 
-  reportResultsHTML: string = "(No report results)"
+  reportResultsElement?: ReportResults
 
-  connectedCallback() {
-    super.connectedCallback()
-    document.addEventListener("jraceman-report-results-event", this.onReportResultsEvent.bind(this))
-  }
-
-  onReportResultsEvent(e:Event) {
-    const evt = e as CustomEvent<ReportResultsEvent>
-    console.log("ReportMenu got updated report results", evt.detail.results)
-    // Save the report results so we can write it out on request.
-    const reportResults = evt.detail.results as ReportResultsData
-    this.reportResultsHTML = reportResults.HTML
+  setReportResults(rr: ReportResults) {
+    this.reportResultsElement = rr
   }
 
   onOpenInNewTab() {
     const newWindow = window.open()!;
     newWindow.document.title = "JRaceman report"
-    newWindow.document.body.innerHTML = this.reportResultsHTML
+    newWindow.document.body.innerHTML = this.reportResultsElement!.getReportResultsHTML()
   }
 
   onOpenSourceInNewTab() {
     const newWindow = window.open()!;
     newWindow.document.title = "JRaceman report source"
-    newWindow.document.body.innerText = this.reportResultsHTML
+    newWindow.document.body.innerText = this.reportResultsElement!.getReportResultsHTML()
   }
 
   onPrint() {
     const newWindow = window.open('','_blank')!;
     newWindow.document.title = "JRaceman report"
-    newWindow.document.body.innerHTML = this.reportResultsHTML
+    newWindow.document.body.innerHTML = this.reportResultsElement!.getReportResultsHTML()
     newWindow.print()
     newWindow.close()
   }

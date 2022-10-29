@@ -29,6 +29,8 @@ import { MessageMenu } from './message-menu.js'
 import { QueryMenu } from './query-menu.js'
 import { QueryResults } from './query-results.js'
 import { ReportResultsEvent } from './reports-pane.js'
+import { ReportMenu } from './report-menu.js'
+import { ReportResults } from './report-results.js'
 import { QueryResultsEvent } from './table-desc.js'
 
 /**
@@ -97,14 +99,19 @@ export class JracemanApp extends LitElement {
   // to allow some of our components to directly access other components.
   linkComponents() {
     // Give the MessageMenu direct access to the MessageLog.
-    const messageLog = this.shadowRoot!.querySelector("#message-log") as MessageLog
-    const messageMenu = this.shadowRoot!.querySelector("#message-menu") as MessageMenu
+    const messageLog = this.shadowRoot!.querySelector("message-log") as MessageLog
+    const messageMenu = this.shadowRoot!.querySelector("message-menu") as MessageMenu
     messageMenu!.setMessageLog(messageLog)
 
     // Give the QueryMenu direct access to the QueryResults
     const queryResults = this.shadowRoot!.querySelector("query-results") as QueryResults
     const queryMenu = this.shadowRoot!.querySelector("query-menu") as QueryMenu
     queryMenu!.setQueryResults(queryResults)
+
+    // Give the ReportMenu direct access to the ReportResults
+    const reportResults = this.shadowRoot!.querySelector("report-results") as ReportResults
+    const reportMenu = this.shadowRoot!.querySelector("report-menu") as ReportMenu
+    reportMenu!.setReportResults(reportResults)
   }
 
   async loadVersion() {
@@ -255,20 +262,14 @@ export class JracemanApp extends LitElement {
           <div id="bottom" slot="bottom" class="tab-container">
             <jraceman-tabs @jraceman-tab-selected-event=${this.onTabSelected} id="bottom-tabs">
               <span slot="tab" id="message-log-tab">
-                <message-menu id="message-menu"></message-menu>
+                <message-menu></message-menu>
                 Messages${when(this.unviewedMessageCount>0,
                   ()=>html` [+${this.unviewedMessageCount}]`
                 )}</span>
-              <section slot="panel" id="message-log-pane">
-                <message-log id="message-log"></message-log>
-              </section>
+              <section slot="panel" id="message-log-pane"><message-log></message-log></section>
               <span slot="tab" id="query-results-tab">
-                <query-menu id="query-menu"></query-menu>
-                Query Results
-              </span>
-              <section slot="panel">
-                <query-results id="query-results"></query-results>
-              </section>
+                <query-menu></query-menu>Query Results</span>
+              <section slot="panel"><query-results></query-results></section>
               <span slot="tab" id="report-results-tab"><report-menu></report-menu>Report</span>
               <section slot="panel"><report-results></report-results></section>
               <span slot="tab">Help</span>
