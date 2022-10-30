@@ -26,6 +26,7 @@ if [ -d $DIST ]; then
     rm -rf $DIST || errExit "Error (status $?) deleing old $DIST directory"
 fi
 
+echo "Creating new $DIST directory"
 # Step 2a: create the dist directory and subdirectories
 mkdir $DIST || errExit "Error (status $?) creating $DIST directory"
 mkdir $DISTV || errExit "Error (status $?) creating $DISTV"
@@ -37,6 +38,7 @@ cp -p jraceman $DISTV || errExit "Error (status $?) copying jraceman"
 cp -p _ui/index.html $DISTV/_ui || errExit "Error (status $?) copying index.html"
 cp -rp _ui/build $DISTV/_ui/ || errExit "Error (status $?) copying _ui/build"
 cp -rp _ui/node_modules $DISTV/_ui/ || errExit "Error (status $?) copying _ui/node_modules"
+cp -rp report/ctemplate $DISTV/report/ || errExit "Error (status $?) copying report/ctemplate"
 cp -rp report/template $DISTV/report/ || errExit "Error (status $?) copying report/template"
 echo "$VERSION" > $DISTV/VERSION || errExit "Error (status $?) creating VERSION file"
 
