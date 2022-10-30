@@ -11,7 +11,7 @@ import (
 
 // PwDB implements the Store interface to load and store data in our SQL database.
 // Data is stored in a table called "user" with three string columns,
-// id, cryptword, and permissions,
+// id, saltword, and permissions,
 // where the permissions value is a comma-separated list of permission names.
 type PwDB struct {
     db *sql.DB
@@ -33,52 +33,52 @@ func (pdb *PwDB) Save() error {
   return nil
 }
 
-func (pdb *PwDB) User(userid string) *users.User {
-  glog.V(2).Infof("Looking for user %s", userid)
+func (pdb *PwDB) User(username string) *users.User {
+  glog.V(2).Infof("Looking for user %s", username)
   query := `
-    SELECT cryptword, GROUP_CONCAT(COALESCE(permission.name,''),',') as permissions
+    SELECT saltword, GROUP_CONCAT(COALESCE(permission.name,''),',') as permissions
     FROM user
          LEFT JOIN userrole ON user.id=userrole.userid
          LEFT JOIN rolepermission ON userrole.roleid=rolepermission.roleid
          LEFT JOIN permission ON rolepermission.permissionid=permission.id
     WHERE user.username = :username
     GROUP BY user.id`
-  var cryptword string
+  var saltword string
   var perms string
-  err := pdb.db.QueryRow(query,sql.Named("username", userid)).Scan(&cryptword, &perms)
+  err := pdb.db.QueryRow(query,sql.Named("username", username)).Scan(&saltword, &perms)
   if err == sql.ErrNoRows {
-    glog.Warningf("No matching rows found for user %s", userid)
-    return nil          // No matching userid found
+    glog.Warningf("No matching rows found for user %s", username)
+    return nil          // No matching username found
   }
   if err != nil {
-    glog.Errorf("Error scanning for user %q: %v\n", userid, err)
+    glog.Errorf("Error scanning for user %q: %v\n", username, err)
     return nil
   }
-  user := users.NewUser(userid, cryptword, permissions.FromString(perms))
+  user := users.NewUser(username, saltword, permissions.FromString(perms))
   glog.V(2).Infof("Found user %v", user)
   return user
 }
 
-func (pdb *PwDB) SetCryptword(userid, cryptword string) {
-  if userid == "" {
-    glog.Errorf("Can't SetCryptword with no userid\n")
+func (pdb *PwDB) SetSaltword(username, saltword string) {
+  if username == "" {
+    glog.Errorf("Can't SetSaltword with no username\n")
     return
   }
   // Assume row does not exist, try to insert it.
-  iQuery := `INSERT into user(id,username,cryptword) values(:id, :username, :cw);`
+  iQuery := `INSERT into user(id,username,saltword) values(:id, :username, :cw);`
   _, err := pdb.db.Exec(iQuery,
-        sql.Named("cw", cryptword),
-        sql.Named("id", userid),
-        sql.Named("username", userid))
+        sql.Named("cw", saltword),
+        sql.Named("id", username),
+        sql.Named("username", username))
   if err == nil {
     return      // Succeeded
   }
   glog.Infof("INSERT returned err=%v\n", err)   // Expected if the user already exists.
   // If the INSERT failed, assume it was because the row already exists, so try updating it.
-  query := "UPDATE user SET cryptword = :cw WHERE username = :username;"
-  _, err = pdb.db.Exec(query,sql.Named("cw", cryptword),sql.Named("username", userid))
+  query := "UPDATE user SET saltword = :cw WHERE username = :username;"
+  _, err = pdb.db.Exec(query,sql.Named("cw", saltword),sql.Named("username", username))
   if err != nil {
-    glog.Errorf("Error setting cryptword for user %q: %v\n", userid, err)
+    glog.Errorf("Error setting saltword for user %q: %v\n", username, err)
   }
 }
 

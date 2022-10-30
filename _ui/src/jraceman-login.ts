@@ -93,16 +93,12 @@ export class JracemanLogin extends LitElement {
   async login() {
     const username = this.username!.value;
     const password = this.password!.value;
-    const seconds = Math.floor(Date.now()/1000);
-    const cryptword = this.sha256sum(username + "-" + password);
-    const shaInput = cryptword + "-" + seconds.toString();
-    const nonce = this.sha256sum(shaInput);
+    const hashword = this.sha256sum(username + "/" + password);
     try {
       const loginUrl = "/auth/login/";
       const formData = new FormData();
-      formData.append("userid", username);
-      formData.append("nonce", nonce);
-      formData.append("time", seconds.toString());
+      formData.append("username", username);
+      formData.append("hashword", hashword);
       const options = {
         method: "POST",
         params: formData,

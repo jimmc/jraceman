@@ -14,7 +14,6 @@ func NewHandler(db *sql.DB, maxClockSkewSeconds int) *authlib.Handler {
     Prefix: "/auth/",
     Store: authStore,
     TokenCookieName: "JRACEMAN_TOKEN",
-    MaxClockSkewSeconds: maxClockSkewSeconds,
   })
   return authHandler
 }

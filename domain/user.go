@@ -15,5 +15,5 @@ type UserRepo interface {
 type User struct {
   ID string
   Username string
-  Cryptword string
+  Saltword string
 }
