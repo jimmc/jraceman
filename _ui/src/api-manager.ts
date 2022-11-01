@@ -4,6 +4,10 @@ export interface XhrOptions {
   encoding?: string;    // 'direct' or 'json'; default is 'json'
 }
 
+export interface TimeoutSecondsEvent {
+  timeoutSeconds: number;      // Number of seconds until our session times out due to inactivity.
+}
+
 // ApiManager provides assistance for calling our back end services.
 export class ApiManager {
   // We don't want ApiManager to depend on any other modules, but we want
@@ -41,6 +45,7 @@ export class ApiManager {
           } else {
             reject(request);
           }
+          ApiManager.postTimeoutSecondsEvent()
         }
       };
       const method = (options && options.method) || "GET";
@@ -54,5 +59,34 @@ export class ApiManager {
         request.send(params)
       }
     })
+  }
+
+  // postTimeoutSecondsEvent reads the cookie that has our session timeout
+  // and dispatches an event with that many seconds as payload.
+  static postTimeoutSecondsEvent() {
+    const timeoutCookieValue = ApiManager.getCookieValue("JRACEMAN_TOKEN_TIMEOUT")
+    const timeoutSeconds = parseInt(timeoutCookieValue)
+    const event = new CustomEvent<TimeoutSecondsEvent>('jraceman-timeout-seconds-event', {
+      detail: {
+        timeoutSeconds: timeoutSeconds
+      } as TimeoutSecondsEvent
+    });
+    // Dispatch the event to the document so any element can listen for it.
+    console.log("ApiManager dispatching timeout-seconds event", event)
+    document.dispatchEvent(event);
+  }
+
+  // From https://gist.github.com/hunan-rostomyan/28e8702c1cecff41f7fe64345b76f2ca
+  static getCookieValue(name: string):string {
+    const nameLenPlus = (name.length + 1);
+    return document.cookie
+      .split(';')
+      .map(c => c.trim())
+      .filter(cookie => {
+        return cookie.substring(0, nameLenPlus) === `${name}=`;
+      })
+      .map(cookie => {
+        return decodeURIComponent(cookie.substring(nameLenPlus));
+      })[0] || "";
   }
 }

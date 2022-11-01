@@ -21,7 +21,7 @@ import './sport-setup.js'
 import './team-setup.js'
 import './venue-setup.js'
 
-import { ApiManager } from './api-manager.js'
+import { ApiManager, TimeoutSecondsEvent } from './api-manager.js'
 import { JracemanLogin, LoginStateEvent } from './jraceman-login.js'
 import { JracemanTabs} from './jraceman-tabs.js'
 import { Message, PostMessageEvent, PostError, MessageLog } from './message-log.js'
@@ -82,6 +82,11 @@ export class JracemanApp extends LitElement {
   @property()
   loggedIn = false
 
+  @property()
+  timeoutSeconds = 0
+
+  timeoutAt = 0
+
   connectedCallback() {
     super.connectedCallback()
     // We add a listener for query results so that we can make
@@ -90,6 +95,7 @@ export class JracemanApp extends LitElement {
     document.addEventListener("jraceman-report-results-event", this.onReportResultsEvent.bind(this))
     document.addEventListener("jraceman-post-message-event", this.onPostMessage.bind(this))
     document.addEventListener("jraceman-login-state-event", this.onLoginState.bind(this))
+    document.addEventListener("jraceman-timeout-seconds-event", this.onTimeoutSeconds.bind(this))
     JracemanLogin.AnnounceLoginState()  // See if we are logged in.
 
     this.loadVersion()
@@ -219,6 +225,21 @@ export class JracemanApp extends LitElement {
     this.unviewedMessageCount = 0
   }
 
+  onTimeoutSeconds(e:Event) {
+    const evt = e as CustomEvent<TimeoutSecondsEvent>
+    const tse = evt.detail
+    console.log("Got timeout seconds:", tse.timeoutSeconds)
+    const nowSeconds = Math.floor(new Date().getTime() / 1000)
+    this.timeoutAt = nowSeconds + tse.timeoutSeconds
+    this.updateTimeoutSeconds()
+  }
+
+  updateTimeoutSeconds() {
+    const nowSeconds = Math.floor(new Date().getTime() / 1000)
+    this.timeoutSeconds = this.timeoutAt - nowSeconds
+    setTimeout(this.updateTimeoutSeconds.bind(this), 1000)
+  }
+
   logout() {
     console.log("Logging out")
     const jl = this.shadowRoot!.querySelector("#login") as JracemanLogin
@@ -230,6 +251,7 @@ export class JracemanApp extends LitElement {
       <div class="title-bar">JRaceman ${this.jracemanVersion}
         ${when(this.loggedIn,()=>html`
           <a href="#" class="right" @click="${this.logout}">Logout</a>
+          <span class="right">Seconds until session timeout: ${this.timeoutSeconds} - </span>
         `)}
       </div>
       <jraceman-login id="login" hidden=${this.loggedIn} logged-in=${this.loggedIn}></jraceman-login>
