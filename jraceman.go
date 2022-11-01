@@ -27,7 +27,6 @@ type config struct {
   reportRoots string
   uiRoot string
   db string
-  maxClockSkewSeconds int
   password string
   sslCert string
   sslKey string
@@ -57,8 +56,6 @@ func doMain() int {
   flag.StringVar(&config.reportRoots, "reportroots", "report/template", "comma-separated list of locations of report templates")
   flag.StringVar(&config.uiRoot, "uiroot", "_ui/", "location of ui root")
   flag.StringVar(&config.db, "db", "", "location of database, in the form driver:name")
-  flag.IntVar(&config.maxClockSkewSeconds, "maxclockskewseconds", 5,
-      "max seconds of clock skew allowed between client and server")
   flag.StringVar(&config.password, "password", "", "password for update (for testing)")
   flag.StringVar(&config.sslCert, "sslcert", "", "path to file containing SSL certificate chain")
   flag.StringVar(&config.sslKey, "sslkey", "", "path to file containing SSL private key")
@@ -140,7 +137,7 @@ func doMain() int {
 
   if config.updatePassword != "" {
     var err error
-    authHandler := auth.NewHandler(dbRepos.DB(), config.maxClockSkewSeconds)
+    authHandler := auth.NewHandler(dbRepos.DB())
     if config.password == "" {
       err = authHandler.UpdateUserPassword(config.updatePassword)
     } else {
@@ -208,7 +205,7 @@ func importFile(config *config, dbRepos *dbrepo.Repos) error {
 
 func runHttpServer(config *config, dbRepos *dbrepo.Repos) {
   mux := http.NewServeMux()
-  authHandler := auth.NewHandler(dbRepos.DB(), config.maxClockSkewSeconds)
+  authHandler := auth.NewHandler(dbRepos.DB())
 
   uiFileHandler := newImportResolver(http.FileServer(http.Dir(config.uiRoot)))
   apiPrefix := "/api/"
