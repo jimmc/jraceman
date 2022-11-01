@@ -73,7 +73,7 @@ func (pdb *PwDB) SetSaltword(username, saltword string) {
   if err == nil {
     return      // Succeeded
   }
-  glog.Infof("INSERT returned err=%v\n", err)   // Expected if the user already exists.
+  glog.Infof("INSERT returned err=%v; will try UPDATE\n", err)   // Expected if the user already exists.
   // If the INSERT failed, assume it was because the row already exists, so try updating it.
   query := "UPDATE user SET saltword = :cw WHERE username = :username;"
   _, err = pdb.db.Exec(query,sql.Named("cw", saltword),sql.Named("username", username))
