@@ -57,19 +57,19 @@ func doMain() int {
   flag.StringVar(&config.reportRoots, "reportroots", "report/template", "comma-separated list of locations of report templates")
   flag.StringVar(&config.uiRoot, "uiroot", "_ui/", "location of ui root")
   flag.StringVar(&config.db, "db", "", "location of database, in the form driver:name")
-  flag.IntVar(&config.maxClockSkewSeconds, "maxClockSkewSeconds", 5,
-        "max seconds of clock skew allowed between client and server")
+  flag.IntVar(&config.maxClockSkewSeconds, "maxclockskewseconds", 5,
+      "max seconds of clock skew allowed between client and server")
   flag.StringVar(&config.password, "password", "", "password for update (for testing)")
   flag.StringVar(&config.sslCert, "sslcert", "", "path to file containing SSL certificate chain")
   flag.StringVar(&config.sslKey, "sslkey", "", "path to file containing SSL private key")
 
   // Action flags
-  flag.BoolVar(&config.checkUpgrade, "checkUpgrade", false, "true to check for upgrade the database specified by -db")
+  flag.BoolVar(&config.checkUpgrade, "checkupgrade", false, "true to check for upgrade the database specified by -db")
   flag.BoolVar(&config.create, "create", false, "true to create the database specified by -db")
   flag.StringVar(&config.exportFile, "export", "", "export the database to a text file")
   flag.StringVar(&config.importFile, "import", "", "import a text file to the database")
   flag.StringVar(&config.sql, "sql", "", "execute sql statement")
-  flag.StringVar(&config.updatePassword, "updatePassword", "", "update password for named user")
+  flag.StringVar(&config.updatePassword, "updatepassword", "", "update password for named user")
   flag.BoolVar(&config.upgrade, "upgrade", false, "true to upgrade the database specified by -db")
   flag.BoolVar(&config.version, "version", false, "print the version")
 
