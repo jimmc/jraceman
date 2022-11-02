@@ -240,6 +240,18 @@ export class JracemanApp extends LitElement {
     setTimeout(this.updateTimeoutSeconds.bind(this), 1000)
   }
 
+  timeoutString() {
+    let s = ""
+    let t = this.timeoutSeconds
+    if (t > 60) {
+      const minutes = Math.floor(t/60)
+      s += minutes + "m"
+      t -= 60 * minutes
+    }
+    s += t + "s"
+    return s
+  }
+
   logout() {
     console.log("Logging out")
     const jl = this.shadowRoot!.querySelector("#login") as JracemanLogin
@@ -251,7 +263,7 @@ export class JracemanApp extends LitElement {
       <div class="title-bar">JRaceman ${this.jracemanVersion}
         ${when(this.loggedIn,()=>html`
           <a href="#" class="right" @click="${this.logout}">Logout</a>
-          <span class="right">Seconds until session timeout: ${this.timeoutSeconds} - </span>
+          <span class="right">Session timeout in ${this.timeoutString()} -&nbsp;</span>
         `)}
       </div>
       <jraceman-login id="login" hidden=${this.loggedIn} logged-in=${this.loggedIn}></jraceman-login>
