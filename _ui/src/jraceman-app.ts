@@ -276,17 +276,17 @@ export class JracemanApp extends LitElement {
         <jraceman-split id="main">
           <div id="top" slot="top" class="tab-container">
             <jraceman-tabs>
-              <span slot="tab">Auth Setup</span>
+              <span slot="tab">Auth</span>
               <section slot="panel"><auth-setup></auth-setup></section>
-              <span slot="tab">Sport Setup</span>
+              <span slot="tab">Sport</span>
               <section slot="panel"><sport-setup></sport-setup></section>
-              <span slot="tab">Plan Setup</span>
+              <span slot="tab">Plan</span>
               <section slot="panel"><plan-setup></sport-setup></section>
-              <span slot="tab">Venue Setup</span>
+              <span slot="tab">Venue</span>
               <section slot="panel"><venue-setup></sport-setup></section>
-              <span slot="tab">Team Setup</span>
+              <span slot="tab">Roster</span>
               <section slot="panel"><team-setup></sport-setup></section>
-              <span slot="tab">Meet Setup</span>
+              <span slot="tab">Regatta</span>
               <section slot="panel"><meet-setup></sport-setup></section>
               <span slot="tab">By Event</span>
               <section slot="panel">By Event is not yet implemented</section>
