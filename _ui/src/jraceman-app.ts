@@ -228,7 +228,6 @@ export class JracemanApp extends LitElement {
   onTimeoutSeconds(e:Event) {
     const evt = e as CustomEvent<TimeoutSecondsEvent>
     const tse = evt.detail
-    console.log("Got timeout seconds:", tse.timeoutSeconds)
     const nowSeconds = Math.floor(new Date().getTime() / 1000)
     this.timeoutAt = nowSeconds + tse.timeoutSeconds
     this.updateTimeoutSeconds()

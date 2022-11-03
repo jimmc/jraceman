@@ -72,7 +72,6 @@ export class ApiManager {
       } as TimeoutSecondsEvent
     });
     // Dispatch the event to the document so any element can listen for it.
-    console.log("ApiManager dispatching timeout-seconds event", event)
     document.dispatchEvent(event);
   }
 
