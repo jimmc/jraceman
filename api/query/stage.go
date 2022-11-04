@@ -18,7 +18,7 @@ func (sc *stageQuery) NewEntity() interface{} {
   return &domain.Stage{}
 }
 
-func (sc *stageQuery) SummaryQuery() string {
+func (sc *stageQuery) SummaryQuery(format string) string {
   return "select ID, Name || ' [' || ID || ']' as summary from " + sc.EntityTypeName()
 }
 

@@ -18,7 +18,7 @@ func (sc *complanruleQuery) NewEntity() interface{} {
   return &domain.ComplanRule{}
 }
 
-func (sc *complanruleQuery) SummaryQuery() string {
+func (sc *complanruleQuery) SummaryQuery(format string) string {
   return "select ID, '[' || ID || '] ' as summary from " + sc.EntityTypeName()
 }
 

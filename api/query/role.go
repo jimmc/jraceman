@@ -18,7 +18,7 @@ func (sc *roleQuery) NewEntity() interface{} {
   return &domain.Role{}
 }
 
-func (sc *roleQuery) SummaryQuery() string {
+func (sc *roleQuery) SummaryQuery(format string) string {
   return "select ID, Name || ' [' || ID || ']' as summary from " + sc.EntityTypeName()
 }
 

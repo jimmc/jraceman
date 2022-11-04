@@ -18,7 +18,7 @@ func (sc *teamQuery) NewEntity() interface{} {
   return &domain.Team{}
 }
 
-func (sc *teamQuery) SummaryQuery() string {
+func (sc *teamQuery) SummaryQuery(format string) string {
   return "select ID, ShortName || ': ' || Name || ' [' || ID || ']' as summary from " + sc.EntityTypeName()
 }
 

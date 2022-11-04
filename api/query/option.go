@@ -18,7 +18,7 @@ func (sc *optionQuery) NewEntity() interface{} {
   return &domain.Option{}
 }
 
-func (sc *optionQuery) SummaryQuery() string {
+func (sc *optionQuery) SummaryQuery(format string) string {
   return "select ID, Name || ' [' || ID || ']' as summary from " + sc.EntityTypeName()
 }
 

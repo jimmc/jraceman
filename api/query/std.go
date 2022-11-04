@@ -54,7 +54,7 @@ func (qp *queryParam) CleanValue() interface{} {
 type std interface {
   EntityTypeName() string   // such as "site"
   NewEntity() interface{}       // such as a new Site
-  SummaryQuery() string    // An SQL query that is suitable for use as a summary for each row.
+  SummaryQuery(format string) string    // An SQL query that is suitable for use as a summary for each row.
 }
 
 // Stdquery is an http handler that takes care of most of the work for
@@ -70,16 +70,19 @@ func (h *handler) stdquery(w http.ResponseWriter, r *http.Request, st std) {
   // next part of the path be specified.
   getOp := "column"     // Default op for GET request.
   postOp := "row"       // Default op for POST request.
+  subOp := ""
   if morePath != "" {
     morePath = strings.TrimSuffix(morePath, "/")
     moreParts := strings.SplitN(morePath, "/", 2)
-    if len(moreParts) > 1 {
+    getOp = moreParts[0]
+    postOp = moreParts[0]
+    if len(moreParts) == 2 && getOp=="summary" {
+      subOp = moreParts[1]
+    } else if len(moreParts) > 1 {
       msg := fmt.Sprintf("Too many additional path elements after %s (%v)", pathPrefix, morePath)
       http.Error(w, msg, http.StatusBadRequest)
       return
     }
-    getOp = moreParts[0]
-    postOp = moreParts[0]
   }
   glog.V(1).Infof("%s %s %s|%s", r.Method, entityType, getOp, postOp);
   switch r.Method {
@@ -88,7 +91,7 @@ func (h *handler) stdquery(w http.ResponseWriter, r *http.Request, st std) {
       case "column":
         h.stdGetColumns(w, r, st)
       case "row", "summary":
-        h.stdGetRows(w, r, st, []queryParam{}, getOp)       // Get all rows.
+        h.stdGetRows(w, r, st, []queryParam{}, getOp, subOp)       // Get all rows.
       default:
         http.Error(w, "Invalid GET operation", http.StatusBadRequest)
         return
@@ -107,7 +110,7 @@ func (h *handler) stdquery(w http.ResponseWriter, r *http.Request, st std) {
             return
           }
         }
-        h.stdGetRows(w, r, st, queryParams, postOp)
+        h.stdGetRows(w, r, st, queryParams, postOp, subOp)
       default:
         http.Error(w, "Invalid POST operation", http.StatusBadRequest)
         return
@@ -139,13 +142,21 @@ func (h *handler) stdGetColumns(w http.ResponseWriter, r *http.Request, st std) 
   apihttp.MarshalAndReply(w, result)
 }
 
-func (h *handler) stdGetRows(w http.ResponseWriter, r *http.Request, st std, queryParams []queryParam, op string) {
+func (h *handler) stdGetRows(w http.ResponseWriter, r *http.Request, st std, queryParams []queryParam, op, subOp string) {
   tableName := st.EntityTypeName()
   query := "select * from " + tableName
+  orderBy := ""
   if op == "summary" {
-    query = st.SummaryQuery()
+    query = st.SummaryQuery(subOp)      // The subOp is used as the summary format.
+    orderBy = "summary"
   }
   whereVals := make([]interface{}, len(queryParams))
+  if op == "summary" && strings.Contains(query, "ORDER BY") {
+    queryParts := strings.Split(query, "ORDER BY")
+    orderBy = queryParts[len(queryParts)-1]      // Get the last element of the slice.
+    queryParts = queryParts[:len(queryParts)-1]  // Remove the order by value
+    query = strings.Join(queryParts, "ORDER BY")
+  }
   if len(queryParams) > 0 {
     whereParts := make([]string, len(queryParams))
     for i, qp := range queryParams {
@@ -157,8 +168,8 @@ func (h *handler) stdGetRows(w http.ResponseWriter, r *http.Request, st std, que
   } else {
     // No query params, so no WHERE clause
   }
-  if op == "summary" {
-    query = query + " ORDER BY summary"
+  if orderBy != "" {
+    query = query + " ORDER BY " + orderBy
   }
 
   glog.V(1).Infof("query: %v", query)

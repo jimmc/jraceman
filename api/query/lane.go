@@ -18,7 +18,7 @@ func (sc *laneQuery) NewEntity() interface{} {
   return &domain.Lane{}
 }
 
-func (sc *laneQuery) SummaryQuery() string {
+func (sc *laneQuery) SummaryQuery(format string) string {
   return "select ID, '[' || ID || '] ' as summary from " + sc.EntityTypeName()
 }
 

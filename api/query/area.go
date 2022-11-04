@@ -18,7 +18,7 @@ func (sc *areaQuery) NewEntity() interface{} {
   return &domain.Area{}
 }
 
-func (sc *areaQuery) SummaryQuery() string {
+func (sc *areaQuery) SummaryQuery(format string) string {
   return "select ID, Name || ' [' || ID || ']' as summary from " + sc.EntityTypeName()
 }
 

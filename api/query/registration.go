@@ -18,7 +18,7 @@ func (sc *registrationQuery) NewEntity() interface{} {
   return &domain.Registration{}
 }
 
-func (sc *registrationQuery) SummaryQuery() string {
+func (sc *registrationQuery) SummaryQuery(format string) string {
   return "select ID, '[' || ID || '] ' as summary from " + sc.EntityTypeName()
 }
 

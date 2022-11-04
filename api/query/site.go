@@ -18,7 +18,7 @@ func (sc *siteQuery) NewEntity() interface{} {
   return &domain.Site{}
 }
 
-func (sc *siteQuery) SummaryQuery() string {
+func (sc *siteQuery) SummaryQuery(format string) string {
   return "select ID, Name || ' [' || ID || ']' as summary from " + sc.EntityTypeName()
 }
 

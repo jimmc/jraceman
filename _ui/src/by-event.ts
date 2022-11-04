@@ -62,12 +62,13 @@ export class ByEvent extends LitElement {
       params.push(meetWhere)
       // The contents of the event list depends on the setting of the by-choice.
       if (this.byChoice == "by_event_number") {
-        this.eventItems = await ApiHelper.loadKeySummaries("event", params)
+        this.eventItems = await ApiHelper.loadKeySummaries("event", params, "bynumber")
       } else if (this.byChoice == "by_event_name") {
-        // TODO - need to implement alternate summary formats.
-        this.eventItems = await ApiHelper.loadKeySummaries("event", params)
+        this.eventItems = await ApiHelper.loadKeySummaries("event", params, "byname")
+      } else if (this.byChoice == "by_event_id") {
+        this.eventItems = await ApiHelper.loadKeySummaries("event", params, "byid")
       } else if (this.byChoice == "by_race_number") {
-        this.eventItems = await ApiHelper.loadKeySummaries("event", params)
+        this.eventItems = await ApiHelper.loadKeySummaries("event", params, "byracenumber")
       } else {
         PostError("by-event", 'Bad byChoice value "' + this.byChoice + '"')
       }
@@ -88,11 +89,10 @@ export class ByEvent extends LitElement {
 
   onByChoiceChange() {
     this.byChoice = (this.shadowRoot!.querySelector("#by_choice") as HTMLSelectElement)!.value
-    console.log("By-choice changed to", this.byChoice) // TODO
-    setTimeout(()=>this.loadEventChoices())        // After dependend components are created, update them.
+    console.log("By-choice changed to", this.byChoice)
+    setTimeout(()=>this.loadEventChoices())        // After dependent components are available, update them.
   }
 
-  // TODO - need to have separate event stuff for by-event-number and by-event-name
   onEventChange() {
     this.eventId = (this.shadowRoot!.querySelector("#event_list") as HTMLSelectElement)!.value
     console.log("Event changed to", this.eventId) // TODO
@@ -114,8 +114,9 @@ export class ByEvent extends LitElement {
         <br/>
         <select id="by_choice" @change="${this.onByChoiceChange}">
           <option value="by_event_number">By Event #</option>
-          <option value="by_race_number">By Race #</option>
           <option value="by_event_name">By Event Name</option>
+          <option value="by_event_id">By Event ID</option>
+          <option value="by_race_number">By Race #</option>
         </select>
         <select id="event_list" @change="${this.onEventChange}">
           ${repeat(this.eventItems, (keyitem)=>html`

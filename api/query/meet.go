@@ -18,7 +18,7 @@ func (sc *meetQuery) NewEntity() interface{} {
   return &domain.Meet{}
 }
 
-func (sc *meetQuery) SummaryQuery() string {
+func (sc *meetQuery) SummaryQuery(format string) string {
   return "select ID, ShortName || ': ' || Name || ' [' || ID || ']' as summary from " + sc.EntityTypeName()
 }
 

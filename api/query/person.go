@@ -18,7 +18,7 @@ func (sc *personQuery) NewEntity() interface{} {
   return &domain.Person{}
 }
 
-func (sc *personQuery) SummaryQuery() string {
+func (sc *personQuery) SummaryQuery(format string) string {
   return "select person.ID as ID, person.LastName || ', ' || person.FirstName || " +
           "' (' || team.ShortName || ') [' || person.ID || ']' as summary " +
           "from person join team on person.teamid = team.id"

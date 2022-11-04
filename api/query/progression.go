@@ -18,7 +18,7 @@ func (sc *progressionQuery) NewEntity() interface{} {
   return &domain.Progression{}
 }
 
-func (sc *progressionQuery) SummaryQuery() string {
+func (sc *progressionQuery) SummaryQuery(format string) string {
   return "select ID, Name || ' [' || ID || ']' as summary from " + sc.EntityTypeName()
 }
 

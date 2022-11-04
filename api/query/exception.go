@@ -18,7 +18,7 @@ func (sc *exceptionQuery) NewEntity() interface{} {
   return &domain.Exception{}
 }
 
-func (sc *exceptionQuery) SummaryQuery() string {
+func (sc *exceptionQuery) SummaryQuery(format string) string {
   return "select ID, Name || ' [' || ID || ']' as summary from " + sc.EntityTypeName()
 }
 

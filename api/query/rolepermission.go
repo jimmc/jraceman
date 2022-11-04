@@ -18,7 +18,7 @@ func (sc *rolepermissionQuery) NewEntity() interface{} {
   return &domain.RolePermission{}
 }
 
-func (sc *rolepermissionQuery) SummaryQuery() string {
+func (sc *rolepermissionQuery) SummaryQuery(format string) string {
   return "select rolepermission.ID as ID, "+
           "role.Name || '[' || role.ID || '] has ' || " +
           " permission.Name || '[' || permission.ID || ']' as summary " +

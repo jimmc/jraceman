@@ -18,7 +18,7 @@ func (sc *levelQuery) NewEntity() interface{} {
   return &domain.Level{}
 }
 
-func (sc *levelQuery) SummaryQuery() string {
+func (sc *levelQuery) SummaryQuery(format string) string {
   return "select ID, Name || ' [' || ID || ']' as summary from " + sc.EntityTypeName()
 }
 

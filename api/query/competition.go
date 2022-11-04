@@ -18,7 +18,7 @@ func (sc *competitionQuery) NewEntity() interface{} {
   return &domain.Competition{}
 }
 
-func (sc *competitionQuery) SummaryQuery() string {
+func (sc *competitionQuery) SummaryQuery(format string) string {
   return "select ID, Name || '[' || ID || ']' as summary from " + sc.EntityTypeName()
 }
 

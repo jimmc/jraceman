@@ -18,7 +18,7 @@ func (sc *userroleQuery) NewEntity() interface{} {
   return &domain.UserRole{}
 }
 
-func (sc *userroleQuery) SummaryQuery() string {
+func (sc *userroleQuery) SummaryQuery(format string) string {
   return "select userrole.ID as ID, "+
           "user.Username || '[' || user.ID || '] has ' || " +
           " role.Name || '[' || role.ID || ']' as summary " +

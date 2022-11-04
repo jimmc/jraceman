@@ -18,7 +18,7 @@ func (sc *laneorderQuery) NewEntity() interface{} {
   return &domain.LaneOrder{}
 }
 
-func (sc *laneorderQuery) SummaryQuery() string {
+func (sc *laneorderQuery) SummaryQuery(format string) string {
   return "select ID, '[' || ID || '] ' as summary from " + sc.EntityTypeName()
 }
 

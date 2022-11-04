@@ -18,7 +18,7 @@ func (sc *complanstageQuery) NewEntity() interface{} {
   return &domain.ComplanStage{}
 }
 
-func (sc *complanstageQuery) SummaryQuery() string {
+func (sc *complanstageQuery) SummaryQuery(format string) string {
   return "select ID, '[' || ID || '] ' as summary from " + sc.EntityTypeName()
 }
 

@@ -18,7 +18,7 @@ func (sc *simplanruleQuery) NewEntity() interface{} {
   return &domain.SimplanRule{}
 }
 
-func (sc *simplanruleQuery) SummaryQuery() string {
+func (sc *simplanruleQuery) SummaryQuery(format string) string {
   return "select ID, '[' || ID || '] ' as summary from " + sc.EntityTypeName()
 }
 

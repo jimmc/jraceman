@@ -18,7 +18,7 @@ func (sc *challengeQuery) NewEntity() interface{} {
   return &domain.Challenge{}
 }
 
-func (sc *challengeQuery) SummaryQuery() string {
+func (sc *challengeQuery) SummaryQuery(format string) string {
   return "select ID, Name || '[' || ID || ']' as summary from " + sc.EntityTypeName()
 }
 

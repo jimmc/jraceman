@@ -18,7 +18,7 @@ func (sc *seedingplanQuery) NewEntity() interface{} {
   return &domain.SeedingPlan{}
 }
 
-func (sc *seedingplanQuery) SummaryQuery() string {
+func (sc *seedingplanQuery) SummaryQuery(format string) string {
   return "select ID, Name || ' [' || ID || ']' as summary from " + sc.EntityTypeName()
 }
 

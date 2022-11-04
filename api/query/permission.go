@@ -18,7 +18,7 @@ func (sc *permissionQuery) NewEntity() interface{} {
   return &domain.Permission{}
 }
 
-func (sc *permissionQuery) SummaryQuery() string {
+func (sc *permissionQuery) SummaryQuery(format string) string {
   return "select ID, Name || ' [' || ID || ']' as summary from " + sc.EntityTypeName()
 }
 

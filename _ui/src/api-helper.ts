@@ -12,8 +12,11 @@ export class ApiHelper {
   // the specified table. This is useful for providing a list of choices
   // for a foreign key to that table.
   // If there is an error, this function will throw an XMLHttpRequest event.
-  public static async loadKeySummaries(table: string, params?: {}) {
-    const path = '/api/query/' + table + '/summary/'
+  public static async loadKeySummaries(table: string, params?: {}, format?: string) {
+    let path = '/api/query/' + table + '/summary/'
+    if (format) {
+      path = path + format + "/"
+    }
     const options: XhrOptions = {}
     if (params) {
       options.method = "POST"

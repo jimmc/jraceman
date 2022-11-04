@@ -18,7 +18,7 @@ func (sc *genderQuery) NewEntity() interface{} {
   return &domain.Gender{}
 }
 
-func (sc *genderQuery) SummaryQuery() string {
+func (sc *genderQuery) SummaryQuery(format string) string {
   return "select ID, Name || ' [' || ID || ']' as summary from " + sc.EntityTypeName()
 }
 

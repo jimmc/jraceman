@@ -18,7 +18,7 @@ func (sc *userQuery) NewEntity() interface{} {
   return &domain.User{}
 }
 
-func (sc *userQuery) SummaryQuery() string {
+func (sc *userQuery) SummaryQuery(format string) string {
   return "select ID, Username || ' [' || ID || ']' as summary from " + sc.EntityTypeName()
 }
 

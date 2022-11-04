@@ -18,7 +18,7 @@ func (sc *scoringruleQuery) NewEntity() interface{} {
   return &domain.ScoringRule{}
 }
 
-func (sc *scoringruleQuery) SummaryQuery() string {
+func (sc *scoringruleQuery) SummaryQuery(format string) string {
   return "select ID, '[' || ID || '] ' as summary from " + sc.EntityTypeName()
 }
 

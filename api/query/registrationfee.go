@@ -18,7 +18,7 @@ func (sc *registrationfeeQuery) NewEntity() interface{} {
   return &domain.RegistrationFee{}
 }
 
-func (sc *registrationfeeQuery) SummaryQuery() string {
+func (sc *registrationfeeQuery) SummaryQuery(format string) string {
   return "select ID, '[' || ID || '] ' as summary from " + sc.EntityTypeName()
 }
 
