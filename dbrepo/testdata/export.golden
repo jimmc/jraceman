@@ -4,7 +4,7 @@
 !type database
 
 !table user
-!columns "id","username","cryptword"
+!columns "id","username","saltword"
 #no rows
 
 !table role
