@@ -53,14 +53,21 @@ export class ByEvent extends LitElement {
 
   async loadEventChoices() {
     try {
+      let params = []
+      const meetWhere = {
+        name: "meetId",
+        op: "eq",
+        value: this.meetId,
+      }
+      params.push(meetWhere)
       // The contents of the event list depends on the setting of the by-choice.
       if (this.byChoice == "by_event_number") {
-        this.eventItems = await ApiHelper.loadKeySummaries("event")       // TODO - include WHERE clause to select meet
+        this.eventItems = await ApiHelper.loadKeySummaries("event", params)
       } else if (this.byChoice == "by_event_name") {
         // TODO - need to implement alternate summary formats.
-        this.eventItems = await ApiHelper.loadKeySummaries("event")       // TODO - include WHERE clause to select meet
+        this.eventItems = await ApiHelper.loadKeySummaries("event", params)
       } else if (this.byChoice == "by_race_number") {
-        this.eventItems = await ApiHelper.loadKeySummaries("event")       // TODO - include WHERE clause to select meet
+        this.eventItems = await ApiHelper.loadKeySummaries("event", params)
       } else {
         PostError("by-event", 'Bad byChoice value "' + this.byChoice + '"')
       }

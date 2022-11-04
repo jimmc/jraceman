@@ -1,4 +1,4 @@
-import { ApiManager } from './api-manager.js'
+import { ApiManager, XhrOptions } from './api-manager.js'
 
 // KeySummary is a summary line for one row of a table, typically for a foreign key.
 export interface KeySummary {
@@ -12,9 +12,13 @@ export class ApiHelper {
   // the specified table. This is useful for providing a list of choices
   // for a foreign key to that table.
   // If there is an error, this function will throw an XMLHttpRequest event.
-  public static async loadKeySummaries(table: string) {
+  public static async loadKeySummaries(table: string, params?: {}) {
     const path = '/api/query/' + table + '/summary/'
-    const options = {}
+    const options: XhrOptions = {}
+    if (params) {
+      options.method = "POST"
+      options.params = params
+    }
     const result = await ApiManager.xhrJson(path, options)
     const newKeyItems: KeySummary[] = [];
     newKeyItems.push({ID: "", Summary: ""});

@@ -41,6 +41,7 @@ func (qp *queryParam) CleanOp() string {
   case "le": return "<="
   case "like": return "LIKE"
   }
+  glog.Warning("ERROR: invalid op '"+qp.Op+"'")
   return "ERROR"        // This will result in invalid SQL.
 }
 
