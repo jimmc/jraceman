@@ -8,7 +8,7 @@ export interface TimeoutSecondsEvent {
   timeoutSeconds: number;      // Number of seconds until our session times out due to inactivity.
 }
 
-// ApiManager provides assistance for calling our back end services.
+// ApiManager provides basic functions for calling our back end services.
 export class ApiManager {
   // We don't want ApiManager to depend on any other modules, but we want
   // to allow someone else to take action when we get an authorization error,

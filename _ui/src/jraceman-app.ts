@@ -3,6 +3,7 @@ import { customElement, property } from 'lit/decorators.js';
 import { when } from 'lit/directives/when.js';
 
 import './auth-setup.js'
+import './by-event.js'
 import './database-menu.js'
 import './database-pane.js'
 import './debug-pane.js'
@@ -289,7 +290,7 @@ export class JracemanApp extends LitElement {
               <span slot="tab">Regatta</span>
               <section slot="panel"><meet-setup></sport-setup></section>
               <span slot="tab">By Event</span>
-              <section slot="panel">By Event is not yet implemented</section>
+              <section slot="panel"><by-event></by-event></section>
               <span slot="tab">Reports</span>
               <section slot="panel"><reports-pane></reports-pane></section>
               <span slot="tab"><database-menu></database-menu>Database</span>

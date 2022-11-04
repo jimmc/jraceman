@@ -1,8 +1,9 @@
-import {LitElement, html, css} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
-import {repeat} from 'lit/directives/repeat.js';
-import {when} from 'lit/directives/when.js';
+import { LitElement, html, css } from 'lit'
+import { customElement, property } from 'lit/decorators.js'
+import { repeat } from 'lit/directives/repeat.js'
+import { when } from 'lit/directives/when.js'
 
+import { ApiHelper, KeySummary } from './api-helper.js'
 import { ApiManager } from './api-manager.js'
 import { PostError } from './message-log.js'
 
@@ -34,7 +35,7 @@ interface WhereControl {
   Display: string;
   Ops: WhereControlOp[];
   KeyTable: string;
-  KeyItems: KeyTableItem[];
+  KeyItems: KeySummary[];
 }
 
 // WhereControlOp is what we prepare for our UI for each Op on a Where item.
@@ -48,12 +49,6 @@ interface WhereOption {
   Name: string;
   Op: string;
   Value: string;
-}
-
-// KeyTableItem is what we prepare for the UI for a choice list on a key field.
-interface KeyTableItem {
-  ID: string;
-  Summary: string;
 }
 
 export interface ReportResultsData {
@@ -186,7 +181,7 @@ export class ReportsPane extends LitElement {
   }
 
   // updateKeyChoices goes through the updated whereList looking for fields that have a KeyTable set.
-  // For each of those, it issues a summary request for that table and stores the results in TODO.
+  // For each of those, it issues a summary request for that table.
   updateKeyChoices() {
     for (var i = 0; i<this.whereList.length; i++) {
       const item = this.whereList[i]
@@ -197,19 +192,11 @@ export class ReportsPane extends LitElement {
   }
 
   async loadKeyChoices(i: number, table: string) {
-    const path = '/api/query/' + table + '/summary/'
-    const options = {}
     try {
-      const result = await ApiManager.xhrJson(path, options)
-      const newKeyItems: KeyTableItem[] = [];
-      newKeyItems.push({ID: "", Summary: ""});
-      for (const row of result.Rows) {
-        newKeyItems.push({ID: row[0], Summary: row[1]});
-      }
-      this.whereList[i].KeyItems = newKeyItems
+      this.whereList[i].KeyItems = await ApiHelper.loadKeySummaries(table)
       this.requestUpdate()
     } catch(e) {
-      console.error("Error getting table summary: ", e)         // TODO
+      console.error("Error getting table summary: ", e)
       const evt = e as XMLHttpRequest
       PostError("reports", evt.responseText)
     }
