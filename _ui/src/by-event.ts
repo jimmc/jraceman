@@ -21,6 +21,15 @@ export class ByEvent extends LitElement {
   meetItems: KeySummary[] = []
 
   @property()
+  meetId = ""
+
+  @property()
+  eventItems: KeySummary[] = []
+
+  @property()
+  eventId = ""
+
+  @property()
   byChoice = ""
 
   @property()
@@ -38,14 +47,34 @@ export class ByEvent extends LitElement {
     } catch(e) {
       console.error("Error getting meet table summary: ", e)
       const evt = e as XMLHttpRequest
-      PostError("reports", evt.responseText)
+      PostError("by-event", evt.responseText)
+    }
+  }
+
+  async loadEventChoices() {
+    try {
+      // The contents of the event list depends on the setting of the by-choice.
+      if (this.byChoice == "by_event_number") {
+        this.eventItems = await ApiHelper.loadKeySummaries("event")       // TODO - include WHERE clause to select meet
+      } else if (this.byChoice == "by_event_name") {
+        // TODO - need to implement alternate summary formats.
+        this.eventItems = await ApiHelper.loadKeySummaries("event")       // TODO - include WHERE clause to select meet
+      } else if (this.byChoice == "by_race_number") {
+        this.eventItems = await ApiHelper.loadKeySummaries("event")       // TODO - include WHERE clause to select meet
+      } else {
+        PostError("by-event", 'Bad byChoice value "' + this.byChoice + '"')
+      }
+      this.onEventChange()
+    } catch(e) {
+      console.error("Error getting event table summary: ", e)
+      const evt = e as XMLHttpRequest
+      PostError("by-event", evt.responseText)
     }
   }
 
   onMeetChange() {
-    const meetId = (this.shadowRoot!.querySelector("#val_meet") as HTMLSelectElement)!.value
-    console.log("Meet changed to", meetId)
-    // TODO: update the event/race choice lists
+    this.meetId = (this.shadowRoot!.querySelector("#meet_list") as HTMLSelectElement)!.value
+    console.log("Meet changed to", this.meetId)
     this.onByChoiceChange()     // Init the ByChoice list
     this.onTaskChange()         // Init the task pane
   }
@@ -53,6 +82,13 @@ export class ByEvent extends LitElement {
   onByChoiceChange() {
     this.byChoice = (this.shadowRoot!.querySelector("#by_choice") as HTMLSelectElement)!.value
     console.log("By-choice changed to", this.byChoice) // TODO
+    setTimeout(()=>this.loadEventChoices())        // After dependend components are created, update them.
+  }
+
+  // TODO - need to have separate event stuff for by-event-number and by-event-name
+  onEventChange() {
+    this.eventId = (this.shadowRoot!.querySelector("#event_list") as HTMLSelectElement)!.value
+    console.log("Event changed to", this.eventId) // TODO
   }
 
   onTaskChange() {
@@ -63,7 +99,7 @@ export class ByEvent extends LitElement {
   render() {
     return html`
         Meet:
-        <select id="val_meet" @change="${this.onMeetChange}">
+        <select id="meet_list" @change="${this.onMeetChange}">
           ${repeat(this.meetItems, (keyitem)=>html`
             <option value="${keyitem.ID}">${keyitem.Summary}</option>
           `)}
@@ -74,9 +110,11 @@ export class ByEvent extends LitElement {
           <option value="by_race_number">By Race #</option>
           <option value="by_event_name">By Event Name</option>
         </select>
-        ${when(this.byChoice=="by_event_number",()=>html`[by event number list]`)}
-        ${when(this.byChoice=="by_race_number",()=>html`[by race number list]`)}
-        ${when(this.byChoice=="by_event_name",()=>html`[by event name list]`)}
+        <select id="event_list" @change="${this.onEventChange}">
+          ${repeat(this.eventItems, (keyitem)=>html`
+            <option value="${keyitem.ID}">${keyitem.Summary}</option>
+          `)}
+        </select>
         <select id="task" @change="${this.onTaskChange}">
           <option value="create_races">Create Races</option>
           <option value="entries_progress">Entries/Progress</option>
