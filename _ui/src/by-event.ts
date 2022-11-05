@@ -1,8 +1,9 @@
 import { LitElement, html, css } from 'lit'
-import { customElement, property } from 'lit/decorators.js'
+import { customElement, state } from 'lit/decorators.js'
 import { repeat } from 'lit/directives/repeat.js'
 import { when } from 'lit/directives/when.js'
 
+import './create-races.js'
 import './jraceman-tabs.js'
 import './table-queryedit.js'
 
@@ -17,22 +18,22 @@ export class ByEvent extends LitElement {
   static styles = css`
   `;
 
-  @property()
+  @state()
   meetItems: KeySummary[] = []
 
-  @property()
+  @state()
   meetId = ""
 
-  @property()
+  @state()
   eventItems: KeySummary[] = []
 
-  @property()
+  @state()
   eventId = ""
 
-  @property()
+  @state()
   byChoice = ""
 
-  @property()
+  @state()
   task = ""
 
   connectedCallback() {
@@ -130,7 +131,7 @@ export class ByEvent extends LitElement {
           <option value="reports">Reports</option>
         </select>
         <br/>
-        ${when(this.task=="create_races",()=>html`[create races pane]`)}
+        ${when(this.task=="create_races",()=>html`<create-races .eventId="${this.eventId}"></create-races>`)}
         ${when(this.task=="entries_progress",()=>html`[entries/progress pane]`)}
         ${when(this.task=="results",()=>html`[results pane]`)}
         ${when(this.task=="reports",()=>html`[reports pane]`)}
