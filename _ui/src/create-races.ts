@@ -1,6 +1,9 @@
 import { LitElement, html, css } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 
+import { ApiManager } from './api-manager.js'
+import { PostError } from './message-log.js'
+
 /**
  * create-races is the tab content that contains other tabs for venue setup.
  *
@@ -15,7 +18,9 @@ export class CreateRaces extends LitElement {
   eventId = ""
 
   @state()
-  eventInfo = "Select an event"
+  eventSummary = "Select an event"
+  @state()
+  eventEntryCount = 0
 
   onCreateRaces() {
     const numEntries = (this.shadowRoot!.querySelector("#entries") as HTMLInputElement)!.value
@@ -31,12 +36,30 @@ export class CreateRaces extends LitElement {
   }
 
   async loadEventInfo() {
-    this.eventInfo = await ("Info for event "+this.eventId)
+    if (this.eventId == "") {
+      this.eventSummary = "(Select an event)"
+      this.eventEntryCount = 0
+      return
+    }
+    const path = '/api/app/event/' + this.eventId + '/info'
+    let eventInfo = {Summary: "", EntryCount:0}
+    try {
+      eventInfo = await ApiManager.xhrJson(path)
+    } catch (e) {
+      console.error(e);
+      const errstr = "Error getting event info: " + e/*.responseText*/
+      PostError("create-races", errstr)
+      return;
+    }
+    this.eventSummary = eventInfo.Summary
+    this.eventEntryCount = eventInfo.EntryCount
   }
 
   render() {
     return html`
-        <span id="eventinfo">${this.eventInfo}</span>
+        Selected Event: <span id="eventsummary">${this.eventSummary}</span>
+        <br/>
+        Entry Count: <span id="evententrycount">${this.eventEntryCount}</span>
         <br/>
         For this event: <button @click="${this.onCreateRaces}">Create Races</button> for <input id="entries" size=4></input> entries
     `;

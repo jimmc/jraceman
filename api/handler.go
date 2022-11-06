@@ -4,6 +4,7 @@ import (
   "fmt"
   "net/http"
 
+  apiapp "github.com/jimmc/jraceman/api/app"
   "github.com/jimmc/jraceman/api/crud"
   apidb "github.com/jimmc/jraceman/api/database"
   apidebug "github.com/jimmc/jraceman/api/debug"
@@ -30,6 +31,14 @@ type Config struct {
 func NewHandler(c *Config) http.Handler {
   h := handler{config: c}
   mux := http.NewServeMux()
+
+  appPrefix := h.apiPrefix("app")
+  appConfig := &apiapp.Config{
+    Prefix: appPrefix,
+    DomainRepos: c.DomainRepos,
+  }
+  appHandler := apiapp.NewHandler(appConfig)
+  mux.Handle(appPrefix, appHandler)
 
   crudPrefix := h.apiPrefix("crud")
   crudConfig := &crud.Config{
