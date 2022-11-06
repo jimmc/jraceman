@@ -53,6 +53,8 @@ export class CreateRaces extends LitElement {
     }
     this.eventSummary = eventInfo.Summary
     this.eventEntryCount = eventInfo.EntryCount
+    const inputField = (this.shadowRoot!.querySelector("#entries")! as HTMLInputElement)
+    inputField.value = ""+this.eventEntryCount
   }
 
   render() {

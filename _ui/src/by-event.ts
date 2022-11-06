@@ -73,7 +73,8 @@ export class ByEvent extends LitElement {
       } else {
         PostError("by-event", 'Bad byChoice value "' + this.byChoice + '"')
       }
-      this.onEventChange()
+      // Let the event choice list get updated, then propagate possible change of selected item.
+      setTimeout(()=>this.onEventChange(),0)
     } catch(e) {
       console.error("Error getting event table summary: ", e)
       const evt = e as XMLHttpRequest
@@ -121,7 +122,7 @@ export class ByEvent extends LitElement {
         </select>
         <select id="event_list" @change="${this.onEventChange}">
           ${repeat(this.eventItems, (keyitem)=>html`
-            <option value="${keyitem.ID}">${keyitem.Summary}</option>
+            <option value="${keyitem.ID}" ?selected=${this.eventId==keyitem.ID}>${keyitem.Summary}</option>
           `)}
         </select>
         <select id="task" @change="${this.onTaskChange}">
