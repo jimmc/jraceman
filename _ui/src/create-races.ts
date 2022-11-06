@@ -1,7 +1,7 @@
 import { LitElement, html, css } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 
-import { ApiManager } from './api-manager.js'
+import { ApiManager, XhrOptions } from './api-manager.js'
 import { PostError } from './message-log.js'
 
 /**
@@ -22,9 +22,26 @@ export class CreateRaces extends LitElement {
   @state()
   eventEntryCount = 0
 
-  onCreateRaces() {
+  async onCreateRaces() {
     const numEntries = (this.shadowRoot!.querySelector("#entries") as HTMLInputElement)!.value
-    console.log("Create races for", numEntries, " entries")
+    console.log("Create races for", numEntries, "entries")
+    // TODO - check for eventId=="" or bad numEntries and abort if so.
+    const path = '/api/app/event/' + this.eventId + '/createraces'
+    const params = { entryCount: numEntries }
+    const options:XhrOptions = {
+      method: 'POST',
+      params: params,
+    }
+    try {
+      /*const results =*/ await ApiManager.xhrJson(path, options)
+      // TODO look at results
+    } catch (e) {
+      const evt = e as XMLHttpRequest
+      console.error(e);
+      const errstr = "Error creating races: " + evt.responseText
+      PostError("create-races", errstr)
+      return;
+    }
   }
 
   update(changedProperties: Map<string, unknown>) {
