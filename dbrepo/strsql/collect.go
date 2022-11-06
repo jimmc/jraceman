@@ -18,7 +18,7 @@ type ColumnInfo struct {
   Type string
 }
 
-// QueryAndCollect issues a Query for the given sql, then interates through
+// QueryAndCollect issues a Query for the given sql, then iterates through
 // the returned rows. For each row, it retrieves the data into targets, then
 // calls the collect function. The assumption is that the targets store the
 // results into data that is accessible to the collect function.
