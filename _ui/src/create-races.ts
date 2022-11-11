@@ -4,6 +4,20 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { ApiManager, XhrOptions } from './api-manager.js'
 import { PostError } from './message-log.js'
 
+interface RoundCount {
+  Count: number,
+  Round: number,
+  StageName: string,
+}
+
+interface EventInfo {
+  Summary: string,
+  EntryCount: number,
+  GroupCount: number,
+  GroupSize: number,
+  RaceCounts: RoundCount[],
+}
+
 /**
  * create-races is the tab content that contains other tabs for venue setup.
  *
@@ -64,7 +78,7 @@ export class CreateRaces extends LitElement {
       return
     }
     const path = '/api/app/event/' + this.eventId + '/info'
-    let eventInfo = {Summary: "", EntryCount:0, GroupCount:0, GroupSize:0}
+    let eventInfo : EventInfo = { Summary:"", EntryCount:0, GroupCount:0, GroupSize:0, RaceCounts:[]}
     try {
       eventInfo = await ApiManager.xhrJson(path)
     } catch (e) {
@@ -85,6 +99,22 @@ export class CreateRaces extends LitElement {
       this.entryUnit = "entries"
       inputField.value = ""+eventInfo.EntryCount
     }
+    let raceTotal = 0
+    let raceInfo = ""
+    for (let roundInfo of eventInfo.RaceCounts) {
+      raceTotal += roundInfo.Count
+      if (raceInfo!="") {
+        raceInfo += ", "
+      }
+      raceInfo += roundInfo.Count + " " + roundInfo.StageName
+    }
+    if (raceTotal==0) {
+      raceInfo = "no races."
+    } else {
+      raceInfo = "" + raceTotal + " race" + (raceTotal>1?"s":"") + " (" + raceInfo + ")."
+    }
+    raceInfo = "This event currently has " + raceInfo
+    eventDetailHTML += raceInfo + "<br/>"
     this.shadowRoot!.querySelector("#eventdetail")!.innerHTML = eventDetailHTML
   }
 

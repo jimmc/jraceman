@@ -11,11 +11,18 @@ import (
   "github.com/golang/glog"
 )
 
+type RaceCountInfo struct {
+  Count int
+  Round int
+  StageName string
+}
+
 type EventInfo struct {
   EntryCount int
   GroupCount int
   GroupSize int
   Summary string
+  RaceCounts []*RaceCountInfo
 }
 
 func (h *handler) event(w http.ResponseWriter, r *http.Request) {
@@ -74,8 +81,34 @@ func (h *handler) eventInfo(w http.ResponseWriter, eventId string) {
   err := db.QueryRow(query, whereVals...).Scan(
     &result.EntryCount, &result.GroupCount, &result.GroupSize, &result.Summary)
   if err != nil {
-    http.Error(w, fmt.Sprintf("Error collecting event info: %v", err), http.StatusBadRequest)
+    http.Error(w, fmt.Sprintf("Error collecting event %q info: %v", eventId, err), http.StatusBadRequest)
     return
   }
+  // Now get the count of races that exist for this event.
+  query = `SELECT count(1) as count, race.round as round, stage.name as stagename
+    FROM event JOIN race on event.id = race.eventid
+      JOIN stage on race.stageid=stage.id
+    WHERE event.id=?
+    GROUP BY race.round
+    ORDER BY race.round
+    `
+  whereVals = make([]interface{}, 1)
+  whereVals[0] = eventId
+  rows, err := db.Query(query, whereVals...)
+  if err != nil {
+    http.Error(w, fmt.Sprintf("Error collecting race info for event %q: %v", eventId, err), http.StatusBadRequest)
+    return
+  }
+  defer rows.Close()
+  rr := make([]*RaceCountInfo,0)
+  for rows.Next() {
+    r := &RaceCountInfo{}
+    if err = rows.Scan(&r.Count, &r.Round, &r.StageName); err != nil {
+        http.Error(w, fmt.Sprintf("Error collecting race count row for event %q: %v", eventId, err), http.StatusBadRequest)
+        return
+    }
+    rr = append(rr, r)
+  }
+  result.RaceCounts = rr
   apihttp.MarshalAndReply(w, result)
 }
