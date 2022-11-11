@@ -31,7 +31,7 @@ export class ReportResults extends LitElement {
 
   render() {
     return html`
-      <span id="results">(Geneated reports will appear here)</span>
+      <span id="results">(Generated reports will appear here)</span>
     `;
   }
 }

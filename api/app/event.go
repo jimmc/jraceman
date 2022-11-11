@@ -13,6 +13,8 @@ import (
 
 type EventInfo struct {
   EntryCount int
+  GroupCount int
+  GroupSize int
   Summary string
 }
 
@@ -49,18 +51,28 @@ func (h *handler) event(w http.ResponseWriter, r *http.Request) {
 
 func (h *handler) eventInfo(w http.ResponseWriter, eventId string) {
   db := h.config.DomainRepos.(*dbrepo.Repos).DB()
-  countQuery :=
+  entryCountQuery :=
         `(SELECT count(1) as entryCount
         FROM entry JOIN event on entry.eventid = event.id
-        WHERE event.id=?)`
-  query := "SELECT "+countQuery+` as EntryCount,
-        Name || ' [' || ID || ']' as Summary
-        FROM event WHERE event.id=?`
-  whereVals := make([]interface{}, 2)
+        WHERE event.id=? AND NOT entry.scratched)`
+  groupCountQuery :=
+        `(SELECT count(distinct groupname) as groupCount
+        FROM entry JOIN event on entry.eventid = event.id
+        WHERE event.id=? AND NOT entry.scratched)`
+  query := "SELECT "+entryCountQuery+" as EntryCount,"+
+        groupCountQuery+` as GroupCount,
+        COALESCE(competition.groupsize,0) as GroupSize,
+        event.Name || ' [' || event.ID || ']' as Summary
+        FROM event
+        LEFT JOIN competition on event.competitionid = competition.id
+        WHERE event.id=?`
+  whereVals := make([]interface{}, 3)
   whereVals[0] = eventId
   whereVals[1] = eventId
+  whereVals[2] = eventId
   result := &EventInfo{}
-  err := db.QueryRow(query, whereVals...).Scan(&result.EntryCount, &result.Summary)
+  err := db.QueryRow(query, whereVals...).Scan(
+    &result.EntryCount, &result.GroupCount, &result.GroupSize, &result.Summary)
   if err != nil {
     http.Error(w, fmt.Sprintf("Error collecting event info: %v", err), http.StatusBadRequest)
     return

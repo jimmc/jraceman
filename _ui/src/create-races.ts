@@ -18,9 +18,10 @@ export class CreateRaces extends LitElement {
   eventId = ""
 
   @state()
-  eventSummary = "Select an event"
+  eventSummary = ""
+
   @state()
-  eventEntryCount = 0
+  entryUnit = "entries"
 
   async onCreateRaces() {
     const numEntries = (this.shadowRoot!.querySelector("#entries") as HTMLInputElement)!.value
@@ -55,11 +56,15 @@ export class CreateRaces extends LitElement {
   async loadEventInfo() {
     if (this.eventId == "") {
       this.eventSummary = "(Select an event)"
-      this.eventEntryCount = 0
+      this.entryUnit = "entries"
+      const detail = this.shadowRoot!.querySelector("#eventDetail")
+      if (detail) {
+        detail.innerHTML = ""
+      }
       return
     }
     const path = '/api/app/event/' + this.eventId + '/info'
-    let eventInfo = {Summary: "", EntryCount:0}
+    let eventInfo = {Summary: "", EntryCount:0, GroupCount:0, GroupSize:0}
     try {
       eventInfo = await ApiManager.xhrJson(path)
     } catch (e) {
@@ -68,19 +73,26 @@ export class CreateRaces extends LitElement {
       PostError("create-races", errstr)
       return;
     }
-    this.eventSummary = eventInfo.Summary
-    this.eventEntryCount = eventInfo.EntryCount
+    this.eventSummary = "Selected Event: " + eventInfo.Summary
     const inputField = (this.shadowRoot!.querySelector("#entries")! as HTMLInputElement)
-    inputField.value = ""+this.eventEntryCount
+    let eventDetailHTML = ""
+    if (eventInfo.GroupSize>1) {
+      eventDetailHTML += "Number of groups: " + eventInfo.GroupCount + "<br/>"
+      this.entryUnit = "groups"
+      inputField.value = ""+eventInfo.GroupCount
+    } else {
+      eventDetailHTML += "Number of entries: " + eventInfo.EntryCount + "<br/>"
+      this.entryUnit = "entries"
+      inputField.value = ""+eventInfo.EntryCount
+    }
+    this.shadowRoot!.querySelector("#eventdetail")!.innerHTML = eventDetailHTML
   }
 
   render() {
     return html`
-        Selected Event: <span id="eventsummary">${this.eventSummary}</span>
-        <br/>
-        Entry Count: <span id="evententrycount">${this.eventEntryCount}</span>
-        <br/>
-        For this event: <button @click="${this.onCreateRaces}">Create Races</button> for <input id="entries" size=4></input> entries
+        <span id="eventsummary">${this.eventSummary}</span><br/>
+        <span id="eventdetail"></span>
+        For this event: <button @click="${this.onCreateRaces}">Create Races</button> for <input id="entries" size=4></input> ${this.entryUnit}
     `;
   }
 }
