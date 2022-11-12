@@ -5,25 +5,12 @@ import (
   "net/http"
   "strings"
 
+  mainapp "github.com/jimmc/jraceman/app"
   apihttp "github.com/jimmc/jraceman/api/http"
   "github.com/jimmc/jraceman/dbrepo"
 
   "github.com/golang/glog"
 )
-
-type RaceCountInfo struct {
-  Count int
-  Round int
-  StageName string
-}
-
-type EventInfo struct {
-  EntryCount int
-  GroupCount int
-  GroupSize int
-  Summary string
-  RaceCounts []*RaceCountInfo
-}
 
 func (h *handler) event(w http.ResponseWriter, r *http.Request) {
   // TODO - check authorization
@@ -57,58 +44,11 @@ func (h *handler) event(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) eventInfo(w http.ResponseWriter, eventId string) {
-  db := h.config.DomainRepos.(*dbrepo.Repos).DB()
-  entryCountQuery :=
-        `(SELECT count(1) as entryCount
-        FROM entry JOIN event on entry.eventid = event.id
-        WHERE event.id=? AND NOT entry.scratched)`
-  groupCountQuery :=
-        `(SELECT count(distinct groupname) as groupCount
-        FROM entry JOIN event on entry.eventid = event.id
-        WHERE event.id=? AND NOT entry.scratched)`
-  query := "SELECT "+entryCountQuery+" as EntryCount,"+
-        groupCountQuery+` as GroupCount,
-        COALESCE(competition.groupsize,0) as GroupSize,
-        event.Name || ' [' || event.ID || ']' as Summary
-        FROM event
-        LEFT JOIN competition on event.competitionid = competition.id
-        WHERE event.id=?`
-  whereVals := make([]interface{}, 3)
-  whereVals[0] = eventId
-  whereVals[1] = eventId
-  whereVals[2] = eventId
-  result := &EventInfo{}
-  err := db.QueryRow(query, whereVals...).Scan(
-    &result.EntryCount, &result.GroupCount, &result.GroupSize, &result.Summary)
+  dbr := h.config.DomainRepos.(*dbrepo.Repos)
+  result, err := mainapp.EventRaceInfo(dbr, eventId)
   if err != nil {
-    http.Error(w, fmt.Sprintf("Error collecting event %q info: %v", eventId, err), http.StatusBadRequest)
+    http.Error(w, err.Error(), http.StatusBadRequest)
     return
   }
-  // Now get the count of races that exist for this event.
-  query = `SELECT count(1) as count, race.round as round, stage.name as stagename
-    FROM event JOIN race on event.id = race.eventid
-      JOIN stage on race.stageid=stage.id
-    WHERE event.id=?
-    GROUP BY race.round
-    ORDER BY race.round
-    `
-  whereVals = make([]interface{}, 1)
-  whereVals[0] = eventId
-  rows, err := db.Query(query, whereVals...)
-  if err != nil {
-    http.Error(w, fmt.Sprintf("Error collecting race info for event %q: %v", eventId, err), http.StatusBadRequest)
-    return
-  }
-  defer rows.Close()
-  rr := make([]*RaceCountInfo,0)
-  for rows.Next() {
-    r := &RaceCountInfo{}
-    if err = rows.Scan(&r.Count, &r.Round, &r.StageName); err != nil {
-        http.Error(w, fmt.Sprintf("Error collecting race count row for event %q: %v", eventId, err), http.StatusBadRequest)
-        return
-    }
-    rr = append(rr, r)
-  }
-  result.RaceCounts = rr
   apihttp.MarshalAndReply(w, result)
 }
