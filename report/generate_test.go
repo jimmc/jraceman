@@ -1,17 +1,14 @@
 package report
 
 import (
-  "fmt"
   "io/ioutil"
   "testing"
   "time"
 
   "github.com/jimmc/gtrepgen/gen"
-  "github.com/jimmc/jraceman/dbrepo"
+  dbtest "github.com/jimmc/jraceman/dbrepo/test"
 
   goldenbase "github.com/jimmc/golden/base"
-
-  "github.com/golang/glog"
 )
 
 func tNow() time.Time {
@@ -54,7 +51,7 @@ func TestStandardReports(t *testing.T) {
 
       setupfilename := "testdata/" + tt.setupName + ".setup"
 
-      dbRepos, err := openAndLoad(setupfilename)
+      dbRepos, err := dbtest.ReposAndLoadFile(setupfilename)
       if err != nil {
         t.Fatalf(err.Error())
       }
@@ -76,25 +73,4 @@ func TestStandardReports(t *testing.T) {
       }
     })
   }
-}
-
-func openAndLoad(setupfile string) (*dbrepo.Repos, error) {
-  dbRepos, err := dbrepo.Open("sqlite3::memory:")
-  if err != nil {
-    return nil, fmt.Errorf("failed to open repository: %v", err)
-  }
-
-  err = dbRepos.CreateTables()
-  if err != nil {
-    return nil, fmt.Errorf("failed to create repository tables: %v", err)
-  }
-
-  glog.Infof("Importing from %s\n", setupfile)
-  counts, err := dbRepos.ImportFile(setupfile)
-  if err != nil {
-    return nil, fmt.Errorf("error importing from %s: %v", setupfile, err)
-  }
-  glog.Infof("Import done: inserted %d, updated %d, unchanged %d records\n",
-      counts.Inserted(), counts.Updated(), counts.Unchanged())
-  return dbRepos, nil
 }
