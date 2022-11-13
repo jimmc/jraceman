@@ -10,6 +10,9 @@ import (
   "github.com/jimmc/jraceman/domain"
   apihttp "github.com/jimmc/jraceman/api/http"
 
+  "github.com/jimmc/auth/auth"
+  "github.com/jimmc/auth/permissions"
+
   "github.com/golang/glog"
 )
 
@@ -17,6 +20,7 @@ import (
 // CRUD code.
 type std interface {
   EntityTypeName() string   // such as "site"
+  EntityGroupName() string      // The table group for auth puposes, such as "venue".
   NewEntity() interface{}       // such as a new Site
   List(offset, limit int) ([]interface{}, error)
   Save(entity interface{}) (string, error)        // function must cast entity to its type
@@ -30,7 +34,23 @@ type std interface {
 // type turns around and calls this handler with a type-specific std that
 // defines the type-specific methods needed by this handler.
 func (h *handler) stdcrud(w http.ResponseWriter, r *http.Request, st std) {
-  // TODO - check authorization
+  // We require read or write permission for the table group, depending on http mthod.
+  permPrefix := "edit_"         // Assume we will need write privileges.
+  if r.Method == http.MethodGet {
+    permPrefix = "view_"       // GET requires read privilege.
+  }
+  permissionName := permPrefix + st.EntityGroupName()
+  permission := permissions.Permission(permissionName)
+  if !auth.CurrentUserHasPermission(r, permission) {
+    currentUser := auth.CurrentUser(r)
+    username := "(no current user)"
+    if currentUser != nil {
+      username = currentUser.Id()
+    }
+    glog.Infof("Not authorized: user %q does not have permission %q", username, permissionName)
+    http.Error(w, "Not authorized", http.StatusUnauthorized)
+    return
+  }
   entityType := st.EntityTypeName()
   entityID := strings.TrimPrefix(r.URL.Path, h.crudPrefix(entityType))
   glog.Infof("%s %s ID='%s'", r.Method, entityType, entityID);
