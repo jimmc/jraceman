@@ -214,6 +214,7 @@ func runHttpServer(config *config, dbRepos *dbrepo.Repos) {
     DomainRepos: dbRepos,
     CheckRoots: strings.Split(config.checkRoots,","),
     ReportRoots: strings.Split(config.reportRoots,","),
+    AuthHandler: authHandler,
   })
   mux.Handle("/ui/", http.StripPrefix("/ui/", uiFileHandler))
   mux.Handle(apiPrefix, authHandler.RequireAuth(apiHandler))

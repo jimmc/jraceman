@@ -11,6 +11,8 @@ import (
   "github.com/jimmc/jraceman/api/query"
   apireport "github.com/jimmc/jraceman/api/report"
   "github.com/jimmc/jraceman/domain"
+
+  authlib "github.com/jimmc/auth/auth"
 )
 
 type handler struct {
@@ -25,6 +27,7 @@ type Config struct {
   DomainRepos domain.Repos
   CheckRoots []string
   ReportRoots []string
+  AuthHandler *authlib.Handler
 }
 
 // NewHandler creates the http handler that is used to route api requests.
@@ -36,6 +39,7 @@ func NewHandler(c *Config) http.Handler {
   appConfig := &apiapp.Config{
     Prefix: appPrefix,
     DomainRepos: c.DomainRepos,
+    AuthHandler: c.AuthHandler,
   }
   appHandler := apiapp.NewHandler(appConfig)
   mux.Handle(appPrefix, appHandler)

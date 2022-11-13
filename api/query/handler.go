@@ -21,6 +21,9 @@ type Config struct {
 func NewHandler(c *Config) http.Handler {
   h := handler{config: c}
   mux := http.NewServeMux()
+  // Permissions for these tables are handled in std.go.
+  // If you add a table that doesn't redirect to stdquery,
+  // you need to remember to include a check for permissions.
   mux.HandleFunc(h.queryPrefix("area"), h.area)
   mux.HandleFunc(h.queryPrefix("challenge"), h.challenge)
   mux.HandleFunc(h.queryPrefix("competition"), h.competition)
