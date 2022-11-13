@@ -11,6 +11,9 @@ import (
   "github.com/jimmc/jraceman/dbrepo/strsql"
   "github.com/jimmc/jraceman/dbrepo/structsql"
 
+  "github.com/jimmc/auth/auth"
+  "github.com/jimmc/auth/permissions"
+
   "github.com/golang/glog"
 )
 
@@ -53,6 +56,7 @@ func (qp *queryParam) CleanValue() interface{} {
 // query code.
 type std interface {
   EntityTypeName() string   // such as "site"
+  EntityGroupName() string      // The table group for auth puposes, such as "venue".
   NewEntity() interface{}       // such as a new Site
   SummaryQuery(format string) string    // An SQL query that is suitable for use as a summary for each row.
 }
@@ -62,7 +66,19 @@ type std interface {
 // type turns around and calls this handler with a type-specific std that
 // defines the type-specific methods needed by this handler.
 func (h *handler) stdquery(w http.ResponseWriter, r *http.Request, st std) {
-  // TODO - check authorization
+  // We require view permission for the table group.
+  permissionName := "view_" + st.EntityGroupName()
+  permission := permissions.Permission(permissionName)
+  if !auth.CurrentUserHasPermission(r, permission) {
+    currentUser := auth.CurrentUser(r)
+    username := "(no current user)"
+    if currentUser != nil {
+      username = currentUser.Id()
+    }
+    glog.Infof("Not authorized: user %q does not have permission %q", username, permissionName)
+    http.Error(w, "Not authorized", http.StatusUnauthorized)
+    return
+  }
   entityType := st.EntityTypeName()
   pathPrefix := h.queryPrefix(entityType)
   morePath := strings.TrimPrefix(r.URL.Path, pathPrefix)

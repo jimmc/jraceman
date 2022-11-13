@@ -109,6 +109,28 @@ user, you can then log in and use the Auth Setup tabs to add more users.
 You can also use the command line option `-password` to give the password
 on the command line rather than typing it in twice.
 
+#### Add standard permissions
+
+API calls require permission, so you will need to add permissions to your
+database if they are not included in your imported file. To add the standard
+permissions and a "guru" role that has all permissions, import the standard
+permissions file:
+
+    ./jraceman -db sqlite3:$JRDB -logtostderr -import ./_data/stdperms.txt
+
+#### Grant the "guru" role to your user
+
+Assuming you loaded the standard permissions file, the role ID for the guru
+role is R1. Assign that role to your user:
+
+    ./jraceman -db sqlite3:$JRDB -logtostderr -sql \
+        "INSERT INTO userrole(id,userid,roleid) VALUES('UR1','U1','R1')"
+
+You can check the IDs of the user and role before running this command by
+doing some SQL queries, for example:
+
+    ./jraceman -db sqlite3:$JRDB -logtostderr -sql "SELECT * FROM user"
+
 ### Run the server
 
     ./jraceman -db sqlite3:$JRDB -logtostderr

@@ -36,7 +36,7 @@ func (pdb *PwDB) Save() error {
 func (pdb *PwDB) User(username string) *users.User {
   glog.V(2).Infof("Looking for user %s", username)
   query := `
-    SELECT saltword, GROUP_CONCAT(COALESCE(permission.name,''),',') as permissions
+    SELECT saltword, GROUP_CONCAT(COALESCE(permission.name,''),' ') as permissions
     FROM user
          LEFT JOIN userrole ON user.id=userrole.userid
          LEFT JOIN rolepermission ON userrole.roleid=rolepermission.roleid
@@ -55,7 +55,7 @@ func (pdb *PwDB) User(username string) *users.User {
     return nil
   }
   user := users.NewUser(username, saltword, permissions.FromString(perms))
-  glog.V(2).Infof("Found user %v", user)
+  glog.V(2).Infof("Found user %v with perms %v", user, perms)
   return user
 }
 
