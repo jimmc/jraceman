@@ -23,6 +23,10 @@ func (m *SeedingPlanMeta) EntityTypeName() string {
   return "seedingplan"
 }
 
+func (m *SeedingPlanMeta) EntityGroupName() string {
+  return "roster"
+}
+
 func (m *SeedingPlanMeta) NewEntity() interface{} {
   return &SeedingPlan{}
 }

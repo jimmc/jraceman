@@ -30,6 +30,10 @@ func (m *SiteMeta) EntityTypeName() string {
   return "site"
 }
 
+func (m *SiteMeta) EntityGroupName() string {
+  return "venue"
+}
+
 func (m *SiteMeta) NewEntity() interface{} {
   return &Site{}
 }

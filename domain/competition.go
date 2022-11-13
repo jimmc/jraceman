@@ -26,6 +26,10 @@ func (m *CompetitionMeta) EntityTypeName() string {
   return "competition"
 }
 
+func (m *CompetitionMeta) EntityGroupName() string {
+  return "sport"
+}
+
 func (m *CompetitionMeta) NewEntity() interface{} {
   return &Competition{}
 }

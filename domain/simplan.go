@@ -25,6 +25,10 @@ func (m *SimplanMeta) EntityTypeName() string {
   return "simplan"
 }
 
+func (m *SimplanMeta) EntityGroupName() string {
+  return "plan"
+}
+
 func (m *SimplanMeta) NewEntity() interface{} {
   return &Simplan{}
 }

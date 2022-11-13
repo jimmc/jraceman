@@ -25,6 +25,10 @@ func (m *ScoringRuleMeta) EntityTypeName() string {
   return "scoringrule"
 }
 
+func (m *ScoringRuleMeta) EntityGroupName() string {
+  return "sport"
+}
+
 func (m *ScoringRuleMeta) NewEntity() interface{} {
   return &ScoringRule{}
 }

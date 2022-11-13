@@ -26,6 +26,10 @@ func (m *SimplanRuleMeta) EntityTypeName() string {
   return "simplanrule"
 }
 
+func (m *SimplanRuleMeta) EntityGroupName() string {
+  return "plan"
+}
+
 func (m *SimplanRuleMeta) NewEntity() interface{} {
   return &SimplanRule{}
 }

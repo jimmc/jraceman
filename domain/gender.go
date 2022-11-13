@@ -22,6 +22,10 @@ func (m *GenderMeta) EntityTypeName() string {
   return "gender"
 }
 
+func (m *GenderMeta) EntityGroupName() string {
+  return "sport"
+}
+
 func (m *GenderMeta) NewEntity() interface{} {
   return &Gender{}
 }

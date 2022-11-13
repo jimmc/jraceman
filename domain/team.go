@@ -34,6 +34,10 @@ func (m *TeamMeta) EntityTypeName() string {
   return "team"
 }
 
+func (m *TeamMeta) EntityGroupName() string {
+  return "roster"
+}
+
 func (m *TeamMeta) NewEntity() interface{} {
   return &Team{}
 }

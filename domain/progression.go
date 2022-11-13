@@ -24,6 +24,10 @@ func (m *ProgressionMeta) EntityTypeName() string {
   return "progression"
 }
 
+func (m *ProgressionMeta) EntityGroupName() string {
+  return "sport"
+}
+
 func (m *ProgressionMeta) NewEntity() interface{} {
   return &Progression{}
 }

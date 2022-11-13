@@ -24,6 +24,10 @@ func (m *LaneOrderMeta) EntityTypeName() string {
   return "laneorder"
 }
 
+func (m *LaneOrderMeta) EntityGroupName() string {
+  return "regatta"
+}
+
 func (m *LaneOrderMeta) NewEntity() interface{} {
   return &LaneOrder{}
 }

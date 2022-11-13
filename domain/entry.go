@@ -26,6 +26,10 @@ func (m *EntryMeta) EntityTypeName() string {
   return "entry"
 }
 
+func (m *EntryMeta) EntityGroupName() string {
+  return "regatta"
+}
+
 func (m *EntryMeta) NewEntity() interface{} {
   return &Entry{}
 }

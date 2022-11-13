@@ -30,6 +30,10 @@ func (m *RegistrationMeta) EntityTypeName() string {
   return "registration"
 }
 
+func (m *RegistrationMeta) EntityGroupName() string {
+  return "regatta"
+}
+
 func (m *RegistrationMeta) NewEntity() interface{} {
   return &Registration{}
 }

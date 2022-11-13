@@ -32,6 +32,10 @@ func (m *RaceMeta) EntityTypeName() string {
   return "race"
 }
 
+func (m *RaceMeta) EntityGroupName() string {
+  return "regatta"
+}
+
 func (m *RaceMeta) NewEntity() interface{} {
   return &Race{}
 }

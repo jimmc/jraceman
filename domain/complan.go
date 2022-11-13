@@ -26,6 +26,10 @@ func (m *ComplanMeta) EntityTypeName() string {
   return "complan"
 }
 
+func (m *ComplanMeta) EntityGroupName() string {
+  return "plan"
+}
+
 func (m *ComplanMeta) NewEntity() interface{} {
   return &Complan{}
 }

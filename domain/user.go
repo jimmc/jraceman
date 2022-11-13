@@ -25,6 +25,10 @@ func (m *UserMeta) EntityTypeName() string {
   return "user"
 }
 
+func (m *UserMeta) EntityGroupName() string {
+  return "auth"
+}
+
 func (m *UserMeta) NewEntity() interface{} {
   return &User{}
 }

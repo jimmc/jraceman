@@ -37,6 +37,10 @@ func (m *PersonMeta) EntityTypeName() string {
   return "person"
 }
 
+func (m *PersonMeta) EntityGroupName() string {
+  return "roster"
+}
+
 func (m *PersonMeta) NewEntity() interface{} {
   return &Person{}
 }

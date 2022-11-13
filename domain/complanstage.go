@@ -26,6 +26,10 @@ func (m *ComplanStageMeta) EntityTypeName() string {
   return "complanstage"
 }
 
+func (m *ComplanStageMeta) EntityGroupName() string {
+  return "plan"
+}
+
 func (m *ComplanStageMeta) NewEntity() interface{} {
   return &ComplanStage{}
 }

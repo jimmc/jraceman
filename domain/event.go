@@ -36,6 +36,10 @@ func (m *EventMeta) EntityTypeName() string {
   return "event"
 }
 
+func (m *EventMeta) EntityGroupName() string {
+  return "regatta"
+}
+
 func (m *EventMeta) NewEntity() interface{} {
   return &Event{}
 }

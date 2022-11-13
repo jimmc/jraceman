@@ -26,6 +26,10 @@ func (m *ContextOptionMeta) EntityTypeName() string {
   return "contextoption"
 }
 
+func (m *ContextOptionMeta) EntityGroupName() string {
+  return "config"
+}
+
 func (m *ContextOptionMeta) NewEntity() interface{} {
   return &ContextOption{}
 }

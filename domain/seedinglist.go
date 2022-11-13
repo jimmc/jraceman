@@ -24,6 +24,10 @@ func (m *SeedingListMeta) EntityTypeName() string {
   return "seedinglist"
 }
 
+func (m *SeedingListMeta) EntityGroupName() string {
+  return "roster"
+}
+
 func (m *SeedingListMeta) NewEntity() interface{} {
   return &SeedingList{}
 }

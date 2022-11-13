@@ -28,6 +28,10 @@ func (m *ComplanRuleMeta) EntityTypeName() string {
   return "complanrule"
 }
 
+func (m *ComplanRuleMeta) EntityGroupName() string {
+  return "plan"
+}
+
 func (m *ComplanRuleMeta) NewEntity() interface{} {
   return &ComplanRule{}
 }

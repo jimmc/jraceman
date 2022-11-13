@@ -24,6 +24,10 @@ func (m *StageMeta) EntityTypeName() string {
   return "stage"
 }
 
+func (m *StageMeta) EntityGroupName() string {
+  return "sport"
+}
+
 func (m *StageMeta) NewEntity() interface{} {
   return &Stage{}
 }

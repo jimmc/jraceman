@@ -29,6 +29,10 @@ func (m *LaneMeta) EntityTypeName() string {
   return "lane"
 }
 
+func (m *LaneMeta) EntityGroupName() string {
+  return "regatta"
+}
+
 func (m *LaneMeta) NewEntity() interface{} {
   return &Lane{}
 }

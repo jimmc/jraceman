@@ -24,6 +24,10 @@ func (m *RegistrationFeeMeta) EntityTypeName() string {
   return "registrationfee"
 }
 
+func (m *RegistrationFeeMeta) EntityGroupName() string {
+  return "regatta"
+}
+
 func (m *RegistrationFeeMeta) NewEntity() interface{} {
   return &RegistrationFee{}
 }

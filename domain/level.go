@@ -27,6 +27,10 @@ func (m *LevelMeta) EntityTypeName() string {
   return "level"
 }
 
+func (m *LevelMeta) EntityGroupName() string {
+  return "sport"
+}
+
 func (m *LevelMeta) NewEntity() interface{} {
   return &Level{}
 }

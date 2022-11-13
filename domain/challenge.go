@@ -22,6 +22,10 @@ func (m *ChallengeMeta) EntityTypeName() string {
   return "challenge"
 }
 
+func (m *ChallengeMeta) EntityGroupName() string {
+  return "roster"
+}
+
 func (m *ChallengeMeta) NewEntity() interface{} {
   return &Challenge{}
 }

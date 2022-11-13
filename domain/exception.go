@@ -24,6 +24,10 @@ func (m *ExceptionMeta) EntityTypeName() string {
   return "exception"
 }
 
+func (m *ExceptionMeta) EntityGroupName() string {
+  return "sport"
+}
+
 func (m *ExceptionMeta) NewEntity() interface{} {
   return &Exception{}
 }

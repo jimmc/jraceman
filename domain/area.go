@@ -25,6 +25,10 @@ func (m *AreaMeta) EntityTypeName() string {
   return "area"
 }
 
+func (m *AreaMeta) EntityGroupName() string {
+  return "venue"
+}
+
 func (m *AreaMeta) NewEntity() interface{} {
   return &Area{}
 }
