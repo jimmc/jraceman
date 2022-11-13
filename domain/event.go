@@ -28,3 +28,14 @@ type Event struct {
   Scratched *bool
   EventComment *string
 }
+
+// EventMeta provides funcions related to the Event struct.
+type EventMeta struct {}
+
+func (m *EventMeta) EntityTypeName() string {
+  return "event"
+}
+
+func (m *EventMeta) NewEntity() interface{} {
+  return &Event{}
+}

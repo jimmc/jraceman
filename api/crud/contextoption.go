@@ -7,15 +7,8 @@ import (
 )
 
 type contextoptionCrud struct{
+  domain.ContextOptionMeta
   h *handler
-}
-
-func (sc *contextoptionCrud) EntityTypeName() string {
-  return "contextoption"
-}
-
-func (sc *contextoptionCrud) NewEntity() interface{} {
-  return &domain.ContextOption{}
 }
 
 func (sc *contextoptionCrud) Save(entity interface{}) (string, error) {
@@ -50,6 +43,6 @@ func (sc *contextoptionCrud) UpdateByID(ID string, oldEntity, newEntity interfac
 }
 
 func (h *handler) contextoption(w http.ResponseWriter, r *http.Request) {
-  sc := &contextoptionCrud{h}
+  sc := &contextoptionCrud{domain.ContextOptionMeta{}, h}
   h.stdcrud(w, r, sc)
 }

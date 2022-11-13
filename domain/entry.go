@@ -18,3 +18,14 @@ type Entry struct {
   Alternate bool
   Scratched bool
 }
+
+// EntryMeta provides funcions related to the Entry struct.
+type EntryMeta struct {}
+
+func (m *EntryMeta) EntityTypeName() string {
+  return "entry"
+}
+
+func (m *EntryMeta) NewEntity() interface{} {
+  return &Entry{}
+}

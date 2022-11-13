@@ -7,15 +7,8 @@ import (
 )
 
 type registrationQuery struct{
+  domain.RegistrationMeta
   h *handler
-}
-
-func (sc *registrationQuery) EntityTypeName() string {
-  return "registration"
-}
-
-func (sc *registrationQuery) NewEntity() interface{} {
-  return &domain.Registration{}
 }
 
 func (sc *registrationQuery) SummaryQuery(format string) string {
@@ -23,6 +16,6 @@ func (sc *registrationQuery) SummaryQuery(format string) string {
 }
 
 func (h *handler) registration(w http.ResponseWriter, r *http.Request) {
-  sq := &registrationQuery{h}
+  sq := &registrationQuery{domain.RegistrationMeta{}, h}
   h.stdquery(w, r, sq)
 }

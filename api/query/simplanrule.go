@@ -7,15 +7,8 @@ import (
 )
 
 type simplanruleQuery struct{
+  domain.SimplanRuleMeta
   h *handler
-}
-
-func (sc *simplanruleQuery) EntityTypeName() string {
-  return "simplanrule"
-}
-
-func (sc *simplanruleQuery) NewEntity() interface{} {
-  return &domain.SimplanRule{}
 }
 
 func (sc *simplanruleQuery) SummaryQuery(format string) string {
@@ -23,6 +16,6 @@ func (sc *simplanruleQuery) SummaryQuery(format string) string {
 }
 
 func (h *handler) simplanrule(w http.ResponseWriter, r *http.Request) {
-  sq := &simplanruleQuery{h}
+  sq := &simplanruleQuery{domain.SimplanRuleMeta{}, h}
   h.stdquery(w, r, sq)
 }

@@ -7,15 +7,8 @@ import (
 )
 
 type scoringsystemCrud struct{
+  domain.ScoringSystemMeta
   h *handler
-}
-
-func (sc *scoringsystemCrud) EntityTypeName() string {
-  return "scoringsystem"
-}
-
-func (sc *scoringsystemCrud) NewEntity() interface{} {
-  return &domain.ScoringSystem{}
 }
 
 func (sc *scoringsystemCrud) Save(entity interface{}) (string, error) {
@@ -50,6 +43,6 @@ func (sc *scoringsystemCrud) UpdateByID(ID string, oldEntity, newEntity interfac
 }
 
 func (h *handler) scoringsystem(w http.ResponseWriter, r *http.Request) {
-  sc := &scoringsystemCrud{h}
+  sc := &scoringsystemCrud{domain.ScoringSystemMeta{}, h}
   h.stdcrud(w, r, sc)
 }

@@ -14,3 +14,14 @@ type Option struct {
   Name string
   Value *string
 }
+
+// OptionMeta provides funcions related to the Option struct.
+type OptionMeta struct {}
+
+func (m *OptionMeta) EntityTypeName() string {
+  return "option"
+}
+
+func (m *OptionMeta) NewEntity() interface{} {
+  return &Option{}
+}

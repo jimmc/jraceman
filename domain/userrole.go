@@ -16,3 +16,14 @@ type UserRole struct {
   UserID string
   RoleID string
 }
+
+// UserRoleMeta provides funcions related to the UserRole struct.
+type UserRoleMeta struct {}
+
+func (m *UserRoleMeta) EntityTypeName() string {
+  return "userrole"
+}
+
+func (m *UserRoleMeta) NewEntity() interface{} {
+  return &UserRole{}
+}

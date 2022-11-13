@@ -16,3 +16,14 @@ type Permission struct {
   Name string
   Description string
 }
+
+// PermissionMeta provides funcions related to the Permission struct.
+type PermissionMeta struct {}
+
+func (m *PermissionMeta) EntityTypeName() string {
+  return "permission"
+}
+
+func (m *PermissionMeta) NewEntity() interface{} {
+  return &Permission{}
+}

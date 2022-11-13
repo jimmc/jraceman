@@ -7,15 +7,8 @@ import (
 )
 
 type competitionCrud struct{
+  domain.CompetitionMeta
   h *handler
-}
-
-func (sc *competitionCrud) EntityTypeName() string {
-  return "competition"
-}
-
-func (sc *competitionCrud) NewEntity() interface{} {
-  return &domain.Competition{}
 }
 
 func (sc *competitionCrud) Save(entity interface{}) (string, error) {
@@ -50,6 +43,6 @@ func (sc *competitionCrud) UpdateByID(ID string, oldEntity, newEntity interface{
 }
 
 func (h *handler) competition(w http.ResponseWriter, r *http.Request) {
-  sc := &competitionCrud{h}
+  sc := &competitionCrud{domain.CompetitionMeta{}, h}
   h.stdcrud(w, r, sc)
 }

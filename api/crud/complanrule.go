@@ -7,15 +7,8 @@ import (
 )
 
 type complanruleCrud struct{
+  domain.ComplanRuleMeta
   h *handler
-}
-
-func (sc *complanruleCrud) EntityTypeName() string {
-  return "complanrule"
-}
-
-func (sc *complanruleCrud) NewEntity() interface{} {
-  return &domain.ComplanRule{}
 }
 
 func (sc *complanruleCrud) Save(entity interface{}) (string, error) {
@@ -50,6 +43,6 @@ func (sc *complanruleCrud) UpdateByID(ID string, oldEntity, newEntity interface{
 }
 
 func (h *handler) complanrule(w http.ResponseWriter, r *http.Request) {
-  sc := &complanruleCrud{h}
+  sc := &complanruleCrud{domain.ComplanRuleMeta{}, h}
   h.stdcrud(w, r, sc)
 }

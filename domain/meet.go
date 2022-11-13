@@ -24,3 +24,14 @@ type Meet struct {
   LabelImageRight *string
   ScoringSystemID *string
 }
+
+// MeetMeta provides funcions related to the Meet struct.
+type MeetMeta struct {}
+
+func (m *MeetMeta) EntityTypeName() string {
+  return "meet"
+}
+
+func (m *MeetMeta) NewEntity() interface{} {
+  return &Meet{}
+}

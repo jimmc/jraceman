@@ -7,15 +7,8 @@ import (
 )
 
 type complanstageCrud struct{
+  domain.ComplanStageMeta
   h *handler
-}
-
-func (sc *complanstageCrud) EntityTypeName() string {
-  return "complanstage"
-}
-
-func (sc *complanstageCrud) NewEntity() interface{} {
-  return &domain.ComplanStage{}
 }
 
 func (sc *complanstageCrud) Save(entity interface{}) (string, error) {
@@ -50,6 +43,6 @@ func (sc *complanstageCrud) UpdateByID(ID string, oldEntity, newEntity interface
 }
 
 func (h *handler) complanstage(w http.ResponseWriter, r *http.Request) {
-  sc := &complanstageCrud{h}
+  sc := &complanstageCrud{domain.ComplanStageMeta{}, h}
   h.stdcrud(w, r, sc)
 }

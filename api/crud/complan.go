@@ -7,15 +7,8 @@ import (
 )
 
 type complanCrud struct{
+  domain.ComplanMeta
   h *handler
-}
-
-func (sc *complanCrud) EntityTypeName() string {
-  return "complan"
-}
-
-func (sc *complanCrud) NewEntity() interface{} {
-  return &domain.Complan{}
 }
 
 func (sc *complanCrud) Save(entity interface{}) (string, error) {
@@ -50,6 +43,6 @@ func (sc *complanCrud) UpdateByID(ID string, oldEntity, newEntity interface{}, d
 }
 
 func (h *handler) complan(w http.ResponseWriter, r *http.Request) {
-  sc := &complanCrud{h}
+  sc := &complanCrud{domain.ComplanMeta{}, h}
   h.stdcrud(w, r, sc)
 }

@@ -18,3 +18,14 @@ type SimplanRule struct {
   ThruPlace *int
   NextBestTimes *int
 }
+
+// SimplanRuleMeta provides funcions related to the SimplanRule struct.
+type SimplanRuleMeta struct {}
+
+func (m *SimplanRuleMeta) EntityTypeName() string {
+  return "simplanrule"
+}
+
+func (m *SimplanRuleMeta) NewEntity() interface{} {
+  return &SimplanRule{}
+}

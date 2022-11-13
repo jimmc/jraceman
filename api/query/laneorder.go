@@ -7,15 +7,8 @@ import (
 )
 
 type laneorderQuery struct{
+  domain.LaneOrderMeta
   h *handler
-}
-
-func (sc *laneorderQuery) EntityTypeName() string {
-  return "laneorder"
-}
-
-func (sc *laneorderQuery) NewEntity() interface{} {
-  return &domain.LaneOrder{}
 }
 
 func (sc *laneorderQuery) SummaryQuery(format string) string {
@@ -23,6 +16,6 @@ func (sc *laneorderQuery) SummaryQuery(format string) string {
 }
 
 func (h *handler) laneorder(w http.ResponseWriter, r *http.Request) {
-  sq := &laneorderQuery{h}
+  sq := &laneorderQuery{domain.LaneOrderMeta{}, h}
   h.stdquery(w, r, sq)
 }

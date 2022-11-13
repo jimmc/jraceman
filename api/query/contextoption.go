@@ -7,15 +7,8 @@ import (
 )
 
 type contextoptionQuery struct{
+  domain.ContextOptionMeta
   h *handler
-}
-
-func (sc *contextoptionQuery) EntityTypeName() string {
-  return "contextoption"
-}
-
-func (sc *contextoptionQuery) NewEntity() interface{} {
-  return &domain.ContextOption{}
 }
 
 func (sc *contextoptionQuery) SummaryQuery(format string) string {
@@ -23,6 +16,6 @@ func (sc *contextoptionQuery) SummaryQuery(format string) string {
 }
 
 func (h *handler) contextoption(w http.ResponseWriter, r *http.Request) {
-  sq := &contextoptionQuery{h}
+  sq := &contextoptionQuery{domain.ContextOptionMeta{}, h}
   h.stdquery(w, r, sq)
 }

@@ -20,3 +20,14 @@ type ComplanRule struct {
   ToSection int
   ToLane int
 }
+
+// ComplanRuleMeta provides funcions related to the ComplanRule struct.
+type ComplanRuleMeta struct {}
+
+func (m *ComplanRuleMeta) EntityTypeName() string {
+  return "complanrule"
+}
+
+func (m *ComplanRuleMeta) NewEntity() interface{} {
+  return &ComplanRule{}
+}

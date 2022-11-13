@@ -19,3 +19,14 @@ type Level struct {
   MaxEntryAge *int
   UseGroupAverage *bool
 }
+
+// LevelMeta provides funcions related to the Level struct.
+type LevelMeta struct {}
+
+func (m *LevelMeta) EntityTypeName() string {
+  return "level"
+}
+
+func (m *LevelMeta) NewEntity() interface{} {
+  return &Level{}
+}

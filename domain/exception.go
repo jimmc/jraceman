@@ -16,3 +16,14 @@ type Exception struct {
   ShortName string
   ResultAllowedRequired int
 }
+
+// ExceptionMeta provides funcions related to the Exception struct.
+type ExceptionMeta struct {}
+
+func (m *ExceptionMeta) EntityTypeName() string {
+  return "exception"
+}
+
+func (m *ExceptionMeta) NewEntity() interface{} {
+  return &Exception{}
+}

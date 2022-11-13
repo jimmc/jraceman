@@ -7,15 +7,8 @@ import (
 )
 
 type siteCrud struct{
+  domain.SiteMeta
   h *handler
-}
-
-func (sc *siteCrud) EntityTypeName() string {
-  return "site"
-}
-
-func (sc *siteCrud) NewEntity() interface{} {
-  return &domain.Site{}
 }
 
 func (sc *siteCrud) Save(entity interface{}) (string, error) {
@@ -50,6 +43,6 @@ func (sc *siteCrud) UpdateByID(ID string, oldEntity, newEntity interface{}, diff
 }
 
 func (h *handler) site(w http.ResponseWriter, r *http.Request) {
-  sc := &siteCrud{h}
+  sc := &siteCrud{domain.SiteMeta{}, h}
   h.stdcrud(w, r, sc)
 }

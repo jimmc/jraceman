@@ -17,3 +17,14 @@ type Area struct {
   Lanes int
   ExtraLanes int
 }
+
+// AreaMeta provides funcions related to the Area struct.
+type AreaMeta struct {}
+
+func (m *AreaMeta) EntityTypeName() string {
+  return "area"
+}
+
+func (m *AreaMeta) NewEntity() interface{} {
+  return &Area{}
+}

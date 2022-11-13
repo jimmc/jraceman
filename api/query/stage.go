@@ -7,15 +7,8 @@ import (
 )
 
 type stageQuery struct{
+  domain.StageMeta
   h *handler
-}
-
-func (sc *stageQuery) EntityTypeName() string {
-  return "stage"
-}
-
-func (sc *stageQuery) NewEntity() interface{} {
-  return &domain.Stage{}
 }
 
 func (sc *stageQuery) SummaryQuery(format string) string {
@@ -23,6 +16,6 @@ func (sc *stageQuery) SummaryQuery(format string) string {
 }
 
 func (h *handler) stage(w http.ResponseWriter, r *http.Request) {
-  sq := &stageQuery{h}
+  sq := &stageQuery{domain.StageMeta{}, h}
   h.stdquery(w, r, sq)
 }

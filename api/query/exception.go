@@ -7,15 +7,8 @@ import (
 )
 
 type exceptionQuery struct{
+  domain.ExceptionMeta
   h *handler
-}
-
-func (sc *exceptionQuery) EntityTypeName() string {
-  return "exception"
-}
-
-func (sc *exceptionQuery) NewEntity() interface{} {
-  return &domain.Exception{}
 }
 
 func (sc *exceptionQuery) SummaryQuery(format string) string {
@@ -23,6 +16,6 @@ func (sc *exceptionQuery) SummaryQuery(format string) string {
 }
 
 func (h *handler) exception(w http.ResponseWriter, r *http.Request) {
-  sq := &exceptionQuery{h}
+  sq := &exceptionQuery{domain.ExceptionMeta{}, h}
   h.stdquery(w, r, sq)
 }

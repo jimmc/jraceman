@@ -29,3 +29,14 @@ type Person struct {
   Phone *string
   Email *string
 }
+
+// PersonMeta provides funcions related to the Person struct.
+type PersonMeta struct {}
+
+func (m *PersonMeta) EntityTypeName() string {
+  return "person"
+}
+
+func (m *PersonMeta) NewEntity() interface{} {
+  return &Person{}
+}

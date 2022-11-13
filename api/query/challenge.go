@@ -7,15 +7,8 @@ import (
 )
 
 type challengeQuery struct{
+  domain.ChallengeMeta
   h *handler
-}
-
-func (sc *challengeQuery) EntityTypeName() string {
-  return "challenge"
-}
-
-func (sc *challengeQuery) NewEntity() interface{} {
-  return &domain.Challenge{}
 }
 
 func (sc *challengeQuery) SummaryQuery(format string) string {
@@ -23,6 +16,6 @@ func (sc *challengeQuery) SummaryQuery(format string) string {
 }
 
 func (h *handler) challenge(w http.ResponseWriter, r *http.Request) {
-  sq := &challengeQuery{h}
+  sq := &challengeQuery{domain.ChallengeMeta{}, h}
   h.stdquery(w, r, sq)
 }

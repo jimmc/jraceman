@@ -7,15 +7,8 @@ import (
 )
 
 type seedinglistCrud struct{
+  domain.SeedingListMeta
   h *handler
-}
-
-func (sc *seedinglistCrud) EntityTypeName() string {
-  return "seedinglist"
-}
-
-func (sc *seedinglistCrud) NewEntity() interface{} {
-  return &domain.SeedingList{}
 }
 
 func (sc *seedinglistCrud) Save(entity interface{}) (string, error) {
@@ -50,6 +43,6 @@ func (sc *seedinglistCrud) UpdateByID(ID string, oldEntity, newEntity interface{
 }
 
 func (h *handler) seedinglist(w http.ResponseWriter, r *http.Request) {
-  sc := &seedinglistCrud{h}
+  sc := &seedinglistCrud{domain.SeedingListMeta{}, h}
   h.stdcrud(w, r, sc)
 }

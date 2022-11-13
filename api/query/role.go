@@ -7,15 +7,8 @@ import (
 )
 
 type roleQuery struct{
+  domain.RoleMeta
   h *handler
-}
-
-func (sc *roleQuery) EntityTypeName() string {
-  return "role"
-}
-
-func (sc *roleQuery) NewEntity() interface{} {
-  return &domain.Role{}
 }
 
 func (sc *roleQuery) SummaryQuery(format string) string {
@@ -23,6 +16,6 @@ func (sc *roleQuery) SummaryQuery(format string) string {
 }
 
 func (h *handler) role(w http.ResponseWriter, r *http.Request) {
-  sq := &roleQuery{h}
+  sq := &roleQuery{domain.RoleMeta{}, h}
   h.stdquery(w, r, sq)
 }

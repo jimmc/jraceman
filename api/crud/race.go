@@ -7,15 +7,8 @@ import (
 )
 
 type raceCrud struct{
+  domain.RaceMeta
   h *handler
-}
-
-func (sc *raceCrud) EntityTypeName() string {
-  return "race"
-}
-
-func (sc *raceCrud) NewEntity() interface{} {
-  return &domain.Race{}
 }
 
 func (sc *raceCrud) Save(entity interface{}) (string, error) {
@@ -50,6 +43,6 @@ func (sc *raceCrud) UpdateByID(ID string, oldEntity, newEntity interface{}, diff
 }
 
 func (h *handler) race(w http.ResponseWriter, r *http.Request) {
-  sc := &raceCrud{h}
+  sc := &raceCrud{domain.RaceMeta{}, h}
   h.stdcrud(w, r, sc)
 }

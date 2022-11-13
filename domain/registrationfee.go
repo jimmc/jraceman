@@ -16,3 +16,14 @@ type RegistrationFee struct {
   EventCount int
   AmountCharged int
 }
+
+// RegistrationFeeMeta provides funcions related to the RegistrationFee struct.
+type RegistrationFeeMeta struct {}
+
+func (m *RegistrationFeeMeta) EntityTypeName() string {
+  return "registrationfee"
+}
+
+func (m *RegistrationFeeMeta) NewEntity() interface{} {
+  return &RegistrationFee{}
+}

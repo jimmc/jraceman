@@ -7,15 +7,8 @@ import (
 )
 
 type optionCrud struct{
+  domain.OptionMeta
   h *handler
-}
-
-func (sc *optionCrud) EntityTypeName() string {
-  return "option"
-}
-
-func (sc *optionCrud) NewEntity() interface{} {
-  return &domain.Option{}
 }
 
 func (sc *optionCrud) Save(entity interface{}) (string, error) {
@@ -50,6 +43,6 @@ func (sc *optionCrud) UpdateByID(ID string, oldEntity, newEntity interface{}, di
 }
 
 func (h *handler) option(w http.ResponseWriter, r *http.Request) {
-  sc := &optionCrud{h}
+  sc := &optionCrud{domain.OptionMeta{}, h}
   h.stdcrud(w, r, sc)
 }

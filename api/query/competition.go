@@ -7,15 +7,8 @@ import (
 )
 
 type competitionQuery struct{
+  domain.CompetitionMeta
   h *handler
-}
-
-func (sc *competitionQuery) EntityTypeName() string {
-  return "competition"
-}
-
-func (sc *competitionQuery) NewEntity() interface{} {
-  return &domain.Competition{}
 }
 
 func (sc *competitionQuery) SummaryQuery(format string) string {
@@ -23,6 +16,6 @@ func (sc *competitionQuery) SummaryQuery(format string) string {
 }
 
 func (h *handler) competition(w http.ResponseWriter, r *http.Request) {
-  sq := &competitionQuery{h}
+  sq := &competitionQuery{domain.CompetitionMeta{}, h}
   h.stdquery(w, r, sq)
 }

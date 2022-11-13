@@ -18,3 +18,14 @@ type Complan struct {
   MaxEntries int
   PlanOrder int
 }
+
+// ComplanMeta provides funcions related to the Complan struct.
+type ComplanMeta struct {}
+
+func (m *ComplanMeta) EntityTypeName() string {
+  return "complan"
+}
+
+func (m *ComplanMeta) NewEntity() interface{} {
+  return &Complan{}
+}

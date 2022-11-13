@@ -17,3 +17,14 @@ type ScoringRule struct {
   Value int
   Points float32
 }
+
+// ScoringRuleMeta provides funcions related to the ScoringRule struct.
+type ScoringRuleMeta struct {}
+
+func (m *ScoringRuleMeta) EntityTypeName() string {
+  return "scoringrule"
+}
+
+func (m *ScoringRuleMeta) NewEntity() interface{} {
+  return &ScoringRule{}
+}

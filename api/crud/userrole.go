@@ -7,15 +7,8 @@ import (
 )
 
 type userroleCrud struct{
+  domain.UserRoleMeta
   h *handler
-}
-
-func (sc *userroleCrud) EntityTypeName() string {
-  return "userrole"
-}
-
-func (sc *userroleCrud) NewEntity() interface{} {
-  return &domain.UserRole{}
 }
 
 func (sc *userroleCrud) Save(entity interface{}) (string, error) {
@@ -50,6 +43,6 @@ func (sc *userroleCrud) UpdateByID(ID string, oldEntity, newEntity interface{}, 
 }
 
 func (h *handler) userrole(w http.ResponseWriter, r *http.Request) {
-  sc := &userroleCrud{h}
+  sc := &userroleCrud{domain.UserRoleMeta{}, h}
   h.stdcrud(w, r, sc)
 }

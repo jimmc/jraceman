@@ -7,15 +7,8 @@ import (
 )
 
 type raceQuery struct{
+  domain.RaceMeta
   h *handler
-}
-
-func (sc *raceQuery) EntityTypeName() string {
-  return "race"
-}
-
-func (sc *raceQuery) NewEntity() interface{} {
-  return &domain.Race{}
 }
 
 func (sc *raceQuery) SummaryQuery(format string) string {
@@ -23,6 +16,6 @@ func (sc *raceQuery) SummaryQuery(format string) string {
 }
 
 func (h *handler) race(w http.ResponseWriter, r *http.Request) {
-  sq := &raceQuery{h}
+  sq := &raceQuery{domain.RaceMeta{}, h}
   h.stdquery(w, r, sq)
 }

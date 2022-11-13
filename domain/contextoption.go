@@ -18,3 +18,14 @@ type ContextOption struct {
   WebContext *string
   MeetID *string
 }
+
+// ContextOptionMeta provides funcions related to the ContextOption struct.
+type ContextOptionMeta struct {}
+
+func (m *ContextOptionMeta) EntityTypeName() string {
+  return "contextoption"
+}
+
+func (m *ContextOptionMeta) NewEntity() interface{} {
+  return &ContextOption{}
+}

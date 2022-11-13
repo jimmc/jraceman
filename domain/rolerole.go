@@ -15,3 +15,14 @@ type RoleRole struct {
   RoleID string         // If a user has this role...
   HasRoleID string      //   then he also gets this role (recursively).
 }
+
+// RoleRoleMeta provides funcions related to the RoleRole struct.
+type RoleRoleMeta struct {}
+
+func (m *RoleRoleMeta) EntityTypeName() string {
+  return "rolerole"
+}
+
+func (m *RoleRoleMeta) NewEntity() interface{} {
+  return &RoleRole{}
+}

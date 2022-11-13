@@ -7,15 +7,8 @@ import (
 )
 
 type rolepermissionQuery struct{
+  domain.RolePermissionMeta
   h *handler
-}
-
-func (sc *rolepermissionQuery) EntityTypeName() string {
-  return "rolepermission"
-}
-
-func (sc *rolepermissionQuery) NewEntity() interface{} {
-  return &domain.RolePermission{}
 }
 
 func (sc *rolepermissionQuery) SummaryQuery(format string) string {
@@ -27,6 +20,6 @@ func (sc *rolepermissionQuery) SummaryQuery(format string) string {
 }
 
 func (h *handler) rolepermission(w http.ResponseWriter, r *http.Request) {
-  sq := &rolepermissionQuery{h}
+  sq := &rolepermissionQuery{domain.RolePermissionMeta{}, h}
   h.stdquery(w, r, sq)
 }

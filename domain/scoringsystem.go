@@ -14,3 +14,14 @@ type ScoringSystem struct {
   ID string
   Name string
 }
+
+// ScoringSystemMeta provides funcions related to the ScoringSystem struct.
+type ScoringSystemMeta struct {}
+
+func (m *ScoringSystemMeta) EntityTypeName() string {
+  return "scoringsystem"
+}
+
+func (m *ScoringSystemMeta) NewEntity() interface{} {
+  return &ScoringSystem{}
+}

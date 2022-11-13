@@ -16,3 +16,14 @@ type Role struct {
   Name string
   Description string
 }
+
+// RoleMeta provides funcions related to the Role struct.
+type RoleMeta struct {}
+
+func (m *RoleMeta) EntityTypeName() string {
+  return "role"
+}
+
+func (m *RoleMeta) NewEntity() interface{} {
+  return &Role{}
+}

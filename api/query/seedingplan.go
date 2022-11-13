@@ -7,15 +7,8 @@ import (
 )
 
 type seedingplanQuery struct{
+  domain.SeedingPlanMeta
   h *handler
-}
-
-func (sc *seedingplanQuery) EntityTypeName() string {
-  return "seedingplan"
-}
-
-func (sc *seedingplanQuery) NewEntity() interface{} {
-  return &domain.SeedingPlan{}
 }
 
 func (sc *seedingplanQuery) SummaryQuery(format string) string {
@@ -23,6 +16,6 @@ func (sc *seedingplanQuery) SummaryQuery(format string) string {
 }
 
 func (h *handler) seedingplan(w http.ResponseWriter, r *http.Request) {
-  sq := &seedingplanQuery{h}
+  sq := &seedingplanQuery{domain.SeedingPlanMeta{}, h}
   h.stdquery(w, r, sq)
 }

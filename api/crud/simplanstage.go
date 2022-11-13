@@ -7,15 +7,8 @@ import (
 )
 
 type simplanstageCrud struct{
+  domain.SimplanStageMeta
   h *handler
-}
-
-func (sc *simplanstageCrud) EntityTypeName() string {
-  return "simplanstage"
-}
-
-func (sc *simplanstageCrud) NewEntity() interface{} {
-  return &domain.SimplanStage{}
 }
 
 func (sc *simplanstageCrud) Save(entity interface{}) (string, error) {
@@ -50,6 +43,6 @@ func (sc *simplanstageCrud) UpdateByID(ID string, oldEntity, newEntity interface
 }
 
 func (h *handler) simplanstage(w http.ResponseWriter, r *http.Request) {
-  sc := &simplanstageCrud{h}
+  sc := &simplanstageCrud{domain.SimplanStageMeta{}, h}
   h.stdcrud(w, r, sc)
 }

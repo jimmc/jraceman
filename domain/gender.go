@@ -14,3 +14,14 @@ type Gender struct {
   ID string
   Name string
 }
+
+// GenderMeta provides funcions related to the Gender struct.
+type GenderMeta struct {}
+
+func (m *GenderMeta) EntityTypeName() string {
+  return "gender"
+}
+
+func (m *GenderMeta) NewEntity() interface{} {
+  return &Gender{}
+}

@@ -7,15 +7,8 @@ import (
 )
 
 type permissionQuery struct{
+  domain.PermissionMeta
   h *handler
-}
-
-func (sc *permissionQuery) EntityTypeName() string {
-  return "permission"
-}
-
-func (sc *permissionQuery) NewEntity() interface{} {
-  return &domain.Permission{}
 }
 
 func (sc *permissionQuery) SummaryQuery(format string) string {
@@ -23,6 +16,6 @@ func (sc *permissionQuery) SummaryQuery(format string) string {
 }
 
 func (h *handler) permission(w http.ResponseWriter, r *http.Request) {
-  sq := &permissionQuery{h}
+  sq := &permissionQuery{domain.PermissionMeta{}, h}
   h.stdquery(w, r, sq)
 }

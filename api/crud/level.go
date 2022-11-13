@@ -7,15 +7,8 @@ import (
 )
 
 type levelCrud struct{
+  domain.LevelMeta
   h *handler
-}
-
-func (sc *levelCrud) EntityTypeName() string {
-  return "level"
-}
-
-func (sc *levelCrud) NewEntity() interface{} {
-  return &domain.Level{}
 }
 
 func (sc *levelCrud) Save(entity interface{}) (string, error) {
@@ -50,6 +43,6 @@ func (sc *levelCrud) UpdateByID(ID string, oldEntity, newEntity interface{}, dif
 }
 
 func (h *handler) level(w http.ResponseWriter, r *http.Request) {
-  sc := &levelCrud{h}
+  sc := &levelCrud{domain.LevelMeta{}, h}
   h.stdcrud(w, r, sc)
 }

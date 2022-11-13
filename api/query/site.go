@@ -7,15 +7,8 @@ import (
 )
 
 type siteQuery struct{
+  domain.SiteMeta
   h *handler
-}
-
-func (sc *siteQuery) EntityTypeName() string {
-  return "site"
-}
-
-func (sc *siteQuery) NewEntity() interface{} {
-  return &domain.Site{}
 }
 
 func (sc *siteQuery) SummaryQuery(format string) string {
@@ -23,6 +16,6 @@ func (sc *siteQuery) SummaryQuery(format string) string {
 }
 
 func (h *handler) site(w http.ResponseWriter, r *http.Request) {
-  sq := &siteQuery{h}
+  sq := &siteQuery{domain.SiteMeta{}, h}
   h.stdquery(w, r, sq)
 }

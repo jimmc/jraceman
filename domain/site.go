@@ -22,3 +22,14 @@ type Site struct {
   Phone *string
   Fax *string
 }
+
+// SiteMeta provides funcions related to the Site struct.
+type SiteMeta struct {}
+
+func (m *SiteMeta) EntityTypeName() string {
+  return "site"
+}
+
+func (m *SiteMeta) NewEntity() interface{} {
+  return &Site{}
+}

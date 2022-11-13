@@ -7,15 +7,8 @@ import (
 )
 
 type areaQuery struct{
+  domain.AreaMeta
   h *handler
-}
-
-func (sc *areaQuery) EntityTypeName() string {
-  return "area"
-}
-
-func (sc *areaQuery) NewEntity() interface{} {
-  return &domain.Area{}
 }
 
 func (sc *areaQuery) SummaryQuery(format string) string {
@@ -23,6 +16,6 @@ func (sc *areaQuery) SummaryQuery(format string) string {
 }
 
 func (h *handler) area(w http.ResponseWriter, r *http.Request) {
-  sq := &areaQuery{h}
+  sq := &areaQuery{domain.AreaMeta{}, h}
   h.stdquery(w, r, sq)
 }

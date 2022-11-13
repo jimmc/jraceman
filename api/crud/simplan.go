@@ -7,15 +7,8 @@ import (
 )
 
 type simplanCrud struct{
+  domain.SimplanMeta
   h *handler
-}
-
-func (sc *simplanCrud) EntityTypeName() string {
-  return "simplan"
-}
-
-func (sc *simplanCrud) NewEntity() interface{} {
-  return &domain.Simplan{}
 }
 
 func (sc *simplanCrud) Save(entity interface{}) (string, error) {
@@ -50,6 +43,6 @@ func (sc *simplanCrud) UpdateByID(ID string, oldEntity, newEntity interface{}, d
 }
 
 func (h *handler) simplan(w http.ResponseWriter, r *http.Request) {
-  sc := &simplanCrud{h}
+  sc := &simplanCrud{domain.SimplanMeta{}, h}
   h.stdcrud(w, r, sc)
 }

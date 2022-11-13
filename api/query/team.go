@@ -7,15 +7,8 @@ import (
 )
 
 type teamQuery struct{
+  domain.TeamMeta
   h *handler
-}
-
-func (sc *teamQuery) EntityTypeName() string {
-  return "team"
-}
-
-func (sc *teamQuery) NewEntity() interface{} {
-  return &domain.Team{}
 }
 
 func (sc *teamQuery) SummaryQuery(format string) string {
@@ -23,6 +16,6 @@ func (sc *teamQuery) SummaryQuery(format string) string {
 }
 
 func (h *handler) team(w http.ResponseWriter, r *http.Request) {
-  sq := &teamQuery{h}
+  sq := &teamQuery{domain.TeamMeta{}, h}
   h.stdquery(w, r, sq)
 }

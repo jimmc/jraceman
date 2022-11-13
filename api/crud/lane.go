@@ -7,15 +7,8 @@ import (
 )
 
 type laneCrud struct{
+  domain.LaneMeta
   h *handler
-}
-
-func (sc *laneCrud) EntityTypeName() string {
-  return "lane"
-}
-
-func (sc *laneCrud) NewEntity() interface{} {
-  return &domain.Lane{}
 }
 
 func (sc *laneCrud) Save(entity interface{}) (string, error) {
@@ -50,6 +43,6 @@ func (sc *laneCrud) UpdateByID(ID string, oldEntity, newEntity interface{}, diff
 }
 
 func (h *handler) lane(w http.ResponseWriter, r *http.Request) {
-  sc := &laneCrud{h}
+  sc := &laneCrud{domain.LaneMeta{}, h}
   h.stdcrud(w, r, sc)
 }

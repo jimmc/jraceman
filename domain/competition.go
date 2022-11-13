@@ -18,3 +18,14 @@ type Competition struct {
   MaxAlternates *int
   ScheduledDuration *int         // duration in seconds
 }
+
+// CompetitionMeta provides funcions related to the Competition struct.
+type CompetitionMeta struct {}
+
+func (m *CompetitionMeta) EntityTypeName() string {
+  return "competition"
+}
+
+func (m *CompetitionMeta) NewEntity() interface{} {
+  return &Competition{}
+}

@@ -7,15 +7,8 @@ import (
 )
 
 type permissionCrud struct{
+  domain.PermissionMeta
   h *handler
-}
-
-func (sc *permissionCrud) EntityTypeName() string {
-  return "permission"
-}
-
-func (sc *permissionCrud) NewEntity() interface{} {
-  return &domain.Permission{}
 }
 
 func (sc *permissionCrud) Save(entity interface{}) (string, error) {
@@ -50,6 +43,6 @@ func (sc *permissionCrud) UpdateByID(ID string, oldEntity, newEntity interface{}
 }
 
 func (h *handler) permission(w http.ResponseWriter, r *http.Request) {
-  sc := &permissionCrud{h}
+  sc := &permissionCrud{domain.PermissionMeta{}, h}
   h.stdcrud(w, r, sc)
 }

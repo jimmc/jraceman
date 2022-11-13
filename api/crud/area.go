@@ -7,15 +7,8 @@ import (
 )
 
 type areaCrud struct{
+  domain.AreaMeta
   h *handler
-}
-
-func (sc *areaCrud) EntityTypeName() string {
-  return "area"
-}
-
-func (sc *areaCrud) NewEntity() interface{} {
-  return &domain.Area{}
 }
 
 func (sc *areaCrud) Save(entity interface{}) (string, error) {
@@ -50,6 +43,6 @@ func (sc *areaCrud) UpdateByID(ID string, oldEntity, newEntity interface{}, diff
 }
 
 func (h *handler) area(w http.ResponseWriter, r *http.Request) {
-  sc := &areaCrud{h}
+  sc := &areaCrud{domain.AreaMeta{}, h}
   h.stdcrud(w, r, sc)
 }

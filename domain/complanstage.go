@@ -18,3 +18,14 @@ type ComplanStage struct {
   SectionCount int
   FillOrder *string
 }
+
+// ComplanStageMeta provides funcions related to the ComplanStage struct.
+type ComplanStageMeta struct {}
+
+func (m *ComplanStageMeta) EntityTypeName() string {
+  return "complanstage"
+}
+
+func (m *ComplanStageMeta) NewEntity() interface{} {
+  return &ComplanStage{}
+}

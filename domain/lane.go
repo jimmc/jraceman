@@ -21,3 +21,14 @@ type Lane struct {
   ScorePlace *int
   Score *float32
 }
+
+// LaneMeta provides funcions related to the Lane struct.
+type LaneMeta struct {}
+
+func (m *LaneMeta) EntityTypeName() string {
+  return "lane"
+}
+
+func (m *LaneMeta) NewEntity() interface{} {
+  return &Lane{}
+}

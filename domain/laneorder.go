@@ -16,3 +16,14 @@ type LaneOrder struct {
   Lane int
   Ordering int          // Can't use "order", that's a reserved word in SQL
 }
+
+// LaneOrderMeta provides funcions related to the LaneOrder struct.
+type LaneOrderMeta struct {}
+
+func (m *LaneOrderMeta) EntityTypeName() string {
+  return "laneorder"
+}
+
+func (m *LaneOrderMeta) NewEntity() interface{} {
+  return &LaneOrder{}
+}

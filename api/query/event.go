@@ -7,15 +7,8 @@ import (
 )
 
 type eventQuery struct{
+  domain.EventMeta
   h *handler
-}
-
-func (sc *eventQuery) EntityTypeName() string {
-  return "event"
-}
-
-func (sc *eventQuery) NewEntity() interface{} {
-  return &domain.Event{}
 }
 
 func (sc *eventQuery) SummaryQuery(format string) string {
@@ -37,6 +30,6 @@ func (sc *eventQuery) SummaryQuery(format string) string {
 }
 
 func (h *handler) event(w http.ResponseWriter, r *http.Request) {
-  sq := &eventQuery{h}
+  sq := &eventQuery{domain.EventMeta{}, h}
   h.stdquery(w, r, sq)
 }

@@ -7,15 +7,8 @@ import (
 )
 
 type optionQuery struct{
+  domain.OptionMeta
   h *handler
-}
-
-func (sc *optionQuery) EntityTypeName() string {
-  return "option"
-}
-
-func (sc *optionQuery) NewEntity() interface{} {
-  return &domain.Option{}
 }
 
 func (sc *optionQuery) SummaryQuery(format string) string {
@@ -23,6 +16,6 @@ func (sc *optionQuery) SummaryQuery(format string) string {
 }
 
 func (h *handler) option(w http.ResponseWriter, r *http.Request) {
-  sq := &optionQuery{h}
+  sq := &optionQuery{domain.OptionMeta{}, h}
   h.stdquery(w, r, sq)
 }

@@ -7,15 +7,8 @@ import (
 )
 
 type userQuery struct{
+  domain.UserMeta
   h *handler
-}
-
-func (sc *userQuery) EntityTypeName() string {
-  return "user"
-}
-
-func (sc *userQuery) NewEntity() interface{} {
-  return &domain.User{}
 }
 
 func (sc *userQuery) SummaryQuery(format string) string {
@@ -23,6 +16,6 @@ func (sc *userQuery) SummaryQuery(format string) string {
 }
 
 func (h *handler) user(w http.ResponseWriter, r *http.Request) {
-  sq := &userQuery{h}
+  sq := &userQuery{domain.UserMeta{}, h}
   h.stdquery(w, r, sq)
 }

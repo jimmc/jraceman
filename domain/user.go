@@ -17,3 +17,14 @@ type User struct {
   Username string
   Saltword string
 }
+
+// UserMeta provides funcions related to the User struct.
+type UserMeta struct {}
+
+func (m *UserMeta) EntityTypeName() string {
+  return "user"
+}
+
+func (m *UserMeta) NewEntity() interface{} {
+  return &User{}
+}

@@ -22,3 +22,14 @@ type Registration struct {
   WaiverSigned bool
   PaymentNotes *string
 }
+
+// RegistrationMeta provides funcions related to the Registration struct.
+type RegistrationMeta struct {}
+
+func (m *RegistrationMeta) EntityTypeName() string {
+  return "registration"
+}
+
+func (m *RegistrationMeta) NewEntity() interface{} {
+  return &Registration{}
+}

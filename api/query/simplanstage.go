@@ -7,15 +7,8 @@ import (
 )
 
 type simplanstageQuery struct{
+  domain.SimplanStageMeta
   h *handler
-}
-
-func (sc *simplanstageQuery) EntityTypeName() string {
-  return "simplanstage"
-}
-
-func (sc *simplanstageQuery) NewEntity() interface{} {
-  return &domain.SimplanStage{}
 }
 
 func (sc *simplanstageQuery) SummaryQuery(format string) string {
@@ -23,6 +16,6 @@ func (sc *simplanstageQuery) SummaryQuery(format string) string {
 }
 
 func (h *handler) simplanstage(w http.ResponseWriter, r *http.Request) {
-  sq := &simplanstageQuery{h}
+  sq := &simplanstageQuery{domain.SimplanStageMeta{}, h}
   h.stdquery(w, r, sq)
 }

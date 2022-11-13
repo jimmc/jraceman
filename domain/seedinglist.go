@@ -16,3 +16,14 @@ type SeedingList struct {
   Rank int
   PersonID string
 }
+
+// SeedingListMeta provides funcions related to the SeedingList struct.
+type SeedingListMeta struct {}
+
+func (m *SeedingListMeta) EntityTypeName() string {
+  return "seedinglist"
+}
+
+func (m *SeedingListMeta) NewEntity() interface{} {
+  return &SeedingList{}
+}

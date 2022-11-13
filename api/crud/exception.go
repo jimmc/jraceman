@@ -7,15 +7,8 @@ import (
 )
 
 type exceptionCrud struct{
+  domain.ExceptionMeta
   h *handler
-}
-
-func (sc *exceptionCrud) EntityTypeName() string {
-  return "exception"
-}
-
-func (sc *exceptionCrud) NewEntity() interface{} {
-  return &domain.Exception{}
 }
 
 func (sc *exceptionCrud) Save(entity interface{}) (string, error) {
@@ -50,6 +43,6 @@ func (sc *exceptionCrud) UpdateByID(ID string, oldEntity, newEntity interface{},
 }
 
 func (h *handler) exception(w http.ResponseWriter, r *http.Request) {
-  sc := &exceptionCrud{h}
+  sc := &exceptionCrud{domain.ExceptionMeta{}, h}
   h.stdcrud(w, r, sc)
 }

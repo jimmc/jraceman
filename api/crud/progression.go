@@ -7,15 +7,8 @@ import (
 )
 
 type progressionCrud struct{
+  domain.ProgressionMeta
   h *handler
-}
-
-func (sc *progressionCrud) EntityTypeName() string {
-  return "progression"
-}
-
-func (sc *progressionCrud) NewEntity() interface{} {
-  return &domain.Progression{}
 }
 
 func (sc *progressionCrud) Save(entity interface{}) (string, error) {
@@ -50,6 +43,6 @@ func (sc *progressionCrud) UpdateByID(ID string, oldEntity, newEntity interface{
 }
 
 func (h *handler) progression(w http.ResponseWriter, r *http.Request) {
-  sc := &progressionCrud{h}
+  sc := &progressionCrud{domain.ProgressionMeta{}, h}
   h.stdcrud(w, r, sc)
 }

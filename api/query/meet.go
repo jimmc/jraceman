@@ -7,15 +7,8 @@ import (
 )
 
 type meetQuery struct{
+  domain.MeetMeta
   h *handler
-}
-
-func (sc *meetQuery) EntityTypeName() string {
-  return "meet"
-}
-
-func (sc *meetQuery) NewEntity() interface{} {
-  return &domain.Meet{}
 }
 
 func (sc *meetQuery) SummaryQuery(format string) string {
@@ -23,6 +16,6 @@ func (sc *meetQuery) SummaryQuery(format string) string {
 }
 
 func (h *handler) meet(w http.ResponseWriter, r *http.Request) {
-  sq := &meetQuery{h}
+  sq := &meetQuery{domain.MeetMeta{}, h}
   h.stdquery(w, r, sq)
 }

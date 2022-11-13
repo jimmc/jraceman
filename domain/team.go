@@ -26,3 +26,14 @@ type Team struct {
   Phone *string
   Fax *string
 }
+
+// TeamMeta provides funcions related to the Team struct.
+type TeamMeta struct {}
+
+func (m *TeamMeta) EntityTypeName() string {
+  return "team"
+}
+
+func (m *TeamMeta) NewEntity() interface{} {
+  return &Team{}
+}

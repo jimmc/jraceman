@@ -7,15 +7,8 @@ import (
 )
 
 type rolepermissionCrud struct{
+  domain.RolePermissionMeta
   h *handler
-}
-
-func (sc *rolepermissionCrud) EntityTypeName() string {
-  return "rolepermission"
-}
-
-func (sc *rolepermissionCrud) NewEntity() interface{} {
-  return &domain.RolePermission{}
 }
 
 func (sc *rolepermissionCrud) Save(entity interface{}) (string, error) {
@@ -50,6 +43,6 @@ func (sc *rolepermissionCrud) UpdateByID(ID string, oldEntity, newEntity interfa
 }
 
 func (h *handler) rolepermission(w http.ResponseWriter, r *http.Request) {
-  sc := &rolepermissionCrud{h}
+  sc := &rolepermissionCrud{domain.RolePermissionMeta{}, h}
   h.stdcrud(w, r, sc)
 }

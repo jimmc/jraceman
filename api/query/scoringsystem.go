@@ -7,15 +7,8 @@ import (
 )
 
 type scoringsystemQuery struct{
+  domain.ScoringSystemMeta
   h *handler
-}
-
-func (sc *scoringsystemQuery) EntityTypeName() string {
-  return "scoringsystem"
-}
-
-func (sc *scoringsystemQuery) NewEntity() interface{} {
-  return &domain.ScoringSystem{}
 }
 
 func (sc *scoringsystemQuery) SummaryQuery(format string) string {
@@ -23,6 +16,6 @@ func (sc *scoringsystemQuery) SummaryQuery(format string) string {
 }
 
 func (h *handler) scoringsystem(w http.ResponseWriter, r *http.Request) {
-  sq := &scoringsystemQuery{h}
+  sq := &scoringsystemQuery{domain.ScoringSystemMeta{}, h}
   h.stdquery(w, r, sq)
 }

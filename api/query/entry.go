@@ -7,15 +7,8 @@ import (
 )
 
 type entryQuery struct{
+  domain.EntryMeta
   h *handler
-}
-
-func (sc *entryQuery) EntityTypeName() string {
-  return "entry"
-}
-
-func (sc *entryQuery) NewEntity() interface{} {
-  return &domain.Entry{}
 }
 
 func (sc *entryQuery) SummaryQuery(format string) string {
@@ -23,6 +16,6 @@ func (sc *entryQuery) SummaryQuery(format string) string {
 }
 
 func (h *handler) entry(w http.ResponseWriter, r *http.Request) {
-  sq := &entryQuery{h}
+  sq := &entryQuery{domain.EntryMeta{}, h}
   h.stdquery(w, r, sq)
 }

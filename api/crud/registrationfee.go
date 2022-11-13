@@ -7,15 +7,8 @@ import (
 )
 
 type registrationfeeCrud struct{
+  domain.RegistrationFeeMeta
   h *handler
-}
-
-func (sc *registrationfeeCrud) EntityTypeName() string {
-  return "registrationfee"
-}
-
-func (sc *registrationfeeCrud) NewEntity() interface{} {
-  return &domain.RegistrationFee{}
 }
 
 func (sc *registrationfeeCrud) Save(entity interface{}) (string, error) {
@@ -50,6 +43,6 @@ func (sc *registrationfeeCrud) UpdateByID(ID string, oldEntity, newEntity interf
 }
 
 func (h *handler) registrationfee(w http.ResponseWriter, r *http.Request) {
-  sc := &registrationfeeCrud{h}
+  sc := &registrationfeeCrud{domain.RegistrationFeeMeta{}, h}
   h.stdcrud(w, r, sc)
 }

@@ -7,15 +7,8 @@ import (
 )
 
 type levelQuery struct{
+  domain.LevelMeta
   h *handler
-}
-
-func (sc *levelQuery) EntityTypeName() string {
-  return "level"
-}
-
-func (sc *levelQuery) NewEntity() interface{} {
-  return &domain.Level{}
 }
 
 func (sc *levelQuery) SummaryQuery(format string) string {
@@ -23,6 +16,6 @@ func (sc *levelQuery) SummaryQuery(format string) string {
 }
 
 func (h *handler) level(w http.ResponseWriter, r *http.Request) {
-  sq := &levelQuery{h}
+  sq := &levelQuery{domain.LevelMeta{}, h}
   h.stdquery(w, r, sq)
 }

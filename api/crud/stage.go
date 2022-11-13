@@ -7,15 +7,8 @@ import (
 )
 
 type stageCrud struct{
+  domain.StageMeta
   h *handler
-}
-
-func (sc *stageCrud) EntityTypeName() string {
-  return "stage"
-}
-
-func (sc *stageCrud) NewEntity() interface{} {
-  return &domain.Stage{}
 }
 
 func (sc *stageCrud) Save(entity interface{}) (string, error) {
@@ -50,6 +43,6 @@ func (sc *stageCrud) UpdateByID(ID string, oldEntity, newEntity interface{}, dif
 }
 
 func (h *handler) stage(w http.ResponseWriter, r *http.Request) {
-  sc := &stageCrud{h}
+  sc := &stageCrud{domain.StageMeta{}, h}
   h.stdcrud(w, r, sc)
 }

@@ -17,3 +17,14 @@ type SimplanStage struct {
   SectionCount int
   FillOrder *string
 }
+
+// SimplanStageMeta provides funcions related to the SimplanStage struct.
+type SimplanStageMeta struct {}
+
+func (m *SimplanStageMeta) EntityTypeName() string {
+  return "simplanstage"
+}
+
+func (m *SimplanStageMeta) NewEntity() interface{} {
+  return &SimplanStage{}
+}

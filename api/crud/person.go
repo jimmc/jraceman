@@ -7,15 +7,8 @@ import (
 )
 
 type personCrud struct{
+  domain.PersonMeta
   h *handler
-}
-
-func (sc *personCrud) EntityTypeName() string {
-  return "person"
-}
-
-func (sc *personCrud) NewEntity() interface{} {
-  return &domain.Person{}
 }
 
 func (sc *personCrud) Save(entity interface{}) (string, error) {
@@ -50,6 +43,6 @@ func (sc *personCrud) UpdateByID(ID string, oldEntity, newEntity interface{}, di
 }
 
 func (h *handler) person(w http.ResponseWriter, r *http.Request) {
-  sc := &personCrud{h}
+  sc := &personCrud{domain.PersonMeta{}, h}
   h.stdcrud(w, r, sc)
 }

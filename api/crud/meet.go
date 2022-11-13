@@ -7,15 +7,8 @@ import (
 )
 
 type meetCrud struct{
+  domain.MeetMeta
   h *handler
-}
-
-func (sc *meetCrud) EntityTypeName() string {
-  return "meet"
-}
-
-func (sc *meetCrud) NewEntity() interface{} {
-  return &domain.Meet{}
 }
 
 func (sc *meetCrud) Save(entity interface{}) (string, error) {
@@ -50,6 +43,6 @@ func (sc *meetCrud) UpdateByID(ID string, oldEntity, newEntity interface{}, diff
 }
 
 func (h *handler) meet(w http.ResponseWriter, r *http.Request) {
-  sc := &meetCrud{h}
+  sc := &meetCrud{domain.MeetMeta{}, h}
   h.stdcrud(w, r, sc)
 }

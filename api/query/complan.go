@@ -7,15 +7,8 @@ import (
 )
 
 type complanQuery struct{
+  domain.ComplanMeta
   h *handler
-}
-
-func (sc *complanQuery) EntityTypeName() string {
-  return "complan"
-}
-
-func (sc *complanQuery) NewEntity() interface{} {
-  return &domain.Complan{}
 }
 
 func (sc *complanQuery) SummaryQuery(format string) string {
@@ -23,6 +16,6 @@ func (sc *complanQuery) SummaryQuery(format string) string {
 }
 
 func (h *handler) complan(w http.ResponseWriter, r *http.Request) {
-  sq := &complanQuery{h}
+  sq := &complanQuery{domain.ComplanMeta{}, h}
   h.stdquery(w, r, sq)
 }

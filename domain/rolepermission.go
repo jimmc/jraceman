@@ -15,3 +15,14 @@ type RolePermission struct {
   RoleID string
   PermissionID string
 }
+
+// RolePermissionMeta provides funcions related to the RolePermission struct.
+type RolePermissionMeta struct {}
+
+func (m *RolePermissionMeta) EntityTypeName() string {
+  return "rolepermission"
+}
+
+func (m *RolePermissionMeta) NewEntity() interface{} {
+  return &RolePermission{}
+}

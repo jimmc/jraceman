@@ -16,3 +16,14 @@ type Stage struct {
   Number int
   IsFinal bool
 }
+
+// StageMeta provides funcions related to the Stage struct.
+type StageMeta struct {}
+
+func (m *StageMeta) EntityTypeName() string {
+  return "stage"
+}
+
+func (m *StageMeta) NewEntity() interface{} {
+  return &Stage{}
+}

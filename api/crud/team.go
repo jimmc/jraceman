@@ -7,15 +7,8 @@ import (
 )
 
 type teamCrud struct{
+  domain.TeamMeta
   h *handler
-}
-
-func (sc *teamCrud) EntityTypeName() string {
-  return "team"
-}
-
-func (sc *teamCrud) NewEntity() interface{} {
-  return &domain.Team{}
 }
 
 func (sc *teamCrud) Save(entity interface{}) (string, error) {
@@ -50,6 +43,6 @@ func (sc *teamCrud) UpdateByID(ID string, oldEntity, newEntity interface{}, diff
 }
 
 func (h *handler) team(w http.ResponseWriter, r *http.Request) {
-  sc := &teamCrud{h}
+  sc := &teamCrud{domain.TeamMeta{}, h}
   h.stdcrud(w, r, sc)
 }

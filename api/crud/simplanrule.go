@@ -7,15 +7,8 @@ import (
 )
 
 type simplanruleCrud struct{
+  domain.SimplanRuleMeta
   h *handler
-}
-
-func (sc *simplanruleCrud) EntityTypeName() string {
-  return "simplanrule"
-}
-
-func (sc *simplanruleCrud) NewEntity() interface{} {
-  return &domain.SimplanRule{}
 }
 
 func (sc *simplanruleCrud) Save(entity interface{}) (string, error) {
@@ -50,6 +43,6 @@ func (sc *simplanruleCrud) UpdateByID(ID string, oldEntity, newEntity interface{
 }
 
 func (h *handler) simplanrule(w http.ResponseWriter, r *http.Request) {
-  sc := &simplanruleCrud{h}
+  sc := &simplanruleCrud{domain.SimplanRuleMeta{}, h}
   h.stdcrud(w, r, sc)
 }

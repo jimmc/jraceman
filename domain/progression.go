@@ -16,3 +16,14 @@ type Progression struct {
   Class string
   Parameters *string
 }
+
+// ProgressionMeta provides funcions related to the Progression struct.
+type ProgressionMeta struct {}
+
+func (m *ProgressionMeta) EntityTypeName() string {
+  return "progression"
+}
+
+func (m *ProgressionMeta) NewEntity() interface{} {
+  return &Progression{}
+}

@@ -7,15 +7,8 @@ import (
 )
 
 type progressionQuery struct{
+  domain.ProgressionMeta
   h *handler
-}
-
-func (sc *progressionQuery) EntityTypeName() string {
-  return "progression"
-}
-
-func (sc *progressionQuery) NewEntity() interface{} {
-  return &domain.Progression{}
 }
 
 func (sc *progressionQuery) SummaryQuery(format string) string {
@@ -23,6 +16,6 @@ func (sc *progressionQuery) SummaryQuery(format string) string {
 }
 
 func (h *handler) progression(w http.ResponseWriter, r *http.Request) {
-  sq := &progressionQuery{h}
+  sq := &progressionQuery{domain.ProgressionMeta{}, h}
   h.stdquery(w, r, sq)
 }

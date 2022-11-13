@@ -17,3 +17,14 @@ type Simplan struct {
   MinEntries int
   MaxEntries int
 }
+
+// SimplanMeta provides funcions related to the Simplan struct.
+type SimplanMeta struct {}
+
+func (m *SimplanMeta) EntityTypeName() string {
+  return "simplan"
+}
+
+func (m *SimplanMeta) NewEntity() interface{} {
+  return &Simplan{}
+}

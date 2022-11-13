@@ -7,15 +7,8 @@ import (
 )
 
 type genderQuery struct{
+  domain.GenderMeta
   h *handler
-}
-
-func (sc *genderQuery) EntityTypeName() string {
-  return "gender"
-}
-
-func (sc *genderQuery) NewEntity() interface{} {
-  return &domain.Gender{}
 }
 
 func (sc *genderQuery) SummaryQuery(format string) string {
@@ -23,6 +16,6 @@ func (sc *genderQuery) SummaryQuery(format string) string {
 }
 
 func (h *handler) gender(w http.ResponseWriter, r *http.Request) {
-  sq := &genderQuery{h}
+  sq := &genderQuery{domain.GenderMeta{}, h}
   h.stdquery(w, r, sq)
 }

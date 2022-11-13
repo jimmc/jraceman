@@ -7,15 +7,8 @@ import (
 )
 
 type eventCrud struct{
+  domain.EventMeta
   h *handler
-}
-
-func (sc *eventCrud) EntityTypeName() string {
-  return "event"
-}
-
-func (sc *eventCrud) NewEntity() interface{} {
-  return &domain.Event{}
 }
 
 func (sc *eventCrud) Save(entity interface{}) (string, error) {
@@ -50,6 +43,6 @@ func (sc *eventCrud) UpdateByID(ID string, oldEntity, newEntity interface{}, dif
 }
 
 func (h *handler) event(w http.ResponseWriter, r *http.Request) {
-  sc := &eventCrud{h}
+  sc := &eventCrud{domain.EventMeta{}, h}
   h.stdcrud(w, r, sc)
 }

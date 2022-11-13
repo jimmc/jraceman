@@ -15,3 +15,14 @@ type SeedingPlan struct {
   Name string
   SeedingOrder string
 }
+
+// SeedingPlanMeta provides funcions related to the SeedingPlan struct.
+type SeedingPlanMeta struct {}
+
+func (m *SeedingPlanMeta) EntityTypeName() string {
+  return "seedingplan"
+}
+
+func (m *SeedingPlanMeta) NewEntity() interface{} {
+  return &SeedingPlan{}
+}

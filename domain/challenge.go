@@ -14,3 +14,14 @@ type Challenge struct {
   ID string
   Name string
 }
+
+// ChallengeMeta provides funcions related to the Challenge struct.
+type ChallengeMeta struct {}
+
+func (m *ChallengeMeta) EntityTypeName() string {
+  return "challenge"
+}
+
+func (m *ChallengeMeta) NewEntity() interface{} {
+  return &Challenge{}
+}

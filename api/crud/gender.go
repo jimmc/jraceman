@@ -7,15 +7,8 @@ import (
 )
 
 type genderCrud struct{
+  domain.GenderMeta
   h *handler
-}
-
-func (sc *genderCrud) EntityTypeName() string {
-  return "gender"
-}
-
-func (sc *genderCrud) NewEntity() interface{} {
-  return &domain.Gender{}
 }
 
 func (sc *genderCrud) Save(entity interface{}) (string, error) {
@@ -50,6 +43,6 @@ func (sc *genderCrud) UpdateByID(ID string, oldEntity, newEntity interface{}, di
 }
 
 func (h *handler) gender(w http.ResponseWriter, r *http.Request) {
-  sc := &genderCrud{h}
+  sc := &genderCrud{domain.GenderMeta{}, h}
   h.stdcrud(w, r, sc)
 }

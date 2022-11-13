@@ -24,3 +24,14 @@ type Race struct {
   Scratched bool
   RaceComment *string
 }
+
+// RaceMeta provides funcions related to the Race struct.
+type RaceMeta struct {}
+
+func (m *RaceMeta) EntityTypeName() string {
+  return "race"
+}
+
+func (m *RaceMeta) NewEntity() interface{} {
+  return &Race{}
+}
