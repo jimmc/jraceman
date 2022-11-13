@@ -1,11 +1,14 @@
 package test
 
 import (
+  "context"
   "fmt"
   "net/http"
 
   "github.com/jimmc/jraceman/dbrepo"
 
+  authusers "github.com/jimmc/auth/users"
+  authperms "github.com/jimmc/auth/permissions"
   goldenhttpdb "github.com/jimmc/golden/httpdb"
 )
 
@@ -66,4 +69,14 @@ func RunOneWith(r *Tester, basename string, callback func() (*http.Request, erro
     return err
   }
   return r.Close()
+}
+
+// AddTestUser adds a test user to the request, with the specified permissions.
+func AddTestUser(r *http.Request, permstr string) *http.Request {
+  username := "testuser"
+  saltword := "not-used"
+  perms := authperms.FromString(permstr) // permstr is a space-separated list of permission.
+  user := authusers.NewUser(username, saltword, perms)
+  cwv := context.WithValue(r.Context(), "AuthUser", user)
+  return r.WithContext(cwv)
 }

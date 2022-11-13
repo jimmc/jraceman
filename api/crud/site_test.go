@@ -1,15 +1,12 @@
 package crud_test
 
 import (
-  "context"
   "net/http"
   "os"
   "testing"
 
   apitest "github.com/jimmc/jraceman/api/test"
 
-  authusers "github.com/jimmc/auth/users"
-  authperms "github.com/jimmc/auth/permissions"
   goldenbase "github.com/jimmc/golden/base"
   goldenhttp "github.com/jimmc/golden/http"
 )
@@ -22,7 +19,7 @@ func TestList(t *testing.T) {
     if err != nil {
       return nil, err
     }
-    r = addTestUser(r, "view_venue")
+    r = apitest.AddTestUser(r, "view_venue")
     return r, nil
   }), "RunCrudTest")
 }
@@ -36,7 +33,7 @@ func TestListLimit(t *testing.T) {
     if err != nil {
       return nil, err
     }
-    r = addTestUser(r, "view_venue")
+    r = apitest.AddTestUser(r, "view_venue")
     return r, nil
   }), "RunTestWith")
 
@@ -45,7 +42,7 @@ func TestListLimit(t *testing.T) {
     if err != nil {
       return nil, err
     }
-    r = addTestUser(r, "view_venue")
+    r = apitest.AddTestUser(r, "view_venue")
     return r, nil
   }), "RunTestWith")
 
@@ -58,7 +55,7 @@ func TestGet(t *testing.T) {
     if err != nil {
       return nil, err
     }
-    r = addTestUser(r, "view_venue")
+    r = apitest.AddTestUser(r, "view_venue")
     return r, nil
   }), "RunCrudTest")
 }
@@ -78,7 +75,7 @@ func TestCreateWithID(t *testing.T) {
     if err != nil {
       return nil, err
     }
-    r = addTestUser(r, "edit_venue")
+    r = apitest.AddTestUser(r, "edit_venue")
     return r, nil
   }), "RunTestWith")
 
@@ -87,18 +84,9 @@ func TestCreateWithID(t *testing.T) {
     if err != nil {
       return nil, err
     }
-    r = addTestUser(r, "view_venue")
+    r = apitest.AddTestUser(r, "view_venue")
     return r, nil
   }), "RunTestWith")
 
   r.Close()
-}
-
-func addTestUser(r *http.Request, permstr string) *http.Request {
-  username := "testuser"
-  saltword := "not-used"
-  perms := authperms.FromString(permstr) // permstr is a space-separated list of permission.
-  user := authusers.NewUser(username, saltword, perms)
-  cwv := context.WithValue(r.Context(), "AuthUser", user)
-  return r.WithContext(cwv)
 }
