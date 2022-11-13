@@ -1,0 +1,23 @@
+{
+ "EntryCount": 0,
+ "GroupCount": 0,
+ "GroupSize": 0,
+ "Summary": "K1 500m Bantam Women [M1.EV4]",
+ "RaceCounts": [
+  {
+   "Count": 2,
+   "Round": 1,
+   "StageName": "Heat"
+  },
+  {
+   "Count": 2,
+   "Round": 2,
+   "StageName": "Semifinal"
+  },
+  {
+   "Count": 1,
+   "Round": 3,
+   "StageName": "Final"
+  }
+ ]
+}
