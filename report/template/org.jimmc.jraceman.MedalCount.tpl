@@ -1,6 +1,7 @@
 {{/*GT: {
   "display": "Medal Count",
   "description": "The number of medals received by each team",
+  "permission": "view_regatta",
   "where": [ "meet", "event", "team", "person" ],
   "orderby": [
     {

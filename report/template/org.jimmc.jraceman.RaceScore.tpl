@@ -1,6 +1,7 @@
 {{/*GT: {
   "display": "Race Results with Score",
   "description": "Results for a Race, sorted by finish order and including score points",
+  "permission": "view_regatta",
   "where": [ "event", "race" ],
   "orderby": [
     {

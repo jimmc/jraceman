@@ -15,7 +15,12 @@ var testRoots = []string{"testdata", "../../report/template"}
 
 func TestGet(t *testing.T) {
   request := func() (*http.Request, error) {
-    return http.NewRequest("GET", "/api/report/generate/?name=site-report&data=S2", nil)
+    req, err := http.NewRequest("GET", "/api/report/generate/?name=site-report&data=S2", nil)
+    if err != nil {
+      return nil, err
+    }
+    req = apitest.AddTestUser(req, "view_regatta")
+    return req, nil
   }
   goldenbase.FatalIfError(t, apitest.RunReportTest("site-report", testRoots, request), "RunReportTest")
 }
@@ -32,6 +37,7 @@ func TestPost(t *testing.T) {
     if err != nil {
       return nil, err
     }
+    req = apitest.AddTestUser(req, "view_regatta")
     req.Header.Set("Content-Type", "application/json")
     return req, nil
   }
@@ -40,7 +46,12 @@ func TestPost(t *testing.T) {
 
 func TestOrderbyName(t *testing.T) {
   request := func() (*http.Request, error) {
-    return http.NewRequest("GET", "/api/report/generate/?name=site-all-report&orderby=name", nil)
+    req, err := http.NewRequest("GET", "/api/report/generate/?name=site-all-report&orderby=name", nil)
+    if err != nil {
+      return nil, err
+    }
+    req = apitest.AddTestUser(req, "view_regatta")
+    return req, nil
   }
   r := apitest.NewReportTester(testRoots)
   r.SetupBaseName = "site-report"
@@ -51,7 +62,11 @@ func TestOrderbyName(t *testing.T) {
 func TestOrderbyNone(t *testing.T) {
   // The default sort for site-all-report is name, so leaving it off is like specifying "name".
   request := func() (*http.Request, error) {
-    return http.NewRequest("GET", "/api/report/generate/?name=site-all-report", nil)
+    req, err := http.NewRequest("GET", "/api/report/generate/?name=site-all-report", nil)
+    if err != nil {
+      return nil, err
+    }
+    req = apitest.AddTestUser(req, "view_regatta")
   }
   r := apitest.NewReportTester(testRoots)
   r.SetupBaseName = "site-report"
@@ -61,7 +76,12 @@ func TestOrderbyNone(t *testing.T) {
 
 func TestOrderbyCity(t *testing.T) {
   request := func() (*http.Request, error) {
-    return http.NewRequest("GET", "/api/report/generate/?name=site-all-report&orderby=city", nil)
+    req, err := http.NewRequest("GET", "/api/report/generate/?name=site-all-report&orderby=city", nil)
+    if err != nil {
+      return nil, err
+    }
+    req = apitest.AddTestUser(req, "view_regatta")
+    return req, nil
   }
   r := apitest.NewReportTester(testRoots)
   r.SetupBaseName = "site-report"
@@ -70,7 +90,12 @@ func TestOrderbyCity(t *testing.T) {
 
 func TestOrderbyInvalid(t *testing.T) {
   request := func() (*http.Request, error) {
-    return http.NewRequest("GET", "/api/report/generate/?name=site-all-report&orderby=invalid", nil)
+    req, err := http.NewRequest("GET", "/api/report/generate/?name=site-all-report&orderby=invalid", nil)
+    if err != nil {
+      return nil, err
+    }
+    req = apitest.AddTestUser(req, "view_regatta")
+    return req, nil
   }
   r := apitest.NewReportTester(testRoots)
   r.SetupBaseName = "site-report"
@@ -100,6 +125,7 @@ func TestWherePost(t *testing.T) {
     if err != nil {
       return nil, err
     }
+    req = apitest.AddTestUser(req, "view_regatta")
     req.Header.Set("Content-Type", "application/json")
     return req, nil
   }

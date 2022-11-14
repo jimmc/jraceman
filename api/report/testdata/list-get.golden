@@ -16,6 +16,13 @@
     "Where": []
   },
   {
+    "Name": "site-report",
+    "Display": "SiteReport",
+    "Description": "Test file.",
+    "OrderBy": [],
+    "Where": []
+  },
+  {
     "Name": "org.jimmc.jraceman.Entries",
     "Display": "Entries",
     "Description": "Entries ordered as selected.",

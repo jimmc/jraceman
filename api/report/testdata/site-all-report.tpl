@@ -1,6 +1,7 @@
 {{/*GT: {
   "display": "Sites",
   "description": "List all sites",
+  "permission": "view_regatta",
   "orderby": [
     {
       "name": "name",

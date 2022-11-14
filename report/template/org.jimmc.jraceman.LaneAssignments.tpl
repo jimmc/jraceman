@@ -1,6 +1,7 @@
 {{/*GT: {
   "display": "Lane Assignments",
   "description": "Lane Assignments.",
+  "permission": "view_regatta",
   "where": [ "event", "race", "team", "person", "event_race_entry_scratched" ],
   "orderby": [
     {

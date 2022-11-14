@@ -11,7 +11,12 @@ import (
 
 func TestListGet(t *testing.T) {
   request := func() (*http.Request, error) {
-    return http.NewRequest("GET", "/api/report/", nil)
+    req, err := http.NewRequest("GET", "/api/report/", nil)
+    if err != nil {
+      return nil, err
+    }
+    req = apitest.AddTestUser(req, "view_regatta")
+    return req, nil
   }
   reportRoots := []string{"testdata", "../../report/template"}
   goldenbase.FatalIfError(t, apitest.RunReportTest("list-get", reportRoots, request), "RunReportTest")

@@ -1,6 +1,7 @@
 {{/*GT: {
   "display": "Entries",
   "description": "Entries ordered as selected.",
+  "permission": "view_regatta",
   "where": [ "event", "team", "person" ],
   "orderby": [
     {

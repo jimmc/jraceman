@@ -1,6 +1,7 @@
 {{/*GT: {
   "display": "Race Lanes",
   "description": "Lane assignments for a Race",
+  "permission": "view_regatta",
   "where": [ "event", "race" ],
   "orderby": [
     {

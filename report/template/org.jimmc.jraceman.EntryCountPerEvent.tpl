@@ -1,6 +1,7 @@
 {{/*GT: {
   "display": "Entry Count Per Event",
   "description": "The number of Entries and Teams entered for each Event.",
+  "permission": "view_regatta",
   "where": [ "event", "meet", "person", "team" ],
   "orderby": [
     {

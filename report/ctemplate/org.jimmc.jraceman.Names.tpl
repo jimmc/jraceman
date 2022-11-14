@@ -1,6 +1,7 @@
 {{/*GT: {
   "display": "Names",
   "description": "Problems with Person names",
+  "permission": "view_roster",
   "where": [ "team", "person" ],
   "orderby": [
     {

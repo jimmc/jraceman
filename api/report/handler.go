@@ -23,11 +23,13 @@ type Config struct {
 func NewHandler(c *Config) http.Handler {
   h := handler{config: c}
   mux := http.NewServeMux()
+  // Permissions are checked in h.list and h.generate.
   mux.HandleFunc(h.apiPrefix("generate"), h.generate)
   mux.HandleFunc(h.config.Prefix, h.root)
   return mux
 }
 
+// root calls either h.list or h.generateByName, which both check permissions.
 func (h *handler) root(w http.ResponseWriter, r *http.Request) {
   p := strings.TrimPrefix(r.URL.Path, h.config.Prefix)
   if p=="" {

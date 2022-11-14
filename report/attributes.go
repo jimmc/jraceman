@@ -11,6 +11,7 @@ type ReportAttributes struct {
   Name string
   Display string
   Description string
+  Permission string
   Where []string
   OrderBy []AttributesOrderByItem
 }
@@ -56,8 +57,8 @@ func ReadTemplateAttrs(templateDir string) ([]*ReportAttributes, error) {
   return reportAttrs, err
 }
 
-// getAttributes loads our attributes from the template in one of the given report roots.
-func getAttributes(templateName string, reportRoots []string) (*ReportAttributes, error) {
+// GetAttributes loads our attributes from the template in one of the given report roots.
+func GetAttributes(templateName string, reportRoots []string) (*ReportAttributes, error) {
   attrs := &ReportAttributes{}
   if err := gen.FindAndReadAttributesInto(templateName, reportRoots, attrs); err != nil {
     return nil, fmt.Errorf("reading template attributes: %v", err)

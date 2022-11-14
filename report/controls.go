@@ -3,6 +3,8 @@ package report
 import (
   "github.com/jimmc/jraceman/dbrepo"
 
+  "github.com/jimmc/auth/permissions"
+
   "github.com/golang/glog"
 )
 
@@ -13,12 +15,28 @@ type ReportControls struct {
   Description string
   OrderBy []ControlsOrderByItem
   Where []ControlsWhereItem
+  permission string
+}
+
+/* ClientPermittedReports returns the list of reports and their attributes
+ * for the reports that the client has permission to see.
+ */
+func ClientPermittedReports(dbrepos *dbrepo.Repos, reportRoots []string, perms *permissions.Permissions) ([]*ReportControls, error) {
+  visibleReports, err := ClientVisibleReports(dbrepos, reportRoots)
+  if err != nil {
+    return nil, err
+  }
+  permittedReports := make([]*ReportControls, 0)
+  for _, r := range visibleReports {
+    if r.permission != "" && perms.HasPermission(permissions.Permission(r.permission)) {
+      permittedReports = append(permittedReports, r)
+    }
+  }
+  return permittedReports, nil
 }
 
 /* ClientVisibleReports returns the list of reports and their attributes
  * that should be visible to a client.
- * Once we have user ids and authorizations, this function should accept
- * a user id and return only data that should be visible to that user.
  */
 func ClientVisibleReports(dbrepos *dbrepo.Repos, reportRoots []string) ([]*ReportControls, error) {
   attrs, err := ReadAllTemplateAttrs(reportRoots)
@@ -61,6 +79,7 @@ func attrsToControls(dbrepos *dbrepo.Repos, tplAttrs *ReportAttributes) *ReportC
     Description: tplAttrs.Description,
     OrderBy: orderByItems,
     Where: whereItems,
+    permission: tplAttrs.Permission,
   }
   return report
 }

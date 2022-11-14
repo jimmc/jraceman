@@ -29,7 +29,7 @@ func GenerateResults(db dbsource.DBQuery, reportRoots []string, templateName str
   dataSource := dbsource.New(db)
   w := &strings.Builder{}
 
-  attrs, err := getAttributes(templateName, reportRoots)
+  attrs, err := GetAttributes(templateName, reportRoots)
   if err != nil {
     return nil, err
   }

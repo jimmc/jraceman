@@ -1,6 +1,7 @@
 {{/*GT: {
   "display": "Personal Results",
   "description": "Personal results for each person collected on one page per person, sorted by team and last name",
+  "permission": "view_regatta",
   "where": [ "meet", "team", "person" ],
   "orderby": [
     {

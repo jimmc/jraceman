@@ -9,13 +9,22 @@ import (
   "github.com/jimmc/jraceman/dbrepo"
   reportmain "github.com/jimmc/jraceman/report"
 
+  authlib "github.com/jimmc/auth/auth"
+  "github.com/jimmc/auth/permissions"
+
   "github.com/golang/glog"
 )
 
+// generate calls generateByName with no name, which gets the name from the query parameters.
 func (h *handler) generate(w http.ResponseWriter, r *http.Request) {
   h.generateByName(w, r, "")
 }
 
+// generateByName generates the named report. If no name is passed in, it gets
+// the name from the query parameters. It filters the allowed reports by the
+// current user's permissions. Attempting to execute a report for which the
+// user does not have permission behaves the same as asking to execute a
+// non-existant report.
 func (h *handler) generateByName(w http.ResponseWriter, r *http.Request, rName string) {
   switch r.Method {
     case http.MethodGet:
@@ -65,6 +74,26 @@ func (h *handler) generateReportForHTTP(w http.ResponseWriter, r *http.Request, 
   }
   db := dbrepos.DB()
   glog.Infof("Generating report: %v", name)
+  reportAttributes, err := reportmain.GetAttributes(name, h.config.ReportRoots)
+  if err != nil {
+    http.Error(w, "Not authorized", http.StatusUnauthorized)
+    return
+  }
+  glog.V(4).Infof("Attributes for report %q: %+v", name, reportAttributes)
+  username := authlib.CurrentUsername(r)
+  perms := authlib.CurrentPermissions(r)
+  if reportAttributes.Permission=="" {
+    glog.V(3).Infof("Report %q has no permission specified", name)
+    http.Error(w, "Not authorized", http.StatusUnauthorized)
+    return
+  }
+  if !perms.HasPermission(permissions.Permission(reportAttributes.Permission)) {
+    glog.V(3).Infof("User %q does not have permission %q required for Report %q",
+        username, reportAttributes.Permission, reportAttributes.Name)
+    http.Error(w, "Not authorized", http.StatusUnauthorized)
+    return
+  }
+
   result, err := reportmain.GenerateResults(db, h.config.ReportRoots, name, options)
   if err != nil {
     http.Error(w, fmt.Sprintf("Error generating report: %v", err), http.StatusBadRequest)

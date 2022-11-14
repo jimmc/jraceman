@@ -1,6 +1,7 @@
 {{/*GT: {
   "display": "Genders",
   "description": "Gender mismatches between Person and Event",
+  "permission": "view_regatta",
   "where": [ "meet", "event", "team", "person" ],
   "orderby": [
     {

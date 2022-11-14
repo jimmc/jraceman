@@ -1,4 +1,5 @@
 {{/*GT: {
+  "permission": "view_regatta",
   "where": [ "site_id" ]
 } */ -}}
 This is the test sites report.
