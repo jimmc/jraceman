@@ -4,13 +4,22 @@ import (
   "net/http"
 
   "github.com/jimmc/jraceman/api/debug"
+  "github.com/jimmc/jraceman/auth"
+  "github.com/jimmc/jraceman/dbrepo"
 )
 
 // CreateDebugHandler create an http handler for our debug calls.
 func CreateDebugHandler(r *Tester) http.Handler {
+  dbr, err := dbrepo.Open("sqlite3::memory:")
+  if err != nil {
+    panic("Failed to open in-memory database")
+  }
+  emptyDb := dbr.DB()
+  authHandler := auth.NewHandler(emptyDb)
   config := &debug.Config{
     Prefix: "/api/debug/",
     DomainRepos: r.repos,
+    AuthHandler: authHandler,
   }
   return debug.NewHandler(config)
 }

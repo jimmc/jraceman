@@ -56,6 +56,7 @@ func NewHandler(c *Config) http.Handler {
   dbConfig := &apidb.Config{
     Prefix: dbPrefix,
     DomainRepos: c.DomainRepos,
+    AuthHandler: c.AuthHandler,
   }
   dbHandler := apidb.NewHandler(dbConfig)
   mux.Handle(dbPrefix, dbHandler)
@@ -64,6 +65,7 @@ func NewHandler(c *Config) http.Handler {
   debugConfig := &apidebug.Config{
     Prefix: debugPrefix,
     DomainRepos: c.DomainRepos,
+    AuthHandler: c.AuthHandler,
   }
   debugHandler := apidebug.NewHandler(debugConfig)
   mux.Handle(debugPrefix, debugHandler)
