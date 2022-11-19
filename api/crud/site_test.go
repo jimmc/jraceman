@@ -24,6 +24,20 @@ func TestList(t *testing.T) {
   }), "RunCrudTest")
 }
 
+// The same test as TestList, but easier to understand.
+func TestListAlt(t *testing.T) {
+  repos, cleanup := apitest.RequireDatabaseWithSqlFile(t, "site-list") // Calls t.Fatal on error.
+  defer cleanup()
+  req, err := http.NewRequest("GET", "/api/crud/site/", nil)
+  if err != nil {
+    t.Fatalf("http.NewRequest failed: %v", err)
+  }
+  req = apitest.AddTestUser(req, "view_venue")
+  rr := apitest.ServeCrudRequest(req, repos)
+  apitest.RequireHttpSuccess(t, req, rr)     // Call t.Fatal if no http success.
+  apitest.RequireBodyMatchesGolden(t, rr, "site-list")
+}
+
 func TestListLimit(t *testing.T) {
   r := apitest.NewCrudTester()
   goldenbase.FatalIfError(t, r.Init(), "Init")

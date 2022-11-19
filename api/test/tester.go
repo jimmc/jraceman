@@ -3,12 +3,18 @@ package test
 import (
   "context"
   "fmt"
+  "io/ioutil"
   "net/http"
+  "net/http/httptest"
+  "os"
+  "testing"
 
   "github.com/jimmc/jraceman/dbrepo"
+  dbrepotest "github.com/jimmc/jraceman/dbrepo/test"
 
   authusers "github.com/jimmc/auth/users"
   authperms "github.com/jimmc/auth/permissions"
+  goldenbase "github.com/jimmc/golden/base"
   goldenhttpdb "github.com/jimmc/golden/httpdb"
 )
 
@@ -79,4 +85,44 @@ func AddTestUser(r *http.Request, permstr string) *http.Request {
   user := authusers.NewUser(username, saltword, perms)
   cwv := context.WithValue(r.Context(), "AuthUser", user)
   return r.WithContext(cwv)
+}
+
+// Returns the database repo and a cleanup function to close the repo.
+func RequireDatabaseWithSqlFile(t *testing.T, filebase string) (*dbrepo.Repos, func()) {
+  filename := "testdata/" + filebase + ".setup"
+  repos, err := dbrepotest.EmptyReposAndSqlFile(filename)
+  if err != nil {
+    t.Fatalf("Error creating database: %v", err)
+  }
+  cleanup := func() {
+    repos.Close()
+  }
+  return repos, cleanup
+}
+
+func RequireHttpSuccess(t *testing.T, req *http.Request, rr *httptest.ResponseRecorder) {
+  t.Helper()
+  if got, want := rr.Code, http.StatusOK; got != want {
+    t.Fatalf("HTTP response status for request %v: got %d, want %d\nBody: %v",
+        req.URL, got, want, rr.Body.String())
+  }
+}
+
+func RequireBodyMatchesGolden(t *testing.T, rr *httptest.ResponseRecorder, filebase string) {
+  t.Helper()
+  body := rr.Body.Bytes()
+  if len(body) == 0 {
+    t.Fatal("Response body should not be empty")
+  }
+
+  outfilepath := "testdata/" + filebase + ".out"
+  goldenfilepath := "testdata/" + filebase + ".golden"
+  os.Remove(outfilepath)
+  if err := ioutil.WriteFile(outfilepath, body, 0644); err != nil {
+    t.Fatalf("Error writing body to file %q: %v", outfilepath, err)
+  }
+  err := goldenbase.CompareOutToGolden(outfilepath, goldenfilepath)
+  if err != nil {
+    t.Fatalf("Output did not match: %v", err)
+  }
 }

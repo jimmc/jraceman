@@ -40,24 +40,40 @@ func ReposEmpty() (*dbrepo.Repos, error) {
 }
 
 // ReposAndLoadFile creates an in-memory Repos with the default
-// set of tables, then loads the specified SQL file.
+// set of tables, then imports the specified JRaceman-format file.
 func ReposAndLoadFile(setupfile string) (*dbrepo.Repos, error) {
-  dbRepos, err := ReposEmpty()
+  repos, err := ReposEmpty()
   if err != nil {
     return nil, fmt.Errorf("failed to open repository: %v", err)
   }
 
-  err = dbRepos.CreateTables()
+  err = repos.CreateTables()
   if err != nil {
     return nil, fmt.Errorf("failed to create repository tables: %v", err)
   }
 
   glog.Infof("Importing from %s\n", setupfile)
-  counts, err := dbRepos.ImportFile(setupfile)
+  counts, err := repos.ImportFile(setupfile)
   if err != nil {
     return nil, fmt.Errorf("error importing from %s: %v", setupfile, err)
   }
   glog.Infof("Import done: inserted %d, updated %d, unchanged %d records\n",
       counts.Inserted(), counts.Updated(), counts.Unchanged())
-  return dbRepos, nil
+  return repos, nil
+}
+
+// ReposAndSqlFile creates an in-memory Repos and loads
+// the specified SQL file. It does not create the standard tables.
+func EmptyReposAndSqlFile(setupfile string) (*dbrepo.Repos, error) {
+  repos, err := ReposEmpty()
+  if err != nil {
+    return nil, fmt.Errorf("failed to open repository: %v", err)
+  }
+
+  glog.Infof("Loading SQL from %s\n", setupfile)
+  err = goldendb.LoadSetupFile(repos.DB(), setupfile)
+  if err != nil {
+    return nil, fmt.Errorf("error importing from %s: %v", setupfile, err)
+  }
+  return repos, nil
 }
