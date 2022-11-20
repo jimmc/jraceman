@@ -63,6 +63,23 @@ func TestListLimit(t *testing.T) {
   r.Close()
 }
 
+func TestListError(t *testing.T) {
+  // We ask for an empty database so that the SQL query on the site table
+  // will return an error.
+  repos, cleanup := apitest.RequireEmptyDatabase(t) // Calls t.Fatal on error.
+  defer cleanup()
+  req, err := http.NewRequest("GET", "/api/crud/site/", nil)
+  if err != nil {
+    t.Fatalf("http.NewRequest failed: %v", err)
+  }
+  req = apitest.AddTestUser(req, "view_venue")
+  rr := apitest.ServeCrudRequest(req, repos)
+  if got, want := rr.Code, http.StatusBadRequest; got != want {
+  t.Fatalf("HTTP response status for request %v: got %d, want %d\nBody: %v",
+      req.URL, got, want, rr.Body.String())
+  }
+}
+
 func TestGet(t *testing.T) {
   goldenbase.FatalIfError(t, apitest.RunCrudTest("site-get", func() (*http.Request, error) {
     r, err := http.NewRequest("GET", "/api/crud/site/S2", nil)
