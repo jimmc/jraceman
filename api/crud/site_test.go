@@ -1,17 +1,17 @@
 package crud_test
 
 import (
+  "encoding/json"
   "net/http"
   "os"
   "testing"
 
   apitest "github.com/jimmc/jraceman/api/test"
+  "github.com/jimmc/jraceman/domain"
 
   goldenbase "github.com/jimmc/golden/base"
   goldenhttp "github.com/jimmc/golden/http"
 )
-
-// TODO: Update, Delete, Patch
 
 func TestList(t *testing.T) {
   goldenbase.FatalIfError(t, apitest.RunCrudTest("site-list", func() (*http.Request, error) {
@@ -34,7 +34,7 @@ func TestListAlt(t *testing.T) {
   }
   req = apitest.AddTestUser(req, "view_venue")
   rr := apitest.ServeCrudRequest(req, repos)
-  apitest.RequireHttpSuccess(t, req, rr)     // Call t.Fatal if no http success.
+  apitest.RequireHttpSuccess(t, req, rr)     // Calls t.Fatal if not http success.
   apitest.RequireBodyMatchesGolden(t, rr, "site-list")
 }
 
@@ -66,7 +66,7 @@ func TestListLimit(t *testing.T) {
 func TestListError(t *testing.T) {
   // We ask for an empty database so that the SQL query on the site table
   // will return an error.
-  repos, cleanup := apitest.RequireEmptyDatabase(t) // Calls t.Fatal on error.
+  repos, cleanup := apitest.RequireEmptyDatabase(t)
   defer cleanup()
   req, err := http.NewRequest("GET", "/api/crud/site/", nil)
   if err != nil {
@@ -89,6 +89,64 @@ func TestGet(t *testing.T) {
     r = apitest.AddTestUser(r, "view_venue")
     return r, nil
   }), "RunCrudTest")
+}
+
+func TestCreateUpdateDelete(t *testing.T) {
+  repos, cleanup := apitest.RequireDatabaseWithSqlFile(t, "site-list")
+  defer cleanup()
+
+  // Create a site record.
+  payloadfile, err := os.Open("testdata/site-create-id.payload")
+  if err != nil {
+    t.Fatal(err.Error())
+  }
+  defer payloadfile.Close()
+
+  req, err := http.NewRequest("POST", "/api/crud/site/", payloadfile)
+  if err != nil {
+    t.Fatalf("http.NewRequest failed: %v", err)
+  }
+  req = apitest.AddTestUser(req, "edit_venue")
+
+  rr := apitest.ServeCrudRequest(req, repos)
+  apitest.RequireHttpSuccess(t, req, rr)
+  apitest.RequireBodyMatchesGolden(t, rr, "site-create-id")
+
+  // Get the returned ID.
+  decoder := json.NewDecoder(rr.Body)
+  site := &domain.Site{}
+  if err := decoder.Decode(site); err != nil {
+    t.Fatalf("Error decoding JSON: %v", err)
+  }
+  siteId := site.ID
+  if siteId == "" {
+    t.Fatal("Expected site ID, got empty string")
+  }
+
+  // Update the record.
+  updatepayloadfile, err := os.Open("testdata/site-update-id.payload")
+  if err != nil {
+    t.Fatal(err.Error())
+  }
+  defer updatepayloadfile.Close()
+  req, err = http.NewRequest("PUT", "/api/crud/site/" + siteId, updatepayloadfile)
+  if err != nil {
+    t.Fatalf("http.NewRequest failed: %v", err)
+  }
+  req = apitest.AddTestUser(req, "edit_venue")
+
+  rr = apitest.ServeCrudRequest(req, repos)
+  apitest.RequireHttpSuccess(t, req, rr)
+
+  // Delete the record.
+  req, err = http.NewRequest("DELETE", "/api/crud/site/" + siteId, nil)
+  if err != nil {
+    t.Fatalf("http.NewRequest failed: %v", err)
+  }
+  req = apitest.AddTestUser(req, "edit_venue")
+
+  rr = apitest.ServeCrudRequest(req, repos)
+  apitest.RequireHttpSuccess(t, req, rr)
 }
 
 func TestCreateWithID(t *testing.T) {
