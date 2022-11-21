@@ -6,5 +6,7 @@
   "City": "Anytown",
   "State": "Anystate",
   "Zip": "12345",
-  "Country": null
+  "Country": null,
+  "Phone": null,
+  "Fax": null
 }

@@ -1,0 +1,12 @@
+{
+  "ID": "S1",
+  "Name": "Site One",
+  "Street": null,
+  "Street2": null,
+  "City": "Anytown",
+  "State": null,
+  "Zip": null,
+  "Country": null,
+  "Phone": "800-555-1212",
+  "Fax": null
+}
