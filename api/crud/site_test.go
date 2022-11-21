@@ -26,10 +26,7 @@ func TestList(t *testing.T) {
 func TestListAlt(t *testing.T) {
   repos, cleanup := apitest.RequireDatabaseWithSqlFile(t, "site-list") // Calls t.Fatal on error.
   defer cleanup()
-  req, err := http.NewRequest("GET", "/api/crud/site/", nil)
-  if err != nil {
-    t.Fatalf("http.NewRequest failed: %v", err)
-  }
+  req := apitest.RequireNewRequest(t, "GET", "/api/crud/site/", nil) // Calls t.Fatal on error.
   req = apitest.AddTestUser(req, "view_venue")
   rr := apitest.ServeCrudRequest(req, repos)
   apitest.RequireHttpSuccess(t, req, rr)     // Calls t.Fatal if not http success.
@@ -66,10 +63,7 @@ func TestListError(t *testing.T) {
   // will return an error.
   repos, cleanup := apitest.RequireEmptyDatabase(t)
   defer cleanup()
-  req, err := http.NewRequest("GET", "/api/crud/site/", nil)
-  if err != nil {
-    t.Fatalf("http.NewRequest failed: %v", err)
-  }
+  req := apitest.RequireNewRequest(t, "GET", "/api/crud/site/", nil)
   req = apitest.AddTestUser(req, "view_venue")
   rr := apitest.ServeCrudRequest(req, repos)
   if got, want := rr.Code, http.StatusBadRequest; got != want {
@@ -100,10 +94,7 @@ func TestCreate(t *testing.T) {
   }
   defer payloadfile.Close()
 
-  req, err := http.NewRequest("POST", "/api/crud/site/", payloadfile)
-  if err != nil {
-    t.Fatalf("http.NewRequest failed: %v", err)
-  }
+  req := apitest.RequireNewRequest(t, "POST", "/api/crud/site/", payloadfile)
   req = apitest.AddTestUser(req, "edit_venue")
   rr := apitest.ServeCrudRequest(req, repos)
   apitest.RequireHttpSuccess(t, req, rr)
@@ -116,10 +107,7 @@ func TestUpdate(t *testing.T) {
 
   // Make sure the record we want is there as expected.
   siteId := "S1"
-  req, err := http.NewRequest("GET", "/api/crud/site/" + siteId, nil)
-  if err != nil {
-    t.Fatalf("http.NewRequest failed: %v", err)
-  }
+  req := apitest.RequireNewRequest(t, "GET", "/api/crud/site/" + siteId, nil)
   req = apitest.AddTestUser(req, "view_venue")
   rr := apitest.ServeCrudRequest(req, repos)
   apitest.RequireHttpSuccess(t, req, rr)
@@ -131,20 +119,14 @@ func TestUpdate(t *testing.T) {
     t.Fatal(err.Error())
   }
   defer updatepayloadfile.Close()
-  req, err = http.NewRequest("PUT", "/api/crud/site/" + siteId, updatepayloadfile)
-  if err != nil {
-    t.Fatalf("http.NewRequest failed: %v", err)
-  }
+  req = apitest.RequireNewRequest(t, "PUT", "/api/crud/site/" + siteId, updatepayloadfile)
   req = apitest.AddTestUser(req, "edit_venue")
   rr = apitest.ServeCrudRequest(req, repos)
   apitest.RequireHttpSuccess(t, req, rr)
   apitest.RequireBodyMatchesGolden(t, rr, "status-ok")
 
   // Make sure our record has been updated.
-  req, err = http.NewRequest("GET", "/api/crud/site/" + siteId, nil)
-  if err != nil {
-    t.Fatalf("http.NewRequest failed: %v", err)
-  }
+  req = apitest.RequireNewRequest(t, "GET", "/api/crud/site/" + siteId, nil)
   req = apitest.AddTestUser(req, "view_venue")
   rr = apitest.ServeCrudRequest(req, repos)
   apitest.RequireHttpSuccess(t, req, rr)
@@ -157,30 +139,21 @@ func TestDelete(t *testing.T) {
 
   // Make sure the record we want is there as expected.
   siteId := "S1"
-  req, err := http.NewRequest("GET", "/api/crud/site/" + siteId, nil)
-  if err != nil {
-    t.Fatalf("http.NewRequest failed: %v", err)
-  }
+  req := apitest.RequireNewRequest(t, "GET", "/api/crud/site/" + siteId, nil)
   req = apitest.AddTestUser(req, "view_venue")
   rr := apitest.ServeCrudRequest(req, repos)
   apitest.RequireHttpSuccess(t, req, rr)
   apitest.RequireBodyMatchesGolden(t, rr, "site-delete-id-before")
 
   // Delete the record.
-  req, err = http.NewRequest("DELETE", "/api/crud/site/" + siteId, nil)
-  if err != nil {
-    t.Fatalf("http.NewRequest failed: %v", err)
-  }
+  req = apitest.RequireNewRequest(t, "DELETE", "/api/crud/site/" + siteId, nil)
   req = apitest.AddTestUser(req, "edit_venue")
   rr = apitest.ServeCrudRequest(req, repos)
   apitest.RequireHttpSuccess(t, req, rr)
   apitest.RequireBodyMatchesGolden(t, rr, "status-ok")
 
   // Make sure our record is no longer there.
-  req, err = http.NewRequest("GET", "/api/crud/site/" + siteId, nil)
-  if err != nil {
-    t.Fatalf("http.NewRequest failed: %v", err)
-  }
+  req = apitest.RequireNewRequest(t, "GET", "/api/crud/site/" + siteId, nil)
   req = apitest.AddTestUser(req, "view_venue")
   rr = apitest.ServeCrudRequest(req, repos)
   if got, want := rr.Code, http.StatusBadRequest; got != want {

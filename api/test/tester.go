@@ -3,6 +3,7 @@ package test
 import (
   "context"
   "fmt"
+  "io"
   "io/ioutil"
   "net/http"
   "net/http/httptest"
@@ -85,6 +86,16 @@ func AddTestUser(r *http.Request, permstr string) *http.Request {
   user := authusers.NewUser(username, saltword, perms)
   cwv := context.WithValue(r.Context(), "AuthUser", user)
   return r.WithContext(cwv)
+}
+
+// Gets a new request. Calls t.Fatal on error.
+func RequireNewRequest(t *testing.T, method, endpoint string, payloadfile io.Reader) *http.Request {
+  t.Helper()
+  req, err := http.NewRequest(method, endpoint, payloadfile)
+  if err != nil {
+    t.Fatalf("http.NewRequest failed: %v", err)
+  }
+  return req
 }
 
 // Returns the database repo and a cleanup function to close the repo.
