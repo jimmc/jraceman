@@ -37,7 +37,7 @@ func deepDiff(oldEntity, newEntity interface{}) (diffs domain.Diffs, equal bool)
   }, equal
 }
 
-// PatchToDiffs takes a struct (oldEntity), and empty newEntity, and a datastructure representing a patch,
+// PatchToDiffs takes a struct (oldEntity), an empty newEntity, and a datastructure representing a patch,
 // applies the patch to the oldEntity, then takes a diff and returns that.
 func patchToDiffs(oldEntity, newEntity interface{}, patch interface{}) (domain.Diffs, bool, error) {
   patchBytes, err := json.Marshal(patch)

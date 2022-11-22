@@ -1,0 +1,12 @@
+{
+  "ID": "S1",
+  "Name": "Site One Patched",
+  "Street": "1234 Main Street",
+  "Street2": null,
+  "City": null,
+  "State": null,
+  "Zip": "12345",
+  "Country": null,
+  "Phone": "800-555-1212",
+  "Fax": null
+}

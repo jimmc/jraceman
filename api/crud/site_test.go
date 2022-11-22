@@ -133,6 +133,38 @@ func TestUpdate(t *testing.T) {
   apitest.RequireBodyMatchesGolden(t, rr, "site-update-id-after")
 }
 
+func TestPatch(t *testing.T) {
+  repos, cleanup := apitest.RequireDatabaseWithSqlFile(t, "site-patch")
+  defer cleanup()
+
+  // Make sure the record we want is there as expected.
+  siteId := "S1"
+  req := apitest.RequireNewRequest(t, "GET", "/api/crud/site/" + siteId, nil)
+  req = apitest.AddTestUser(req, "view_venue")
+  rr := apitest.ServeCrudRequest(req, repos)
+  apitest.RequireHttpSuccess(t, req, rr)
+  apitest.RequireBodyMatchesGolden(t, rr, "site-patch-before")
+
+  // Update the record.
+  patchpayloadfile, err := os.Open("testdata/site-patch.payload")
+  if err != nil {
+    t.Fatal(err.Error())
+  }
+  defer patchpayloadfile.Close()
+  req = apitest.RequireNewRequest(t, "PATCH", "/api/crud/site/" + siteId, patchpayloadfile)
+  req = apitest.AddTestUser(req, "edit_venue")
+  rr = apitest.ServeCrudRequest(req, repos)
+  apitest.RequireHttpSuccess(t, req, rr)
+  apitest.RequireBodyMatchesGolden(t, rr, "status-ok")
+
+  // Make sure our record has been updated.
+  req = apitest.RequireNewRequest(t, "GET", "/api/crud/site/" + siteId, nil)
+  req = apitest.AddTestUser(req, "view_venue")
+  rr = apitest.ServeCrudRequest(req, repos)
+  apitest.RequireHttpSuccess(t, req, rr)
+  apitest.RequireBodyMatchesGolden(t, rr, "site-patch-after")
+}
+
 func TestDelete(t *testing.T) {
   repos, cleanup := apitest.RequireDatabaseWithSqlFile(t, "site-create-id")
   defer cleanup()

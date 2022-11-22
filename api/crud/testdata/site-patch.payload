@@ -1,0 +1,6 @@
+[
+  { "op": "replace", "path": "/Name", "value": "Site One Patched" },
+  { "op": "add", "path": "/Zip", "value": "12345" },
+  { "op": "add", "path": "/Street", "value": "1234 Main Street" },
+  { "op": "remove", "path": "/City" }
+]

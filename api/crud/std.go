@@ -74,6 +74,7 @@ func (h *handler) stdcrud(w http.ResponseWriter, r *http.Request, st std) {
         h.stdUpdate(w, r, st ,entityID)
       }
     case http.MethodPatch:
+      glog.V(3).Infof("Method is Patch")
       if entityID == "" {
         http.Error(w, "Entity ID must be specified on a PATCH", http.StatusBadRequest)
       } else {
@@ -94,7 +95,7 @@ func (h *handler) stdCreate(w http.ResponseWriter, r *http.Request, st std) {
   decoder := json.NewDecoder(r.Body)
   entity := st.NewEntity()
   if err := decoder.Decode(entity); err != nil {
-    msg := fmt.Sprintf("Error decoding JSON: %v", err)
+    msg := fmt.Sprintf("Error decoding JSON for create: %v", err)
     http.Error(w, msg, http.StatusBadRequest)
     return
   }
@@ -163,7 +164,7 @@ func (h *handler) stdUpdate(w http.ResponseWriter, r *http.Request, st std, enti
   decoder := json.NewDecoder(r.Body)
   newEntity := st.NewEntity()
   if err := decoder.Decode(newEntity); err != nil {
-    msg := fmt.Sprintf("Error decoding JSON: %v", err)
+    msg := fmt.Sprintf("Error decoding JSON for update: %v", err)
     http.Error(w, msg, http.StatusBadRequest)
     return
   }
@@ -174,7 +175,7 @@ func (h *handler) stdUpdate(w http.ResponseWriter, r *http.Request, st std, enti
     http.Error(w, msg, http.StatusBadRequest)
     return
   }
-  glog.V(1).Infof("entity diffs: %v", diffs.Modified())
+  glog.V(1).Infof("update entity diffs: %v", diffs.Modified())
 
   if err := st.UpdateByID(entityID, oldEntity, newEntity, diffs); err != nil {
     msg := fmt.Sprintf("Error updating data: %v", err)
@@ -185,6 +186,7 @@ func (h *handler) stdUpdate(w http.ResponseWriter, r *http.Request, st std, enti
 }
 
 func (h *handler) stdPatch(w http.ResponseWriter, r *http.Request, st std, entityID string) {
+  glog.V(3).Infof("Begin stdPatch")
   oldEntity, err := st.FindByID(entityID)
   if err != nil {
     http.Error(w, err.Error(), http.StatusBadRequest)
@@ -194,10 +196,11 @@ func (h *handler) stdPatch(w http.ResponseWriter, r *http.Request, st std, entit
   decoder := json.NewDecoder(r.Body)
   var patch interface{}
   if err := decoder.Decode(&patch); err != nil {
-    msg := fmt.Sprintf("Error decoding JSON patch: %v", err)
+    msg := fmt.Sprintf("Error decoding JSON for patch: %v", err)
     http.Error(w, msg, http.StatusBadRequest)
     return
   }
+  glog.V(2).Infof("decoded patch: %+v", patch)
 
   newEntity := st.NewEntity()
   diffs, equal, err := patchToDiffs(oldEntity, newEntity, patch)
@@ -211,7 +214,7 @@ func (h *handler) stdPatch(w http.ResponseWriter, r *http.Request, st std, entit
     http.Error(w, msg, http.StatusBadRequest)
     return
   }
-  glog.V(1).Infof("entity diffs: %v", diffs.Modified())
+  glog.V(1).Infof("patch entity diffs: %v", diffs.Modified())
 
   if err := st.UpdateByID(entityID, oldEntity, newEntity, diffs); err != nil {
     msg := fmt.Sprintf("Error updating data: %v", err)
