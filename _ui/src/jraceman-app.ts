@@ -18,6 +18,7 @@ import './query-results.js'
 import './reports-pane.js'
 import './report-menu.js'
 import './report-results.js'
+import './session-menu.js'
 import './sport-setup.js'
 import './team-setup.js'
 import './venue-setup.js'
@@ -32,6 +33,7 @@ import { QueryResults } from './query-results.js'
 import { ReportResultsEvent } from './reports-pane.js'
 import { ReportMenu } from './report-menu.js'
 import { ReportResults } from './report-results.js'
+import { SessionMenu } from './session-menu.js'
 import { QueryResultsEvent } from './table-desc.js'
 
 /**
@@ -83,6 +85,12 @@ export class JracemanApp extends LitElement {
   @property()
   loggedIn = false
 
+  // We set refreshingLogin true to display the login screen again
+  // while the user is still logged in so that they can refresh
+  // their login before it expires.
+  @property()
+  refreshingLogin = false
+
   @property()
   timeoutSeconds = 0
 
@@ -105,6 +113,10 @@ export class JracemanApp extends LitElement {
   // After we are logged in, calling this method will set up links
   // to allow some of our components to directly access other components.
   linkComponents() {
+    // Give the SessionMenu direct access to JRacemanApp.
+    const sessionMenu = this.shadowRoot!.querySelector("session-menu") as SessionMenu
+    sessionMenu!.setJracemanApp(this)
+
     // Give the MessageMenu direct access to the MessageLog.
     const messageLog = this.shadowRoot!.querySelector("message-log") as MessageLog
     const messageMenu = this.shadowRoot!.querySelector("message-menu") as MessageMenu
@@ -156,6 +168,9 @@ export class JracemanApp extends LitElement {
     const evt = e as CustomEvent<LoginStateEvent>
     console.log("JracemanApp.onLoginState", evt)
     this.loggedIn = evt.detail.State
+    if (this.loggedIn) {
+      this.refreshingLogin = false
+    }
 
     if (this.loggedIn && !previouslyLoggedIn) {
       // Once we are logged in, we can link our components to each other.
@@ -264,17 +279,24 @@ export class JracemanApp extends LitElement {
     jl.logout()
   }
 
+  refreshLogin() {
+    console.log("Refreshing login")
+    this.refreshingLogin = true
+  }
+
   render() {
     return html`
       <div class="title-bar">JRaceman ${this.jracemanVersion}
         ${when(this.loggedIn,()=>html`
-          <a href="#" class="right" @click="${this.logout}">Logout</a>
-          <span class="right">${this.timeoutString()} -&nbsp;</span>
+          <session-menu class="right"></session-menu>
+          <span class="right">${this.timeoutString()}</span>
         `)}
       </div>
-      <jraceman-login id="login" hidden=${this.loggedIn} logged-in=${this.loggedIn}></jraceman-login>
+      <jraceman-login id="login" hidden=${this.loggedIn && !this.refreshingLogin}
+          logged-in=${this.loggedIn}>
+      </jraceman-login>
       ${when(this.loggedIn,()=>html`
-        <jraceman-split id="main">
+        <jraceman-split id="main" hidden=${this.refreshingLogin}>
           <div id="top" slot="top" class="tab-container">
             <jraceman-tabs>
               <span slot="tab">Auth</span>

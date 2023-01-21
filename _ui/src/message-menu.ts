@@ -30,8 +30,8 @@ export class MessageMenu extends LitElement {
   }
 
   onPostMessage(/*e:Event*/) {
-   this.requestUpdate() // May have to fix up our Clear/UndoClear menu items
-}
+    this.requestUpdate() // May have to fix up our Clear/UndoClear menu items
+  }
 
   onClear() {
     this.messageLog!.clear()
