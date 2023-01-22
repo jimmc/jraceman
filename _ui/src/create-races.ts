@@ -42,7 +42,8 @@ export class CreateRaces extends LitElement {
     console.log("Create races for", numEntries, "entries")
     // TODO - check for eventId=="" or bad numEntries and abort if so.
     const path = '/api/app/event/' + this.eventId + '/createraces'
-    const params = { entryCount: numEntries }
+    const params = { laneCount: numEntries }
+      // laneCOunt is number of groups for group events, number of entries for non-group events.
     const options:XhrOptions = {
       method: 'POST',
       params: params,

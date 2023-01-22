@@ -37,7 +37,19 @@ func (h *handler) event(w http.ResponseWriter, r *http.Request) {
       }
       h.eventInfo(w, eventId)
     case http.MethodPost:
-      http.Error(w, "POST is not yet implemented", http.StatusBadRequest)
+      switch action {
+        case "createraces":
+          params, err := apihttp.GetRequestParameters(r)
+          if err != nil {
+            http.Error(w, err.Error(), http.StatusBadRequest)
+            return
+          }
+          h.createRaces(w, eventId, params)
+          return
+        default:
+          http.Error(w, fmt.Sprintf("Invalid POST action %s", action), http.StatusBadRequest)
+          return
+      }
     default:
       http.Error(w, "Method must be GET or POST", http.StatusMethodNotAllowed)
   }
@@ -46,6 +58,18 @@ func (h *handler) event(w http.ResponseWriter, r *http.Request) {
 func (h *handler) eventInfo(w http.ResponseWriter, eventId string) {
   dbr := h.config.DomainRepos.(*dbrepo.Repos)
   result, err := mainapp.EventRaceInfo(dbr, eventId)
+  if err != nil {
+    http.Error(w, err.Error(), http.StatusBadRequest)
+    return
+  }
+  apihttp.MarshalAndReply(w, result)
+}
+
+func (h *handler) createRaces(w http.ResponseWriter, eventId string, params map[string]interface{}) {
+  glog.V(2).Infof("createRaces params=%#v", params)
+  laneCount := apihttp.GetJsonIntParameter(params, "laneCount", -1)
+  dbr := h.config.DomainRepos.(*dbrepo.Repos)
+  result, err := mainapp.EventCreateRaces(dbr, eventId, laneCount)
   if err != nil {
     http.Error(w, err.Error(), http.StatusBadRequest)
     return

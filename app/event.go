@@ -80,3 +80,7 @@ func EventRaceInfo(dbr *dbrepo.Repos, eventId string) (*EventInfo, error) {
   result.RaceCounts = rr
   return result, nil
 }
+
+func EventCreateRaces(dbr *dbrepo.Repos, eventId string, entryCount int) (*EventInfo, error) {
+  return nil, fmt.Errorf("CreateRaces(%s, %d) NYI", eventId, entryCount)        // TODO
+}
