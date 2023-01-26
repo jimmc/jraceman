@@ -259,7 +259,7 @@ export class JracemanApp extends LitElement {
   }
 
   timeoutString() {
-    if (this.timeoutSeconds <= 0) {
+    if (this.timeoutSeconds <= 0 || isNaN(this.timeoutSeconds)) {
         return "Session has timed out"
     }
     let s = ""
