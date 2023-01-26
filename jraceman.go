@@ -9,7 +9,7 @@ import (
   "strings"
 
   "github.com/jimmc/jraceman/api"
-  "github.com/jimmc/jraceman/app"
+  // "github.com/jimmc/jraceman/app"
   "github.com/jimmc/jraceman/auth"
   "github.com/jimmc/jraceman/dbrepo"
   "github.com/jimmc/jraceman/dbrepo/strsql"
@@ -161,8 +161,6 @@ func doMain() int {
     }
     actionTaken = true
   }
-
-  _ = app.Placeholder{}       // Just to use the app package
 
   if actionTaken {
     return 0
