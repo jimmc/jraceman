@@ -22,7 +22,7 @@ If not, [install Go](https://go.dev/doc/install).
 
 Once the Go compiler is installed, it can do this for you automatically:
 
-    go get github.com/jimmc/jraceman
+    go install github.com/jimmc/jraceman@latest
 
 ### Build
 
@@ -35,6 +35,8 @@ Change your working directory to the jraceman directory:
 Compile jraceman:
 
     go build
+	
+You may need to use the `sudo` command if permissions on your machine are not set for your user to modify all directories.
 
 This creates the executable `jraceman` in the jraceman directory.
 
@@ -91,7 +93,7 @@ If you did not use the latest JRaceman v2 data file to create your database,
 upgrade it so that it includes all the tables it needs. You can start with
 a dry run:
 
-    ./jraceman -db sqlite3:$JRDB -checkUpgrade
+    ./jraceman -db sqlite3:$JRDB -checkupgrade
 
 Then do the upgrade:
 
@@ -101,7 +103,7 @@ Then do the upgrade:
 
 You need at least one user in order to log in. Add one:
 
-    ./jraceman -db sqlite3:$JRDB -updatePassword user1
+    ./jraceman -db sqlite3:$JRDB -updatepassword U1
 
 This will prompt you for a password and ask again for confirmation, then
 create or update the named user with the new password. Once you have one
