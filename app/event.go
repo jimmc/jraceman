@@ -14,6 +14,10 @@ type RaceCountInfo struct {
   StageName string
 }
 
+func (r *RaceCountInfo) String() string {
+  return fmt.Sprintf("{count=%d,round=%d,stage=%s}", r.Count, r.Round, r.StageName)
+}
+
 type EventInfo struct {
   EntryCount int
   GroupCount int
@@ -21,6 +25,9 @@ type EventInfo struct {
   Summary string
   RaceCounts []*RaceCountInfo
 }
+
+// TODO - fill out CreateRacesResults
+type CreateRacesResult struct {}
 
 func EventRaceInfo(dbr *dbrepo.Repos, eventId string) (*EventInfo, error) {
   if eventId == "" {
@@ -81,6 +88,34 @@ func EventRaceInfo(dbr *dbrepo.Repos, eventId string) (*EventInfo, error) {
   return result, nil
 }
 
-func EventCreateRaces(dbr *dbrepo.Repos, eventId string, entryCount int) (*EventInfo, error) {
-  return nil, fmt.Errorf("CreateRaces(%s, %d) NYI", eventId, entryCount)        // TODO
+// EventCreateRaces creates or updates the races for the given event
+// and specified number of lanes. It may create new races, or delete or
+// update existing races.
+func EventCreateRaces(dbr *dbrepo.Repos, eventId string, laneCount int) (*CreateRacesResult, error) {
+  raceInfo, err := EventRaceInfo(dbr, eventId)
+  if err != nil {
+    return nil, err
+  }
+  eventLaneCount := raceInfo.EntryCount
+  if raceInfo.GroupSize > 1 {
+    eventLaneCount = raceInfo.GroupCount
+  }
+  if laneCount < 0 {
+    laneCount = eventLaneCount
+  }
+  // Get the progression for the specified event. This will include
+  // any progression state information from the event, and the number
+  // of lanes required by the event.
+  progression, err := ProgSysForEvent(dbr, eventId, laneCount)
+  if err != nil {
+    return nil, err
+  }
+  desiredRaceCounts, err := progression.DesiredRaceCounts()
+  if err != nil {
+    return nil, err
+  }
+  existingRaceCounts := raceInfo.RaceCounts
+  // TODO: get existing races, get differences, calculate create/delete/update.
+  glog.V(3).Infof("desiredRaceCounts=%v, existingRaceCounts=%v", desiredRaceCounts, existingRaceCounts)
+  return nil, fmt.Errorf("EventCreateRaces NYI")
 }
