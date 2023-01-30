@@ -1,5 +1,10 @@
 package domain
 
+import (
+  "fmt"
+  "strings"
+)
+
 // ProgressionRepo describes how Progression records are loaded and saved.
 type ProgressionRepo interface {
   FindByID(ID string) (*Progression, error)
@@ -15,6 +20,27 @@ type Progression struct {
   Name string
   Class string
   Parameters *string
+}
+
+// ParmsAsMap parses the Parameters field and returns s
+// map[string]string with all of the values.
+// Each parameter is name=value, and parameters are separated by commas.
+// There is no additional whitespace around either the equals or the commas.
+func (p *Progression) ParmsAsMap() (map[string]string, error) {
+  values := make(map[string]string)
+  if p.Parameters == nil || *p.Parameters == "" {
+    return values, nil
+  }
+  pkvs := strings.Split(*p.Parameters, ",")
+  for _, kvs := range pkvs {
+    kva := strings.Split(kvs, "=")
+    if len(kva) != 2 {
+      return nil, fmt.Errorf("Invalid syntax for progression parameter %s, should be name=value", kvs)
+    } else {
+      values[kva[0]] = kva[1]
+    }
+  }
+  return values, nil
 }
 
 // ProgressionMeta provides funcions related to the Progression struct.

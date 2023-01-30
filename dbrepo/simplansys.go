@@ -1,28 +1,22 @@
-package app
+package dbrepo
 
 import (
   "database/sql"
   "fmt"
 
-  "github.com/jimmc/jraceman/dbrepo"
   "github.com/jimmc/jraceman/domain"
 
   "github.com/golang/glog"
 )
 
-// SimplanSys implements the ProgSys interface according to the
-// rules for a simple progression plan.
-type SimplanSys struct {
-  system string         // The system name for this progression plan
-  simplanID string      // The ID of the Simplan entry we are using
-  laneCount int         // The number of lanes to use when creating races
-  raceCounts []*RaceCountInfo  // The count of the number of races we should have per round
+type DBSimplanSysRepo struct {
+  db *sql.DB
 }
 
-func NewSimplanSys(dbr *dbrepo.Repos, progression *domain.Progression, progressionState *string, laneCount int) (*SimplanSys, error) {
-  s := &SimplanSys{}
+func (r *DBSimplanSysRepo) LoadSimplanSys(progression *domain.Progression, progressionState *string, laneCount int) (*domain.SimplanSys, error) {
+  s := &domain.SimplanSys{}
   // 1. Extract system name from progression.Parameters
-  parameters, err := progressionParmsToMap(progression.Parameters)
+  parameters, err := progression.ParmsAsMap()
   if err != nil {
     return nil, err
   }
@@ -39,7 +33,7 @@ func NewSimplanSys(dbr *dbrepo.Repos, progression *domain.Progression, progressi
   whereVals[1] = laneCount
   whereVals[2] = laneCount
   glog.V(3).Infof("SQL: %s with whereVals=%#v", query, whereVals)
-  err = dbr.DB().QueryRow(query, whereVals...).Scan(&s.simplanID)
+  err = r.db.QueryRow(query, whereVals...).Scan(&s.SimplanID)
   if err!=nil {
     if err == sql.ErrNoRows {
       return nil, fmt.Errorf("No Simplan found for system=%q and entries=%d", system, laneCount)
@@ -55,20 +49,20 @@ func NewSimplanSys(dbr *dbrepo.Repos, progression *domain.Progression, progressi
           WHERE SimplanStage.SimplanID=?
           ORDER BY StageNumber`
   stagesVals := make([]interface{}, 1)
-  stagesVals[0] = s.simplanID
+  stagesVals[0] = s.SimplanID
   glog.V(3).Infof("SQL: %s with whereVals=%#v", stagesQuery, stagesVals)
 
-  rows, err := dbr.DB().Query(stagesQuery, stagesVals...)
+  rows, err := r.db.Query(stagesQuery, stagesVals...)
   if err != nil {
     return nil, err
   }
   defer rows.Close()
   rowCount := 0
-  raceCounts := make([]*RaceCountInfo,0)
+  raceCounts := make([]*domain.RaceCountInfo,0)
   for rows.Next() {
     stageId := ""
     stageNumber := 0
-    rci := &RaceCountInfo{}
+    rci := &domain.RaceCountInfo{}
     err := rows.Scan(&stageId, &rci.Count, &rci.StageName, &stageNumber)
     if err != nil {
       return nil, err
@@ -76,11 +70,7 @@ func NewSimplanSys(dbr *dbrepo.Repos, progression *domain.Progression, progressi
     raceCounts = append(raceCounts, rci)
     rowCount++
   }
-  s.raceCounts = raceCounts
+  s.RaceCounts = raceCounts
 
   return s, nil
-}
-
-func (s *SimplanSys) DesiredRaceCounts() ([]*RaceCountInfo, error) {
-  return s.raceCounts, nil
 }

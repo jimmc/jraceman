@@ -116,3 +116,49 @@ label ane tableName parameter to refer to your new table.
 That's it! Recompile the go code and the typescript code, restart your jraceman
 server, and reload your web page, and you should see the query and edit forms for
 your new tab.
+
+## Adding composite domain types
+
+In addition to the lowest level domain types that get mapped directly to
+database tables, there are composite types in which multiple instances are
+linked together in memory. For example, the EventRaceCounts type includes
+informaiton that is stored in both the Event and Race tables.
+
+The architecture of JRaceman is intended to separate database access from
+domain calculations. Database manipulation is typically done by reading
+into a composite type instance, doing application-specific manipulation of
+that data to create a new instance of a composite type,
+then writing that new instance back to the database.
+
+### Design your composite type
+
+Since composite types don't get directly mapped to the database, you don't
+need to worry about field names. Use whatever makes sense for your type.
+
+Composite types usually include multiple struct definitions and define
+multiple ways to access that information, so are much less regular than
+the basic domain types. Group your access methods into composite type
+files that make sense.
+
+### Add server code
+
+When adding a new composite type, select an existing composite type to use as a template,
+such as the eventinfo type. In each of the following
+directories, copy that file to the corresponding file with your new type name, and edit
+the new file appropriately.
+
+* `dbrepo`
+  * This is where you define the body of the methods to load and save
+    data from the database, matching the interface definition in the
+    corresponding domain file.
+* `domain`
+  * This is where you define your composite struct types. You can define
+    as many types as you want.
+  * Your access interface can include methods to load and save data using
+    whatever method signatures makes sense to you.
+
+In addition, edit the following files, look for the type name you are using
+as your source template, then copy that line for your new type:
+
+* `dbrepo/repos.go` (three places; do not add a line to the TableEntries function)
+* `domain/repos.do`

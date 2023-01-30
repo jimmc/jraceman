@@ -16,6 +16,8 @@ import (
 type Repos struct {
   db *sql.DB
   tableMap map[string]TableRepo
+
+  // Table types
   dbArea *DBAreaRepo
   dbChallenge *DBChallengeRepo
   dbCompetition *DBCompetitionRepo
@@ -53,6 +55,10 @@ type Repos struct {
   dbTeam *DBTeamRepo
   dbUser *DBUserRepo
   dbUserRole *DBUserRoleRepo
+
+  // Composite types
+  dbEventInfo *DBEventInfoRepo
+  dbSimplanSys *DBSimplanSysRepo
 }
 
 type TableRepo interface {
@@ -115,6 +121,7 @@ func (r *Repos) DB() *sql.DB {
   return r.db
 }
 
+// Table types
 func (r *Repos) Area() domain.AreaRepo { return r.dbArea }
 func (r *Repos) Challenge() domain.ChallengeRepo { return r.dbChallenge }
 func (r *Repos) Competition() domain.CompetitionRepo { return r.dbCompetition }
@@ -153,6 +160,10 @@ func (r *Repos) Team() domain.TeamRepo { return r.dbTeam }
 func (r *Repos) User() domain.UserRepo { return r.dbUser }
 func (r *Repos) UserRole() domain.UserRoleRepo { return r.dbUserRole }
 
+// Composite types
+func (r *Repos) EventInfo() domain.EventInfoRepo { return r.dbEventInfo }
+func (r *Repos) SimplanSys() domain.SimplanSysRepo { return r.dbSimplanSys }
+
 // Open opens a database repository.
 // The repoPath argument is of the form dbtype:dbinfo,
 // such as "sqlite3:/foo/bar" or "mysql:user:password@tcp(...)/hello".
@@ -182,6 +193,7 @@ func OpenDB(db *sql.DB) (*Repos, error) {
 
   r := &Repos{
     db: db,
+    // Table types
     dbArea: &DBAreaRepo{db},
     dbChallenge: &DBChallengeRepo{db},
     dbCompetition: &DBCompetitionRepo{db},
@@ -219,6 +231,10 @@ func OpenDB(db *sql.DB) (*Repos, error) {
     dbTeam: &DBTeamRepo{db},
     dbUser: &DBUserRepo{db},
     dbUserRole: &DBUserRoleRepo{db},
+
+    // Composite types
+    dbEventInfo: &DBEventInfoRepo{db},
+    dbSimplanSys: &DBSimplanSysRepo{db},
   }
 
   tableMap := make(map[string]TableRepo)

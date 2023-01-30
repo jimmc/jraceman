@@ -56,8 +56,8 @@ func (h *handler) event(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) eventInfo(w http.ResponseWriter, eventId string) {
-  dbr := h.config.DomainRepos.(*dbrepo.Repos)
-  result, err := mainapp.EventRaceInfo(dbr, eventId)
+  eventInfoRepo := h.config.DomainRepos.EventInfo()
+  result, err := eventInfoRepo.EventRaceInfo(eventId)
   if err != nil {
     http.Error(w, err.Error(), http.StatusBadRequest)
     return

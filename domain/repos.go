@@ -4,6 +4,7 @@ package domain
 // different types so that methods within one of the type-specific repos can
 // access the repos for the other types.
 type Repos interface {
+  // Table types
   Area() AreaRepo
   Challenge() ChallengeRepo
   Competition() CompetitionRepo
@@ -41,4 +42,8 @@ type Repos interface {
   Team() TeamRepo
   User() UserRepo
   UserRole() UserRoleRepo
+
+  // Composite types
+  EventInfo() EventInfoRepo
+  SimplanSys() SimplanSysRepo
 }
