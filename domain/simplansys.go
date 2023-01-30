@@ -11,9 +11,9 @@ type SimplanSys struct {
   System string         // The system name for this progression plan
   SimplanID string      // The ID of the Simplan entry we are using
   LaneCount int         // The number of lanes to use when creating races
-  RaceCounts []*RaceCountInfo  // The count of the number of races we should have per round
+  RoundCounts []*EventRoundCounts  // The count of the number of races we should have per round
 }
 
-func (s *SimplanSys) DesiredRaceCounts() ([]*RaceCountInfo, error) {
-  return s.RaceCounts, nil
+func (s *SimplanSys) DesiredRoundCounts() ([]*EventRoundCounts, error) {
+  return s.RoundCounts, nil
 }

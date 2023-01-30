@@ -13,7 +13,7 @@ import (
 //  2. Seeding the lane assignments for the first round of an event
 //  3. Defining how winners from one round are assigned lanes (progressed) in the next round
 type ProgSys interface {
-  DesiredRaceCounts() ([]*domain.RaceCountInfo, error)
+  DesiredRoundCounts() ([]*domain.EventRoundCounts, error)
 }
 
 // ProgSysForEvent looks up the progression in the database for the specified event

@@ -58,11 +58,11 @@ func (r *DBSimplanSysRepo) LoadSimplanSys(progression *domain.Progression, progr
   }
   defer rows.Close()
   rowCount := 0
-  raceCounts := make([]*domain.RaceCountInfo,0)
+  raceCounts := make([]*domain.EventRoundCounts,0)
   for rows.Next() {
     stageId := ""
     stageNumber := 0
-    rci := &domain.RaceCountInfo{}
+    rci := &domain.EventRoundCounts{}
     err := rows.Scan(&stageId, &rci.Count, &rci.StageName, &stageNumber)
     if err != nil {
       return nil, err
@@ -70,7 +70,7 @@ func (r *DBSimplanSysRepo) LoadSimplanSys(progression *domain.Progression, progr
     raceCounts = append(raceCounts, rci)
     rowCount++
   }
-  s.RaceCounts = raceCounts
+  s.RoundCounts = raceCounts
 
   return s, nil
 }

@@ -60,14 +60,14 @@ func (r *DBEventInfoRepo) EventRaceInfo(eventId string) (*domain.EventInfo, erro
     return nil, fmt.Errorf("Error collecting race info for event %q: %w", eventId, err)
   }
   defer rows.Close()
-  rr := make([]*domain.RaceCountInfo,0)
+  rr := make([]*domain.EventRoundCounts,0)
   for rows.Next() {
-    r := &domain.RaceCountInfo{}
+    r := &domain.EventRoundCounts{}
     if err = rows.Scan(&r.Count, &r.Round, &r.StageName); err != nil {
         return nil, fmt.Errorf("Error collecting race count row for event %q: %w", eventId, err)
     }
     rr = append(rr, r)
   }
-  result.RaceCounts = rr
+  result.RoundCounts = rr
   return result, nil
 }

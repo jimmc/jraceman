@@ -9,13 +9,13 @@ type EventInfoRepo interface {
   EventRaceInfo(ID string) (*EventInfo, error)
 }
 
-type RaceCountInfo struct {
+type EventRoundCounts struct {
   Count int
   Round int
   StageName string
 }
 
-func (r *RaceCountInfo) String() string {
+func (r *EventRoundCounts) String() string {
   return fmt.Sprintf("{count=%d,round=%d,stage=%s}", r.Count, r.Round, r.StageName)
 }
 
@@ -24,5 +24,5 @@ type EventInfo struct {
   GroupCount int
   GroupSize int
   Summary string
-  RaceCounts []*RaceCountInfo
+  RoundCounts []*EventRoundCounts
 }

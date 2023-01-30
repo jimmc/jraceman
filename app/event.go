@@ -33,12 +33,12 @@ func EventCreateRaces(r domain.Repos, eventId string, laneCount int) (*CreateRac
   if err != nil {
     return nil, err
   }
-  desiredRaceCounts, err := progression.DesiredRaceCounts()
+  desiredRoundCounts, err := progression.DesiredRoundCounts()
   if err != nil {
     return nil, err
   }
-  existingRaceCounts := raceInfo.RaceCounts
+  existingRoundCounts := raceInfo.RoundCounts
   // TODO: get existing races, get differences, calculate create/delete/update.
-  glog.V(3).Infof("desiredRaceCounts=%v, existingRaceCounts=%v", desiredRaceCounts, existingRaceCounts)
+  glog.V(3).Infof("desiredRoundCounts=%v, existingRoundCounts=%v", desiredRoundCounts, existingRoundCounts)
   return nil, fmt.Errorf("EventCreateRaces NYI")
 }
