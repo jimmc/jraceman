@@ -121,7 +121,7 @@ your new tab.
 
 In addition to the lowest level domain types that get mapped directly to
 database tables, there are composite types in which multiple instances are
-linked together in memory. For example, the EventRaceCounts type includes
+linked together in memory. For example, the EventInfo type includes
 informaiton that is stored in both the Event and Race tables.
 
 The architecture of JRaceman is intended to separate database access from
@@ -129,6 +129,15 @@ domain calculations. Database manipulation is typically done by reading
 into a composite type instance, doing application-specific manipulation of
 that data to create a new instance of a composite type,
 then writing that new instance back to the database.
+
+As much as possible, code should be written so that functions that manipulate
+data are pure functions, which only use data passed in as arguments, and have
+no side effects, but just return updated data as function return values.
+Changes to the database are then structured in three steps: load data from
+the database, calculate changes to the data, store the data back into the database.
+Maintaining this separation makes it easier to understand the code and reason
+about what it is doing, and makes it easier to write tests for code
+that calculates state changes.
 
 ### Design your composite type
 
@@ -142,23 +151,28 @@ files that make sense.
 
 ### Add server code
 
-When adding a new composite type, select an existing composite type to use as a template,
-such as the eventinfo type. In each of the following
-directories, copy that file to the corresponding file with your new type name, and edit
-the new file appropriately.
+When adding a new composite type, select an existing composite type to
+use as a template, such as the eventinfo type. In each of the following
+directories, copy that file to the corresponding file with your new
+type name, and edit the new file appropriately.  Each composite type
+file includes an access interface in the domain file that defines
+the signatures of the methods used to load and save the data objects
+defined in that file, and an implementation of that access interface
+in the dbrepo file.
 
 * `dbrepo`
   * This is where you define the body of the methods to load and save
     data from the database, matching the interface definition in the
-    corresponding domain file.
+    corresponding domain file. All code that uses SQL statements
+    should go into this directory.
 * `domain`
   * This is where you define your composite struct types. You can define
     as many types as you want.
   * Your access interface can include methods to load and save data using
-    whatever method signatures makes sense to you.
+    whatever method signatures make sense to you.
 
 In addition, edit the following files, look for the type name you are using
-as your source template, then copy that line for your new type:
+as your source template, then copy that line for your new access interface type:
 
 * `dbrepo/repos.go` (three places; do not add a line to the TableEntries function)
 * `domain/repos.do`
