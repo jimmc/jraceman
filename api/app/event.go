@@ -7,7 +7,6 @@ import (
 
   mainapp "github.com/jimmc/jraceman/app"
   apihttp "github.com/jimmc/jraceman/api/http"
-  "github.com/jimmc/jraceman/dbrepo"
 
   "github.com/golang/glog"
 )
@@ -68,8 +67,8 @@ func (h *handler) eventInfo(w http.ResponseWriter, eventId string) {
 func (h *handler) createRaces(w http.ResponseWriter, eventId string, params map[string]interface{}) {
   glog.V(2).Infof("createRaces params=%#v", params)
   laneCount := apihttp.GetJsonIntParameter(params, "laneCount", -1)
-  dbr := h.config.DomainRepos.(*dbrepo.Repos)
-  result, err := mainapp.EventCreateRaces(dbr, eventId, laneCount)
+  r := h.config.DomainRepos
+  result, err := mainapp.EventCreateRaces(r, eventId, laneCount)
   if err != nil {
     http.Error(w, err.Error(), http.StatusBadRequest)
     return
