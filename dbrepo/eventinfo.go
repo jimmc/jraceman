@@ -18,6 +18,8 @@ func (r *DBEventInfoRepo) EventRaceInfo(eventId string) (*domain.EventInfo, erro
     return nil, fmt.Errorf("Event ID must be specified")
   }
   db := r.db
+
+  // Collect summary info about the entries for this event.
   entryCountQuery :=
         `(SELECT count(1) as entryCount
         FROM entry JOIN event on entry.eventid = event.id
@@ -44,17 +46,62 @@ func (r *DBEventInfoRepo) EventRaceInfo(eventId string) (*domain.EventInfo, erro
   if err != nil {
     return nil, fmt.Errorf("Error collecting event %q info: %w", eventId, err)
   }
-  // Now get the count of races that exist for this event.
-  query = `SELECT count(1) as count, race.round as round, stage.name as stagename
+
+  // Collect information about the races for this event.
+  races, err := loadEventRaces(db, eventId)
+  if err != nil {
+    return nil, fmt.Errorf("Error collecting races for event %q: %w", eventId, err)
+  }
+  result.Races = races
+
+  // Get the count of races that exist for this event.
+  roundCounts, err := loadEventRoundCounts(db, eventId)
+  if err != nil {
+    return nil, fmt.Errorf("Error collecting round counts for event %q: %w", eventId, err)
+  }
+  result.RoundCounts = roundCounts
+  return result, nil
+}
+
+func loadEventRaces(db *sql.DB, eventId string) ([]*domain.RaceInfo, error) {
+  query := `SELECT stage.name as StageName, stage.number as StageNumber, stage.isfinal as IsFinal,
+        race.round as Round,
+        race.section as Section, area.name as AreaName, race.number as RaceNumber
+    FROM race LEFT JOIN stage on race.stageid = stage.id
+        LEFT JOIN area on race.areaid = area.id
+    WHERE race.eventid = ?
+    ORDER BY race.round, race.section`
+  whereVals := make([]interface{}, 1)
+  whereVals[0] = eventId
+  glog.V(3).Infof("SQL: %s; with whereVals=%v", query, whereVals)
+  rows, err := db.Query(query, whereVals...)
+  if err != nil {
+    return nil, fmt.Errorf("Error collecting races for event %q: %w", eventId, err)
+  }
+  defer rows.Close()
+  rr := make([]*domain.RaceInfo,0)
+  for rows.Next() {
+    r := &domain.RaceInfo{}
+    if err = rows.Scan(&r.StageName, &r.StageNumber, &r.IsFinal,
+        &r.Round, &r.Section, &r.AreaName, &r.RaceNumber); err != nil {
+      return nil, fmt.Errorf("Error collecting race data for event %q: %w", eventId, err)
+    }
+    rr = append(rr, r)
+  }
+  return rr, nil
+}
+
+func loadEventRoundCounts(db *sql.DB, eventId string) ([]*domain.EventRoundCounts, error) {
+  query := `SELECT count(1) as count, race.round as round, stage.name as stagename
     FROM event JOIN race on event.id = race.eventid
       JOIN stage on race.stageid=stage.id
     WHERE event.id=?
     GROUP BY race.round
     ORDER BY race.round
     `
-  whereVals = make([]interface{}, 1)
+  whereVals := make([]interface{}, 1)
   whereVals[0] = eventId
-  glog.V(3).Infof("SQL: %s", query)
+  glog.V(3).Infof("SQL: %s; with whereVals=%v", query, whereVals)
   rows, err := db.Query(query, whereVals...)
   if err != nil {
     return nil, fmt.Errorf("Error collecting race info for event %q: %w", eventId, err)
@@ -68,6 +115,5 @@ func (r *DBEventInfoRepo) EventRaceInfo(eventId string) (*domain.EventInfo, erro
     }
     rr = append(rr, r)
   }
-  result.RoundCounts = rr
-  return result, nil
+  return rr, nil
 }

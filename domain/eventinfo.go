@@ -13,16 +13,20 @@ type EventRoundCounts struct {
   Count int
   Round int
   StageName string
+  StageNumber int
+  IsFinal bool
 }
 
 func (r *EventRoundCounts) String() string {
   return fmt.Sprintf("{count=%d,round=%d,stage=%s}", r.Count, r.Round, r.StageName)
 }
 
+// EventInfo is a summary of an event with details collcted from multiple tables.
 type EventInfo struct {
   EntryCount int
   GroupCount int
   GroupSize int
   Summary string
   RoundCounts []*EventRoundCounts
+  Races []*RaceInfo
 }

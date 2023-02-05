@@ -3,6 +3,7 @@ package dbrepo
 import (
   "database/sql"
   "fmt"
+  "strings"
 
   "github.com/jimmc/jraceman/domain"
 
@@ -15,7 +16,7 @@ type DBSimplanSysRepo struct {
 
 func (r *DBSimplanSysRepo) LoadSimplanSys(progression *domain.Progression, progressionState *string, laneCount int) (*domain.SimplanSys, error) {
   s := &domain.SimplanSys{}
-  // 1. Extract system name from progression.Parameters
+  // 1. Extract parameter values from progression.Parameters
   parameters, err := progression.ParmsAsMap()
   if err != nil {
     return nil, err
@@ -24,6 +25,26 @@ func (r *DBSimplanSysRepo) LoadSimplanSys(progression *domain.Progression, progr
   if !ok || system=="" {
     return nil, fmt.Errorf("SimplanSys: No system name in parameters for progressionId %q", progression.ID)
   }
+  s.System = system
+  multipleFinals, ok := parameters["multipleFinals"]
+  if ok {
+    b, ok := parameterToBoolean(multipleFinals)
+    if !ok {
+      return nil, fmt.Errorf("Invalid value %q for mulitpleFinals option in progression %q",
+          multipleFinals, progression.ID)
+    }
+    s.MultipleFinals = b
+  }
+  useExtraLanes, ok := parameters["useExtraLanes"]
+  if ok {
+    b, ok := parameterToBoolean(useExtraLanes)
+    if !ok {
+      return nil, fmt.Errorf("Invalid value %q for useExtraLanes option in progression %q",
+          useExtraLanes, progression.ID)
+    }
+    s.UseExtraLanes = b
+  }
+
   // 2. Get the simplan id from the row in the simplan table
   //    with matching system and with minentries<=laneCount<=maxentries
   query := `SELECT ID from Simplan
@@ -44,7 +65,7 @@ func (r *DBSimplanSysRepo) LoadSimplanSys(progression *domain.Progression, progr
   // 3. Get the stageid and sectioncount from all rows in the simplanstage
   //    table with the simplan id from the previous step
   stagesQuery := `SELECT Stage.ID as StageId, SimplanStage.SectionCount as SectionCount,
-            Stage.Name as StageName, Stage.Number as StageNumber
+            Stage.Name as StageName, Stage.Number as StageNumber, Stage.IsFinal as IsFinal
           FROM SimplanStage JOIN Stage on SimplanStage.StageID=Stage.ID
           WHERE SimplanStage.SimplanID=?
           ORDER BY StageNumber`
@@ -57,20 +78,31 @@ func (r *DBSimplanSysRepo) LoadSimplanSys(progression *domain.Progression, progr
     return nil, err
   }
   defer rows.Close()
+  round := 1    // Round is 1-based.
   rowCount := 0
   raceCounts := make([]*domain.EventRoundCounts,0)
   for rows.Next() {
     stageId := ""
-    stageNumber := 0
     rci := &domain.EventRoundCounts{}
-    err := rows.Scan(&stageId, &rci.Count, &rci.StageName, &stageNumber)
+    err := rows.Scan(&stageId, &rci.Count, &rci.StageName, &rci.StageNumber, &rci.IsFinal)
     if err != nil {
       return nil, err
     }
+    rci.Round = round
+    round++
     raceCounts = append(raceCounts, rci)
     rowCount++
   }
   s.RoundCounts = raceCounts
 
   return s, nil
+}
+
+// Parses a string as a boolean value. On error, the second return value is false.
+func parameterToBoolean(v string) (bool, bool) {
+  switch strings.ToLower(v) {
+    case "true", "on", "yes", "": return true, true
+    case "false", "off", "no": return false, true
+    default: return false, false
+  }
 }

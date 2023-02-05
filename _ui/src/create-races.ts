@@ -10,12 +10,21 @@ interface RoundCount {
   StageName: string,
 }
 
+interface RaceInfo {
+  StageName: string,
+  Round: number,
+  Section: number,
+  AreaName: string,
+  RaceNumber: number,
+}
+
 interface EventInfo {
   Summary: string,
   EntryCount: number,
   GroupCount: number,
   GroupSize: number,
-  RaceCounts: RoundCount[],
+  RoundCounts: RoundCount[],
+  Races: RaceInfo[],
 }
 
 /**
@@ -38,19 +47,31 @@ export class CreateRaces extends LitElement {
   entryUnit = "entries"
 
   async onCreateRaces() {
+    await this.callCreateRaces(false)
+  }
+  async onDryRun() {
+    await this.callCreateRaces(true)
+  }
+  async callCreateRaces(dryRun: boolean) {
     const numEntries = (this.shadowRoot!.querySelector("#entries") as HTMLInputElement)!.value
     console.log("Create races for", numEntries, "entries")
     // TODO - check for eventId=="" or bad numEntries and abort if so.
     const path = '/api/app/event/' + this.eventId + '/createraces'
-    const params = { laneCount: numEntries }
-      // laneCOunt is number of groups for group events, number of entries for non-group events.
+    const params = {
+      laneCount: numEntries,
+        // laneCOunt is number of groups for group events, number of entries for non-group events.
+      dryRun: dryRun,
+        // If dryRun is try, tell us what would happen without actually doing it
+    }
     const options:XhrOptions = {
       method: 'POST',
       params: params,
     }
     try {
-      /*const results =*/ await ApiManager.xhrJson(path, options)
-      // TODO look at results
+      const response = await ApiManager.xhrJson(path, options)
+      const results = response.EventInfo
+      console.log("Results of Create Races:", results)
+      // TODO display results
     } catch (e) {
       const evt = e as XMLHttpRequest
       console.error(e);
@@ -79,7 +100,14 @@ export class CreateRaces extends LitElement {
       return
     }
     const path = '/api/app/event/' + this.eventId + '/info'
-    let eventInfo : EventInfo = { Summary:"", EntryCount:0, GroupCount:0, GroupSize:0, RaceCounts:[]}
+    let eventInfo : EventInfo = {
+      Summary: "",
+      EntryCount: 0,
+      GroupCount: 0,
+      GroupSize: 0,
+      RoundCounts: [],
+      Races: [],
+      }
     try {
       eventInfo = await ApiManager.xhrJson(path)
     } catch (e) {
@@ -102,7 +130,7 @@ export class CreateRaces extends LitElement {
     }
     let raceTotal = 0
     let raceInfo = ""
-    for (let roundInfo of eventInfo.RaceCounts) {
+    for (let roundInfo of eventInfo.RoundCounts) {
       raceTotal += roundInfo.Count
       if (raceInfo!="") {
         raceInfo += ", "
@@ -123,7 +151,9 @@ export class CreateRaces extends LitElement {
     return html`
         <span id="eventsummary">${this.eventSummary}</span><br/>
         <span id="eventdetail"></span>
-        For this event: <button @click="${this.onCreateRaces}">Create Races</button> for <input id="entries" size=4></input> ${this.entryUnit}
+        For this event: <button @click="${this.onCreateRaces}">Create Races</button>
+            for <input id="entries" size=4></input> ${this.entryUnit}
+            <button @click="${this.onDryRun}">Dry Run</button>
     `;
   }
 }

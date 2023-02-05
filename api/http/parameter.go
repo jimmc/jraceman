@@ -65,3 +65,17 @@ func GetJsonIntParameter(jsonBody map[string]interface{}, name string, dflt int)
   }
   return n
 }
+
+// Get the value of a JSON parameter as a boolean.
+// This should be called on the return value from GetRequestParameters.
+func GetJsonBoolParameter(jsonBody map[string]interface{}, name string, dflt bool) bool {
+  val, ok := jsonBody[name]
+  if !ok {
+    return dflt
+  }
+  b, ok := val.(bool)
+  if !ok {
+    return dflt
+  }
+  return b
+}
