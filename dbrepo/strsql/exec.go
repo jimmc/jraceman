@@ -1,9 +1,10 @@
 package strsql
 
 import (
-  "database/sql"
   "regexp"
   "strings"
+
+  "github.com/jimmc/jraceman/dbrepo/compat"
 )
 
 // ExecMulti executes multiple sql statements from a string.
@@ -11,7 +12,7 @@ import (
 // starting with a "#" (as comments), and separately executes
 // each segment. If any segment returns an error, it stop executing
 // and returns that error.
-func ExecMulti(db *sql.DB, sql string) error {
+func ExecMulti(db compat.DBorTx, sql string) error {
   re := regexp.MustCompile("\r")
   sql = re.ReplaceAllString(sql, "")
   segments := strings.Split(sql, "\n\n")
@@ -25,7 +26,7 @@ func ExecMulti(db *sql.DB, sql string) error {
 
 // ExecSegment executes a single sql statement from a string.
 // It removes lines starting with "#" (as comments).
-func ExecSegment(db *sql.DB, segment string) error {
+func ExecSegment(db compat.DBorTx, segment string) error {
   lines := strings.Split(segment, "\n")
   sqlLines := make([]string, 0)
   for _, line := range lines {

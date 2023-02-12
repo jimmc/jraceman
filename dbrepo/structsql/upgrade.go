@@ -1,8 +1,9 @@
 package structsql
 
 import (
-  "database/sql"
   "fmt"
+
+  "github.com/jimmc/jraceman/dbrepo/compat"
 
   "github.com/golang/glog"
 )
@@ -10,14 +11,14 @@ import (
 // UpgradeTable upgrades a table from its current state to match
 // what CreateTable would create. If the table does not exist,
 // it creates the table.
-func UpgradeTable(db *sql.DB, tableName string, entity interface{}, dryrun bool) (bool, string, error) {
+func UpgradeTable(db compat.DBorTx, tableName string, entity interface{}, dryrun bool) (bool, string, error) {
   return UpgradeTableWithUpdater(db, tableName, entity, dryrun, nil)
 }
 
 // UpgradeTableWithUpdater upgrades a table from its current state to match
 // what CreateTableWithUpdater would create. If the table does not exist,
 // it creates the table.
-func UpgradeTableWithUpdater(db *sql.DB, tableName string, entity interface{}, dryrun bool, updater ColumnInfosUpdater) (bool, string, error) {
+func UpgradeTableWithUpdater(db compat.DBorTx, tableName string, entity interface{}, dryrun bool, updater ColumnInfosUpdater) (bool, string, error) {
   tableColumns, err := TableColumns(db, tableName)
   if err != nil {
     return false, "", fmt.Errorf("error getting columns for table %s: %v", tableName, err)
@@ -40,7 +41,7 @@ func UpgradeTableWithUpdater(db *sql.DB, tableName string, entity interface{}, d
 // CreateOrUpgradeTableSql checks to see whether the table already exists,
 // and returns either a CREATE TABLE statement if it does not exist, or
 // the ALTER TABLE statements for column changes if it does exist.
-func CreateOrUpgradeTableSql(db *sql.DB, tableName string, entity interface{}, tableColumns []ColumnInfo, updater ColumnInfosUpdater) (string, error) {
+func CreateOrUpgradeTableSql(db compat.DBorTx, tableName string, entity interface{}, tableColumns []ColumnInfo, updater ColumnInfosUpdater) (string, error) {
   exists, err := TableExists(db, tableName)
   if err != nil {
     return "", err

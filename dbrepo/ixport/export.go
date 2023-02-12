@@ -1,19 +1,19 @@
 package ixport
 
 import (
-  "database/sql"
   "fmt"
   "io"
   "strings"
 
+  "github.com/jimmc/jraceman/dbrepo/compat"
   "github.com/jimmc/jraceman/dbrepo/structsql"
 )
 
 type Exporter struct{
-  db *sql.DB
+  db compat.DBorTx
 }
 
-func NewExporter(db *sql.DB) *Exporter {
+func NewExporter(db compat.DBorTx) *Exporter {
   return &Exporter{db}
 }
 

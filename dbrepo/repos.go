@@ -6,6 +6,7 @@ import (
   "io"
   "strings"
 
+  "github.com/jimmc/jraceman/dbrepo/compat"
   "github.com/jimmc/jraceman/dbrepo/ixport"
   "github.com/jimmc/jraceman/domain"
 
@@ -14,7 +15,7 @@ import (
 
 // Repos implements the domain.Repos interface.
 type Repos struct {
-  db *sql.DB
+  db compat.DBorTx
   tableMap map[string]TableRepo
 
   // Table types
@@ -117,7 +118,7 @@ func (r *Repos) TableEntries() []TableEntry {
   }
 }
 
-func (r *Repos) DB() *sql.DB {
+func (r *Repos) DB() compat.DBorTx {
   return r.db
 }
 
@@ -191,6 +192,11 @@ func OpenDB(db *sql.DB) (*Repos, error) {
     return nil, err
   }
 
+  return ReopenDB(db)
+}
+
+// Reopen a database with a DBorTx (typically a Tx).
+func ReopenDB(db compat.DBorTx) (*Repos, error) {
   r := &Repos{
     db: db,
     // Table types
@@ -259,7 +265,12 @@ func (r *Repos) Close() {
   if r.db == nil {
     return
   }
-  r.db.Close()
+  db, ok := r.db.(*sql.DB)
+  if !ok {
+    glog.Warning("Attempt to close a dbrepo containing a transaction")
+    return      // Can't close a transaction
+  }
+  db.Close()
   r.db = nil
 }
 
@@ -355,7 +366,11 @@ func (r *Repos) ImportFile(fileName string) (ixport.ImporterCounts, error) {
 // Export writes out all of our tables to a text file that can
 // be loaded back in later using Import.
 func (r *Repos) Export(w io.Writer) error {
-  e := ixport.NewExporter(r.db)
+  db, ok := r.db.(*sql.DB)
+  if !ok {
+    return fmt.Errorf("Can't start an export on a non-DB repo")
+  }
+  e := ixport.NewExporter(db)
   if err := e.ExportHeader(w); err != nil {
     return err
   }

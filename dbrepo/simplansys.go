@@ -1,17 +1,17 @@
 package dbrepo
 
 import (
-  "database/sql"
   "fmt"
   "strings"
 
+  "github.com/jimmc/jraceman/dbrepo/compat"
   "github.com/jimmc/jraceman/domain"
 
   "github.com/golang/glog"
 )
 
 type DBSimplanSysRepo struct {
-  db *sql.DB
+  db compat.DBorTx
 }
 
 func (r *DBSimplanSysRepo) LoadSimplanSys(progression *domain.Progression) (*domain.SimplanSys, error) {

@@ -71,7 +71,11 @@ func EmptyReposAndSqlFile(setupfile string) (*dbrepo.Repos, error) {
   }
 
   glog.Infof("Loading SQL from %s\n", setupfile)
-  err = goldendb.LoadSetupFile(repos.DB(), setupfile)
+  db, ok := repos.DB().(*sql.DB)
+  if !ok {
+    return nil, fmt.Errorf("repos.DB() is not *sql.DB")
+  }
+  err = goldendb.LoadSetupFile(db, setupfile)
   if err != nil {
     return nil, fmt.Errorf("error importing from %s: %v", setupfile, err)
   }

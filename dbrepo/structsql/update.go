@@ -1,16 +1,17 @@
 package structsql
 
 import (
-  "database/sql"
   "reflect"
   "sort"
   "strings"
+
+  "github.com/jimmc/jraceman/dbrepo/compat"
 
   "github.com/golang/glog"
 )
 
 // UpdateByID updates a record by ID.
-func UpdateByID(db *sql.DB, tableName string, mods map[string]interface{}, ID string) error {
+func UpdateByID(db compat.DBorTx, tableName string, mods map[string]interface{}, ID string) error {
   sql, vals := ModsToSql(tableName, mods, ID)
   res, err := db.Exec(sql, vals...)
   return RequireOneResult(res, err, "Updated", tableName, ID)

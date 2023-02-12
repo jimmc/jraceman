@@ -1,18 +1,18 @@
 package structsql
 
 import (
-  "database/sql"
   "sort"
   "strconv"
   "strings"
   "unicode"
 
+  "github.com/jimmc/jraceman/dbrepo/compat"
   "github.com/jimmc/jraceman/dbrepo/strsql"
 )
 
 // UniqueID returns a unique id within the table, following the
 // id pattern given but using a different trailing number if necessary.
-func UniqueID(db *sql.DB, table string, id string) string {
+func UniqueID(db compat.DBorTx, table string, id string) string {
   n, err := strsql.QueryInt(db, "select count(*) from " + table + " where id=?", id)
   if err != nil {
     return id   // We will probably get an error when we try to save this record.

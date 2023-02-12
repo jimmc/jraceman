@@ -1,11 +1,11 @@
 package structsql
 
 import (
-  "database/sql"
+  "github.com/jimmc/jraceman/dbrepo/compat"
 )
 
 // DeleteByID deletes a record by ID.
-func DeleteByID(db *sql.DB, tableName, ID string) error {
+func DeleteByID(db compat.DBorTx, tableName, ID string) error {
   sql := DeleteByIDSql(tableName)
   res, err := db.Exec(sql, ID)
   return RequireOneResult(res, err, "Deleted", tableName, ID)

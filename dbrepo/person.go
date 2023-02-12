@@ -1,9 +1,9 @@
 package dbrepo
 
 import (
-  "database/sql"
   "io"
 
+  "github.com/jimmc/jraceman/dbrepo/compat"
   "github.com/jimmc/jraceman/dbrepo/ixport"
   "github.com/jimmc/jraceman/dbrepo/strsql"
   "github.com/jimmc/jraceman/dbrepo/structsql"
@@ -11,7 +11,7 @@ import (
 )
 
 type DBPersonRepo struct {
-  db *sql.DB
+  db compat.DBorTx
 }
 
 func (r *DBPersonRepo) New() interface{} {

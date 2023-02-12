@@ -35,7 +35,7 @@ func TestEventRaceInfo(t *testing.T) {
       }
       defer dbRepos.Close()
 
-      eventInfo, err := EventRaceInfo(dbRepos, tt.eventId)
+      eventInfo, err := dbRepos.EventInfo().EventRaceInfo(tt.eventId)
       if tt.expectError {
         if err == nil {
           t.Fatal("Expected error but did not get one")

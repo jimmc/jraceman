@@ -5,13 +5,14 @@ import (
   "fmt"
   "strings"
 
+  "github.com/jimmc/jraceman/dbrepo/compat"
   // TODO - We only need structsql for requireOneResult, maybe that can go elsewhere
   "github.com/jimmc/jraceman/dbrepo/structsql"
 )
 
 // dbRowRepo implements the RowRepo interface for use by Importer.
 type dbRowRepo struct {
-  db *sql.DB    // One or the other of db and tx must be filled.
+  db compat.DBorTx    // One or the other of db and tx must be filled.
   tx *sql.Tx
 }
 
@@ -22,7 +23,11 @@ func NewRowRepo(dbrepos *Repos) *dbRowRepo {
 }
 
 func NewRowRepoWithTx(dbrepos *Repos) (*dbRowRepo, error) {
-  tx, err := dbrepos.db.Begin()
+  db, ok := dbrepos.db.(*sql.DB)
+  if !ok {
+    return nil, fmt.Errorf("Can't start a transaction on a non-DB")
+  }
+  tx, err := db.Begin()
   if err != nil {
     return nil, err
   }

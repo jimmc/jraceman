@@ -1,10 +1,10 @@
 package structsql
 
 import (
-  "database/sql"
   "fmt"
   "strings"
 
+  "github.com/jimmc/jraceman/dbrepo/compat"
   "github.com/jimmc/jraceman/dbrepo/strsql"
 )
 
@@ -32,7 +32,7 @@ func ColumnSpec(colInfo ColumnInfo) string {
 }
 
 // TableExists returns true of the specified table exists in the database.
-func TableExists(db *sql.DB, tableName string) (bool, error) {
+func TableExists(db compat.DBorTx, tableName string) (bool, error) {
   // TODO - this is specific to SQLite
   colSql := `SELECT name FROM sqlite_master WHERE type='table' AND name=?;`
   results, err := strsql.QueryStarAndCollect(db, colSql, tableName)
@@ -47,7 +47,7 @@ func TableExists(db *sql.DB, tableName string) (bool, error) {
 
 // TableColumns collects details about the current columns in the database
 // for the specified table, and returns them in the same form as ColumnInfos.
-func TableColumns(db *sql.DB, tableName string) ([]ColumnInfo, error) {
+func TableColumns(db compat.DBorTx, tableName string) ([]ColumnInfo, error) {
   // TODO - this is specific to SQLite
   colSql := `select name, lower(type), "notnull", pk from pragma_table_info(?)`
   results, err := strsql.QueryStarAndCollect(db, colSql, tableName)
