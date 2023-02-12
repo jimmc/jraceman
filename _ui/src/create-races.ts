@@ -1,5 +1,6 @@
-import { LitElement, html, css } from 'lit';
-import { customElement, property, state } from 'lit/decorators.js';
+import { LitElement, html, css } from 'lit'
+import { customElement, property, state } from 'lit/decorators.js'
+import { when } from 'lit/directives/when.js'
 
 import { ApiManager, XhrOptions } from './api-manager.js'
 import { PostError, PostInfo } from './message-log.js'
@@ -19,6 +20,7 @@ interface RaceInfo {
   Section: number,
   AreaName: string,
   RaceNumber: number,
+  LaneCount: number,
 }
 
 interface EventInfo {
@@ -57,6 +59,9 @@ export class CreateRaces extends LitElement {
   @state()
   entryUnit = "entries"
 
+  @state()
+  hasLanes = false
+
   async onCreateRaces() {
     await this.callCreateRaces(false)
   }
@@ -70,12 +75,16 @@ export class CreateRaces extends LitElement {
       PostError("create-races", "No event selected")
       return
     }
+    const allowDeleteLanes = !!(this.shadowRoot!.querySelector("#allowdelete:checked"))
+    console.log("allowdelete is", allowDeleteLanes)
     const path = '/api/app/event/' + this.eventId + '/createraces'
     const params = {
       laneCount: numEntries,
         // laneCOunt is number of groups for group events, number of entries for non-group events.
       dryRun: dryRun,
-        // If dryRun is true, tell us what would happen without actually doing it
+        // If dryRun is true, tell us what would happen without actually doing it.
+      allowDeleteLanes:  allowDeleteLanes,
+        // If allowDeleteLanes is false and we try to delete a race, that will be an error.
     }
     const options:XhrOptions = {
       method: 'POST',
@@ -110,13 +119,20 @@ export class CreateRaces extends LitElement {
     results.RacesToCreate.forEach( (race) => {
       PostInfo("create-races", "+ Create Race "+this.raceToString(race))
     })
+    let deleteWouldFail = false
     results.RacesToDelete.forEach( (race) => {
+      if (race.LaneCount > 0 && !allowDeleteLanes) {
+        deleteWouldFail = true
+      }
       PostInfo("create-races", "+ Delete Race "+this.raceToString(race))
     })
     for (let i=0; i<results.RacesToModFrom.length; i++) {
       const raceFrom = results.RacesToModFrom[i]
       const raceTo = results.RacesToModTo[i]
       PostInfo("create-races", "+ Modify Race "+this.raceToString(raceFrom) + " to " + this.raceToString(raceTo))
+    }
+    if (deleteWouldFail) {
+      PostInfo("create-races", "* NOTE: This operation would fail because some races to be deleted have lane data, and 'Allow deleting races with lane data' is not selected")
     }
   }
 
@@ -137,7 +153,11 @@ export class CreateRaces extends LitElement {
     if (race.RaceID) {
       idinfo = " [" + race.RaceID + "]"
     }
-    return "Stage="+race.StageName+" Round="+race.Round+" Section="+race.Section + raceNumber + idinfo
+    var laneInfo = ""
+    if (race.LaneCount>0) {
+      laneInfo = " (NOTE: This race includes lane data)"
+    }
+    return "Stage="+race.StageName+" Round="+race.Round+" Section="+race.Section + raceNumber + idinfo + laneInfo
   }
 
   async loadEventInfo() {
@@ -180,21 +200,28 @@ export class CreateRaces extends LitElement {
       inputField.value = ""+eventInfo.EntryCount
     }
     let raceTotal = 0
-    let raceInfo = ""
+    let raceSummary = ""
     for (let roundInfo of eventInfo.RoundCounts) {
       raceTotal += roundInfo.Count
-      if (raceInfo!="") {
-        raceInfo += ", "
+      if (raceSummary!="") {
+        raceSummary += ", "
       }
-      raceInfo += roundInfo.Count + " " + roundInfo.StageName
+      raceSummary += roundInfo.Count + " " + roundInfo.StageName
     }
     if (raceTotal==0) {
-      raceInfo = "no races."
+      raceSummary = "no races."
     } else {
-      raceInfo = "" + raceTotal + " race" + (raceTotal>1?"s":"") + " (" + raceInfo + ")."
+      raceSummary = "" + raceTotal + " race" + (raceTotal>1?"s":"") + " (" + raceSummary + ")."
     }
-    raceInfo = "This event currently has " + raceInfo
-    eventDetailHTML += raceInfo + "<br/>"
+    raceSummary = "This event currently has " + raceSummary
+    eventDetailHTML += raceSummary + "<br/>"
+    this.hasLanes = false
+    for (let raceInfo of eventInfo.Races) {
+      if (raceInfo.LaneCount>0) {
+        this.hasLanes = true
+        break
+      }
+    }
     this.shadowRoot!.querySelector("#eventdetail")!.innerHTML = eventDetailHTML
   }
 
@@ -205,6 +232,11 @@ export class CreateRaces extends LitElement {
         For this event: <button @click="${this.onCreateRaces}">Create Races</button>
             for <input id="entries" size=4></input> ${this.entryUnit}
             <button @click="${this.onDryRun}">Dry Run</button>
+        ${when(this.hasLanes,()=>html`<br/>
+            <b>NOTE: Some races include lane data</b><br/>
+            <input type="checkbox" id="allowdelete" name="allowdelete"></input>
+            <label for="allowdelete">Allow deleting races with lane data</label>
+        `)}
     `;
   }
 }

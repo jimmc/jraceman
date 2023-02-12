@@ -70,9 +70,13 @@ func (r *DBEventInfoRepo) EventRaceInfo(eventId string) (*domain.EventInfo, erro
 }
 
 func loadEventRaces(db *sql.DB, eventId string) ([]*domain.RaceInfo, error) {
+  laneCountQuery :=
+        `(SELECT count(1) as laneCount
+        FROM lane JOIN race on lane.raceid = race.id)`
   query := `SELECT stage.name as StageName, stage.number as StageNumber, stage.isfinal as IsFinal,
         race.round as Round,
-        race.section as Section, area.name as AreaName, race.number as RaceNumber, race.ID as RaceID
+        race.section as Section, area.name as AreaName, race.number as RaceNumber, race.ID as RaceID,
+        `+laneCountQuery+` as LaneCount
     FROM race LEFT JOIN stage on race.stageid = stage.id
         LEFT JOIN area on race.areaid = area.id
     WHERE race.eventid = ?
@@ -89,7 +93,7 @@ func loadEventRaces(db *sql.DB, eventId string) ([]*domain.RaceInfo, error) {
   for rows.Next() {
     r := &domain.RaceInfo{}
     if err = rows.Scan(&r.StageName, &r.StageNumber, &r.IsFinal,
-        &r.Round, &r.Section, &r.AreaName, &r.RaceNumber, &r.RaceID); err != nil {
+        &r.Round, &r.Section, &r.AreaName, &r.RaceNumber, &r.RaceID, &r.LaneCount); err != nil {
       return nil, fmt.Errorf("Error collecting race data for event %q: %w", eventId, err)
     }
     rr = append(rr, r)

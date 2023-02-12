@@ -68,8 +68,9 @@ func (h *handler) createRaces(w http.ResponseWriter, eventId string, params map[
   glog.V(2).Infof("createRaces params=%#v", params)
   laneCount := apihttp.GetJsonIntParameter(params, "laneCount", -1)
   dryRun := apihttp.GetJsonBoolParameter(params, "dryRun", true)
+  allowDeleteLanes := apihttp.GetJsonBoolParameter(params, "allowDeleteLanes", false)
   r := h.config.DomainRepos
-  result, err := mainapp.EventCreateRaces(r, eventId, laneCount, dryRun)
+  result, err := mainapp.EventCreateRaces(r, eventId, laneCount, dryRun, allowDeleteLanes)
   if err != nil {
     http.Error(w, err.Error(), http.StatusBadRequest)
     return

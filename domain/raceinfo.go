@@ -14,6 +14,7 @@ type RaceInfo struct {
   Section int
   AreaName string
   RaceNumber int
+  LaneCount int         // The number of lane records associated with this race
 }
 
 func (r *RaceInfo) String() string {

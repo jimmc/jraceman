@@ -20,7 +20,7 @@ type CreateRacesResult struct {
 // EventCreateRaces creates or updates the races for the given event
 // and specified number of lanes. It may create new races, or delete or
 // update existing races.
-func EventCreateRaces(r domain.Repos, eventId string, laneCount int, dryRun bool) (*CreateRacesResult, error) {
+func EventCreateRaces(r domain.Repos, eventId string, laneCount int, dryRun bool, allowDeleteLanes bool) (*CreateRacesResult, error) {
   eventInfo, err := r.EventInfo().EventRaceInfo(eventId)
   if err != nil {
     return nil, err
@@ -55,6 +55,12 @@ func EventCreateRaces(r domain.Repos, eventId string, laneCount int, dryRun bool
   existingRoundCounts := eventInfo.RoundCounts
   glog.V(3).Infof("desiredRoundCounts=%v, existingRoundCounts=%v", desiredRoundCounts, existingRoundCounts)
 
+  // If there are no existing races, and there are no entries, that's an error.
+  // The event should be scratched.
+  if len(existingRoundCounts)==0 && len(desiredRoundCounts)==0 {
+    return nil, fmt.Errorf("No entries and no existing races for event %s", eventInfo.Summary)
+  }
+
   // Figure out what races we need to create, delete, or update.
   // We are asuming existingRaces is sorted by round and section.
   existingRaces := eventInfo.Races
@@ -81,9 +87,23 @@ func EventCreateRaces(r domain.Repos, eventId string, laneCount int, dryRun bool
     result.RacesToModTo = racesToModTo
     return result, nil
   }
-  // TODO - check to see if the existing races have any data, return an error if
-  // so unless we have a "deleteExistingLanes" flag telling us to delete that data.
+
+  if !allowDeleteLanes && anyRaceHasLaneData(racesToDelete) {
+    return nil, fmt.Errorf("Attempt to delete a race with lane data, with allowDeleteLanes false")
+  }
+
+  // We are clear to proceed. We can now create, delete, and modify the races.  <-TODO
   return nil, fmt.Errorf("EventCreateRaces NYI")
+}
+
+// wouldDeleteLanes returns true if any of the races have lane data.
+func anyRaceHasLaneData(races []*domain.RaceInfo) bool {
+  for _, race := range races {
+    if race.LaneCount > 0 {
+      return true
+    }
+  }
+  return false
 }
 
 // roundToRaces takes a list of round counts and produces a slice of
