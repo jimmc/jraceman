@@ -1,6 +1,7 @@
 package app
 
 import (
+  "context"
   "fmt"
 
   "github.com/jimmc/jraceman/domain"
@@ -20,7 +21,7 @@ type CreateRacesResult struct {
 // EventCreateRaces creates or updates the races for the given event
 // and specified number of lanes. It may create new races, or delete or
 // update existing races.
-func EventCreateRaces(r domain.Repos, eventId string, laneCount int, dryRun bool, allowDeleteLanes bool) (*CreateRacesResult, error) {
+func EventCreateRaces(ctx context.Context, r domain.Repos, eventId string, laneCount int, dryRun bool, allowDeleteLanes bool) (*CreateRacesResult, error) {
   eventInfo, err := r.EventInfo().EventRaceInfo(eventId)
   if err != nil {
     return nil, err
@@ -66,7 +67,7 @@ func EventCreateRaces(r domain.Repos, eventId string, laneCount int, dryRun bool
   existingRaces := eventInfo.Races
   // We ae assuming desiredRoundCounts is sorted by round,
   // so that desiredRaces is sorted by round and section.
-  desiredRaces := roundsToRaces(desiredRoundCounts)
+  desiredRaces := roundsToRaces(desiredRoundCounts, eventInfo.AreaName)
   racesToCreate := racesAndNot(desiredRaces, existingRaces)
   racesToDelete := racesAndNot(existingRaces, desiredRaces)
   racesToModFrom := racesIntersectAndDiffer(existingRaces, desiredRaces)
@@ -80,11 +81,12 @@ func EventCreateRaces(r domain.Repos, eventId string, laneCount int, dryRun bool
   glog.V(3).Infof("racesToModFrom: %v", racesToModFrom)
   glog.V(3).Infof("racesToModTo: %v", racesToModTo)
 
+  result.RacesToCreate = racesToCreate
+  result.RacesToDelete = racesToDelete
+  result.RacesToModFrom = racesToModFrom
+  result.RacesToModTo = racesToModTo
+
   if dryRun {
-    result.RacesToCreate = racesToCreate
-    result.RacesToDelete = racesToDelete
-    result.RacesToModFrom = racesToModFrom
-    result.RacesToModTo = racesToModTo
     return result, nil
   }
 
@@ -92,8 +94,14 @@ func EventCreateRaces(r domain.Repos, eventId string, laneCount int, dryRun bool
     return nil, fmt.Errorf("Attempt to delete a race with lane data, with allowDeleteLanes false")
   }
 
-  // We are clear to proceed. We can now create, delete, and modify the races.  <-TODO
-  return nil, fmt.Errorf("EventCreateRaces NYI")
+  // We are clear to proceed. We can now create, delete, and modify the races.
+  err = r.EventInfo().UpdateRaceInfo(ctx, eventInfo, racesToCreate, racesToDelete,
+      racesToModFrom, racesToModTo)
+  if err!=nil {
+    return nil, err
+  }
+
+  return result, nil
 }
 
 // wouldDeleteLanes returns true if any of the races have lane data.
@@ -108,12 +116,13 @@ func anyRaceHasLaneData(races []*domain.RaceInfo) bool {
 
 // roundToRaces takes a list of round counts and produces a slice of
 // RaceInfo structs that have the appropriate Round and Section fields filled in.
-func roundsToRaces(desiredRoundCounts []*domain.EventRoundCounts) []*domain.RaceInfo {
+func roundsToRaces(desiredRoundCounts []*domain.EventRoundCounts, areaName string) []*domain.RaceInfo {
   result := make([]*domain.RaceInfo, 0)
   for _, rc := range desiredRoundCounts {
     // Round and Section are both 1-based numbers.
     for n := 1; n <= rc.Count; n++ {
       race := &domain.RaceInfo{
+        AreaName: areaName,
         StageName: rc.StageName,
         StageNumber: rc.StageNumber,
         IsFinal: rc.IsFinal,

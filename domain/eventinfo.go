@@ -1,12 +1,14 @@
 package domain
 
 import (
+  "context"
   "fmt"
 )
 
 // EvenInfoRepo describes how various types related to events are loaded and saved.
 type EventInfoRepo interface {
   EventRaceInfo(ID string) (*EventInfo, error)
+  UpdateRaceInfo(ctx context.Context, eventInfo *EventInfo, racesToCreate, racesToDelete, racesToModFrom, racesToModTo []*RaceInfo) error
 }
 
 type EventRoundCounts struct {

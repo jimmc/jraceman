@@ -1,6 +1,7 @@
 package dbrepo
 
 import (
+  "context"
   "database/sql"
   "fmt"
 
@@ -126,4 +127,24 @@ func loadEventRoundCounts(db *sql.DB, eventId string) ([]*domain.EventRoundCount
     rr = append(rr, r)
   }
   return rr, nil
+}
+
+// UpdateRaceInfo updates the database to create, delete, and modify races
+// according to the given data.
+func (r *DBEventInfoRepo) UpdateRaceInfo(ctx context.Context, eventInfo *domain.EventInfo,
+    racesToCreate, racesToDelete, racesToModFrom, racesToModTo []*domain.RaceInfo) error {
+  // We do all operations within a transaction and roll back if any fail.
+  tx, err := r.db.BeginTx(ctx, nil)
+  if err!=nil {
+    return err
+  }
+  defer tx.Rollback()   // Roll back if anything fails.
+
+  // TODO: create, delete, and update races; return error if anything fails
+
+  if err = tx.Commit(); err!=nil {
+    return err
+  }
+  return fmt.Errorf("EventInfo.UpdateRaceInfo NYI")
+  // return nil
 }
