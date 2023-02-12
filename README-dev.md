@@ -50,6 +50,21 @@ when starting JRaceman:
   or prefixes with an asterisk,
   and the `N` numbers are the verbosity levels for the matching files.
 
+## Debugging
+
+You can use the [Delve debugger](https://github.com/go-delve/delve)
+to interactively debug the server.
+Set your working directory to the `jraceman` directory.
+See the typical commands in the [README](./README.md) file for starting the server,
+then run a command such as the following:
+
+```
+dlv debug . -- -db sqlite3:$JRDB -logtostderr
+```
+
+At the dlv prompt, you can enter `c` to start the server, or you can set breakpoints
+and use other dlv commands.
+
 ## Adding a database table
 
 JRaceman provides extensive automatic support for database tables. With a minumum
