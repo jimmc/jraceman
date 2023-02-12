@@ -31,9 +31,14 @@ func (r *DBEventInfoRepo) EventRaceInfo(eventId string) (*domain.EventInfo, erro
   query := "SELECT "+entryCountQuery+" as EntryCount,"+
         groupCountQuery+` as GroupCount,
         COALESCE(competition.groupsize,0) as GroupSize,
-        event.Name || ' [' || event.ID || ']' as Summary
+        event.Name || ' [' || event.ID || ']' as Summary,
+        area.Name as areaName,
+        area.Lanes as areaLanes,
+        area.ExtraLanes as areaExtraLanes,
+        event.ProgressionState as progressionState
         FROM event
         LEFT JOIN competition on event.competitionid = competition.id
+        LEFT JOIN area on event.areaid = area.id
         WHERE event.id=?`
   whereVals := make([]interface{}, 3)
   whereVals[0] = eventId
@@ -42,7 +47,8 @@ func (r *DBEventInfoRepo) EventRaceInfo(eventId string) (*domain.EventInfo, erro
   glog.V(3).Infof("SQL: %s", query)
   result := &domain.EventInfo{}
   err := db.QueryRow(query, whereVals...).Scan(
-    &result.EntryCount, &result.GroupCount, &result.GroupSize, &result.Summary)
+    &result.EntryCount, &result.GroupCount, &result.GroupSize, &result.Summary,
+    &result.AreaName, &result.AreaLanes, &result.AreaExtraLanes, &result.ProgressionState)
   if err != nil {
     return nil, fmt.Errorf("Error collecting event %q info: %w", eventId, err)
   }
@@ -66,7 +72,7 @@ func (r *DBEventInfoRepo) EventRaceInfo(eventId string) (*domain.EventInfo, erro
 func loadEventRaces(db *sql.DB, eventId string) ([]*domain.RaceInfo, error) {
   query := `SELECT stage.name as StageName, stage.number as StageNumber, stage.isfinal as IsFinal,
         race.round as Round,
-        race.section as Section, area.name as AreaName, race.number as RaceNumber
+        race.section as Section, area.name as AreaName, race.number as RaceNumber, race.ID as RaceID
     FROM race LEFT JOIN stage on race.stageid = stage.id
         LEFT JOIN area on race.areaid = area.id
     WHERE race.eventid = ?
@@ -83,7 +89,7 @@ func loadEventRaces(db *sql.DB, eventId string) ([]*domain.RaceInfo, error) {
   for rows.Next() {
     r := &domain.RaceInfo{}
     if err = rows.Scan(&r.StageName, &r.StageNumber, &r.IsFinal,
-        &r.Round, &r.Section, &r.AreaName, &r.RaceNumber); err != nil {
+        &r.Round, &r.Section, &r.AreaName, &r.RaceNumber, &r.RaceID); err != nil {
       return nil, fmt.Errorf("Error collecting race data for event %q: %w", eventId, err)
     }
     rr = append(rr, r)

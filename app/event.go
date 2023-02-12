@@ -10,8 +10,11 @@ import (
 
 // CreateRacesResult is the data that we return from a CreateRaces request for an event.
 type CreateRacesResult struct {
-  // TODO - fill out CreateRacesResults
   EventInfo *domain.EventInfo
+  RacesToCreate []*domain.RaceInfo
+  RacesToDelete []*domain.RaceInfo
+  RacesToModFrom []*domain.RaceInfo
+  RacesToModTo []*domain.RaceInfo
 }
 
 // EventCreateRaces creates or updates the races for the given event
@@ -33,19 +36,23 @@ func EventCreateRaces(r domain.Repos, eventId string, laneCount int, dryRun bool
   if laneCount < 0 {
     laneCount = eventLaneCount
   }
-  // Get the progression for the specified event. This will include
-  // any progression state information from the event, and the number
-  // of lanes required by the event.
-  progression, err := ProgSysForEvent(r, eventId, laneCount)
-  if err != nil {
-    return nil, err
-  }
-  desiredRoundCounts, err := progression.DesiredRoundCounts()
-  if err != nil {
-    return nil, err
+  var desiredRoundCounts []*domain.EventRoundCounts
+  if laneCount == 0 {
+    // If no lanes, then there will be no races.
+    desiredRoundCounts = make([]*domain.EventRoundCounts,0)
+  } else {
+    // Get the progression system for the specified event.
+    progression, err := ProgSysForEvent(r, eventId)
+    if err != nil {
+      return nil, err
+    }
+    desiredRoundCounts, err = progression.DesiredRoundCounts(
+          eventInfo.ProgressionState, laneCount, eventInfo.AreaLanes, eventInfo.AreaExtraLanes)
+    if err != nil {
+      return nil, err
+    }
   }
   existingRoundCounts := eventInfo.RoundCounts
-  // TODO: get existing races, get differences, calculate create/delete/update.
   glog.V(3).Infof("desiredRoundCounts=%v, existingRoundCounts=%v", desiredRoundCounts, existingRoundCounts)
 
   // Figure out what races we need to create, delete, or update.
@@ -56,8 +63,8 @@ func EventCreateRaces(r domain.Repos, eventId string, laneCount int, dryRun bool
   desiredRaces := roundsToRaces(desiredRoundCounts)
   racesToCreate := racesAndNot(desiredRaces, existingRaces)
   racesToDelete := racesAndNot(existingRaces, desiredRaces)
-  racesToModFrom := racesIntersect(existingRaces, desiredRaces)
-  racesToModTo := racesIntersect(desiredRaces, existingRaces)
+  racesToModFrom := racesIntersectAndDiffer(existingRaces, desiredRaces)
+  racesToModTo := racesIntersectAndDiffer(desiredRaces, existingRaces)
   if len(racesToModFrom) != len(racesToModTo) {
     return nil, fmt.Errorf("Length mismach in races to mod lists")
       // Programming error, should not happen.
@@ -68,8 +75,14 @@ func EventCreateRaces(r domain.Repos, eventId string, laneCount int, dryRun bool
   glog.V(3).Infof("racesToModTo: %v", racesToModTo)
 
   if dryRun {
+    result.RacesToCreate = racesToCreate
+    result.RacesToDelete = racesToDelete
+    result.RacesToModFrom = racesToModFrom
+    result.RacesToModTo = racesToModTo
     return result, nil
   }
+  // TODO - check to see if the existing races have any data, return an error if
+  // so unless we have a "deleteExistingLanes" flag telling us to delete that data.
   return nil, fmt.Errorf("EventCreateRaces NYI")
 }
 
@@ -104,7 +117,8 @@ func racesAndNot(r1, r2 []*domain.RaceInfo) []*domain.RaceInfo {
   }
   result := make([]*domain.RaceInfo, 0)
   for _, r1r := range r1 {
-    if !racesContains(r2, r1r) {
+    r2r := findMatchingRace(r2, r1r)
+    if r2r == nil {
       result = append(result, r1r)
     }
   }
@@ -112,8 +126,9 @@ func racesAndNot(r1, r2 []*domain.RaceInfo) []*domain.RaceInfo {
 }
 
 // racesIntersect return a slice containing all of the RaceInfo entries in r1 that
-// have a matching RaceInfo in r2 based only on the round and section fields.
-func racesIntersect(r1, r2 []*domain.RaceInfo) []*domain.RaceInfo {
+// have a matching RaceInfo in r2 based only on the round and section fields,
+// and where there is a difference in the StageNumber.
+func racesIntersectAndDiffer(r1, r2 []*domain.RaceInfo) []*domain.RaceInfo {
   if r1==nil {
     return nil
   }
@@ -122,20 +137,23 @@ func racesIntersect(r1, r2 []*domain.RaceInfo) []*domain.RaceInfo {
   }
   result := make([]*domain.RaceInfo, 0)
   for _, r1r := range r1 {
-    if racesContains(r2, r1r) {
-      result = append(result, r1r)
+    r2r := findMatchingRace(r2, r1r)
+    if r2r != nil {
+      if r2r.StageNumber != r1r.StageNumber {
+        result = append(result, r1r)
+      }
     }
   }
   return result
 }
 
-// racesContains returns true if the single RaceInfo r has
-// a matching RaceInfo in ra based only on the round and section fields.
-func racesContains(ra []*domain.RaceInfo, r *domain.RaceInfo) bool {
+// findMatchingRace looks through ra for a race that matches r
+// based only on the round and section fields.
+func findMatchingRace(ra []*domain.RaceInfo, r *domain.RaceInfo) *domain.RaceInfo {
   for _, t := range ra {
     if t.Round == r.Round && t.Section == r.Section {
-      return true
+      return t
     }
   }
-  return false
+  return nil
 }

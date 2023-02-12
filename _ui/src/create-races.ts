@@ -2,7 +2,7 @@ import { LitElement, html, css } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 
 import { ApiManager, XhrOptions } from './api-manager.js'
-import { PostError } from './message-log.js'
+import { PostError, PostInfo } from './message-log.js'
 
 interface RoundCount {
   Count: number,
@@ -11,7 +11,10 @@ interface RoundCount {
 }
 
 interface RaceInfo {
+  RaceID: string,
   StageName: string,
+  StageNumber: number,
+  IsFinal: boolean,
   Round: number,
   Section: number,
   AreaName: string,
@@ -25,6 +28,14 @@ interface EventInfo {
   GroupSize: number,
   RoundCounts: RoundCount[],
   Races: RaceInfo[],
+}
+
+interface CreateRacesResult {
+  EventInfo: EventInfo,
+  RacesToCreate: RaceInfo[],
+  RacesToDelete: RaceInfo[],
+  RacesToModFrom: RaceInfo[],
+  RacesToModTo: RaceInfo[],
 }
 
 /**
@@ -55,29 +66,57 @@ export class CreateRaces extends LitElement {
   async callCreateRaces(dryRun: boolean) {
     const numEntries = (this.shadowRoot!.querySelector("#entries") as HTMLInputElement)!.value
     console.log("Create races for", numEntries, "entries")
-    // TODO - check for eventId=="" or bad numEntries and abort if so.
+    if (this.eventId == "") {
+      PostError("create-races", "No event selected")
+      return
+    }
     const path = '/api/app/event/' + this.eventId + '/createraces'
     const params = {
       laneCount: numEntries,
         // laneCOunt is number of groups for group events, number of entries for non-group events.
       dryRun: dryRun,
-        // If dryRun is try, tell us what would happen without actually doing it
+        // If dryRun is true, tell us what would happen without actually doing it
     }
     const options:XhrOptions = {
       method: 'POST',
       params: params,
     }
+    var results
     try {
       const response = await ApiManager.xhrJson(path, options)
-      const results = response.EventInfo
+      results = response as CreateRacesResult
       console.log("Results of Create Races:", results)
-      // TODO display results
     } catch (e) {
       const evt = e as XMLHttpRequest
       console.error(e);
       const errstr = "Error creating races: " + evt.responseText
       PostError("create-races", errstr)
       return;
+    }
+    const changeCount = results.RacesToCreate.length + results.RacesToDelete.length + results.RacesToModFrom.length
+    if (changeCount==0) {
+      if (dryRun) {
+        PostInfo("create-races", "No changes to races would be made for event " + results.EventInfo.Summary)
+      } else {
+        PostInfo("create-races", "No changes to races were made for event " + results.EventInfo.Summary)
+      }
+      return
+    }
+    if (dryRun) {
+      PostInfo("create-races", "The following changes would be made for event " + results.EventInfo.Summary)
+    } else {
+      PostInfo("create-races", "The following changes were made for event " + results.EventInfo.Summary)
+    }
+    results.RacesToCreate.forEach( (race) => {
+      PostInfo("create-races", "+ Create Race "+this.raceToString(race))
+    })
+    results.RacesToDelete.forEach( (race) => {
+      PostInfo("create-races", "+ Delete Race "+this.raceToString(race))
+    })
+    for (let i=0; i<results.RacesToModFrom.length; i++) {
+      const raceFrom = results.RacesToModFrom[i]
+      const raceTo = results.RacesToModTo[i]
+      PostInfo("create-races", "+ Modify Race "+this.raceToString(raceFrom) + " to " + this.raceToString(raceTo))
     }
   }
 
@@ -87,6 +126,18 @@ export class CreateRaces extends LitElement {
       this.loadEventInfo()  // No need to await here, just kick it off.
     }
     super.update(changedProperties)
+  }
+
+  raceToString(race: RaceInfo):string {
+    var raceNumber = ""
+    if (race.RaceNumber) {
+      raceNumber = " #" + race.RaceNumber
+    }
+    var idinfo = ""
+    if (race.RaceID) {
+      idinfo = " [" + race.RaceID + "]"
+    }
+    return "Stage="+race.StageName+" Round="+race.Round+" Section="+race.Section + raceNumber + idinfo
   }
 
   async loadEventInfo() {

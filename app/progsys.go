@@ -13,12 +13,12 @@ import (
 //  2. Seeding the lane assignments for the first round of an event
 //  3. Defining how winners from one round are assigned lanes (progressed) in the next round
 type ProgSys interface {
-  DesiredRoundCounts() ([]*domain.EventRoundCounts, error)
+  DesiredRoundCounts(progressionState string, laneCount, areaLanes, areaExtraLanes int) ([]*domain.EventRoundCounts, error)
 }
 
 // ProgSysForEvent looks up the progression in the database for the specified event
 // and returns the right kind of ProgSys for it.
-func ProgSysForEvent(r domain.Repos, eventId string, laneCount int) (ProgSys, error) {
+func ProgSysForEvent(r domain.Repos, eventId string) (ProgSys, error) {
   event, err := r.Event().FindByID(eventId)
   if err != nil {
     return nil, err
@@ -35,7 +35,7 @@ func ProgSysForEvent(r domain.Repos, eventId string, laneCount int) (ProgSys, er
     case "":
       return nil, fmt.Errorf("ProgressionID %q has no class specified", progressionId)
     case "ProgressionSimplan":
-      return r.SimplanSys().LoadSimplanSys(progression, event.ProgressionState, laneCount)
+      return r.SimplanSys().LoadSimplanSys(progression)
     case "ProgressionComplan":
       return nil, fmt.Errorf("ProgressionForEvent: ProgressionComplan NYI")
     default:

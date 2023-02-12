@@ -29,4 +29,8 @@ type EventInfo struct {
   Summary string
   RoundCounts []*EventRoundCounts
   Races []*RaceInfo
+  AreaName string
+  AreaLanes int
+  AreaExtraLanes int
+  ProgressionState string
 }

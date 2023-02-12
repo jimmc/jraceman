@@ -14,7 +14,7 @@ import (
 func (h *handler) event(w http.ResponseWriter, r *http.Request) {
   // TODO - check authorization
   morePath := strings.TrimPrefix(r.URL.Path, h.apiPrefix("event"))
-  glog.Infof("%s morePath='%s'", r.Method, morePath);
+  glog.V(1).Infof("%s morePath='%s'", r.Method, morePath);
   morePathParts := strings.Split(morePath, "/")
   eventId := ""
   if len(morePathParts)>0 {
