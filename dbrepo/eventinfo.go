@@ -13,6 +13,7 @@ import (
 
 type DBEventInfoRepo struct {
   db compat.DBorTx
+  repos *Repos      // We need access to repos for the table types
 }
 
 func (r *DBEventInfoRepo) EventRaceInfo(eventId string) (*domain.EventInfo, error) {
@@ -34,10 +35,11 @@ func (r *DBEventInfoRepo) EventRaceInfo(eventId string) (*domain.EventInfo, erro
         groupCountQuery+` as GroupCount,
         COALESCE(competition.groupsize,0) as GroupSize,
         event.Name || ' [' || event.ID || ']' as Summary,
-        area.Name as areaName,
-        area.Lanes as areaLanes,
-        area.ExtraLanes as areaExtraLanes,
-        event.ProgressionState as progressionState
+        COALESCE(event.areaid,"") as areaID,
+        COALESCE(area.Name,"") as areaName,
+        COALESCE(area.Lanes,0) as areaLanes,
+        COALESCE(area.ExtraLanes,0) as areaExtraLanes,
+        COALESCE(event.ProgressionState,"") as progressionState
         FROM event
         LEFT JOIN competition on event.competitionid = competition.id
         LEFT JOIN area on event.areaid = area.id
@@ -50,10 +52,12 @@ func (r *DBEventInfoRepo) EventRaceInfo(eventId string) (*domain.EventInfo, erro
   result := &domain.EventInfo{}
   err := db.QueryRow(query, whereVals...).Scan(
     &result.EntryCount, &result.GroupCount, &result.GroupSize, &result.Summary,
-    &result.AreaName, &result.AreaLanes, &result.AreaExtraLanes, &result.ProgressionState)
+    &result.AreaID, &result.AreaName, &result.AreaLanes, &result.AreaExtraLanes,
+    &result.ProgressionState)
   if err != nil {
     return nil, fmt.Errorf("Error collecting event %q info: %w", eventId, err)
   }
+  result.EventID = eventId
 
   // Collect information about the races for this event.
   races, err := loadEventRaces(db, eventId)
@@ -75,10 +79,12 @@ func loadEventRaces(db compat.DBorTx, eventId string) ([]*domain.RaceInfo, error
   laneCountQuery :=
         `(SELECT count(1) as laneCount
         FROM lane JOIN race on lane.raceid = race.id)`
-  query := `SELECT stage.name as StageName, stage.number as StageNumber, stage.isfinal as IsFinal,
-        race.round as Round,
-        race.section as Section, area.name as AreaName, race.number as RaceNumber, race.ID as RaceID,
-        `+laneCountQuery+` as LaneCount
+  query := `SELECT COALESCE(stage.name,"") as StageName,
+        COALESCE(stage.number,0) as StageNumber, COALESCE(stage.isfinal,false) as IsFinal,
+        race.round as Round, race.section as Section,
+        COALESCE(area.name,"") as AreaName, COALESCE(race.number,0) as RaceNumber, race.ID as RaceID,
+        `+laneCountQuery+` as LaneCount,
+        COALESCE(race.stageid,"") as StageID, COALESCE(race.areaid,"") as AreaID
     FROM race LEFT JOIN stage on race.stageid = stage.id
         LEFT JOIN area on race.areaid = area.id
     WHERE race.eventid = ?
@@ -95,16 +101,19 @@ func loadEventRaces(db compat.DBorTx, eventId string) ([]*domain.RaceInfo, error
   for rows.Next() {
     r := &domain.RaceInfo{}
     if err = rows.Scan(&r.StageName, &r.StageNumber, &r.IsFinal,
-        &r.Round, &r.Section, &r.AreaName, &r.RaceNumber, &r.RaceID, &r.LaneCount); err != nil {
+        &r.Round, &r.Section, &r.AreaName, &r.RaceNumber, &r.RaceID, &r.LaneCount, &r.StageID,
+        &r.AreaID); err != nil {
       return nil, fmt.Errorf("Error collecting race data for event %q: %w", eventId, err)
     }
+    r.EventID = eventId
     rr = append(rr, r)
   }
   return rr, nil
 }
 
 func loadEventRoundCounts(db compat.DBorTx, eventId string) ([]*domain.EventRoundCounts, error) {
-  query := `SELECT count(1) as count, race.round as round, stage.name as stagename
+  query := `SELECT count(1) as count, race.round as round,
+      race.stageid as StageID, stage.name as StageName
     FROM event JOIN race on event.id = race.eventid
       JOIN stage on race.stageid=stage.id
     WHERE event.id=?
@@ -122,7 +131,7 @@ func loadEventRoundCounts(db compat.DBorTx, eventId string) ([]*domain.EventRoun
   rr := make([]*domain.EventRoundCounts,0)
   for rows.Next() {
     r := &domain.EventRoundCounts{}
-    if err = rows.Scan(&r.Count, &r.Round, &r.StageName); err != nil {
+    if err = rows.Scan(&r.Count, &r.Round, &r.StageID, &r.StageName); err != nil {
         return nil, fmt.Errorf("Error collecting race count row for event %q: %w", eventId, err)
     }
     rr = append(rr, r)
@@ -162,9 +171,58 @@ func (r *DBEventInfoRepo) UpdateRaceInfo(ctx context.Context, eventInfo *domain.
 }
 
 // UpdateRaceInfo updates the database to create, delete, and modify races
-// according to the given data.
+// according to the given data. Return error if any operations fail.
 func (r *DBEventInfoRepo) updateRaceInfoInTx(ctx context.Context, tx *sql.Tx, eventInfo *domain.EventInfo,
     racesToCreate, racesToDelete, racesToModFrom, racesToModTo []*domain.RaceInfo) error {
-  // TODO: create, delete, and update races; return error if anything fails
-  return fmt.Errorf("EventInfo.UpdateRaceInfoInTx NYI")
+
+  // Create
+  for _, raceInfo := range racesToCreate {
+    race := raceInfoToRace(raceInfo)
+    id, err := r.repos.Race().Save(race)
+    if err!=nil {
+      return fmt.Errorf("error creating race for event ID=%q: %w", raceInfo.EventID, err)
+    }
+    raceInfo.RaceID = id
+  }
+
+  // Delete
+  for _, raceInfo := range racesToDelete {
+    if err := r.repos.Race().DeleteByID(raceInfo.RaceID); err!=nil {
+      return fmt.Errorf("error deleting race ID=%q: %w", raceInfo.RaceID, err)
+    }
+  }
+
+  // Update
+  for i, raceInfo := range racesToModFrom {
+    race := raceInfoToRace(raceInfo)
+    race.StageID = &(racesToModFrom[i].StageID)
+    // TODO - need to deal with Race.Scratched?
+    id, err := r.repos.Race().Save(race)
+    if err!=nil {
+      return fmt.Errorf("error updating race ID=%q: %w", raceInfo.RaceID, err)
+    }
+    raceInfo.RaceID = id
+  }
+
+  return nil
+}
+
+// Create a Race struct that we can use with the database.
+func raceInfoToRace(raceInfo *domain.RaceInfo) *domain.Race {
+  race := &domain.Race{
+    ID: raceInfo.RaceID,
+    EventID: raceInfo.EventID,
+    Round: &raceInfo.Round,     // We know we have Round and Section.
+    Section: &raceInfo.Section,
+  }
+  if raceInfo.AreaID != "" {
+    race.AreaID = &raceInfo.AreaID
+  }
+  if raceInfo.RaceNumber != 0 {
+    race.Number = &raceInfo.RaceNumber
+  }
+  if raceInfo.StageID != "" {
+    race.StageID = &raceInfo.StageID
+  }
+  return race
 }

@@ -14,6 +14,7 @@ type EventInfoRepo interface {
 type EventRoundCounts struct {
   Count int
   Round int
+  StageID string
   StageName string
   StageNumber int
   IsFinal bool
@@ -25,12 +26,14 @@ func (r *EventRoundCounts) String() string {
 
 // EventInfo is a summary of an event with details collcted from multiple tables.
 type EventInfo struct {
+  EventID string
   EntryCount int
   GroupCount int
   GroupSize int
   Summary string
   RoundCounts []*EventRoundCounts
   Races []*RaceInfo
+  AreaID string
   AreaName string
   AreaLanes int
   AreaExtraLanes int

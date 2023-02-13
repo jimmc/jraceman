@@ -239,9 +239,10 @@ func ReopenDB(db compat.DBorTx) (*Repos, error) {
     dbUserRole: &DBUserRoleRepo{db},
 
     // Composite types
-    dbEventInfo: &DBEventInfoRepo{db},
+    dbEventInfo: &DBEventInfoRepo{db: db},
     dbSimplanSys: &DBSimplanSysRepo{db},
   }
+  r.dbEventInfo.repos = r
 
   tableMap := make(map[string]TableRepo)
   for _, entry := range r.TableEntries() {

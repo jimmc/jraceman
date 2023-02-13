@@ -1,7 +1,14 @@
 {
+ "EventID": "M1.EV1",
  "EntryCount": 6,
  "GroupCount": 0,
  "GroupSize": 0,
  "Summary": "C1 500m Bantam Men [M1.EV1]",
- "RaceCounts": []
+ "RoundCounts": [],
+ "Races": [],
+ "AreaID": "",
+ "AreaName": "",
+ "AreaLanes": 0,
+ "AreaExtraLanes": 0,
+ "ProgressionState": ""
 }

@@ -7,6 +7,9 @@ import (
 // RaceInfo collects information about a race from multiple tables.
 type RaceInfo struct {
   RaceID string
+  EventID string
+  StageID string
+  AreaID string
   StageName string
   StageNumber int
   IsFinal bool

@@ -21,7 +21,7 @@ func UniqueID(db compat.DBorTx, table string, id string) string {
     return id   // This ID is not yet taken, so we can use it.
   }
 
-  // String off the trailing digits to get a prefix to which we can add other digits.
+  // Strip off the trailing digits to get a prefix to which we can add other digits.
   prefix := strings.TrimRightFunc(id, unicode.IsDigit)
   pattern := prefix + "%"
   ss, err := strsql.QueryStrings(db, "select id from " + table + " where id LIKE ?", pattern)

@@ -1,13 +1,38 @@
 {
+ "EventID": "M1.EV3",
  "EntryCount": 5,
  "GroupCount": 0,
  "GroupSize": 0,
  "Summary": "C1 500m Bantam Women [M1.EV3]",
- "RaceCounts": [
+ "RoundCounts": [
   {
    "Count": 1,
    "Round": 1,
-   "StageName": "Final"
+   "StageID": "S3",
+   "StageName": "Final",
+   "StageNumber": 0,
+   "IsFinal": false
   }
- ]
+ ],
+ "Races": [
+  {
+   "RaceID": "R1",
+   "EventID": "M1.EV3",
+   "StageID": "S3",
+   "AreaID": "",
+   "StageName": "Final",
+   "StageNumber": 3,
+   "IsFinal": true,
+   "Round": 1,
+   "Section": 1,
+   "AreaName": "",
+   "RaceNumber": 1001,
+   "LaneCount": 0
+  }
+ ],
+ "AreaID": "",
+ "AreaName": "",
+ "AreaLanes": 0,
+ "AreaExtraLanes": 0,
+ "ProgressionState": ""
 }

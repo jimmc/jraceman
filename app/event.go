@@ -67,7 +67,7 @@ func EventCreateRaces(ctx context.Context, r domain.Repos, eventId string, laneC
   existingRaces := eventInfo.Races
   // We ae assuming desiredRoundCounts is sorted by round,
   // so that desiredRaces is sorted by round and section.
-  desiredRaces := roundsToRaces(desiredRoundCounts, eventInfo.AreaName)
+  desiredRaces := roundsToRaces(desiredRoundCounts, eventInfo)
   racesToCreate := racesAndNot(desiredRaces, existingRaces)
   racesToDelete := racesAndNot(existingRaces, desiredRaces)
   racesToModFrom := racesIntersectAndDiffer(existingRaces, desiredRaces)
@@ -116,13 +116,16 @@ func anyRaceHasLaneData(races []*domain.RaceInfo) bool {
 
 // roundToRaces takes a list of round counts and produces a slice of
 // RaceInfo structs that have the appropriate Round and Section fields filled in.
-func roundsToRaces(desiredRoundCounts []*domain.EventRoundCounts, areaName string) []*domain.RaceInfo {
+func roundsToRaces(desiredRoundCounts []*domain.EventRoundCounts, eventInfo *domain.EventInfo) []*domain.RaceInfo {
   result := make([]*domain.RaceInfo, 0)
   for _, rc := range desiredRoundCounts {
     // Round and Section are both 1-based numbers.
     for n := 1; n <= rc.Count; n++ {
       race := &domain.RaceInfo{
-        AreaName: areaName,
+        EventID: eventInfo.EventID,
+        AreaID: eventInfo.AreaID,
+        AreaName: eventInfo.AreaName,
+        StageID: rc.StageID,
         StageName: rc.StageName,
         StageNumber: rc.StageNumber,
         IsFinal: rc.IsFinal,

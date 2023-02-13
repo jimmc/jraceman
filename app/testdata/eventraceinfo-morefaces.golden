@@ -1,23 +1,110 @@
 {
+ "EventID": "M1.EV4",
  "EntryCount": 0,
  "GroupCount": 0,
  "GroupSize": 0,
  "Summary": "K1 500m Bantam Women [M1.EV4]",
- "RaceCounts": [
+ "RoundCounts": [
   {
    "Count": 2,
    "Round": 1,
-   "StageName": "Heat"
+   "StageID": "S1",
+   "StageName": "Heat",
+   "StageNumber": 0,
+   "IsFinal": false
   },
   {
    "Count": 2,
    "Round": 2,
-   "StageName": "Semifinal"
+   "StageID": "S2",
+   "StageName": "Semifinal",
+   "StageNumber": 0,
+   "IsFinal": false
   },
   {
    "Count": 1,
    "Round": 3,
-   "StageName": "Final"
+   "StageID": "S3",
+   "StageName": "Final",
+   "StageNumber": 0,
+   "IsFinal": false
   }
- ]
+ ],
+ "Races": [
+  {
+   "RaceID": "R2",
+   "EventID": "M1.EV4",
+   "StageID": "S1",
+   "AreaID": "",
+   "StageName": "Heat",
+   "StageNumber": 1,
+   "IsFinal": false,
+   "Round": 1,
+   "Section": 1,
+   "AreaName": "",
+   "RaceNumber": 1002,
+   "LaneCount": 0
+  },
+  {
+   "RaceID": "R3",
+   "EventID": "M1.EV4",
+   "StageID": "S1",
+   "AreaID": "",
+   "StageName": "Heat",
+   "StageNumber": 1,
+   "IsFinal": false,
+   "Round": 1,
+   "Section": 2,
+   "AreaName": "",
+   "RaceNumber": 1003,
+   "LaneCount": 0
+  },
+  {
+   "RaceID": "R4",
+   "EventID": "M1.EV4",
+   "StageID": "S2",
+   "AreaID": "",
+   "StageName": "Semifinal",
+   "StageNumber": 2,
+   "IsFinal": false,
+   "Round": 2,
+   "Section": 1,
+   "AreaName": "",
+   "RaceNumber": 1004,
+   "LaneCount": 0
+  },
+  {
+   "RaceID": "R5",
+   "EventID": "M1.EV4",
+   "StageID": "S2",
+   "AreaID": "",
+   "StageName": "Semifinal",
+   "StageNumber": 2,
+   "IsFinal": false,
+   "Round": 2,
+   "Section": 2,
+   "AreaName": "",
+   "RaceNumber": 1005,
+   "LaneCount": 0
+  },
+  {
+   "RaceID": "R6",
+   "EventID": "M1.EV4",
+   "StageID": "S3",
+   "AreaID": "",
+   "StageName": "Final",
+   "StageNumber": 3,
+   "IsFinal": true,
+   "Round": 3,
+   "Section": 1,
+   "AreaName": "",
+   "RaceNumber": 1006,
+   "LaneCount": 0
+  }
+ ],
+ "AreaID": "",
+ "AreaName": "",
+ "AreaLanes": 0,
+ "AreaExtraLanes": 0,
+ "ProgressionState": ""
 }
