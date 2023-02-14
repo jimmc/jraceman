@@ -77,13 +77,16 @@ func (r *DBEventInfoRepo) EventRaceInfo(eventId string) (*domain.EventInfo, erro
 
 func loadEventRaces(db compat.DBorTx, eventId string) ([]*domain.RaceInfo, error) {
   laneCountQuery :=
-        `(SELECT count(1) as laneCount
-        FROM lane JOIN race on lane.raceid = race.id)`
+        `(SELECT lCount FROM
+          (SELECT count(1) as lCount, lrace.id as lraceid
+          FROM lane JOIN race as lrace on lane.raceid = lrace.id
+          GROUP BY lrace.id) as LaneCounts
+        WHERE LaneCounts.lraceid = race.id)`
   query := `SELECT COALESCE(stage.name,"") as StageName,
         COALESCE(stage.number,0) as StageNumber, COALESCE(stage.isfinal,false) as IsFinal,
         race.round as Round, race.section as Section,
         COALESCE(area.name,"") as AreaName, COALESCE(race.number,0) as RaceNumber, race.ID as RaceID,
-        `+laneCountQuery+` as LaneCount,
+        COALESCE(`+laneCountQuery+`,0) as LaneCount,
         COALESCE(race.stageid,"") as StageID, COALESCE(race.areaid,"") as AreaID
     FROM race LEFT JOIN stage on race.stageid = stage.id
         LEFT JOIN area on race.areaid = area.id
@@ -194,18 +197,27 @@ func (r *DBEventInfoRepo) updateRaceInfoInTx(ctx context.Context, tx *sql.Tx, ev
 
   // Update
   for i, raceInfo := range racesToModFrom {
-    race := raceInfoToRace(raceInfo)
-    race.StageID = &(racesToModFrom[i].StageID)
+    oldRace := raceInfoToRace(raceInfo)
+    newRace := raceInfoToRace(racesToModTo[i])
+    diffMap := make(map[string]interface{})
+    diffMap["StageID"] = newRace.StageID
     // TODO - need to deal with Race.Scratched?
-    id, err := r.repos.Race().Save(race)
+    raceDiffs := &manualDiffs{ diffMap }
+    err := r.repos.Race().UpdateByID(oldRace.ID, oldRace, newRace, raceDiffs)
     if err!=nil {
       return fmt.Errorf("error updating race ID=%q: %w", raceInfo.RaceID, err)
     }
-    raceInfo.RaceID = id
+    raceInfo.RaceID = oldRace.ID
   }
 
   return nil
 }
+
+type manualDiffs struct {
+  diffMap map[string]interface{}
+}
+
+func (md *manualDiffs) Modified() map[string]interface{} { return md.diffMap }
 
 // Create a Race struct that we can use with the database.
 func raceInfoToRace(raceInfo *domain.RaceInfo) *domain.Race {

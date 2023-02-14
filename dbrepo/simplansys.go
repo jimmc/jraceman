@@ -84,9 +84,8 @@ func (r *DBSimplanSysRepo) LoadSimplanSys(progression *domain.Progression) (*dom
     rowCount := 0
     raceCounts := make([]*domain.EventRoundCounts,0)
     for stageRows.Next() {
-      stageId := ""
       rci := &domain.EventRoundCounts{}
-      err := stageRows.Scan(&stageId, &rci.Count, &rci.StageName, &rci.StageNumber, &rci.IsFinal)
+      err := stageRows.Scan(&rci.StageID, &rci.Count, &rci.StageName, &rci.StageNumber, &rci.IsFinal)
       if err != nil {
         return nil, err
       }

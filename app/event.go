@@ -90,8 +90,11 @@ func EventCreateRaces(ctx context.Context, r domain.Repos, eventId string, laneC
     return result, nil
   }
 
-  if !allowDeleteLanes && anyRaceHasLaneData(racesToDelete) {
-    return nil, fmt.Errorf("Attempt to delete a race with lane data, with allowDeleteLanes false")
+  if !allowDeleteLanes {
+    raceWithLaneData := firstRaceWithLaneData(racesToDelete)
+    if raceWithLaneData != nil {
+      return nil, fmt.Errorf("Attempt to delete a race with lane data (%s), with allowDeleteLanes false", raceWithLaneData.RaceID)
+    }
   }
 
   // We are clear to proceed. We can now create, delete, and modify the races.
@@ -105,13 +108,13 @@ func EventCreateRaces(ctx context.Context, r domain.Repos, eventId string, laneC
 }
 
 // wouldDeleteLanes returns true if any of the races have lane data.
-func anyRaceHasLaneData(races []*domain.RaceInfo) bool {
+func firstRaceWithLaneData(races []*domain.RaceInfo) *domain.RaceInfo {
   for _, race := range races {
     if race.LaneCount > 0 {
-      return true
+      return race
     }
   }
-  return false
+  return nil
 }
 
 // roundToRaces takes a list of round counts and produces a slice of
