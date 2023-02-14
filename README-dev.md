@@ -65,6 +65,12 @@ dlv debug . -- -db sqlite3:$JRDB -logtostderr
 At the dlv prompt, you can enter `c` to start the server, or you can set breakpoints
 and use other dlv commands.
 
+If you make changes to your source code, you can use the `rebuild` command from within dlv
+to rebuild and reload your program without changing breakpoints. Use the `continue` or
+`c` command to restart the program after rebuilding, then use the session dropdown menu
+in the client (the hamburger menu in the top right corner) and select the `Refresh login`
+command to restore your login to the server without losing the state in the client.
+
 ## Adding a database table
 
 JRaceman provides extensive automatic support for database tables. With a minumum
