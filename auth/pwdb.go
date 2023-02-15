@@ -3,7 +3,7 @@ package auth
 import (
   "database/sql"
 
-  "github.com/jimmc/jraceman/dbrepo/compat"
+  "github.com/jimmc/jraceman/dbrepo/conn"
 
   "github.com/golang/glog"
 
@@ -16,10 +16,10 @@ import (
 // id, saltword, and permissions,
 // where the permissions value is a comma-separated list of permission names.
 type PwDB struct {
-    db compat.DBorTx
+    db conn.DB
 }
 
-func NewPwDB(db compat.DBorTx) *PwDB {
+func NewPwDB(db conn.DB) *PwDB {
   return &PwDB{
     db: db,
   }

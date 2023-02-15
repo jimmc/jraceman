@@ -4,7 +4,7 @@ import (
   "fmt"
   "strings"
 
-  "github.com/jimmc/jraceman/dbrepo/compat"
+  "github.com/jimmc/jraceman/dbrepo/conn"
 )
 
 // QueryResults provides generic results for an SQL query.
@@ -23,7 +23,7 @@ type ColumnInfo struct {
 // the returned rows. For each row, it retrieves the data into targets, then
 // calls the collect function. The assumption is that the targets store the
 // results into data that is accessible to the collect function.
-func QueryAndCollect(db compat.DBorTx, sql string, targets []interface{}, collect func()) error {
+func QueryAndCollect(db conn.DB, sql string, targets []interface{}, collect func()) error {
   rows, err := db.Query(sql)
   if err != nil {
     return err
@@ -42,7 +42,7 @@ func QueryAndCollect(db compat.DBorTx, sql string, targets []interface{}, collec
 // QueryStarAndCollect issues a Query for the given arbitrary sql and returns the results.
 // It is intended for cases where the type and column count of the result is unknown,
 // such as "SELECT * from sometable".
-func QueryStarAndCollect(db compat.DBorTx, sql string, queryValues ...interface{}) (*QueryResults, error) {
+func QueryStarAndCollect(db conn.DB, sql string, queryValues ...interface{}) (*QueryResults, error) {
   rows, err := db.Query(sql, queryValues...)
   if err != nil {
     return nil, err
@@ -101,7 +101,7 @@ func QueryStarAndCollect(db compat.DBorTx, sql string, queryValues ...interface{
 
 // QueryInt issues a Query for the given sql which is expected to have a single
 // integer as a return value, such as "SELECT count(*) FROM ... WHERE ..."
-func QueryInt(db compat.DBorTx, sql string, queryValues ...interface{}) (int, error) {
+func QueryInt(db conn.DB, sql string, queryValues ...interface{}) (int, error) {
   rows, err := db.Query(sql, queryValues...)
   if err != nil {
     return 0, err
@@ -124,7 +124,7 @@ func QueryInt(db compat.DBorTx, sql string, queryValues ...interface{}) (int, er
 
 // QueryString issues a Query for the given sql which is expected to have a single
 // string from a single record as a return value.
-func QueryString(db compat.DBorTx, sql string, queryValues ...interface{}) (string, error) {
+func QueryString(db conn.DB, sql string, queryValues ...interface{}) (string, error) {
   rows, err := db.Query(sql, queryValues...)
   if err != nil {
     return "", err
@@ -147,7 +147,7 @@ func QueryString(db compat.DBorTx, sql string, queryValues ...interface{}) (stri
 
 // QueryStrings issues a Query for the given sql and collects the first column of the
 // result, which it assumes is a string.
-func QueryStrings(db compat.DBorTx, sql string, queryValues ...interface{}) ([]string, error) {
+func QueryStrings(db conn.DB, sql string, queryValues ...interface{}) ([]string, error) {
   rows, err := db.Query(sql, queryValues...)
   if err != nil {
     return nil, err

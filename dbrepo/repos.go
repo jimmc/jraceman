@@ -6,7 +6,7 @@ import (
   "io"
   "strings"
 
-  "github.com/jimmc/jraceman/dbrepo/compat"
+  "github.com/jimmc/jraceman/dbrepo/conn"
   "github.com/jimmc/jraceman/dbrepo/ixport"
   "github.com/jimmc/jraceman/domain"
 
@@ -15,7 +15,7 @@ import (
 
 // Repos implements the domain.Repos interface.
 type Repos struct {
-  db compat.DBorTx
+  db conn.DB
   tableMap map[string]TableRepo
 
   // Table types
@@ -118,7 +118,7 @@ func (r *Repos) TableEntries() []TableEntry {
   }
 }
 
-func (r *Repos) DB() compat.DBorTx {
+func (r *Repos) DB() conn.DB {
   return r.db
 }
 
@@ -196,7 +196,7 @@ func OpenDB(db *sql.DB) (*Repos, error) {
 }
 
 // Reopen a database with a DBorTx (typically a Tx).
-func ReopenDB(db compat.DBorTx) (*Repos, error) {
+func ReopenDB(db conn.DB) (*Repos, error) {
   r := &Repos{
     db: db,
     // Table types

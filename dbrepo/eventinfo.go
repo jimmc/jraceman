@@ -5,14 +5,14 @@ import (
   "database/sql"
   "fmt"
 
-  "github.com/jimmc/jraceman/dbrepo/compat"
+  "github.com/jimmc/jraceman/dbrepo/conn"
   "github.com/jimmc/jraceman/domain"
 
   "github.com/golang/glog"
 )
 
 type DBEventInfoRepo struct {
-  db compat.DBorTx
+  db conn.DB
   repos *Repos      // We need access to repos for the table types
 }
 
@@ -75,7 +75,7 @@ func (r *DBEventInfoRepo) EventRaceInfo(eventId string) (*domain.EventInfo, erro
   return result, nil
 }
 
-func loadEventRaces(db compat.DBorTx, eventId string) ([]*domain.RaceInfo, error) {
+func loadEventRaces(db conn.DB, eventId string) ([]*domain.RaceInfo, error) {
   laneCountQuery :=
         `(SELECT lCount FROM
           (SELECT count(1) as lCount, lrace.id as lraceid
@@ -114,7 +114,7 @@ func loadEventRaces(db compat.DBorTx, eventId string) ([]*domain.RaceInfo, error
   return rr, nil
 }
 
-func loadEventRoundCounts(db compat.DBorTx, eventId string) ([]*domain.EventRoundCounts, error) {
+func loadEventRoundCounts(db conn.DB, eventId string) ([]*domain.EventRoundCounts, error) {
   query := `SELECT count(1) as count, race.round as round,
       race.stageid as StageID, stage.name as StageName
     FROM event JOIN race on event.id = race.eventid

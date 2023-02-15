@@ -4,14 +4,14 @@ import (
   "fmt"
   "strings"
 
-  "github.com/jimmc/jraceman/dbrepo/compat"
+  "github.com/jimmc/jraceman/dbrepo/conn"
   "github.com/jimmc/jraceman/domain"
 
   "github.com/golang/glog"
 )
 
 type DBSimplanSysRepo struct {
-  db compat.DBorTx
+  db conn.DB
 }
 
 func (r *DBSimplanSysRepo) LoadSimplanSys(progression *domain.Progression) (*domain.SimplanSys, error) {

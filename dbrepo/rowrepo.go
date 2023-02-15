@@ -5,14 +5,14 @@ import (
   "fmt"
   "strings"
 
-  "github.com/jimmc/jraceman/dbrepo/compat"
+  "github.com/jimmc/jraceman/dbrepo/conn"
   // TODO - We only need structsql for requireOneResult, maybe that can go elsewhere
   "github.com/jimmc/jraceman/dbrepo/structsql"
 )
 
 // dbRowRepo implements the RowRepo interface for use by Importer.
 type dbRowRepo struct {
-  db compat.DBorTx    // One or the other of db and tx must be filled.
+  db conn.DB    // One or the other of db and tx must be filled.
   tx *sql.Tx
 }
 

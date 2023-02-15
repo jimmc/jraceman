@@ -4,7 +4,7 @@ import (
   "io"
   "strconv"
 
-  "github.com/jimmc/jraceman/dbrepo/compat"
+  "github.com/jimmc/jraceman/dbrepo/conn"
   "github.com/jimmc/jraceman/dbrepo/ixport"
   "github.com/jimmc/jraceman/dbrepo/strsql"
   "github.com/jimmc/jraceman/dbrepo/structsql"
@@ -12,7 +12,7 @@ import (
 )
 
 type DBEventRepo struct {
-  db compat.DBorTx
+  db conn.DB
 }
 
 func (r *DBEventRepo) New() interface{} {

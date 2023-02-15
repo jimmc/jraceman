@@ -5,15 +5,15 @@ import (
   "io"
   "strings"
 
-  "github.com/jimmc/jraceman/dbrepo/compat"
+  "github.com/jimmc/jraceman/dbrepo/conn"
   "github.com/jimmc/jraceman/dbrepo/structsql"
 )
 
 type Exporter struct{
-  db compat.DBorTx
+  db conn.DB
 }
 
-func NewExporter(db compat.DBorTx) *Exporter {
+func NewExporter(db conn.DB) *Exporter {
   return &Exporter{db}
 }
 
