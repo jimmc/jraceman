@@ -22,7 +22,7 @@ func TestEventRaceInfo(t *testing.T) {
       { "no such event", "eventraceinfo", "", "XYZ", true },
       { "no races", "eventraceinfo", "eventraceinfo-noraces", "M1.EV1", false },
       { "one race", "eventraceinfo", "eventraceinfo-onerace", "M1.EV3", false },
-      { "more races", "eventraceinfo", "eventraceinfo-morefaces", "M1.EV4", false },
+      { "more races", "eventraceinfo", "eventraceinfo-moreraces", "M1.EV4", false },
   }
   for _, tt := range tests {
     t.Run(tt.testName, func(t *testing.T) {
