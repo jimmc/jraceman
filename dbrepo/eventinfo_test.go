@@ -1,4 +1,4 @@
-package app
+package dbrepo_test
 
 import (
   "encoding/json"
