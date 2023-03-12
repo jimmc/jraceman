@@ -367,11 +367,10 @@ func (r *Repos) ImportFile(fileName string) (ixport.ImporterCounts, error) {
 // Export writes out all of our tables to a text file that can
 // be loaded back in later using Import.
 func (r *Repos) Export(w io.Writer) error {
-  db, ok := r.db.(*sql.DB)
-  if !ok {
-    return fmt.Errorf("Can't start an export on a non-DB repo")
+  e, err := r.NewExporter()
+  if err != nil {
+    return err
   }
-  e := ixport.NewExporter(db)
   if err := e.ExportHeader(w); err != nil {
     return err
   }
@@ -382,4 +381,15 @@ func (r *Repos) Export(w io.Writer) error {
     }
   }
   return nil
+}
+
+// NewExporter returns an Exporter suitable for exporting one table
+// from our database.
+func (r *Repos) NewExporter() (*ixport.Exporter, error) {
+  db, ok := r.db.(*sql.DB)
+  if !ok {
+    return nil, fmt.Errorf("Can't start an export on a non-DB repo")
+  }
+  e := ixport.NewExporter(db)
+  return e, nil
 }

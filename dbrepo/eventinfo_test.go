@@ -8,6 +8,7 @@ import (
   "testing"
 
   "github.com/jimmc/jraceman/domain"
+  "github.com/jimmc/jraceman/dbrepo"
   dbtest "github.com/jimmc/jraceman/dbrepo/test"
 
   goldenbase "github.com/jimmc/golden/base"
@@ -115,27 +116,36 @@ func TestUpdateRaceInfo(t *testing.T) {
         if err != nil {
           t.Fatal(err)
         }
+      }
 
-        // Write out the database.
-        outName := tt.outName
-        if outName=="" {
-          outName = tt.setupName
-        }
-        outfile := "testdata/" + outName + ".out"
-        w, err := os.Create(outfile)
-        if err != nil {
-          t.Fatalf("error opening export output file %s: %v", outfile, err)
-        }
-        if err := dbRepos.Export(w); err != nil {
-          t.Fatalf("error exporting to %s: %v", outfile, err)
-        }
-        w.Close()
+      // We write out our data and compare to our golden even if
+      // we were expecting an error. If we got the expected error,
+      // we want to check that the database did not change.
 
-        // Check that the result is as expected.
-        goldenfile := "testdata/" + outName + ".golden"
-        if err := goldenbase.CompareOutToGolden(outfile, goldenfile); err != nil {
-          t.Fatal(err)
-        }
+      // Write out the Race table.
+      outName := tt.outName
+      if outName=="" {
+        outName = tt.setupName
+      }
+      outfile := "testdata/" + outName + ".out"
+      w, err := os.Create(outfile)
+      if err != nil {
+        t.Fatalf("error opening export output file %s: %v", outfile, err)
+      }
+      exporter, err := dbRepos.NewExporter()
+      if err != nil {
+        t.Fatal(err)
+      }
+      dbReposRace := dbRepos.Race().(*dbrepo.DBRaceRepo)
+      if err := dbReposRace.Export(exporter, w); err != nil {
+        t.Fatalf("error exporting to %s: %v", outfile, err)
+      }
+      w.Close()
+
+      // Check that the result is as expected.
+      goldenfile := "testdata/" + outName + ".golden"
+      if err := goldenbase.CompareOutToGolden(outfile, goldenfile); err != nil {
+        t.Fatal(err)
       }
     })
   }
