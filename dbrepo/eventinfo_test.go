@@ -77,6 +77,55 @@ func TestEventRaceInfo(t *testing.T) {
   }
 }
 
+// raceInfoA is a race that does not exist in updateraceinfo.setup.
+var raceInfoA = &domain.RaceInfo{
+  RaceID: "R7",
+  EventID: "M1.EV4",
+  StageID: "S1",
+  AreaID: "",
+  StageName: "Heat",
+  StageNumber: 1,
+  IsFinal: false,
+  Round: 1,
+  Section: 3,
+  AreaName: "",
+  RaceNumber: 1007,
+  LaneCount: 5,
+}
+// raceInfoB is a race that does exist in updateraceinfo.setup.
+var raceInfoB = &domain.RaceInfo{
+  RaceID: "R5",
+  EventID: "M1.EV4",
+  StageID: "S2",
+  AreaID: "",
+  StageName: "Semi",
+  StageNumber: 2,
+  IsFinal: false,
+  Round: 2,
+  Section: 2,
+  AreaName: "",
+  RaceNumber: 1006,
+  LaneCount: 0,
+}
+// raceInfoB2 is a race that does exist in updateraceinfo.setup, but modified.
+var raceInfoB2 = &domain.RaceInfo{
+  RaceID: "R5",
+  EventID: "M1.EV4",
+  StageID: "S1",
+  AreaID: "",
+  StageName: "Heat",
+  StageNumber: 1,
+  IsFinal: false,
+  Round: 1,
+  Section: 4,
+  AreaName: "",
+  RaceNumber: 1006,
+  LaneCount: 0,
+}
+var raceInfoListA = []*domain.RaceInfo{ raceInfoA }
+var raceInfoListB = []*domain.RaceInfo{ raceInfoB }
+var raceInfoListB2 = []*domain.RaceInfo{ raceInfoB2 }
+
 func TestUpdateRaceInfo(t *testing.T) {
   tests := []struct{
     testName string
@@ -90,6 +139,9 @@ func TestUpdateRaceInfo(t *testing.T) {
     racesToModTo []*domain.RaceInfo
   } {
       { "no changes", "updateraceinfo", "updateraceinfo-nochange", false, nil, nil, nil, nil, nil },
+      { "add race", "updateraceinfo", "updateraceinfo-addrace", false, nil, raceInfoListA, nil, nil, nil },
+      { "delete race", "updateraceinfo", "updateraceinfo-deleterace", false, nil, nil, raceInfoListB, nil, nil },
+      { "modify race", "updateraceinfo", "updateraceinfo-modifyrace", false, nil, nil, nil, raceInfoListB, raceInfoListB2 },
   }
   for _, tt := range tests {
     t.Run(tt.testName, func(t *testing.T) {

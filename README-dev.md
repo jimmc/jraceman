@@ -71,6 +71,14 @@ to rebuild and reload your program without changing breakpoints. Use the `contin
 in the client (the hamburger menu in the top right corner) and select the `Refresh login`
 command to restore your login to the server without losing the state in the client.
 
+To use the `dlv` command to debug a single unit test, use the `dlv test` command
+specifying the path to the test suite and the name of the test to run.
+For example, to run `TestUpdateRaceInfo`, use this command:
+
+```
+dlv test dbrepo/eventinfo_test.go -- -test.run ^TestUpdateRaceInfo$
+```
+
 ## Adding a database table
 
 JRaceman provides extensive automatic support for database tables. With a minumum

@@ -2,18 +2,26 @@ package dbrepo
 
 import (
   "context"
-  "database/sql"
   "fmt"
 
   "github.com/jimmc/jraceman/dbrepo/conn"
   "github.com/jimmc/jraceman/domain"
 
   "github.com/golang/glog"
+  "gopkg.in/d4l3k/messagediff.v1"
 )
 
 type DBEventInfoRepo struct {
   db conn.DB
   repos *Repos      // We need access to repos for the table types
+}
+
+func (r *DBEventInfoRepo) RequireTx(ctx context.Context) (commit func() error, rollback func(), rr *DBEventInfoRepo, err error) {
+  commitf, rollbackf, rrepos, err := r.repos.RequireTx(ctx)
+  if err != nil {
+    return nil, nil, nil, err
+  }
+  return commitf, rollbackf, rrepos.EventInfo().(*DBEventInfoRepo), nil
 }
 
 func (r *DBEventInfoRepo) EventRaceInfo(eventId string) (*domain.EventInfo, error) {
@@ -146,28 +154,19 @@ func loadEventRoundCounts(db conn.DB, eventId string) ([]*domain.EventRoundCount
 // according to the given data.
 func (r *DBEventInfoRepo) UpdateRaceInfo(ctx context.Context, eventInfo *domain.EventInfo,
     racesToCreate, racesToDelete, racesToModFrom, racesToModTo []*domain.RaceInfo) error {
-  // See if our database connection is already a transaction.
-  tx, ok := r.db.(*sql.Tx)
-  if ok {
-    return r.updateRaceInfoInTx(ctx, tx, eventInfo, racesToCreate, racesToDelete, racesToModFrom, racesToModTo)
-  }
-  // We do all operations within a transaction and roll back if any fail.
-  db, ok := r.db.(*sql.DB)
-  if !ok {
-    return fmt.Errorf("In EventInfo.UpdateRaceInfo db is not a Tx or DB!")
-  }
-  tx, err := db.BeginTx(ctx, nil)
+  // We want all our writes to succeed or fail together.
+  commit, rollback, r, err := r.RequireTx(ctx)
   if err!=nil {
     return err
   }
-  defer tx.Rollback()   // Roll back if anything fails.
+  defer rollback()
 
-  err = r.updateRaceInfoInTx(ctx, tx, eventInfo, racesToCreate, racesToDelete, racesToModFrom, racesToModTo)
+  err = r.updateRaceInfoInTx(ctx, eventInfo, racesToCreate, racesToDelete, racesToModFrom, racesToModTo)
   if err != nil {
     return err
   }
 
-  if err = tx.Commit(); err!=nil {
+  if err = commit(); err!=nil {
     return err
   }
   return nil
@@ -175,7 +174,7 @@ func (r *DBEventInfoRepo) UpdateRaceInfo(ctx context.Context, eventInfo *domain.
 
 // UpdateRaceInfo updates the database to create, delete, and modify races
 // according to the given data. Return error if any operations fail.
-func (r *DBEventInfoRepo) updateRaceInfoInTx(ctx context.Context, tx *sql.Tx, eventInfo *domain.EventInfo,
+func (r *DBEventInfoRepo) updateRaceInfoInTx(ctx context.Context, eventInfo *domain.EventInfo,
     racesToCreate, racesToDelete, racesToModFrom, racesToModTo []*domain.RaceInfo) error {
 
   // Create
@@ -199,9 +198,11 @@ func (r *DBEventInfoRepo) updateRaceInfoInTx(ctx context.Context, tx *sql.Tx, ev
   for i, raceInfo := range racesToModFrom {
     oldRace := raceInfoToRace(raceInfo)
     newRace := raceInfoToRace(racesToModTo[i])
+    diffs, _ := messagediff.DeepDiff(oldRace, newRace)
     diffMap := make(map[string]interface{})
-    diffMap["StageID"] = newRace.StageID
-    // TODO - need to deal with Race.Scratched?
+    for k, v := range diffs.Modified {
+      diffMap[k.String()] = v
+    }
     raceDiffs := &manualDiffs{ diffMap }
     err := r.repos.Race().UpdateByID(oldRace.ID, oldRace, newRace, raceDiffs)
     if err!=nil {

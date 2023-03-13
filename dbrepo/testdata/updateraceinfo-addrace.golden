@@ -1,0 +1,10 @@
+
+!table race
+!columns "id","eventid","stageid","round","section","areaid","number","scheduledstart","scheduledduration","actualstart","scratched","racecomment"
+"R1","M1.EV3","S3",1,1,null,1001,null,null,null,false,null
+"R2","M1.EV4","S1",1,1,null,1002,null,null,null,false,null
+"R3","M1.EV4","S1",1,2,null,1003,null,null,null,false,null
+"R4","M1.EV4","S2",2,1,null,1004,null,null,null,false,null
+"R5","M1.EV4","S2",2,2,null,1005,null,null,null,false,null
+"R6","M1.EV4","S3",3,1,null,1006,null,null,null,false,null
+"R7","M1.EV4","S1",1,3,null,1007,null,null,null,false,null

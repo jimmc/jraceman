@@ -1,6 +1,7 @@
 package dbrepo
 
 import (
+  "context"
   "database/sql"
   "fmt"
   "io"
@@ -251,6 +252,40 @@ func ReopenDB(db conn.DB) (*Repos, error) {
   r.tableMap = tableMap
 
   return r, nil
+}
+
+// RequireTx ensures thata our Repos is using a transaction.
+// If we already have a transaction, then the commit and rollback funcs
+// are no-ops and the returned Repos is the same as the receiver.
+// If we don't have a transactions, it creates one, returns commit and
+// rollback funcs that operate on that transaction, and returns a new
+// Repos containing the transaction.
+func (r *Repos) RequireTx(ctx context.Context) (commit func() error, rollback func(), rrepos *Repos, errr error) {
+  nop := func(){}
+  nopE := func() error { return nil }
+
+  // See if our database connection is already a transaction.
+  tx, ok := r.db.(*sql.Tx)
+  if ok {
+    return nopE, nop, r, nil
+  }
+
+  // We do all operations within a transaction and roll back if any fail.
+  db, ok := r.db.(*sql.DB)
+  if !ok {
+    return nil, nil, nil, fmt.Errorf("In Repos.RequireTx db is not a Tx or DB!")
+  }
+  tx, err := db.BeginTx(ctx, nil)
+  if err!=nil {
+    return nil, nil, nil, fmt.Errorf("In Repos.RequireTx: %w", err)
+  }
+  commitf := func() error { return tx.Commit() }
+  rollbackf := func() { tx.Rollback() }
+  rr, err := ReopenDB(tx)
+  if err!=nil {
+    return nil, nil, nil, err
+  }
+  return commitf, rollbackf, rr, nil
 }
 
 func (r *Repos) TableRepo(name string) (TableRepo, error) {
