@@ -112,7 +112,7 @@ var raceInfoB2 = &domain.RaceInfo{
   RaceID: "R5",
   EventID: "M1.EV4",
   StageID: "S1",
-  AreaID: "",
+  AreaID: "A1",
   StageName: "Heat",
   StageNumber: 1,
   IsFinal: false,
@@ -122,9 +122,25 @@ var raceInfoB2 = &domain.RaceInfo{
   RaceNumber: 1006,
   LaneCount: 0,
 }
+// raceInfoBad is a race that does contain sufficient information for creation.
+var raceInfoBad = &domain.RaceInfo{
+  RaceID: "R1",
+  EventID: "",
+  StageID: "",
+  AreaID: "",
+  StageName: "",
+  StageNumber: 0,
+  IsFinal: false,
+  Round: 0,
+  Section: 0,
+  AreaName: "",
+  RaceNumber: 0,
+  LaneCount: 0,
+}
 var raceInfoListA = []*domain.RaceInfo{ raceInfoA }
 var raceInfoListB = []*domain.RaceInfo{ raceInfoB }
 var raceInfoListB2 = []*domain.RaceInfo{ raceInfoB2 }
+var raceInfoListBad = []*domain.RaceInfo{ raceInfoBad }
 
 func TestUpdateRaceInfo(t *testing.T) {
   tests := []struct{
@@ -142,6 +158,9 @@ func TestUpdateRaceInfo(t *testing.T) {
       { "add race", "updateraceinfo", "updateraceinfo-addrace", false, nil, raceInfoListA, nil, nil, nil },
       { "delete race", "updateraceinfo", "updateraceinfo-deleterace", false, nil, nil, raceInfoListB, nil, nil },
       { "modify race", "updateraceinfo", "updateraceinfo-modifyrace", false, nil, nil, nil, raceInfoListB, raceInfoListB2 },
+      { "add bad race", "updateraceinfo", "updateraceinfo-nochange", true, nil, raceInfoListBad, nil, nil, nil },
+      { "delete bad race", "updateraceinfo", "updateraceinfo-nochange", true, nil, nil, raceInfoListA, nil, nil },
+      { "modify bad race", "updateraceinfo", "updateraceinfo-nochange", true, nil, nil, nil, raceInfoListBad, raceInfoListB2 },
   }
   for _, tt := range tests {
     t.Run(tt.testName, func(t *testing.T) {
