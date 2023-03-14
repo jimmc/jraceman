@@ -147,6 +147,7 @@ func TestUpdateRaceInfo(t *testing.T) {
     testName string
     setupName string
     outName string
+    useTx bool          // True means we pass in a transaction, false for a database.
     expectError bool
     eventInfo *domain.EventInfo
     racesToCreate []*domain.RaceInfo
@@ -154,16 +155,18 @@ func TestUpdateRaceInfo(t *testing.T) {
     racesToModFrom []*domain.RaceInfo
     racesToModTo []*domain.RaceInfo
   } {
-      { "no changes", "updateraceinfo", "updateraceinfo-nochange", false, nil, nil, nil, nil, nil },
-      { "add race", "updateraceinfo", "updateraceinfo-addrace", false, nil, raceInfoListA, nil, nil, nil },
-      { "delete race", "updateraceinfo", "updateraceinfo-deleterace", false, nil, nil, raceInfoListB, nil, nil },
-      { "modify race", "updateraceinfo", "updateraceinfo-modifyrace", false, nil, nil, nil, raceInfoListB, raceInfoListB2 },
-      { "add bad race", "updateraceinfo", "updateraceinfo-nochange", true, nil, raceInfoListBad, nil, nil, nil },
-      { "delete bad race", "updateraceinfo", "updateraceinfo-nochange", true, nil, nil, raceInfoListA, nil, nil },
-      { "modify bad race", "updateraceinfo", "updateraceinfo-nochange", true, nil, nil, nil, raceInfoListBad, raceInfoListB2 },
+      { "no changes", "updateraceinfo", "updateraceinfo-nochange", false, false, nil, nil, nil, nil, nil },
+      { "add race", "updateraceinfo", "updateraceinfo-addrace", false, false, nil, raceInfoListA, nil, nil, nil },
+      { "add race in Tx", "updateraceinfo", "updateraceinfo-addrace", true, false, nil, raceInfoListA, nil, nil, nil },
+      { "delete race", "updateraceinfo", "updateraceinfo-deleterace", false, false, nil, nil, raceInfoListB, nil, nil },
+      { "modify race", "updateraceinfo", "updateraceinfo-modifyrace", false, false, nil, nil, nil, raceInfoListB, raceInfoListB2 },
+      { "add bad race", "updateraceinfo", "updateraceinfo-nochange", false, true, nil, raceInfoListBad, nil, nil, nil },
+      { "delete bad race", "updateraceinfo", "updateraceinfo-nochange", false, true, nil, nil, raceInfoListA, nil, nil },
+      { "modify bad race", "updateraceinfo", "updateraceinfo-nochange", false, true, nil, nil, nil, raceInfoListBad, raceInfoListB2 },
   }
   for _, tt := range tests {
     t.Run(tt.testName, func(t *testing.T) {
+      ctx := context.Background()
 
       // Load the database.
       setupfilename := "testdata/" + tt.setupName + ".setup"
@@ -173,9 +176,20 @@ func TestUpdateRaceInfo(t *testing.T) {
       }
       defer dbRepos.Close()
 
+      txCommit := func() error { return nil }
+      txRepos := dbRepos
+      if tt.useTx {
+        txCommit2 ,rollback, txRepos2, err := dbRepos.RequireTx(ctx)
+        if err!=nil {
+          t.Fatalf("Error beginning test transaction: %v", err)
+        }
+        defer rollback()
+        txRepos = txRepos2
+        txCommit = txCommit2
+      }
+
       // Run the function under test.
-      ctx := context.Background()
-      err = dbRepos.EventInfo().UpdateRaceInfo(ctx, tt.eventInfo,
+      err = txRepos.EventInfo().UpdateRaceInfo(ctx, tt.eventInfo,
         tt.racesToCreate, tt.racesToDelete, tt.racesToModFrom, tt.racesToModTo)
 
       // Check the result.
@@ -187,6 +201,10 @@ func TestUpdateRaceInfo(t *testing.T) {
         if err != nil {
           t.Fatal(err)
         }
+      }
+      err = txCommit()  // Nop if we didn't create a transaction.
+      if err != nil {
+        t.Fatalf("Error closing our transaction: %v", err)
       }
 
       // We write out our data and compare to our golden even if
