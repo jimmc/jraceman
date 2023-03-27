@@ -26,27 +26,55 @@ func EventCreateRaces(ctx context.Context, r domain.Repos, eventId string, laneC
   if err != nil {
     return nil, err
   }
+  glog.V(3).Infof("RaceInfo for eventId=%s: %v", eventId, eventInfo)
+  // Get the progression system for the specified event.
+  progression, err := ProgSysForEvent(r, eventId)
+  if err != nil {
+    return nil, err
+  }
+
+  result, err := calculateRaceChanges(eventInfo, progression, laneCount)
+  if err != nil {
+    return nil, err
+  }
+
+  if dryRun {
+    return result, nil
+  }
+
+  if !allowDeleteLanes {
+    raceWithLaneData := firstRaceWithLaneData(result.RacesToDelete)
+    if raceWithLaneData != nil {
+      return nil, fmt.Errorf("Attempt to delete a race with lane data (%s), with allowDeleteLanes false", raceWithLaneData.RaceID)
+    }
+  }
+
+  // We are clear to proceed. We can now create, delete, and modify the races.
+  err = r.EventInfo().UpdateRaceInfo(ctx, eventInfo, result.RacesToCreate, result.RacesToDelete,
+      result.RacesToModFrom, result.RacesToModTo)
+  if err!=nil {
+    return nil, err
+  }
+
+  return result, nil
+}
+
+func calculateRaceChanges(eventInfo *domain.EventInfo, progression ProgSys, laneCount int) (*CreateRacesResult, error) {
   result := &CreateRacesResult{
     EventInfo: eventInfo,
   }
-  glog.V(3).Infof("RaceInfo for eventId=%s: %v", eventId, eventInfo)
-  eventLaneCount := eventInfo.EntryCount
-  if eventInfo.GroupSize > 1 {
-    eventLaneCount = eventInfo.GroupCount
-  }
   if laneCount < 0 {
-    laneCount = eventLaneCount
+    laneCount = eventInfo.EntryCount
+    if eventInfo.GroupSize > 1 {
+      laneCount = eventInfo.GroupCount
+    }
   }
   var desiredRoundCounts []*domain.EventRoundCounts
+  var err error
   if laneCount == 0 {
     // If no lanes, then there will be no races.
     desiredRoundCounts = make([]*domain.EventRoundCounts,0)
   } else {
-    // Get the progression system for the specified event.
-    progression, err := ProgSysForEvent(r, eventId)
-    if err != nil {
-      return nil, err
-    }
     desiredRoundCounts, err = progression.DesiredRoundCounts(
           eventInfo.ProgressionState, laneCount, eventInfo.AreaLanes, eventInfo.AreaExtraLanes)
     if err != nil {
@@ -86,25 +114,13 @@ func EventCreateRaces(ctx context.Context, r domain.Repos, eventId string, laneC
   result.RacesToModFrom = racesToModFrom
   result.RacesToModTo = racesToModTo
 
-  if dryRun {
-    return result, nil
-  }
-
-  if !allowDeleteLanes {
-    raceWithLaneData := firstRaceWithLaneData(racesToDelete)
-    if raceWithLaneData != nil {
-      return nil, fmt.Errorf("Attempt to delete a race with lane data (%s), with allowDeleteLanes false", raceWithLaneData.RaceID)
-    }
-  }
-
-  // We are clear to proceed. We can now create, delete, and modify the races.
-  err = r.EventInfo().UpdateRaceInfo(ctx, eventInfo, racesToCreate, racesToDelete,
-      racesToModFrom, racesToModTo)
-  if err!=nil {
-    return nil, err
-  }
-
   return result, nil
+}
+
+// CalculateRaceChangesForTesting is solely to allow unit testing
+// of calculateRaceChanges.
+func CalculateRaceChangesForTesting(eventInfo *domain.EventInfo, progression ProgSys, laneCount int) (*CreateRacesResult, error) {
+  return calculateRaceChanges(eventInfo, progression, laneCount)
 }
 
 // wouldDeleteLanes returns true if any of the races have lane data.
@@ -160,7 +176,7 @@ func racesAndNot(r1, r2 []*domain.RaceInfo) []*domain.RaceInfo {
   return result
 }
 
-// racesIntersect return a slice containing all of the RaceInfo entries in r1 that
+// racesIntersectAndDiffer return a slice containing all of the RaceInfo entries in r1 that
 // have a matching RaceInfo in r2 based only on the round and section fields,
 // and where there is a difference in the StageNumber.
 func racesIntersectAndDiffer(r1, r2 []*domain.RaceInfo) []*domain.RaceInfo {
@@ -168,7 +184,7 @@ func racesIntersectAndDiffer(r1, r2 []*domain.RaceInfo) []*domain.RaceInfo {
     return nil
   }
   if r2==nil {
-    return r1
+    return nil
   }
   result := make([]*domain.RaceInfo, 0)
   for _, r1r := range r1 {
