@@ -38,11 +38,24 @@ Compile jraceman:
 
 This creates the executable `jraceman` in the jraceman directory.
 
+NOTE: If you have permission problems, you may need to open up the permissions
+within your ~/go folder with a command such as the following:
+
+    chmod +w -R ~/go/pkg/mod/github.com/jimmc
+
 #### Test the Go code
 
 Run the unit tests:
 
     go test ./...
+
+NOTE: You may need to enable CGO in order to run the unit tests:
+
+    export CGO_ENABLED=1
+
+NOTE: You may need to install some additional tools. This might help:
+
+    sudo apt-get install build-essentials
 
 If you want to check the unit test coverage:
 
