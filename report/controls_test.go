@@ -6,14 +6,14 @@ import (
   "os"
   "testing"
 
-  "github.com/jimmc/jraceman/dbrepo"
+  dbtest "github.com/jimmc/jraceman/dbrepo/test"
 
   goldenbase "github.com/jimmc/golden/base"
   _ "github.com/mattn/go-sqlite3"
 )
 
 func TestClientVisibleReports(t *testing.T) {
-  dbrepos, err := dbrepo.Open("sqlite3::memory:")
+  dbrepos, err := dbtest.ReposEmpty()
   if err != nil {
     t.Fatalf("failed to open repository: %v", err)
   }

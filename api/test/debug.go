@@ -5,12 +5,12 @@ import (
 
   "github.com/jimmc/jraceman/api/debug"
   "github.com/jimmc/jraceman/auth"
-  "github.com/jimmc/jraceman/dbrepo"
+  dbtest "github.com/jimmc/jraceman/dbrepo/test"
 )
 
 // CreateDebugHandler create an http handler for our debug calls.
 func CreateDebugHandler(r *Tester) http.Handler {
-  dbr, err := dbrepo.Open("sqlite3::memory:")
+  dbr, err := dbtest.ReposEmpty()
   if err != nil {
     panic("Failed to open in-memory database")
   }

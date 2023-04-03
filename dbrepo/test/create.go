@@ -36,7 +36,14 @@ values('T1', 1, 'a', 'A'), ('T2', 2, 'b', null), ('T3', 3, 'c', 'C');
 
 // ReposEmpty creates an in-memory and empty Repos.
 func ReposEmpty() (*dbrepo.Repos, error) {
-  return dbrepo.Open("sqlite3::memory:")
+  // If we specify ":memory": to sqlite3, each connection opens a new
+  // in-memory database. This appears to happen when you try to issue
+  // a query on a connection while another query is still open, which
+  // makes tests fail with a "no such table" error. According to the FAQ
+  // (https://github.com/mattn/go-sqlite3/blob/master/README.md#faq)
+  // a workaround is to file "file::memory:?cache=shared", which will
+  // make all connections point to the same database.
+  return dbrepo.Open("sqlite3:file::memory:?cache=shared")
 }
 
 // ReposAndLoadFile creates an in-memory Repos with the default
