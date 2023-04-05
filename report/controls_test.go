@@ -13,11 +13,11 @@ import (
 )
 
 func TestClientVisibleReports(t *testing.T) {
-  dbrepos, err := dbtest.ReposEmpty()
+  dbrepos, cleanup, err := dbtest.ReposEmpty()
   if err != nil {
     t.Fatalf("failed to open repository: %v", err)
   }
-  defer dbrepos.Close()
+  defer cleanup()
   reports, err := ClientVisibleReports(dbrepos, []string{"template"})
   if err != nil {
     t.Fatalf("ClientVisibleReports error: %v", err)

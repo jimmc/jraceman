@@ -12,7 +12,7 @@ import (
 )
 
 func TestOpenNormal(t *testing.T) {
-  dbr, err := dbtest.ReposEmpty()
+  dbr, cleanup, err := dbtest.ReposEmpty()
   if err != nil {
     t.Errorf("Failed to open test database: %v", err)
   }
@@ -20,6 +20,7 @@ func TestOpenNormal(t *testing.T) {
 
   // Call Close a second time to make sure it does nothing bad.
   dbr.Close()
+  cleanup()
 }
 
 func TestOpenNoType(t *testing.T) {
@@ -38,22 +39,22 @@ func TestOpenNoType(t *testing.T) {
 }
 
 func TestCreateTables(t *testing.T) {
-  dbr, err := dbtest.ReposEmpty()
+  dbr, cleanup, err := dbtest.ReposEmpty()
   if err != nil {
     t.Errorf("Failed to open test database: %v", err)
   }
-  defer dbr.Close()
+  defer cleanup()
   if err := dbr.CreateTables(); err != nil {
     t.Errorf("Error creating tables: %v", err)
   }
 }
 
 func TestCreateTablesSiteError(t *testing.T) {
-  dbr, err := dbtest.ReposEmpty()
+  dbr, cleanup, err := dbtest.ReposEmpty()
   if err != nil {
     t.Errorf("Failed to open test database: %v", err)
   }
-  defer dbr.Close()
+  defer cleanup()
 
   // Create the site table so that we get an error when we try that again.
   if err := dbr.Site().(*dbrepo.DBSiteRepo).CreateTable(); err != nil {
@@ -69,11 +70,11 @@ func TestCreateTablesSiteError(t *testing.T) {
 }
 
 func TestCreateTablesAreaError(t *testing.T) {
-  dbr, err := dbtest.ReposEmpty()
+  dbr, cleanup, err := dbtest.ReposEmpty()
   if err != nil {
     t.Errorf("Failed to open test database: %v", err)
   }
-  defer dbr.Close()
+  defer cleanup()
 
   // Create the site table so that we get an error when we try that again.
   if err := dbr.Area().(*dbrepo.DBAreaRepo).CreateTable(); err != nil {
@@ -90,11 +91,11 @@ func TestCreateTablesAreaError(t *testing.T) {
 
 func TestImport(t *testing.T) {
   filename := "testdata/import.txt"
-  dbr, err := dbtest.ReposEmpty()
+  dbr, cleanup, err := dbtest.ReposEmpty()
   if err != nil {
     t.Errorf("Failed to open test database: %v", err)
   }
-  defer dbr.Close()
+  defer cleanup()
   if err := dbr.CreateTables(); err != nil {
     t.Errorf("Error creating tables: %v", err)
   }
@@ -131,11 +132,11 @@ func TestImport(t *testing.T) {
 
 func TestExport(t *testing.T) {
   filename := "testdata/import.txt"
-  dbr, err := dbtest.ReposEmpty()
+  dbr, cleanup, err := dbtest.ReposEmpty()
   if err != nil {
     t.Errorf("Failed to open test database: %v", err)
   }
-  defer dbr.Close()
+  defer cleanup()
   if err := dbr.CreateTables(); err != nil {
     t.Errorf("Error creating tables: %v", err)
   }

@@ -35,7 +35,10 @@ values('T1', 1, 'a', 'A'), ('T2', 2, 'b', null), ('T3', 3, 'c', 'C');
 }
 
 // ReposEmpty creates an in-memory and empty Repos.
-func ReposEmpty() (*dbrepo.Repos, error) {
+// The second return value is the cleanup function. Tests should call
+// this function to ensure that everything is properly cleaned up
+// at the end of each test.
+func ReposEmpty() (*dbrepo.Repos, func(), error) {
   // If we specify ":memory": to sqlite3, each connection opens a new
   // in-memory database. This appears to happen when you try to issue
   // a query on a connection while another query is still open, which
@@ -43,48 +46,61 @@ func ReposEmpty() (*dbrepo.Repos, error) {
   // (https://github.com/mattn/go-sqlite3/blob/master/README.md#faq)
   // a workaround is to file "file::memory:?cache=shared", which will
   // make all connections point to the same database.
-  return dbrepo.Open("sqlite3:file::memory:?cache=shared")
+  repos, err :=  dbrepo.Open("sqlite3:file::memory:?cache=shared")
+  if err != nil {
+    return nil, nil, err
+  }
+  cleanup := func() {
+    repos.Close()
+  }
+  return repos, cleanup, err
 }
 
 // ReposAndLoadFile creates an in-memory Repos with the default
 // set of tables, then imports the specified JRaceman-format file.
-func ReposAndLoadFile(setupfile string) (*dbrepo.Repos, error) {
-  repos, err := ReposEmpty()
+func ReposAndLoadFile(setupfile string) (*dbrepo.Repos, func(), error) {
+  repos, cleanup, err := ReposEmpty()
   if err != nil {
-    return nil, fmt.Errorf("failed to open repository: %v", err)
+    cleanup()
+    return nil, nil, fmt.Errorf("failed to open repository: %v", err)
   }
 
   err = repos.CreateTables()
   if err != nil {
-    return nil, fmt.Errorf("failed to create repository tables: %v", err)
+    cleanup()
+    return nil, nil, fmt.Errorf("failed to create repository tables: %v", err)
   }
 
   glog.Infof("Importing from %s\n", setupfile)
   counts, err := repos.ImportFile(setupfile)
   if err != nil {
-    return nil, fmt.Errorf("error importing from %s: %v", setupfile, err)
+    cleanup()
+    return nil, nil, fmt.Errorf("error importing from %s: %v", setupfile, err)
   }
   glog.Infof("Import done: inserted %d, updated %d, unchanged %d records\n",
       counts.Inserted(), counts.Updated(), counts.Unchanged())
-  return repos, nil
+  return repos, cleanup, nil
 }
 
 // ReposAndSqlFile creates an in-memory Repos and loads
 // the specified SQL file. It does not create the standard tables.
-func EmptyReposAndSqlFile(setupfile string) (*dbrepo.Repos, error) {
-  repos, err := ReposEmpty()
+func EmptyReposAndSqlFile(setupfile string) (*dbrepo.Repos, func(),  error) {
+  repos, cleanup, err := ReposEmpty()
   if err != nil {
-    return nil, fmt.Errorf("failed to open repository: %v", err)
+    cleanup()
+    return nil, nil, fmt.Errorf("failed to open repository: %v", err)
   }
 
   glog.Infof("Loading SQL from %s\n", setupfile)
   db, ok := repos.DB().(*sql.DB)
   if !ok {
-    return nil, fmt.Errorf("repos.DB() is not *sql.DB")
+    cleanup()
+    return nil, nil, fmt.Errorf("repos.DB() is not *sql.DB")
   }
   err = goldendb.LoadSetupFile(db, setupfile)
   if err != nil {
-    return nil, fmt.Errorf("error importing from %s: %v", setupfile, err)
+    cleanup()
+    return nil, nil, fmt.Errorf("error importing from %s: %v", setupfile, err)
   }
-  return repos, nil
+  return repos, cleanup, nil
 }

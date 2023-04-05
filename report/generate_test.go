@@ -51,11 +51,11 @@ func TestStandardReports(t *testing.T) {
 
       setupfilename := "testdata/" + tt.setupName + ".setup"
 
-      dbRepos, err := dbtest.ReposAndLoadFile(setupfilename)
+      dbRepos, cleanup, err := dbtest.ReposAndLoadFile(setupfilename)
       if err != nil {
         t.Fatalf(err.Error())
       }
-      defer dbRepos.Close()
+      defer cleanup()
       db := dbRepos.DB()
 
       results, err := GenerateResults(db, tt.reportRoots, tt.templateName, tt.options)

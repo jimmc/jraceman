@@ -33,11 +33,11 @@ func TestEventRaceInfo(t *testing.T) {
 
       // Load the database.
       setupfilename := "testdata/" + tt.setupName + ".setup"
-      dbRepos, err := dbtest.ReposAndLoadFile(setupfilename)
+      dbRepos, cleanup, err := dbtest.ReposAndLoadFile(setupfilename)
       if err != nil {
         t.Fatalf(err.Error())
       }
-      defer dbRepos.Close()
+      defer cleanup()
 
       // Run the function under test.
       eventInfo, err := dbRepos.EventInfo().EventRaceInfo(tt.eventId)
@@ -170,11 +170,11 @@ func TestUpdateRaceInfo(t *testing.T) {
 
       // Load the database.
       setupfilename := "testdata/" + tt.setupName + ".setup"
-      dbRepos, err := dbtest.ReposAndLoadFile(setupfilename)
+      dbRepos, cleanup, err := dbtest.ReposAndLoadFile(setupfilename)
       if err != nil {
         t.Fatalf(err.Error())
       }
-      defer dbRepos.Close()
+      defer cleanup()
 
       txCommit := func() error { return nil }
       txRepos := dbRepos

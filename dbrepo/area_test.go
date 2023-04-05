@@ -27,11 +27,11 @@ func TestAreaCreateTable(t *testing.T) {
 }
 
 func TestAreaHappyPath(t *testing.T) {
-  dbr, err := dbtest.ReposEmpty()
+  dbr, cleanup, err := dbtest.ReposEmpty()
   if err != nil {
     t.Fatalf("Error opening test database: %v", err)
   }
-  defer dbr.Close()
+  defer cleanup()
   areaRepo := dbr.Area().(*dbrepo.DBAreaRepo)
 
   if err := areaRepo.CreateTable(); err != nil {

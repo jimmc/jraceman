@@ -37,11 +37,11 @@ func TestEventCreateRaces(t *testing.T) {
 
       // Load the database.
       setupfilename := "testdata/" + tt.setupName + ".setup"
-      dbRepos, err := dbtest.ReposAndLoadFile(setupfilename)
+      dbRepos, cleanup, err := dbtest.ReposAndLoadFile(setupfilename)
       if err != nil {
         t.Fatalf(err.Error())
       }
-      defer dbRepos.Close()
+      defer cleanup()
 
       ctx := context.Background()
       // racesResult type is *CreateRacesResult

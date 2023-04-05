@@ -100,12 +100,9 @@ func RequireNewRequest(t *testing.T, method, endpoint string, payloadfile io.Rea
 
 // Returns the database repo and a cleanup function to close the repo.
 func RequireEmptyDatabase(t *testing.T) (*dbrepo.Repos, func()) {
-  repos, err := dbrepotest.ReposEmpty()
+  repos, cleanup, err := dbrepotest.ReposEmpty()
   if err != nil {
     t.Fatalf("Error creating database: %v", err)
-  }
-  cleanup := func() {
-    repos.Close()
   }
   return repos, cleanup
 }
@@ -113,12 +110,9 @@ func RequireEmptyDatabase(t *testing.T) (*dbrepo.Repos, func()) {
 // Returns the database repo and a cleanup function to close the repo.
 func RequireDatabaseWithSqlFile(t *testing.T, filebase string) (*dbrepo.Repos, func()) {
   filename := "testdata/" + filebase + ".setup"
-  repos, err := dbrepotest.EmptyReposAndSqlFile(filename)
+  repos, cleanup, err := dbrepotest.EmptyReposAndSqlFile(filename)
   if err != nil {
     t.Fatalf("Error creating database: %v", err)
-  }
-  cleanup := func() {
-    repos.Close()
   }
   return repos, cleanup
 }

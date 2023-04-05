@@ -27,11 +27,11 @@ func TestSiteCreateTable(t *testing.T) {
 }
 
 func TestSiteHappyPath(t *testing.T) {
-  dbr, err := dbtest.ReposEmpty()
+  dbr, cleanup, err := dbtest.ReposEmpty()
   if err != nil {
     t.Fatalf("Error opening test database: %v", err)
   }
-  defer dbr.Close()
+  defer cleanup()
   siteRepo := dbr.Site().(*dbrepo.DBSiteRepo)
 
   if err := siteRepo.CreateTable(); err != nil {
