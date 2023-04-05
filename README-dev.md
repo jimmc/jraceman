@@ -73,10 +73,22 @@ command to restore your login to the server without losing the state in the clie
 
 To use the `dlv` command to debug a single unit test, use the `dlv test` command
 specifying the path to the test suite and the name of the test to run.
-For example, to run `TestUpdateRaceInfo`, use this command:
+For example, to run `TestUpdateRaceInfo`, you can use this command:
 
 ```
 dlv test dbrepo/eventinfo_test.go -- -test.run ^TestUpdateRaceInfo$
+```
+
+You may need to specify a package name instead of a file.
+For example, for TestEventCreateRaces in `app/event_test.go`, use this command:
+```
+dlv test ./app -- -test.run ^TestEventCreateRaces$
+```
+
+You can turn on logging when running a unit test by using the `--args` command
+line option of `go test`, for example:
+```
+go test ./app -run TestEventCreateRaces --args --vmodule=simplansys=4 --alsologtostderr
 ```
 
 ## Adding a database table

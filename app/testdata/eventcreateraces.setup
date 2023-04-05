@@ -1,0 +1,109 @@
+#!jraceman -import
+!exportVersion 2
+!appInfo JRaceman v2.0.0
+!type database
+
+!table competition
+!columns "id","name","groupsize","maxalternates","scheduledduration"
+"C1-500","C1 500m",null,null,900
+"K1-500","K1 500m",null,null,900
+
+!table level
+!columns "id","name","minentryage","minage","maxage","maxentryage","usegroupaverage"
+"L1","Bantam",null,null,13,13,false
+
+!table stage
+!columns "id","name","number","isfinal"
+"S1","Heat",1,false
+"S2","Semifinal",2,false
+"S3","Final",3,true
+
+!table gender
+!columns "id","name"
+"F","Female"
+"M","Male"
+"X","Mixed"
+
+!table team
+!columns "id","shortname","name","number","challengeid","nonscoring","street","street2","city","state","zip","country","phone","fax"
+"CCC","CCC","Centerville Canoe Club",null,null,false,null,null,null,null,null,null,null,null
+"ASP","ASP","All State Paddlers",null,null,false,null,null,null,null,null,null,null,null
+"SHCKT","SHCKT","Sun Harbor Canoe and Kayak Team",null,null,false,null,null,null,null,null,null,null,null
+
+!table person
+!columns "id","firstname","lastname","title","genderid","teamid","birthday","membership","membershipexpiration","street","street2","city","state","country","zip","phone","email"
+"P1","John","Doe",null,"M","CCC",null,null,null,null,null,null,null,null,null,null,null
+"P2","Sam","Doe",null,"M","CCC",null,null,null,null,null,null,null,null,null,null,null
+"P3","Jane","Doe",null,"F","CCC",null,null,null,null,null,null,null,null,null,null,null
+"P4","Julie","Doe",null,"F","CCC",null,null,null,null,null,null,null,null,null,null,null
+"P5","David","Johnson",null,"M","CCC",null,null,null,null,null,null,null,null,null,null,null
+"P6","Diane","Johnson",null,"F","CCC",null,null,null,null,null,null,null,null,null,null,null
+"P7","Nancy","Smith",null,"F","ASP",null,null,null,null,null,null,null,null,null,null,null
+"P8","Mike","Jones",null,"M","ASP",null,null,null,null,null,null,null,null,null,null,null
+"P9","Mary","Jones",null,"F","ASP",null,null,null,null,null,null,null,null,null,null,null
+"P10","Tom","Brown",null,"M","ASP",null,null,null,null,null,null,null,null,null,null,null
+"P11","Sally","Brown",null,"F","ASP",null,null,null,null,null,null,null,null,null,null,null
+"P12","Susan","Brown",null,"F","ASP",null,null,null,null,null,null,null,null,null,null,null
+"P13","Lizzie","Brown",null,"F","ASP",null,null,null,null,null,null,null,null,null,null,null
+"P14","Charity","Lavender",null,"F","SHCKT",null,null,null,null,null,null,null,null,null,null,null
+"P15","Frank","Carr",null,"M","SHCKT",null,null,null,null,null,null,null,null,null,null,null
+"P16","Petunia","Lavender",null,"F","SHCKT",null,null,null,null,null,null,null,null,null,null,null
+"P17","Felicity","Farmer",null,"F","SHCKT",null,null,null,null,null,null,null,null,null,null,null
+"P18","Hank","Farmer",null,"M","SHCKT",null,null,null,null,null,null,null,null,null,null,null
+
+!table meet
+!columns "id","name","shortname","siteid","startdate","enddate","agedate","webreportsdirectory","transferdirectory","labelimageleft","labelimageright","scoringsystemid"
+"M1","National Sprint Championship 2022","Nationals 2022","SI1","2022-08-01","2022-08-05",null,null,null,null,null,null
+
+!table simplan
+!columns "id","system","plan","minentries","maxentries"
+"SP1","Std","A",0,10
+
+!table simplanstage
+!columns "id","simplanid","stageid","sectioncount","fillorder"
+"SS1","SP1","S1",1,null
+
+!table progression
+!columns "id","name","class","parameters"
+"PR1","Test 1","ProgressionSimplan","system=Std"
+
+!table event
+!columns "id","meetid","name","number","competitionid","levelid","genderid","areaid","seedingplanid","progressionid","progressionstate","scoringsystemid","scratched","eventcomment"
+"M1.EV1","M1","C1 500m Bantam Men",1,"C1-500","L1","M",null,null,"PR1",null,null,null,null
+"M1.EV2","M1","K1 500m Bantam Men",2,"K1-500","L1","M",null,null,null,null,null,null,null
+"M1.EV3","M1","C1 500m Bantam Women",3,"C1-500","L1","F",null,null,"PR1",null,null,null,null
+"M1.EV4","M1","K1 500m Bantam Women",4,"K1-500","L1","F",null,null,"PR1",null,null,null,null
+
+!table entry
+!columns "id","personid","eventid","groupname","alternate","scratched"
+"Z.EN1","P1","M1.EV1",null,false,false
+"Z.EN2","P2","M1.EV1",null,false,false
+"Z.EN3","P5","M1.EV1",null,false,false
+"Z.EN4","P6","M1.EV1",null,false,false
+"Z.EN5","P8","M1.EV1",null,false,false
+"Z.EN6","P12","M1.EV1",null,false,false
+"Z.EN7","P1","M1.EV2",null,false,false
+"Z.EN8","P3","M1.EV2",null,false,false
+"Z.EN9","P4","M1.EV2",null,false,false
+"Z.EN10","P8","M1.EV2",null,false,false
+"Z.EN11","P10","M1.EV2",null,false,false
+"Z.EN12","P14","M1.EV2",null,false,false
+"Z.EN13","P15","M1.EV2",null,false,false
+"Z.EN14","P4","M1.EV3",null,false,false
+"Z.EN15","P5","M1.EV3",null,false,false
+"Z.EN16","P8","M1.EV3",null,false,false
+"Z.EN17","P11","M1.EV3",null,false,false
+"Z.EN18","P12","M1.EV3",null,false,false
+
+!table race
+!columns "id","eventid","stageid","round","section","areaid","number","scheduledstart","scheduledduration","actualstart","scratched","racecomment"
+"R1","M1.EV3","S3",1,1,null,1001,null,null,null,false,null
+"R2","M1.EV4","S1",1,1,null,1002,null,null,null,false,null
+"R3","M1.EV4","S1",1,2,null,1003,null,null,null,false,null
+"R4","M1.EV4","S2",2,1,null,1004,null,null,null,false,null
+"R5","M1.EV4","S2",2,2,null,1005,null,null,null,false,null
+"R6","M1.EV4","S3",3,1,null,1006,null,null,null,false,null
+
+!table lane
+!columns "id","entryid","raceid","lane","result","exceptionid","place","scoreplace","score"
+#no rows

@@ -1,0 +1,48 @@
+#!jraceman -import
+!exportVersion 2
+!appInfo JRaceman v2.0.0
+!type database
+
+!table competition
+!columns "id","name","groupsize","maxalternates","scheduledduration"
+"C1-500","C1 500m",null,null,900
+"K1-500","K1 500m",null,null,900
+
+!table level
+!columns "id","name","minentryage","minage","maxage","maxentryage","usegroupaverage"
+"L1","Bantam",null,null,13,13,false
+
+!table stage
+!columns "id","name","number","isfinal"
+"S1","Heat",1,false
+"S2","Semifinal",2,false
+"S3","Final",3,true
+
+!table gender
+!columns "id","name"
+"F","Female"
+"M","Male"
+"X","Mixed"
+
+!table meet
+!columns "id","name","shortname","siteid","startdate","enddate","agedate","webreportsdirectory","transferdirectory","labelimageleft","labelimageright","scoringsystemid"
+"M1","National Sprint Championship 2022","Nationals 2022","SI1","2022-08-01","2022-08-05",null,null,null,null,null,null
+
+!table simplan
+!columns "id","system","plan","minentries","maxentries"
+"SP1","Std","A",0,10
+
+!table simplanstage
+!columns "id","simplanid","stageid","sectioncount","fillorder"
+"SS1","SP1","S1",1,null
+
+!table progression
+!columns "id","name","class","parameters"
+"PR1","Test 1","ProgressionSimplan","system=Std"
+
+!table event
+!columns "id","meetid","name","number","competitionid","levelid","genderid","areaid","seedingplanid","progressionid","progressionstate","scoringsystemid","scratched","eventcomment"
+"M1.EV1","M1","C1 500m Bantam Men",1,"C1-500","L1","M",null,null,"PR1",null,null,null,null
+"M1.EV2","M1","K1 500m Bantam Men",2,"K1-500","L1","M",null,null,null,null,null,null,null
+"M1.EV3","M1","C1 500m Bantam Women",3,"C1-500","L1","F",null,null,"PR1",null,null,null,null
+"M1.EV4","M1","K1 500m Bantam Women",4,"K1-500","L1","F",null,null,"PR1",null,null,null,null

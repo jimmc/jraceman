@@ -24,18 +24,18 @@ type CreateRacesResult struct {
 func EventCreateRaces(ctx context.Context, r domain.Repos, eventId string, laneCount int, dryRun bool, allowDeleteLanes bool) (*CreateRacesResult, error) {
   eventInfo, err := r.EventInfo().EventRaceInfo(eventId)
   if err != nil {
-    return nil, err
+    return nil, fmt.Errorf("error getting races for event %q: %w", eventId, err)
   }
   glog.V(3).Infof("RaceInfo for eventId=%s: %v", eventId, eventInfo)
   // Get the progression system for the specified event.
   progression, err := ProgSysForEvent(r, eventId)
   if err != nil {
-    return nil, err
+    return nil, fmt.Errorf("error getting progression system for event %q: %w", eventId, err)
   }
 
   result, err := calculateRaceChanges(eventInfo, progression, laneCount)
   if err != nil {
-    return nil, err
+    return nil, fmt.Errorf("error calculating race changes for event %q: %w", eventId, err)
   }
 
   if dryRun {
@@ -45,7 +45,7 @@ func EventCreateRaces(ctx context.Context, r domain.Repos, eventId string, laneC
   if !allowDeleteLanes {
     raceWithLaneData := firstRaceWithLaneData(result.RacesToDelete)
     if raceWithLaneData != nil {
-      return nil, fmt.Errorf("Attempt to delete a race with lane data (%s), with allowDeleteLanes false", raceWithLaneData.RaceID)
+      return nil, fmt.Errorf("attempt to delete a race with lane data (%s), with allowDeleteLanes false", raceWithLaneData.RaceID)
     }
   }
 
@@ -87,7 +87,7 @@ func calculateRaceChanges(eventInfo *domain.EventInfo, progression ProgSys, lane
   // If there are no existing races, and there are no entries, that's an error.
   // The event should be scratched.
   if len(existingRoundCounts)==0 && len(desiredRoundCounts)==0 {
-    return nil, fmt.Errorf("No entries and no existing races for event %s", eventInfo.Summary)
+    return nil, fmt.Errorf("no entries and no existing races for event %s", eventInfo.Summary)
   }
 
   // Figure out what races we need to create, delete, or update.
@@ -101,7 +101,7 @@ func calculateRaceChanges(eventInfo *domain.EventInfo, progression ProgSys, lane
   racesToModFrom := racesIntersectAndDiffer(existingRaces, desiredRaces)
   racesToModTo := racesIntersectAndDiffer(desiredRaces, existingRaces)
   if len(racesToModFrom) != len(racesToModTo) {
-    return nil, fmt.Errorf("Length mismach in races to mod lists")
+    return nil, fmt.Errorf("length mismach in races to mod lists")
       // Programming error, should not happen.
   }
   glog.V(3).Infof("racesToCreate: %v", racesToCreate)

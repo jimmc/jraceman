@@ -21,25 +21,29 @@ type ProgSys interface {
 func ProgSysForEvent(r domain.Repos, eventId string) (ProgSys, error) {
   event, err := r.Event().FindByID(eventId)
   if err != nil {
-    return nil, err
+    return nil, fmt.Errorf("can't find event %q to get progression system: %w", eventId, err)
   }
   if event.ProgressionID == nil || *event.ProgressionID == ""{
-    return nil, fmt.Errorf("EventID %q has no progression specified", eventId)
+    return nil, fmt.Errorf("event %q has no progression specified", eventId)
   }
   progressionId := *event.ProgressionID
   progression, err := r.Progression().FindByID(progressionId)
   if err != nil {
-    return nil, err
+    return nil, fmt.Errorf("can't find progression %q for event %q: %w", progressionId, eventId, err)
   }
   switch progression.Class {
     case "":
-      return nil, fmt.Errorf("ProgressionID %q has no class specified", progressionId)
+      return nil, fmt.Errorf("progression %q has no class specified", progressionId)
     case "ProgressionSimplan":
-      return r.SimplanSys().LoadSimplanSys(progression)
+      progSys, err := r.SimplanSys().LoadSimplanSys(progression)
+      if err!=nil {
+        return nil, fmt.Errorf("error loading simplan for progression %q: %w", progressionId, err)
+      }
+      return progSys, nil
     case "ProgressionComplan":
       return nil, fmt.Errorf("ProgressionForEvent: ProgressionComplan NYI")
     default:
-      return nil, fmt.Errorf("ProgressionID %q has unknown progression class %q",
+      return nil, fmt.Errorf("progression %q has unknown progression class %q",
           progressionId, progression.Class)
   }
 }

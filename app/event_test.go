@@ -1,12 +1,88 @@
 package app
 
 import (
+  "context"
+  "encoding/json"
+  "io/ioutil"
   "errors"
   "reflect"
   "testing"
 
   "github.com/jimmc/jraceman/domain"
+  dbtest "github.com/jimmc/jraceman/dbrepo/test"
+
+  goldenbase "github.com/jimmc/golden/base"
 )
+
+func TestEventCreateRaces(t *testing.T) {
+  tests := []struct{
+    testName string
+    setupName string
+    outName string
+    eventId string
+    laneCount int
+    dryRun bool
+    allowDeleteLanes bool
+    expectError bool
+  } {
+      { "no event id", "eventcreateraces-errors", "", "", 0, false, false, true },
+      { "no such event", "eventcreateraces-errors", "", "XYZ", 0, false, false, true },
+      { "no progression", "eventcreateraces-errors", "", "M1.EV2", 0, false, false, true },
+      { "no races no entries", "eventcreateraces-errors", "", "M1.EV4", 0, false, false, true },
+      //{ "create one race", "eventcreateraces", "eventcreateraces-onerace", "M1.EV3", 0, false, false, false },
+      //{ "more races", "eventcreateraces", "eventcreateraces-moreraces", "M1.EV4", 0, false, false, false },
+  }
+  for _, tt := range tests {
+    t.Run(tt.testName, func(t *testing.T) {
+
+      // Load the database.
+      setupfilename := "testdata/" + tt.setupName + ".setup"
+      dbRepos, err := dbtest.ReposAndLoadFile(setupfilename)
+      if err != nil {
+        t.Fatalf(err.Error())
+      }
+      defer dbRepos.Close()
+
+      ctx := context.Background()
+      // racesResult type is *CreateRacesResult
+      // Run the function under test.
+      racesResult, err := EventCreateRaces(ctx, dbRepos, tt.eventId, tt.laneCount,
+            tt.dryRun, tt.allowDeleteLanes)
+
+      // Check the result.
+      if tt.expectError {
+        if err == nil {
+          t.Fatal("Expected error but did not get one")
+        }
+      } else {
+        if err != nil {
+          t.Fatal(err)
+        }
+
+        // Write out the result.
+        jsonData, err := json.MarshalIndent(racesResult, "", " ")
+        if err != nil {
+          t.Fatal(err)
+        }
+        outName := tt.outName
+        if outName=="" {
+          outName = tt.setupName
+        }
+        outfile := "testdata/" + outName + ".out"
+        err = ioutil.WriteFile(outfile, jsonData, 0644)
+        if err != nil {
+          t.Fatal(err)
+        }
+
+        // Check that the result is as expected.
+        goldenfile := "testdata/" + outName + ".golden"
+        if err := goldenbase.CompareOutToGolden(outfile, goldenfile); err != nil {
+          t.Fatal(err)
+        }
+      }
+    })
+  }
+}
 
 var raceInfoOneHeat = &domain.RaceInfo{
   Round: 1,
