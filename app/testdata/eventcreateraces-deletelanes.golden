@@ -1,0 +1,59 @@
+{
+ "EventInfo": {
+  "EventID": "M1.EV5",
+  "EntryCount": 1,
+  "GroupCount": 0,
+  "GroupSize": 0,
+  "Summary": "K1 1000m Bantam Women [M1.EV5]",
+  "RoundCounts": [
+   {
+    "Count": 1,
+    "Round": 1,
+    "StageID": "S1",
+    "StageName": "Heat",
+    "StageNumber": 0,
+    "IsFinal": false
+   }
+  ],
+  "Races": [
+   {
+    "RaceID": "R7",
+    "EventID": "M1.EV5",
+    "StageID": "S1",
+    "AreaID": "",
+    "StageName": "Heat",
+    "StageNumber": 1,
+    "IsFinal": false,
+    "Round": 1,
+    "Section": 1,
+    "AreaName": "",
+    "RaceNumber": 1007,
+    "LaneCount": 1
+   }
+  ],
+  "AreaID": "",
+  "AreaName": "",
+  "AreaLanes": 0,
+  "AreaExtraLanes": 0,
+  "ProgressionState": ""
+ },
+ "RacesToCreate": [],
+ "RacesToDelete": [
+  {
+   "RaceID": "R7",
+   "EventID": "M1.EV5",
+   "StageID": "S1",
+   "AreaID": "",
+   "StageName": "Heat",
+   "StageNumber": 1,
+   "IsFinal": false,
+   "Round": 1,
+   "Section": 1,
+   "AreaName": "",
+   "RaceNumber": 1007,
+   "LaneCount": 1
+  }
+ ],
+ "RacesToModFrom": [],
+ "RacesToModTo": []
+}

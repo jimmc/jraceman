@@ -73,6 +73,7 @@
 "M1.EV2","M1","K1 500m Bantam Men",2,"K1-500","L1","M",null,null,null,null,null,null,null
 "M1.EV3","M1","C1 500m Bantam Women",3,"C1-500","L1","F",null,null,"PR1",null,null,null,null
 "M1.EV4","M1","K1 500m Bantam Women",4,"K1-500","L1","F",null,null,"PR1",null,null,null,null
+"M1.EV5","M1","K1 1000m Bantam Women",4,"K1-1000","L1","F",null,null,"PR1",null,null,null,null
 
 !table entry
 !columns "id","personid","eventid","groupname","alternate","scratched"
@@ -94,16 +95,18 @@
 "Z.EN16","P8","M1.EV3",null,false,false
 "Z.EN17","P11","M1.EV3",null,false,false
 "Z.EN18","P12","M1.EV3",null,false,false
+"Z.EN19","P12","M1.EV5",null,false,false
 
 !table race
 !columns "id","eventid","stageid","round","section","areaid","number","scheduledstart","scheduledduration","actualstart","scratched","racecomment"
-"R1","M1.EV3","S3",1,1,null,1001,null,null,null,false,null
+#"R1","M1.EV3","S3",1,1,null,1001,null,null,null,false,null
 "R2","M1.EV4","S1",1,1,null,1002,null,null,null,false,null
 "R3","M1.EV4","S1",1,2,null,1003,null,null,null,false,null
 "R4","M1.EV4","S2",2,1,null,1004,null,null,null,false,null
 "R5","M1.EV4","S2",2,2,null,1005,null,null,null,false,null
 "R6","M1.EV4","S3",3,1,null,1006,null,null,null,false,null
+"R7","M1.EV5","S1",1,1,null,1007,null,null,null,false,null
 
 !table lane
 !columns "id","entryid","raceid","lane","result","exceptionid","place","scoreplace","score"
-#no rows
+"LN1","Z.EN19","R7",1,null,null,null,null,null

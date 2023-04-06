@@ -29,8 +29,10 @@ func TestEventCreateRaces(t *testing.T) {
       { "no such event", "eventcreateraces-errors", "", "XYZ", 0, false, false, true },
       { "no progression", "eventcreateraces-errors", "", "M1.EV2", 0, false, false, true },
       { "no races no entries", "eventcreateraces-errors", "", "M1.EV4", 0, false, false, true },
-      //{ "create one race", "eventcreateraces", "eventcreateraces-onerace", "M1.EV3", 0, false, false, false },
-      //{ "more races", "eventcreateraces", "eventcreateraces-moreraces", "M1.EV4", 0, false, false, false },
+      { "create one race", "eventcreateraces", "eventcreateraces-onerace", "M1.EV3", 5, false, false, false },
+      { "delete lanes not allowed", "eventcreateraces", "", "M1.EV5", 0, false, false, true },
+      { "delete lanes allowed", "eventcreateraces", "eventcreateraces-deletelanes", "M1.EV5", 0, false, true, false },
+      { "delete lanes dry run", "eventcreateraces", "eventcreateraces-deletelanes", "M1.EV5", 0, true, false, false },
   }
   for _, tt := range tests {
     t.Run(tt.testName, func(t *testing.T) {

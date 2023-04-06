@@ -1,0 +1,35 @@
+{
+ "EventInfo": {
+  "EventID": "M1.EV3",
+  "EntryCount": 5,
+  "GroupCount": 0,
+  "GroupSize": 0,
+  "Summary": "C1 500m Bantam Women [M1.EV3]",
+  "RoundCounts": [],
+  "Races": [],
+  "AreaID": "",
+  "AreaName": "",
+  "AreaLanes": 0,
+  "AreaExtraLanes": 0,
+  "ProgressionState": ""
+ },
+ "RacesToCreate": [
+  {
+   "RaceID": "M1.EV3.S1.1",
+   "EventID": "M1.EV3",
+   "StageID": "S1",
+   "AreaID": "",
+   "StageName": "Heat",
+   "StageNumber": 1,
+   "IsFinal": false,
+   "Round": 1,
+   "Section": 1,
+   "AreaName": "",
+   "RaceNumber": 0,
+   "LaneCount": 0
+  }
+ ],
+ "RacesToDelete": [],
+ "RacesToModFrom": [],
+ "RacesToModTo": []
+}
