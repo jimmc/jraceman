@@ -1,0 +1,30 @@
+#!jraceman -import
+!exportVersion 2
+!appInfo JRaceman v2.0.0
+!type database
+
+!table simplan
+!columns "id","system","plan","minentries","maxentries"
+"SP1","Std","A",0,10
+
+!table simplanstage
+!columns "id","simplanid","stageid","sectioncount","fillorder"
+"SS1","SP1","S1",1,null
+
+!table progression
+!columns "id","name","class","parameters"
+"PR1","Test 1","ProgressionSimplan","system=Std"
+"PR2","Test 2","",""
+"PR3","Test 3","ProgressionComplan","system=Std"
+"PR4","Test 4","ProgressionFoo","system=Std"
+"PR5","Test 5","ProgressionSimplan",""
+
+!table event
+!columns "id","meetid","name","number","competitionid","levelid","genderid","areaid","seedingplanid","progressionid","progressionstate","scoringsystemid","scratched","eventcomment"
+"EV1","M1","C1 500m Bantam Men",1,"C1-500","L1","M",null,null,"PR1",null,null,null,null
+"EV2","M1","K1 500m Bantam Men",2,"K1-500","L1","M",null,null,null,null,null,null,null
+"EV3","M1","C1 500m Bantam Women",3,"C1-500","L1","F",null,null,"PRX",null,null,null,null
+"EV4","M1","K1 500m Bantam Women",4,"K1-500","L1","F",null,null,"PR2",null,null,null,null
+"EV5","M1","K1 1000m Bantam Women",5,"K1-1000","L1","F",null,null,"PR3",null,null,null,null
+"EV6","M1","K1 1000m Bantam Women",6,"K1-1000","L1","F",null,null,"PR4",null,null,null,null
+"EV7","M1","K1 1000m Bantam Women",6,"K1-1000","L1","F",null,null,"PR5",null,null,null,null
