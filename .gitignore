@@ -1,6 +1,8 @@
+cover.html
 dist
 jraceman
 report/testdata/*.html
 *.swp
+**/*.old
 **/*.out
 _private
