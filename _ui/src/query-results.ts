@@ -63,7 +63,11 @@ export class QueryResults extends LitElement {
 
   onClick(e: PointerEvent) {
     console.log("QueryResult.onClick",e)
-    const td = eval("e.path[0]")
+    const td = e.target as HTMLElement
+    if (!td) {
+      console.log("no target")
+      return
+    }
     const rowIndexStr = td.getAttribute('rowIndex')
     if (!rowIndexStr) {
       console.log("no rowIndex in event")

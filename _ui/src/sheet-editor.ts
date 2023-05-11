@@ -78,7 +78,11 @@ export class SheetEditor extends LitElement {
 
   onClick(e: PointerEvent) {
     console.log("SheetEditor.onClick",e)
-    const td = eval("e.path[0]")
+    const td = e.target as HTMLElement
+    if (!td) {
+      console.log("no target")
+      return
+    }
     const rowIndexStr = td.getAttribute('rowIndex')
     if (!rowIndexStr) {
       console.log("no rowIndex in event")
@@ -92,7 +96,14 @@ export class SheetEditor extends LitElement {
     console.log("SheetEditor.selectRowByIndex", rowIndex)
     this.selectedRowIndex = rowIndex
     this.requestUpdate()
+  }
 
+  onEdit() {
+    const rowIndex = this.selectedRowIndex
+    if (rowIndex<0) {
+      console.log("No row selected")
+      return
+    }
     // Get the ID for the selected row
     const row = this.queryResults.Rows[rowIndex]
     const idColumnIndex = this.queryResults.Columns.findIndex(col => col.Name == "id")
@@ -114,6 +125,7 @@ export class SheetEditor extends LitElement {
     document.dispatchEvent(event);
   }
 
+  // TODO: We assume below that the ID column is 0 and its value is in row[0].
   render() {
     return html`
       Table: ${this.tableDesc.Table}<br/>
@@ -121,11 +133,11 @@ export class SheetEditor extends LitElement {
       <table class=sheet-editor @click="${this.onClick}">
         <tr>
           ${/*@ts-ignore*/
-            repeat(this.queryResults.Columns, (col:ColumnDesc/*, colIndex*/) => html`
+            repeat(this.tableDesc.Columns, (col:ColumnDesc/*, colIndex*/) => html`
             ${when(this.isReadOnly(col),()=>html`
-              <th class=readonly>${col.Name}</th>
+              <th class=readonly>${col.Label}</th>
             `,()=>html`
-              <th>${col.Name}</th>
+              <th>${col.Label}</th>
             `)}
           `)}
         </tr>
@@ -133,12 +145,20 @@ export class SheetEditor extends LitElement {
           repeat(this.queryResults.Rows, (row:any[], rowIndex) => html`
           <tr selected=${this.isRowIndexSelected(rowIndex)}>
           ${/*@ts-ignore*/
-            repeat(this.queryResults.Columns, (col:ColumnDesc, colIndex) => html`
+            repeat(this.tableDesc.Columns, (col:ColumnDesc, colIndex) => html`
             <td rowIndex=${rowIndex} selected=${this.isRowIndexSelected(rowIndex)}>
               ${when(this.isReadOnly(col),()=>html`
                 ${row[colIndex]}
               `, ()=>html`
-                <input type=text value="${row[colIndex]}"></input>
+                ${when(col.FKTable, ()=>html`
+                  <select id="val_${col.Name}_${row[0]}">
+                    ${repeat(col.FKItems, (keyitem) => html`
+                      <option value="${keyitem.ID}" ?selected=${row[colIndex]==keyitem.ID}>${keyitem.Summary}</option>
+                    `)}
+                  </select>
+                `, ()=>html`
+                  <input type=text value="${row[colIndex]}"></input>
+                `)}
               `)}
             </td>
           `)}

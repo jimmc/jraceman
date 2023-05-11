@@ -4,7 +4,7 @@ import {repeat} from 'lit/directives/repeat.js';
 import {when} from 'lit/directives/when.js';
 
 import { ApiManager, XhrOptions } from './api-manager.js'
-import { TableDesc, ColumnDesc, RequestEditEvent } from './table-desc.js'
+import { TableDesc, RequestEditEvent } from './table-desc.js'
 
 /**
  * table-edit provides a form to edit one record of a table.
@@ -217,19 +217,6 @@ export class TableEdit extends LitElement {
     default:
       return val;       // no conversion for strings or unknown types
     }
-  }
-
-  static tableDescToCols(tableDesc: TableDesc): ColumnDesc[] {
-    const cols = tableDesc.Columns;
-    for (let c=0; c<cols.length; c++) {
-      const name = cols[c].Name;
-      if (name == 'id') {
-        cols[c].Label = name.toUpperCase();
-      } else {
-        cols[c].Label = name[0].toUpperCase() + name.substr(1);
-      }
-    }
-    return cols;
   }
 
   render() {
