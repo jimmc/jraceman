@@ -6,9 +6,10 @@ import { PostError } from "./message-log.js"
 import { TableDesc, TableDescSupport, FKItem } from "./table-desc.js"
 import "./table-edit.js"
 import "./table-query.js"
+import "./table-sheet.js"
 
 /**
- * table-queryedit provides tabs with query and edit forms for a table.
+ * table-queryedit provides tabs with query, edit, and sheet panels for a table.
  */
 @customElement('table-queryedit')
 export class TableQueryedit extends LitElement {
@@ -77,6 +78,10 @@ export class TableQueryedit extends LitElement {
             <span slot="tab">Edit</span>
             <section slot="panel">
               <table-edit tableDesc=${JSON.stringify(this.tableDesc)}></table-edit>
+            </section>
+            <span slot="tab">Sheet</span>
+            <section slot="panel">
+              <table-sheet tableDesc=${JSON.stringify(this.tableDesc)}></table-edit>
             </section>
         </jraceman-tabs>
     `;
