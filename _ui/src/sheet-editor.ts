@@ -84,11 +84,12 @@ export class SheetEditor extends LitElement {
       return
     }
     const rowIndexStr = td.getAttribute('rowIndex')
-    if (!rowIndexStr) {
+    let rowIndex = -1
+    if (rowIndexStr) {
+      rowIndex = parseInt(rowIndexStr)
+    } else {
       console.log("no rowIndex in event")
-      return
     }
-    const rowIndex = parseInt(rowIndexStr)
     this.selectRowByIndex(rowIndex)
   }
 
@@ -96,9 +97,15 @@ export class SheetEditor extends LitElement {
     console.log("SheetEditor.selectRowByIndex", rowIndex)
     this.selectedRowIndex = rowIndex
     this.requestUpdate()
+
+    // Let our parent component know about the selected row.
+    this.dispatchEvent(new CustomEvent("row-selected", {
+      bubbles: true,
+      detail: rowIndex,
+    }));
   }
 
-  onEdit() {
+  editSelectedRow() {
     const rowIndex = this.selectedRowIndex
     if (rowIndex<0) {
       console.log("No row selected")
@@ -123,6 +130,10 @@ export class SheetEditor extends LitElement {
     // Dispatch the event to the document so any element can listen for it.
     console.log("SheetEditor dispatching event", event)
     document.dispatchEvent(event);
+  }
+
+  deleteSelectedRow() {
+    console.log("deleteSelectedRow NYI")
   }
 
   // TODO: We assume below that the ID column is 0 and its value is in row[0].

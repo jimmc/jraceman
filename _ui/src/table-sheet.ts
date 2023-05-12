@@ -1,13 +1,13 @@
 import {LitElement, html, css} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
-//import {repeat} from 'lit/directives/repeat.js';
-//import {when} from 'lit/directives/when.js';
+import {PropertyValues} from 'lit-element';
+
+import './sheet-editor.js'
 
 import { ApiManager, XhrOptions } from './api-manager.js'
 import { PostError } from './message-log.js'
-import { TableDesc /*, QueryResultsEvent*/ } from './table-desc.js'
-
-import './sheet-editor.js'
+import { SheetEditor } from './sheet-editor.js'
+import { TableDesc } from './table-desc.js'
 
 /**
  * table-sheet provides a panel to edit fields in multiple rows and columns.
@@ -30,8 +30,15 @@ export class TableSheet extends LitElement {
     Rows: [],
   };
 
-  @property({type: String})
-  selectedOp: string = '';
+  @property({type: Number})
+  selectedRowIndex: number = -1;
+
+  sheetEditor?: SheetEditor
+
+  firstUpdated(changedProperties:PropertyValues<this>) {
+    super.firstUpdated(changedProperties);
+    this.sheetEditor = this.shadowRoot!.querySelector("sheet-editor")! as SheetEditor
+  }
 
   // getSelectElement gets an HTMLSelectElement by selector.
   getSelectElement(selector: string) {
@@ -108,16 +115,21 @@ export class TableSheet extends LitElement {
     */
   }
 
+  async rowSelected(e:CustomEvent) {
+    console.log("Row selected", e)
+    this.selectedRowIndex = e.detail as number;
+  }
+
   async add() {
     console.log("TableSheet.add NYI");
   }
 
   async edit() {
-    console.log("TableSheet.edit NYI");
+    this.sheetEditor!.editSelectedRow();
   }
 
   async delete() {
-    console.log("TableSheet.delete NYI");
+    this.sheetEditor!.deleteSelectedRow();
   }
 
   isStringColumn(colType: string) {
@@ -129,11 +141,12 @@ export class TableSheet extends LitElement {
         <form>
           <button type=button @click="${this.search}">Search</button>
           <button type=button @click="${this.add}">Add</button>
-          <button type=button @click="${this.edit}">Edit</button>
-          <button type=button @click="${this.delete}">Delete</button>
+          <button type=button @click="${this.edit}" ?disabled="${this.selectedRowIndex<0}">Edit</button>
+          <button type=button @click="${this.delete}" ?disabled="${this.selectedRowIndex<0}">Delete</button>
         </form>
         <sheet-editor tableDesc=${JSON.stringify(this.tableDesc)}
-            queryResults=${JSON.stringify(this.queryResults)}>
+            queryResults=${JSON.stringify(this.queryResults)}
+            @row-selected="${this.rowSelected}">
         </sheet-editor>
     `;
   }
