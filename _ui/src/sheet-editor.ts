@@ -23,6 +23,9 @@ export class SheetEditor extends LitElement {
     tr[selected="true"] {
       background-color: lightblue;
     }
+    td[editing="true"] input {
+      background-color: lightgreen;
+    }
   `;
 
   @property({type: Object})
@@ -83,7 +86,8 @@ export class SheetEditor extends LitElement {
       console.log("no target")
       return
     }
-    const rowIndexStr = td.getAttribute('rowIndex')
+    const tr = td.closest('tr')!
+    const rowIndexStr = tr.getAttribute('rowIndex')
     let rowIndex = -1
     if (rowIndexStr) {
       rowIndex = parseInt(rowIndexStr)
@@ -91,6 +95,38 @@ export class SheetEditor extends LitElement {
       console.log("no rowIndex in event")
     }
     this.selectRowByIndex(rowIndex)
+  }
+
+  onChange(e: InputEvent) {
+    console.log("onChange", e)
+    const target = e.target as HTMLInputElement;
+    const value = target.value
+    console.log("value is", value)
+    const td = target.closest('td')!    // Get our containing table cell
+    td.removeAttribute("editing")
+    const colIndexStr = td.getAttribute('colIndex')
+    const colIndex = colIndexStr ? parseInt(colIndexStr) : -1
+    const tr = td.closest('tr')!        // Get our containing row
+    const rowIndexStr = tr.getAttribute('rowIndex')
+    const rowIndex = rowIndexStr ? parseInt(rowIndexStr) : -1
+    if (rowIndex<0) {
+      console.log("No row selected")
+      return
+    }
+    const id = this.idForRowIndex(rowIndex)
+    console.log(" ..for rowId", id, " column", this.tableDesc.Columns[colIndex].Name)
+    // TODO - write out the change.
+  }
+
+  // onInput gets called each time the user edits the text in one of our text fields.
+  onInputText(e: InputEvent) {
+    console.log("onInputText", e)
+    const target = e.target as HTMLInputElement;
+    const td = target.closest('td')!    // Get our containing table cell
+    td.setAttribute("editing","true")
+      // Set the attribute so we can visually notify the user that the field
+      // is being edited. It won't be saved until the user presses Enter or
+      // exits the field (such as by tabbing out).
   }
 
   selectRowByIndex(rowIndex: number) {
@@ -102,7 +138,22 @@ export class SheetEditor extends LitElement {
     this.dispatchEvent(new CustomEvent("row-selected", {
       bubbles: true,
       detail: rowIndex,
-    }));
+    }))
+  }
+
+  idForRowIndex(rowIndex: number) {
+    // Get the ID for the selected row
+    const row = this.queryResults.Rows[rowIndex]
+    const idColumnIndex = this.queryResults.Columns.findIndex(col => col.Name == "id")
+    if (idColumnIndex < 0) {
+      console.warn("SheetEditor.selectRowByIndex: no id field found in row", rowIndex)
+      return ""
+    }
+    const rowId = row[idColumnIndex]
+    if (!rowId) {
+      console.log("No rowId found in row")
+    }
+    return rowId
   }
 
   editSelectedRow() {
@@ -111,14 +162,10 @@ export class SheetEditor extends LitElement {
       console.log("No row selected")
       return
     }
-    // Get the ID for the selected row
-    const row = this.queryResults.Rows[rowIndex]
-    const idColumnIndex = this.queryResults.Columns.findIndex(col => col.Name == "id")
-    if (idColumnIndex < 0) {
-      console.warn("SheetEditor.selectRowByIndex: no id field found in row", rowIndex)
-      return
+    const rowId = this.idForRowIndex(rowIndex)
+    if (!rowId) {
+      return    // Issue already logged to console
     }
-    const rowId = row[idColumnIndex]
 
     // send request-edit event
     const event = new CustomEvent<RequestEditEvent>('jraceman-request-edit-event', {
@@ -154,21 +201,26 @@ export class SheetEditor extends LitElement {
         </tr>
         ${/*@ts-ignore*/
           repeat(this.queryResults.Rows, (row:any[], rowIndex) => html`
-          <tr selected=${this.isRowIndexSelected(rowIndex)}>
+          <tr rowIndex=${rowIndex} selected=${this.isRowIndexSelected(rowIndex)}>
           ${/*@ts-ignore*/
             repeat(this.tableDesc.Columns, (col:ColumnDesc, colIndex) => html`
-            <td rowIndex=${rowIndex} selected=${this.isRowIndexSelected(rowIndex)}>
+            <td colIndex=${colIndex} selected=${this.isRowIndexSelected(rowIndex)}>
               ${when(this.isReadOnly(col),()=>html`
                 ${row[colIndex]}
               `, ()=>html`
                 ${when(col.FKTable, ()=>html`
-                  <select id="val_${col.Name}_${row[0]}">
+                  <select id="val_${col.Name}_${row[0]}" @change="${this.onChange}">
                     ${repeat(col.FKItems, (keyitem) => html`
-                      <option value="${keyitem.ID}" ?selected=${row[colIndex]==keyitem.ID}>${keyitem.Summary}</option>
+                      <option value="${keyitem.ID}"
+                          ?selected=${row[colIndex]==keyitem.ID}>
+                        ${keyitem.Summary}
+                      </option>
                     `)}
                   </select>
                 `, ()=>html`
-                  <input type=text value="${row[colIndex]}"></input>
+                  <input @input="${this.onInputText}" @change="${this.onChange}"
+                      type=text value="${row[colIndex]}">
+                  </input>
                 `)}
               `)}
             </td>
