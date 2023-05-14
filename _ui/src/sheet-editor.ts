@@ -3,7 +3,8 @@ import {customElement, property} from 'lit/decorators.js';
 import {repeat} from 'lit/directives/repeat.js';
 import {when} from 'lit/directives/when.js';
 
-import { TableDesc,ColumnDesc, QueryResultsData, QueryResultsEvent, RequestEditEvent } from './table-desc.js'
+import { ApiManager, XhrOptions } from './api-manager.js'
+import { TableDesc, TableDescSupport, ColumnDesc, QueryResultsData, QueryResultsEvent, RequestEditEvent } from './table-desc.js'
 
 /**
  * sheet-editor provides a table-layout for editing.
@@ -25,6 +26,9 @@ export class SheetEditor extends LitElement {
     }
     td[editing="true"] input {
       background-color: lightgreen;
+    }
+    td[error="true"] input {
+      background-color: lightpink;
     }
   `;
 
@@ -97,13 +101,12 @@ export class SheetEditor extends LitElement {
     this.selectRowByIndex(rowIndex)
   }
 
-  onChange(e: InputEvent) {
+  async onChange(e: InputEvent) {
     console.log("onChange", e)
-    const target = e.target as HTMLInputElement;
+    const target = e.target as HTMLInputElement
     const value = target.value
     console.log("value is", value)
     const td = target.closest('td')!    // Get our containing table cell
-    td.removeAttribute("editing")
     const colIndexStr = td.getAttribute('colIndex')
     const colIndex = colIndexStr ? parseInt(colIndexStr) : -1
     const tr = td.closest('tr')!        // Get our containing row
@@ -116,12 +119,19 @@ export class SheetEditor extends LitElement {
     const id = this.idForRowIndex(rowIndex)
     console.log(" ..for rowId", id, " column", this.tableDesc.Columns[colIndex].Name)
     // TODO - write out the change.
+    const err = await this.saveChange(id, colIndex, value)
+    if (err) {
+      td.removeAttribute("editing")
+      td.setAttribute("error","true")
+    } else {
+      td.removeAttribute("editing")
+    }
   }
 
   // onInput gets called each time the user edits the text in one of our text fields.
   onInputText(e: InputEvent) {
     console.log("onInputText", e)
-    const target = e.target as HTMLInputElement;
+    const target = e.target as HTMLInputElement
     const td = target.closest('td')!    // Get our containing table cell
     td.setAttribute("editing","true")
       // Set the attribute so we can visually notify the user that the field
@@ -173,14 +183,43 @@ export class SheetEditor extends LitElement {
         Table: this.queryResults.Table,
         ID: rowId
       } as RequestEditEvent
-    });
+    })
     // Dispatch the event to the document so any element can listen for it.
     console.log("SheetEditor dispatching event", event)
-    document.dispatchEvent(event);
+    document.dispatchEvent(event)
   }
 
   deleteSelectedRow() {
     console.log("deleteSelectedRow NYI")
+  }
+
+  async saveChange(id: string, colIndex: number, colVal: string) {
+    console.log("in SheetEditor.saveChange()")
+    const col = this.tableDesc.Columns[colIndex]
+    const name = col.Label      // TODO - Is this the right way to get the field name?
+    console.log("Type of field " + name + " is " + col.Type)
+    // For non-string fields, convert from the string in the form
+    // to the appropriate data type for the field.
+    const convertedColVal = TableDescSupport.convertToType(colVal, col.Type)
+    const updatePath = '/api/crud/' + this.tableDesc.Table + '/' + id
+    const method = "PATCH"
+    const options: XhrOptions = {
+      method: method,
+      params: [
+        { "op": "replace", "path": "/" + name, "value": convertedColVal },
+      ]
+    }
+    try {
+      const result = await ApiManager.xhrJson(updatePath, options)
+      if (result && !result.Table) {
+        result.Table = this.tableDesc.Table
+      }
+      console.log(result)
+      return null       // No error
+    } catch(e) {
+      console.error("Error:", e/*.responseText*/)
+      return e
+    }
   }
 
   // TODO: We assume below that the ID column is 0 and its value is in row[0].

@@ -51,4 +51,19 @@ export class TableDescSupport {
     }
     return cols;
   }
+
+  // Convert a value from a string representation to its actual value.
+  static convertToType(val: string, typ: string): any {
+    switch (typ) {
+    case 'bool':
+      return val.toLowerCase()=='true' || val=='1';  // TODO - explicitly check for false values?
+    case 'int':
+      return parseInt(val);     // TODO - catch and handle parsing errors
+    case 'float':
+    case 'float32':
+      return parseFloat(val);   // TODO - catch and handle parsing errors
+    default:
+      return val;       // no conversion for strings or unknown types
+    }
+  }
 }
