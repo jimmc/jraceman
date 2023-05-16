@@ -1,13 +1,14 @@
 import {LitElement, html, css} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import {PropertyValues} from 'lit-element';
+import {when} from 'lit/directives/when.js';
 
 import './sheet-editor.js'
 
 import { ApiManager, XhrOptions } from './api-manager.js'
 import { PostError } from './message-log.js'
 import { SheetEditor } from './sheet-editor.js'
-import { TableDesc } from './table-desc.js'
+import { TableDesc, QueryResultsData } from './table-desc.js'
 
 /**
  * table-sheet provides a panel to edit fields in multiple rows and columns.
@@ -24,7 +25,7 @@ export class TableSheet extends LitElement {
   };
 
   @property({type: Object /*, notify: true*/})
-  queryResults: object = {
+  queryResults: QueryResultsData = {
     Table: "(unset-in-query-results)",
     Columns: [],
     Rows: [],
@@ -32,6 +33,9 @@ export class TableSheet extends LitElement {
 
   @property({type: Number})
   selectedRowIndex: number = -1;
+
+  @property({type: Boolean})
+  haveResults = false
 
   sheetEditor?: SheetEditor
 
@@ -80,6 +84,8 @@ export class TableSheet extends LitElement {
 
   async search() {
     console.log("TableSheet.search begin");
+    this.haveResults = false
+    this.selectedRowIndex = -1
     let params:any[] = [];
     // TODO - if we have a selection field, add it here (see table-query).
     const options: XhrOptions = {
@@ -93,6 +99,7 @@ export class TableSheet extends LitElement {
         result.Table = this.tableDesc.Table;
       }
       this.queryResults = result;
+      this.haveResults = true;
     } catch(e) {
       const evt = e as XMLHttpRequest
       PostError("query", evt.responseText)
@@ -139,6 +146,7 @@ export class TableSheet extends LitElement {
   render() {
     return html`
         <form>
+          ${when(this.haveResults, ()=>html`[${this.queryResults.Rows.length}]`)}
           <button type=button @click="${this.search}">Search</button>
           <button type=button @click="${this.add}">Add</button>
           <button type=button @click="${this.edit}" ?disabled="${this.selectedRowIndex<0}">Edit</button>
