@@ -6,7 +6,9 @@ import './auth-setup.js'
 import './by-event.js'
 import './database-menu.js'
 import './database-pane.js'
+import './debug-menu.js'
 import './debug-pane.js'
+import './jraceman-dialog.js'
 import './jraceman-login.js'
 import './jraceman-split.js'
 import './meet-setup.js'
@@ -73,6 +75,16 @@ export class JracemanApp extends LitElement {
     }
     [hidden="true"] {
       display: none !important;
+    }
+    jraceman-split {
+      isolation: isolate;
+    }
+    jraceman-login {
+      isolation: isolate;
+    }
+    jraceman-dialog {
+      isolation: isolate;
+      z-index: 100;
     }
   `;
 
@@ -317,7 +329,7 @@ export class JracemanApp extends LitElement {
               <section slot="panel"><reports-pane></reports-pane></section>
               <span slot="tab"><database-menu></database-menu>Database</span>
               <section slot="panel"><database-pane></database-pane></section>
-              <span slot="tab">Debug</span>
+              <span slot="tab"><debug-menu></debug-menu>Debug</span>
               <section slot="panel"><debug-pane></debug-pane></section>
             </jraceman-tabs>
           </div>
@@ -340,6 +352,7 @@ export class JracemanApp extends LitElement {
           </div>
         </jraceman-split>
       `)}
+      <jraceman-dialog></jraceman-dialog>
     `;
   }
 }
