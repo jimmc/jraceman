@@ -107,24 +107,18 @@ export class TableSheet extends LitElement {
       return
     }
     console.log("TableSheet.search results", this.queryResults);
-
-    // TODO - display the results in our editing table.
-    /*
-    const event = new CustomEvent<QueryResultsEvent>('jraceman-query-results-event', {
-      detail: {
-        message: 'Query results for table '+this.tableDesc.Table,
-        results: this.queryResults
-      } as QueryResultsEvent
-    });
-    // Dispatch the event to the document so any element can listen for it.
-    console.log("TableSheet dispatching event", event)
-    document.dispatchEvent(event);
-    */
   }
 
   async rowSelected(e:CustomEvent) {
     console.log("Row selected", e)
     this.selectedRowIndex = e.detail as number;
+  }
+
+  async rowDeleted(e:CustomEvent) {
+    console.log("Row deleted", e)
+    const rowIndex = e.detail as number;
+    this.queryResults.Rows.splice(rowIndex, 1)
+    this.requestUpdate()
   }
 
   async add() {
@@ -154,7 +148,7 @@ export class TableSheet extends LitElement {
         </form>
         <sheet-editor tableDesc=${JSON.stringify(this.tableDesc)}
             queryResults=${JSON.stringify(this.queryResults)}
-            @row-selected="${this.rowSelected}">
+            @row-selected="${this.rowSelected}" @row-deleted="${this.rowDeleted}">
         </sheet-editor>
     `;
   }

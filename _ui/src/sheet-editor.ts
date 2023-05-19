@@ -4,6 +4,8 @@ import {repeat} from 'lit/directives/repeat.js';
 import {when} from 'lit/directives/when.js';
 
 import { ApiManager, XhrOptions } from './api-manager.js'
+import { JracemanDialog } from './jraceman-dialog.js'
+import { PostError, PostInfo } from './message-log.js'
 import { TableDesc, TableDescSupport, ColumnDesc, QueryResultsData, QueryResultsEvent, RequestEditEvent } from './table-desc.js'
 
 /**
@@ -63,11 +65,6 @@ export class SheetEditor extends LitElement {
   @property()
   selectedRowIndex = -1
 
-  constructor() {
-    super()
-    //document.addEventListener("jraceman-sheet-editor-event", this.onQueryResultsEvent.bind(this))
-  }
-
   onQueryResultsEvent(e:Event) {
     const evt = e as CustomEvent<QueryResultsEvent>
     console.log("SheetEditor got updated results", evt.detail.results)
@@ -118,7 +115,6 @@ export class SheetEditor extends LitElement {
     }
     const id = this.idForRowIndex(rowIndex)
     console.log(" ..for rowId", id, " column", this.tableDesc.Columns[colIndex].Name)
-    // TODO - write out the change.
     const err = await this.saveChange(id, colIndex, value)
     if (err) {
       td.removeAttribute("editing")
@@ -189,12 +185,48 @@ export class SheetEditor extends LitElement {
     document.dispatchEvent(event)
   }
 
-  deleteSelectedRow() {
-    console.log("deleteSelectedRow NYI")
+  async deleteSelectedRow() {
+    if (this.selectedRowIndex < 0) {
+        JracemanDialog.messageDialog("Error", "No row is selected", ["Dismiss"])
+        return
+    }
+    const rowIndex = this.selectedRowIndex
+    const id = this.queryResults.Rows[rowIndex][0]
+    const answer = await JracemanDialog.messageDialog("Confirm Delete", "Delete row with ID "+id+"?", ["Cancel", "Delete"])
+    if (answer<1) {
+      return    // Canceled
+    }
+    console.log("Ready to delete id ", id)
+    const deletePath = '/api/crud/' + this.tableDesc.Table + '/' + id
+    const method = "DELETE"
+    const options: XhrOptions = {
+      method: method,
+    }
+    try {
+      const result = await ApiManager.xhrJson(deletePath, options)
+      if (result && !result.Table) {
+        result.Table = this.tableDesc.Table
+      }
+      console.log(result)
+      PostInfo("sheet-editor", "Deleted row " + id + " from table " + result.Table)
+    } catch(e) {
+      console.error("Error:", e/*.responseText*/)
+      const evt = e as XMLHttpRequest
+      PostError("sheet-editor", "Error deleting row " + id + " from table " + this.tableDesc.Table + " :" + evt.responseText)
+      return
+    }
+
+    this.queryResults.Rows.splice(rowIndex, 1)  // Update our table of rows.
+    this.selectRowByIndex(-1)       // No row is selected now.
+    // Let our parent component know that we changed the data.
+    this.dispatchEvent(new CustomEvent("row-deleted", {
+      bubbles: true,
+      detail: rowIndex,
+    }))
   }
 
   async saveChange(id: string, colIndex: number, colVal: string) {
-    console.log("in SheetEditor.saveChange()")
+    console.log("in SheetEditor.saveChange")
     const col = this.tableDesc.Columns[colIndex]
     const name = col.Label      // TODO - Is this the right way to get the field name?
     console.log("Type of field " + name + " is " + col.Type)
