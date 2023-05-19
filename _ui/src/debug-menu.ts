@@ -22,8 +22,9 @@ export class DebugMenu extends LitElement {
     }
   `;
 
-  openDialog() {
-    JracemanDialog.openDialog("Sample Title", "Sample message", ["Close", "OK"])
+  async openDialog() {
+    const b = await JracemanDialog.messageDialog("Test Dialog", "Sample message for testing dialog", ["Cancel", "OK"])
+    console.log("Button index is", b)
   }
 
   // Render our menu.

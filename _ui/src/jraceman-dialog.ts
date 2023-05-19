@@ -64,8 +64,24 @@ export class JracemanDialog extends LitElement {
     .dialog {
       background: #ffffff;
       max-width: 600px;
-      padding: 1rem;
       position: fixed;
+    }
+    #title {
+      height: 20px;
+      width: "100%";
+      background-color: lightgray;
+      text-align: center;
+    }
+    #content {
+      padding: 1rem;
+    }
+    #buttons {
+      padding-left: 1rem;
+      padding-right: 1rem;
+      padding-bottom: 1rem;
+      display: flex;
+      justify-content: center;
+      gap: 4px;
     }
     `;
 
@@ -82,13 +98,21 @@ export class JracemanDialog extends LitElement {
   @property()
   open = false
 
-  // Call this method to open the singleton dialog.
-  static openDialog(title:string, message:string, buttons:string[]) {
+  resolve = (_:number) => {}
+
+  // Call this method to open the singleton dialog with a title, a message,
+  // and any number of buttons.
+  // The return value is a Promise that resolves to the index number of the
+  // selected button in the array, or -1 if the user clicked outside of the dialog.
+  static messageDialog(title:string, message:string, buttons:string[]) {
     const app = document.querySelector('jraceman-app')! as JracemanApp
     const dialog = app.shadowRoot!.querySelector('jraceman-dialog')! as JracemanDialog
-    console.log("dialog is", dialog)
 
     dialog.onOpen(title, message, buttons)
+
+    return new Promise<number>(resolve => {
+      dialog.resolve = resolve            // Save for later
+    })
   }
 
   onOpen(title: string, message: string, buttons: string[]) {
@@ -102,8 +126,8 @@ export class JracemanDialog extends LitElement {
   // If a button, the index is the array index into this.buttons.
   // If outside the dialog, the index is -1.
   onClose(buttonIndex:number) {
-    console.log("JracemanDialog.close", buttonIndex)
     this.open = false
+    this.resolve(buttonIndex)
   }
 
   render() {
@@ -111,14 +135,16 @@ export class JracemanDialog extends LitElement {
     <div class="wrapper ${this.open? `open` : `closed`}">
       <div class="overlay" @click="${this.onClose.bind(this, -1)}"></div>
       <div class="dialog" role="dialog">
-        <h1 id="title">${this.title}<slot name="heading"></slot></h1>
+        <div id="title">${this.title}<slot name="heading"></slot></div>
         <div id="content" class="content">
           ${this.message}
           <slot></slot>
         </div>
-        ${repeat(this.buttons, (button:string, buttonIndex)=>html`
-          <button type=button class="close" @click=${this.onClose.bind(this, buttonIndex)}>${button}</button>
-        `)}
+        <div id="buttons">
+          ${repeat(this.buttons, (button:string, buttonIndex)=>html`
+            <button type=button class="close" @click=${this.onClose.bind(this, buttonIndex)}>${button}</button>
+          `)}
+        </div>
       </div>
     </div>`;
 
