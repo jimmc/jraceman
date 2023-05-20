@@ -5,8 +5,8 @@ import {when} from 'lit/directives/when.js';
 
 import { ApiManager, XhrOptions } from './api-manager.js'
 import { JracemanDialog } from './jraceman-dialog.js'
-import { PostError, PostInfo } from './message-log.js'
 import { TableDesc, TableDescSupport, ColumnDesc, QueryResultsData, QueryResultsEvent, RequestEditEvent } from './table-desc.js'
+import { TableEdit } from './table-edit.js'
 
 /**
  * sheet-editor provides a table-layout for editing.
@@ -192,27 +192,8 @@ export class SheetEditor extends LitElement {
     }
     const rowIndex = this.selectedRowIndex
     const id = this.queryResults.Rows[rowIndex][0]
-    const answer = await JracemanDialog.messageDialog("Confirm Delete", "Delete row with ID "+id+"?", ["Cancel", "Delete"])
-    if (answer<1) {
-      return    // Canceled
-    }
-    console.log("Ready to delete id ", id)
-    const deletePath = '/api/crud/' + this.tableDesc.Table + '/' + id
-    const method = "DELETE"
-    const options: XhrOptions = {
-      method: method,
-    }
-    try {
-      const result = await ApiManager.xhrJson(deletePath, options)
-      if (result && !result.Table) {
-        result.Table = this.tableDesc.Table
-      }
-      console.log(result)
-      PostInfo("sheet-editor", "Deleted row " + id + " from table " + result.Table)
-    } catch(e) {
-      console.error("Error:", e/*.responseText*/)
-      const evt = e as XMLHttpRequest
-      PostError("sheet-editor", "Error deleting row " + id + " from table " + this.tableDesc.Table + " :" + evt.responseText)
+    const ok = await TableEdit.deleteRow(this.tableDesc.Table, id)
+    if (!ok) {
       return
     }
 

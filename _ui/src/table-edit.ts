@@ -4,6 +4,8 @@ import {repeat} from 'lit/directives/repeat.js';
 import {when} from 'lit/directives/when.js';
 
 import { ApiManager, XhrOptions } from './api-manager.js'
+import { JracemanDialog } from './jraceman-dialog.js'
+import { PostError, PostInfo } from './message-log.js'
 import { TableDesc, TableDescSupport, RequestEditEvent } from './table-desc.js'
 
 /**
@@ -66,15 +68,20 @@ export class TableEdit extends LitElement {
     try {
       result = await ApiManager.xhrJson(queryPath, options);
     } catch(e) {
-      console.error("Error from /api/query:", e/*.responseText*/);
+      PostError("table-edit", "Error from /api/query: " + e/*.responseText*/);
       return
     }
     if (result && !result.Table) {
       result.Table = this.tableDesc.Table;
     }
     console.log(result);
+    if (result.Rows.length == 0) {
+      PostError("table-edit", "No row with ID " + req.ID + " in table " + req.Table)
+      return
+    }
     if (result.Rows.length != 1) {
-      throw 'Expected exactly one row';  // TODO - more graceful error handling
+      PostError("table-edit", "Found " + result.Rows.length + " rows with ID " + req.ID + " in table " + req.Table)
+      return
     }
     this.databaseResult = result;
     this.reset();
@@ -201,8 +208,50 @@ export class TableEdit extends LitElement {
     }
   }
 
+  async delete() {
+    console.log("delete NYI")
+    const ok = await TableEdit.deleteRow(this.tableDesc.Table, this.recordId)
+    if (!ok) {
+      return
+    }
+    this.newRecord()
+  }
+
   isStringColumn(colType: string) {
     return colType == "string";
+  }
+
+  // Delete the specified row in the specified table, after asking the user for confirmation.
+  // Returns Promise<boolean>, resolved as true if the row was deleted.
+  static async deleteRow(table: string, id: string) {
+    if (!id) {
+      PostError("table-edit", "No ID specified to delete from table " + table)
+      return false
+    }
+    const answer = await JracemanDialog.messageDialog("Confirm Delete", "Delete row with ID "+id+"?", ["Cancel", "Delete"])
+    if (answer<1) {
+      return false    // Canceled
+    }
+    console.log("Ready to delete id ", id)
+    const deletePath = '/api/crud/' + table + '/' + id
+    const method = "DELETE"
+    const options: XhrOptions = {
+      method: method,
+    }
+    try {
+      const result = await ApiManager.xhrJson(deletePath, options)
+      if (result && !result.Table) {
+        result.Table = table
+      }
+      console.log(result)
+      PostInfo("table-edit", "Deleted row " + id + " from table " + result.Table)
+    } catch(e) {
+      console.error("Error:", e/*.responseText*/)
+      const evt = e as XMLHttpRequest
+      PostError("table-edit", "Error deleting row " + id + " from table " + table + " :" + evt.responseText)
+      return false
+    }
+    return true
   }
 
   render() {
@@ -213,6 +262,9 @@ export class TableEdit extends LitElement {
             <button type=button @click="${this.reset}">Reset</button>
           `)}
           <button type=button @click="${this.newRecord}">New</button>
+          ${when(this.recordId, ()=>html`
+            <button type=button @click="${this.delete}">Delete</button>
+          `)}
           &nbsp;&nbsp; Record: ${this.editIdLabel}
 
           <table>
