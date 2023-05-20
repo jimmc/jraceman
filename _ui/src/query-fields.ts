@@ -11,6 +11,12 @@ import { TableDesc } from './table-desc.js'
 @customElement('query-fields')
 export class QueryFields extends LitElement {
   static styles = css`
+    .inline {
+      display: inline;
+    }
+    .inline tr {
+      display: inline;
+    }
   `;
 
   @property({type: Object})
@@ -18,6 +24,11 @@ export class QueryFields extends LitElement {
     Table: "(unset-in-query-fields)",
     Columns: [],
   };
+
+  // tableClass is an optional property that allows selecting a different
+  // set of CSS properties to display the table differently.
+  @property({type: String})
+  tableClass: string = ''
 
   // getSelectElement gets an HTMLSelectElement by selector.
   getSelectElement(selector: string) {
@@ -82,7 +93,7 @@ export class QueryFields extends LitElement {
 
   render() {
     return html`
-      <table>
+      <table class=${this.tableClass}>
         ${repeat(this.tableDesc.Columns, (col /*, colIndex*/) => html`
           <tr>
             <td>${col.Label}</td>

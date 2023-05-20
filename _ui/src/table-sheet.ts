@@ -1,14 +1,16 @@
-import {LitElement, html, css} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
-import {PropertyValues} from 'lit-element';
-import {when} from 'lit/directives/when.js';
+import { LitElement, html, css } from 'lit'
+import { customElement, property } from 'lit/decorators.js'
+import { PropertyValues } from 'lit-element'
+import { when } from 'lit/directives/when.js'
 
 import './sheet-editor.js'
 
 import { ApiManager, XhrOptions } from './api-manager.js'
 import { PostError } from './message-log.js'
+import { QueryFields } from './query-fields.js'
 import { SheetEditor } from './sheet-editor.js'
-import { TableDesc, QueryResultsData } from './table-desc.js'
+import { TableCustom } from './table-custom.js'
+import { TableDesc, ColumnDesc, QueryResultsData } from './table-desc.js'
 
 /**
  * table-sheet provides a panel to edit fields in multiple rows and columns.
@@ -21,7 +23,7 @@ export class TableSheet extends LitElement {
   @property({type: Object})
   tableDesc: TableDesc = {
     Table: "(unset-in-table-sheet)",
-    Columns:[],
+    Columns: [],
   };
 
   @property({type: Object /*, notify: true*/})
@@ -39,9 +41,12 @@ export class TableSheet extends LitElement {
 
   sheetEditor?: SheetEditor
 
+  queryFields?: QueryFields
+
   firstUpdated(changedProperties:PropertyValues<this>) {
     super.firstUpdated(changedProperties);
     this.sheetEditor = this.shadowRoot!.querySelector("sheet-editor")! as SheetEditor
+    this.queryFields = this.shadowRoot!.querySelector("query-fields")! as QueryFields
   }
 
   // getSelectElement gets an HTMLSelectElement by selector.
@@ -86,8 +91,7 @@ export class TableSheet extends LitElement {
     console.log("TableSheet.search begin");
     this.haveResults = false
     this.selectedRowIndex = -1
-    let params:any[] = [];
-    // TODO - if we have a selection field, add it here (see table-query).
+    const params = this.queryFields!.fieldsAsParams()
     const options: XhrOptions = {
       method: "POST",
       params: params,
@@ -137,10 +141,32 @@ export class TableSheet extends LitElement {
     return colType == "string";
   }
 
+  // filterFieldTableDesc generates a TableDesc with a ColDesc for each
+  // column for which we want to provide a filter choice.
+  // Typically there is either zero or one filter field.
+  filterFieldTableDesc() {
+    const filterColumnName = TableCustom.sheetFilterFieldName(this.tableDesc.Table)
+    let filterColumns: ColumnDesc[] = []
+    if (filterColumnName) {
+      for (let col of this.tableDesc.Columns) {
+        if (col.Name == filterColumnName) {
+          filterColumns.push(col)
+        }
+      }
+    }
+    const ffTableDesc: TableDesc = {
+      Table: this.tableDesc.Table,
+      Columns: filterColumns,
+    }
+    return ffTableDesc
+  }
+
   render() {
     return html`
         <form>
           ${when(this.haveResults, ()=>html`[${this.queryResults.Rows.length}]`)}
+          <query-fields tableDesc=${JSON.stringify(this.filterFieldTableDesc())} tableClass=inline>
+          </query-fields>
           <button type=button @click="${this.search}">Search</button>
           <button type=button @click="${this.add}">Add</button>
           <button type=button @click="${this.edit}" ?disabled="${this.selectedRowIndex<0}">Edit</button>
