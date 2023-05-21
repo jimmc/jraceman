@@ -7,8 +7,16 @@ export class TableCustom {
   // or an empty string if there should not be a filter field.
   static sheetFilterFieldName(tablename: string): string {
     switch (tablename) {
+    case 'entry':
+      return 'eventid'
+    case 'event':
+      return 'meetid'
     case 'person':
       return 'teamid'
+    case 'race':
+      return 'eventid'
+    case 'seedinglist':
+      return 'seedingplanid'
     default:
       return ''
     }

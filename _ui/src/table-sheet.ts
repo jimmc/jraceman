@@ -125,10 +125,6 @@ export class TableSheet extends LitElement {
     this.requestUpdate()
   }
 
-  async add() {
-    console.log("TableSheet.add NYI");
-  }
-
   async edit() {
     this.sheetEditor!.editSelectedRow();
   }
@@ -168,7 +164,6 @@ export class TableSheet extends LitElement {
           <query-fields tableDesc=${JSON.stringify(this.filterFieldTableDesc())} tableClass=inline>
           </query-fields>
           <button type=button @click="${this.search}">Search</button>
-          <button type=button @click="${this.add}">Add</button>
           <button type=button @click="${this.edit}" ?disabled="${this.selectedRowIndex<0}">Edit</button>
           <button type=button @click="${this.delete}" ?disabled="${this.selectedRowIndex<0}">Delete</button>
         </form>
