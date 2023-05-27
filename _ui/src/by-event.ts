@@ -4,6 +4,7 @@ import { repeat } from 'lit/directives/repeat.js'
 import { when } from 'lit/directives/when.js'
 
 import './create-races.js'
+import './entries-progress.js'
 import './jraceman-tabs.js'
 import './table-queryedit.js'
 
@@ -133,7 +134,7 @@ export class ByEvent extends LitElement {
         </select>
         <br/>
         ${when(this.task=="create_races",()=>html`<create-races .eventId="${this.eventId}"></create-races>`)}
-        ${when(this.task=="entries_progress",()=>html`[entries/progress pane]`)}
+        ${when(this.task=="entries_progress",()=>html`<entries-progress .eventId="${this.eventId}"></entries-progress>`)}
         ${when(this.task=="results",()=>html`[results pane]`)}
         ${when(this.task=="reports",()=>html`[reports pane]`)}
     `;

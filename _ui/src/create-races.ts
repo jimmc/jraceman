@@ -4,33 +4,7 @@ import { when } from 'lit/directives/when.js'
 
 import { ApiManager, XhrOptions } from './api-manager.js'
 import { PostError, PostInfo } from './message-log.js'
-
-interface RoundCount {
-  Count: number,
-  Round: number,
-  StageName: string,
-}
-
-interface RaceInfo {
-  RaceID: string,
-  StageName: string,
-  StageNumber: number,
-  IsFinal: boolean,
-  Round: number,
-  Section: number,
-  AreaName: string,
-  RaceNumber: number,
-  LaneCount: number,
-}
-
-interface EventInfo {
-  Summary: string,
-  EntryCount: number,
-  GroupCount: number,
-  GroupSize: number,
-  RoundCounts: RoundCount[],
-  Races: RaceInfo[],
-}
+import { EventInfo, RaceInfo } from './event-info.js'
 
 interface CreateRacesResult {
   EventInfo: EventInfo,
@@ -41,9 +15,7 @@ interface CreateRacesResult {
 }
 
 /**
- * create-races is the tab content that contains other tabs for venue setup.
- *
- * @slot - Slots for contains tabs and tab content
+ * create-races is the by-event tab that for creating the races for an event.
  */
 @customElement('create-races')
 export class CreateRaces extends LitElement {
