@@ -11,20 +11,20 @@ import (
   "gopkg.in/d4l3k/messagediff.v1"
 )
 
-type DBEventInfoRepo struct {
+type DBEventRacesRepo struct {
   db conn.DB
   repos *Repos      // We need access to repos for the table types
 }
 
-func (r *DBEventInfoRepo) RequireTx(ctx context.Context) (commit func() error, rollback func(), rr *DBEventInfoRepo, err error) {
+func (r *DBEventRacesRepo) RequireTx(ctx context.Context) (commit func() error, rollback func(), rr *DBEventRacesRepo, err error) {
   commitf, rollbackf, rrepos, err := r.repos.RequireTx(ctx)
   if err != nil {
     return nil, nil, nil, err
   }
-  return commitf, rollbackf, rrepos.EventInfo().(*DBEventInfoRepo), nil
+  return commitf, rollbackf, rrepos.EventRaces().(*DBEventRacesRepo), nil
 }
 
-func (r *DBEventInfoRepo) EventRaceInfo(eventId string) (*domain.EventInfo, error) {
+func (r *DBEventRacesRepo) EventRaceInfo(eventId string) (*domain.EventRaces, error) {
   if eventId == "" {
     return nil, fmt.Errorf("Event ID must be specified")
   }
@@ -57,7 +57,7 @@ func (r *DBEventInfoRepo) EventRaceInfo(eventId string) (*domain.EventInfo, erro
   whereVals[1] = eventId
   whereVals[2] = eventId
   glog.V(3).Infof("SQL: %s", query)
-  result := &domain.EventInfo{}
+  result := &domain.EventRaces{}
   err := db.QueryRow(query, whereVals...).Scan(
     &result.EntryCount, &result.GroupCount, &result.GroupSize, &result.Summary,
     &result.AreaID, &result.AreaName, &result.AreaLanes, &result.AreaExtraLanes,
@@ -152,7 +152,7 @@ func loadEventRoundCounts(db conn.DB, eventId string) ([]*domain.EventRoundCount
 
 // UpdateRaceInfo updates the database to create, delete, and modify races
 // according to the given data.
-func (r *DBEventInfoRepo) UpdateRaceInfo(ctx context.Context, eventInfo *domain.EventInfo,
+func (r *DBEventRacesRepo) UpdateRaceInfo(ctx context.Context, eventRaces *domain.EventRaces,
     racesToCreate, racesToDelete, racesToModFrom, racesToModTo []*domain.RaceInfo) error {
   // We want all our writes to succeed or fail together.
   commit, rollback, r, err := r.RequireTx(ctx)
@@ -161,7 +161,7 @@ func (r *DBEventInfoRepo) UpdateRaceInfo(ctx context.Context, eventInfo *domain.
   }
   defer rollback()
 
-  err = r.updateRaceInfoInTx(ctx, eventInfo, racesToCreate, racesToDelete, racesToModFrom, racesToModTo)
+  err = r.updateRaceInfoInTx(ctx, eventRaces, racesToCreate, racesToDelete, racesToModFrom, racesToModTo)
   if err != nil {
     return err
   }
@@ -174,7 +174,7 @@ func (r *DBEventInfoRepo) UpdateRaceInfo(ctx context.Context, eventInfo *domain.
 
 // UpdateRaceInfo updates the database to create, delete, and modify races
 // according to the given data. Return error if any operations fail.
-func (r *DBEventInfoRepo) updateRaceInfoInTx(ctx context.Context, eventInfo *domain.EventInfo,
+func (r *DBEventRacesRepo) updateRaceInfoInTx(ctx context.Context, eventRaces *domain.EventRaces,
     racesToCreate, racesToDelete, racesToModFrom, racesToModTo []*domain.RaceInfo) error {
 
   // Create

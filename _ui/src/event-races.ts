@@ -16,7 +16,7 @@ export interface RaceInfo {
   LaneCount: number,
 }
 
-export interface EventInfo {
+export interface EventRaces {
   Summary: string,
   EntryCount: number,
   GroupCount: number,

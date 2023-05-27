@@ -31,11 +31,11 @@ func (h *handler) event(w http.ResponseWriter, r *http.Request) {
   }
   switch r.Method {
     case http.MethodGet:
-      if action!="" && action!="info" {
+      if action!="" && action!="races" {
         http.Error(w, fmt.Sprintf("Invalid GET action %s", action), http.StatusBadRequest)
         return
       }
-      h.eventInfo(w, eventId)
+      h.eventRaces(w, eventId)
     case http.MethodPost:
       switch action {
         case "createraces":
@@ -55,9 +55,9 @@ func (h *handler) event(w http.ResponseWriter, r *http.Request) {
   }
 }
 
-func (h *handler) eventInfo(w http.ResponseWriter, eventId string) {
-  eventInfoRepo := h.config.DomainRepos.EventInfo()
-  result, err := eventInfoRepo.EventRaceInfo(eventId)
+func (h *handler) eventRaces(w http.ResponseWriter, eventId string) {
+  eventRacesRepo := h.config.DomainRepos.EventRaces()
+  result, err := eventRacesRepo.EventRaceInfo(eventId)
   if err != nil {
     http.Error(w, err.Error(), http.StatusBadRequest)
     return

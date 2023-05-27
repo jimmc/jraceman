@@ -4,10 +4,10 @@ import { when } from 'lit/directives/when.js'
 
 import { ApiManager, XhrOptions } from './api-manager.js'
 import { PostError, PostInfo } from './message-log.js'
-import { EventInfo, RaceInfo } from './event-info.js'
+import { EventRaces, RaceInfo } from './event-races.js'
 
 interface CreateRacesResult {
-  EventInfo: EventInfo,
+  EventRaces: EventRaces,
   RacesToCreate: RaceInfo[],
   RacesToDelete: RaceInfo[],
   RacesToModFrom: RaceInfo[],
@@ -77,16 +77,16 @@ export class CreateRaces extends LitElement {
     const changeCount = results.RacesToCreate.length + results.RacesToDelete.length + results.RacesToModFrom.length
     if (changeCount==0) {
       if (dryRun) {
-        PostInfo("create-races", "No changes to races would be made for event " + results.EventInfo.Summary)
+        PostInfo("create-races", "No changes to races would be made for event " + results.EventRaces.Summary)
       } else {
-        PostInfo("create-races", "No changes to races were made for event " + results.EventInfo.Summary)
+        PostInfo("create-races", "No changes to races were made for event " + results.EventRaces.Summary)
       }
       return
     }
     if (dryRun) {
-      PostInfo("create-races", "The following changes would be made for event " + results.EventInfo.Summary)
+      PostInfo("create-races", "The following changes would be made for event " + results.EventRaces.Summary)
     } else {
-      PostInfo("create-races", "The following changes were made for event " + results.EventInfo.Summary)
+      PostInfo("create-races", "The following changes were made for event " + results.EventRaces.Summary)
     }
     results.RacesToCreate.forEach( (race) => {
       PostInfo("create-races", "+ Create Race "+this.raceToString(race))
@@ -111,7 +111,7 @@ export class CreateRaces extends LitElement {
   update(changedProperties: Map<string, unknown>) {
     if (changedProperties.has("eventId")) {
       // When the eventId changes, update our event info.
-      this.loadEventInfo()  // No need to await here, just kick it off.
+      this.loadEventRaces()  // No need to await here, just kick it off.
     }
     super.update(changedProperties)
   }
@@ -132,7 +132,7 @@ export class CreateRaces extends LitElement {
     return "Stage="+race.StageName+" Round="+race.Round+" Section="+race.Section + raceNumber + idinfo + laneInfo
   }
 
-  async loadEventInfo() {
+  async loadEventRaces() {
     if (this.eventId == "") {
       this.eventSummary = "(Select an event)"
       this.entryUnit = "entries"
@@ -142,8 +142,8 @@ export class CreateRaces extends LitElement {
       }
       return
     }
-    const path = '/api/app/event/' + this.eventId + '/info'
-    let eventInfo : EventInfo = {
+    const path = '/api/app/event/' + this.eventId + '/races'
+    let eventRaces : EventRaces = {
       Summary: "",
       EntryCount: 0,
       GroupCount: 0,
@@ -152,28 +152,28 @@ export class CreateRaces extends LitElement {
       Races: [],
       }
     try {
-      eventInfo = await ApiManager.xhrJson(path)
+      eventRaces = await ApiManager.xhrJson(path)
     } catch (e) {
       console.error(e);
       const errstr = "Error getting event info: " + e/*.responseText*/
       PostError("create-races", errstr)
       return;
     }
-    this.eventSummary = "Selected Event: " + eventInfo.Summary
+    this.eventSummary = "Selected Event: " + eventRaces.Summary
     const inputField = (this.shadowRoot!.querySelector("#entries")! as HTMLInputElement)
     let eventDetailHTML = ""
-    if (eventInfo.GroupSize>1) {
-      eventDetailHTML += "Number of groups: " + eventInfo.GroupCount + "<br/>"
+    if (eventRaces.GroupSize>1) {
+      eventDetailHTML += "Number of groups: " + eventRaces.GroupCount + "<br/>"
       this.entryUnit = "groups"
-      inputField.value = ""+eventInfo.GroupCount
+      inputField.value = ""+eventRaces.GroupCount
     } else {
-      eventDetailHTML += "Number of entries: " + eventInfo.EntryCount + "<br/>"
+      eventDetailHTML += "Number of entries: " + eventRaces.EntryCount + "<br/>"
       this.entryUnit = "entries"
-      inputField.value = ""+eventInfo.EntryCount
+      inputField.value = ""+eventRaces.EntryCount
     }
     let raceTotal = 0
     let raceSummary = ""
-    for (let roundInfo of eventInfo.RoundCounts) {
+    for (let roundInfo of eventRaces.RoundCounts) {
       raceTotal += roundInfo.Count
       if (raceSummary!="") {
         raceSummary += ", "
@@ -188,7 +188,7 @@ export class CreateRaces extends LitElement {
     raceSummary = "This event currently has " + raceSummary
     eventDetailHTML += raceSummary + "<br/>"
     this.hasLanes = false
-    for (let raceInfo of eventInfo.Races) {
+    for (let raceInfo of eventRaces.Races) {
       if (raceInfo.LaneCount>0) {
         this.hasLanes = true
         break

@@ -59,7 +59,7 @@ type Repos struct {
   dbUserRole *DBUserRoleRepo
 
   // Composite types
-  dbEventInfo *DBEventInfoRepo
+  dbEventRaces *DBEventRacesRepo
   dbSimplanSys *DBSimplanSysRepo
 }
 
@@ -163,7 +163,7 @@ func (r *Repos) User() domain.UserRepo { return r.dbUser }
 func (r *Repos) UserRole() domain.UserRoleRepo { return r.dbUserRole }
 
 // Composite types
-func (r *Repos) EventInfo() domain.EventInfoRepo { return r.dbEventInfo }
+func (r *Repos) EventRaces() domain.EventRacesRepo { return r.dbEventRaces }
 func (r *Repos) SimplanSys() domain.SimplanSysRepo { return r.dbSimplanSys }
 
 // Open opens a database repository.
@@ -240,10 +240,10 @@ func ReopenDB(db conn.DB) (*Repos, error) {
     dbUserRole: &DBUserRoleRepo{db},
 
     // Composite types
-    dbEventInfo: &DBEventInfoRepo{db: db},
+    dbEventRaces: &DBEventRacesRepo{db: db},
     dbSimplanSys: &DBSimplanSysRepo{db},
   }
-  r.dbEventInfo.repos = r
+  r.dbEventRaces.repos = r
 
   tableMap := make(map[string]TableRepo)
   for _, entry := range r.TableEntries() {

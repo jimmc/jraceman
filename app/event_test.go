@@ -111,16 +111,16 @@ var raceInfosOneHeat = []*domain.RaceInfo{ raceInfoOneHeat }
 var raceInfosOneDirectFinal = []*domain.RaceInfo{ raceInfoOneDirectFinal }
 var raceInfosOneDirectFinalWithLanes = []*domain.RaceInfo{ raceInfoOneDirectFinalWithLanes }
 
-var eventInfoEmpty = &domain.EventInfo{ }
+var eventRacesEmpty = &domain.EventRaces{ }
 
-var eventInfoNoRaces = &domain.EventInfo{
+var eventRacesNoRaces = &domain.EventRaces{
   EventID: "E1",
   Summary: "E1: No Entries",
   RoundCounts: make([]*domain.EventRoundCounts, 0),
   Races: raceInfosEmpty,
 }
 
-var eventInfoNoRacesWithEntryCount = &domain.EventInfo{
+var eventRacesNoRacesWithEntryCount = &domain.EventRaces{
   EventID: "E1",
   Summary: "E1: No Entries",
   RoundCounts: make([]*domain.EventRoundCounts, 0),
@@ -128,7 +128,7 @@ var eventInfoNoRacesWithEntryCount = &domain.EventInfo{
   Races: raceInfosEmpty,
 }
 
-var eventInfoNoRacesWithGroupCount = &domain.EventInfo{
+var eventRacesNoRacesWithGroupCount = &domain.EventRaces{
   EventID: "E1",
   Summary: "E1: No Entries",
   RoundCounts: make([]*domain.EventRoundCounts, 0),
@@ -138,7 +138,7 @@ var eventInfoNoRacesWithGroupCount = &domain.EventInfo{
   Races: raceInfosEmpty,
 }
 
-var eventInfoOneDirectFinal = &domain.EventInfo{
+var eventRacesOneDirectFinal = &domain.EventRaces{
   EventID: "E1",
   Summary: "E1: No Entries",
   RoundCounts: make([]*domain.EventRoundCounts, 0),
@@ -173,7 +173,7 @@ var progSysOneFinal = &progSysT{eventRoundCountsOneFinal, nil}
 func TestCalculateRaceChanges(t *testing.T) {
   tests := []struct{
     testName string
-    event *domain.EventInfo
+    event *domain.EventRaces
     progression ProgSys
     laneCount int
     expectError bool
@@ -181,12 +181,12 @@ func TestCalculateRaceChanges(t *testing.T) {
     deleteCount int
     modifyCount int
   } {
-    { "empty event" , eventInfoEmpty, nil, 0, true, 0, 0, 0 },
-    { "no races and no lanes" , eventInfoNoRaces, nil, 0, true, 0, 0, 0 },
-    { "one final no changes" , eventInfoOneDirectFinal, progSysOneFinal, 5, false, 0, 0, 0 },
-    { "add one final", eventInfoNoRacesWithEntryCount, progSysOneFinal, -1, false, 1, 0, 0 },
-    { "add one group final", eventInfoNoRacesWithGroupCount, progSysOneFinal, -1, false, 1, 0, 0 },
-    { "progression error", eventInfoNoRacesWithGroupCount, progSysErr, -1, true, 0, 0, 0 },
+    { "empty event" , eventRacesEmpty, nil, 0, true, 0, 0, 0 },
+    { "no races and no lanes" , eventRacesNoRaces, nil, 0, true, 0, 0, 0 },
+    { "one final no changes" , eventRacesOneDirectFinal, progSysOneFinal, 5, false, 0, 0, 0 },
+    { "add one final", eventRacesNoRacesWithEntryCount, progSysOneFinal, -1, false, 1, 0, 0 },
+    { "add one group final", eventRacesNoRacesWithGroupCount, progSysOneFinal, -1, false, 1, 0, 0 },
+    { "progression error", eventRacesNoRacesWithGroupCount, progSysErr, -1, true, 0, 0, 0 },
   }
   for _, tt := range tests {
     t.Run(tt.testName, func(t *testing.T) {
@@ -246,10 +246,10 @@ func TestRoundsToRaces(t *testing.T) {
   tests := []struct{
     testName string
     roundCounts []*domain.EventRoundCounts
-    event *domain.EventInfo
+    event *domain.EventRaces
     result []*domain.RaceInfo
   } {
-    { "no rounds", eventRoundCountsEmpty, eventInfoOneDirectFinal, raceInfosEmpty },
+    { "no rounds", eventRoundCountsEmpty, eventRacesOneDirectFinal, raceInfosEmpty },
     // TODO add more test cases
   }
   for _, tt := range tests {

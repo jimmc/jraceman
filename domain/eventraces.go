@@ -6,9 +6,9 @@ import (
 )
 
 // EvenInfoRepo describes how various types related to events are loaded and saved.
-type EventInfoRepo interface {
-  EventRaceInfo(ID string) (*EventInfo, error)
-  UpdateRaceInfo(ctx context.Context, eventInfo *EventInfo, racesToCreate, racesToDelete, racesToModFrom, racesToModTo []*RaceInfo) error
+type EventRacesRepo interface {
+  EventRaceInfo(ID string) (*EventRaces, error)
+  UpdateRaceInfo(ctx context.Context, eventRaces *EventRaces, racesToCreate, racesToDelete, racesToModFrom, racesToModTo []*RaceInfo) error
 }
 
 type EventRoundCounts struct {
@@ -24,8 +24,8 @@ func (r *EventRoundCounts) String() string {
   return fmt.Sprintf("{count=%d,round=%d,stage=%s}", r.Count, r.Round, r.StageName)
 }
 
-// EventInfo is a summary of an event with details collcted from multiple tables.
-type EventInfo struct {
+// EventRaces is a summary of an event with details collcted from multiple tables.
+type EventRaces struct {
   EventID string
   EntryCount int
   GroupCount int

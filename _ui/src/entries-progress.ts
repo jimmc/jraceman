@@ -5,7 +5,7 @@ import { repeat } from 'lit/directives/repeat.js'
 
 import { ApiManager, XhrOptions } from './api-manager.js'
 import { PostError } from './message-log.js'
-import { EventInfo } from './event-info.js'
+import { EventRaces } from './event-races.js'
 
 interface FromRoundInfo {
   RoundNumber: number;
@@ -35,18 +35,18 @@ export class EntriesProgress extends LitElement {
   update(changedProperties: Map<string, unknown>) {
     if (changedProperties.has("eventId")) {
       // When the eventId changes, update our event info.
-      this.loadEventInfo()  // No need to await here, just kick it off.
+      this.loadEventRaces()  // No need to await here, just kick it off.
       this.loadEventEntries()
     }
     super.update(changedProperties)
   }
 
-  async loadEventInfo() {
+  async loadEventRaces() {
     if (this.eventId == "") {
       return
     }
-    const path = '/api/app/event/' + this.eventId + '/info'
-    let eventInfo : EventInfo = {
+    const path = '/api/app/event/' + this.eventId + '/races'
+    let eventRaces : EventRaces = {
       Summary: "",
       EntryCount: 0,
       GroupCount: 0,
@@ -55,15 +55,15 @@ export class EntriesProgress extends LitElement {
       Races: [],
     }
     try {
-      eventInfo = await ApiManager.xhrJson(path)
+      eventRaces = await ApiManager.xhrJson(path)
     } catch (e) {
       console.error(e);
       const errstr = "Error getting event info: " + e/*.responseText*/
       PostError("entries-progress", errstr)
       return
     }
-    console.log("entries-progress eventInfo", eventInfo)
-    this.fromRounds = this.eventInfoToRoundSelectedInfo(eventInfo)
+    console.log("entries-progress eventRaces", eventRaces)
+    this.fromRounds = this.eventRacesToRoundSelectedInfo(eventRaces)
   }
 
   async loadEventEntries() {
@@ -90,14 +90,14 @@ export class EntriesProgress extends LitElement {
     }
   }
 
-  eventInfoToRoundSelectedInfo(eventInfo: EventInfo): FromRoundInfo[] {
+  eventRacesToRoundSelectedInfo(eventRaces: EventRaces): FromRoundInfo[] {
     let rounds: FromRoundInfo[] = []
     let roundInfo: FromRoundInfo = {
       RoundNumber: 0,
       StageName: "Draw",
     }
     rounds.push(roundInfo)
-    for (let roundCount of eventInfo.RoundCounts) {
+    for (let roundCount of eventRaces.RoundCounts) {
       let roundInfo: FromRoundInfo = {
         RoundNumber: roundCount.Round,
         StageName: roundCount.StageName,

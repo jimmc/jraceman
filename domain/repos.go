@@ -44,6 +44,6 @@ type Repos interface {
   UserRole() UserRoleRepo
 
   // Composite types
-  EventInfo() EventInfoRepo
+  EventRaces() EventRacesRepo
   SimplanSys() SimplanSysRepo
 }

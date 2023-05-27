@@ -40,7 +40,7 @@ func TestEventRaceInfo(t *testing.T) {
       defer cleanup()
 
       // Run the function under test.
-      eventInfo, err := dbRepos.EventInfo().EventRaceInfo(tt.eventId)
+      eventRaces, err := dbRepos.EventRaces().EventRaceInfo(tt.eventId)
 
       // Check the result.
       if tt.expectError {
@@ -53,7 +53,7 @@ func TestEventRaceInfo(t *testing.T) {
         }
 
         // Write out the database.
-        jsonData, err := json.MarshalIndent(eventInfo, "", " ")
+        jsonData, err := json.MarshalIndent(eventRaces, "", " ")
         if err != nil {
           t.Fatal(err)
         }
@@ -149,7 +149,7 @@ func TestUpdateRaceInfo(t *testing.T) {
     outName string
     useTx bool          // True means we pass in a transaction, false for a database.
     expectError bool
-    eventInfo *domain.EventInfo
+    eventRaces *domain.EventRaces
     racesToCreate []*domain.RaceInfo
     racesToDelete []*domain.RaceInfo
     racesToModFrom []*domain.RaceInfo
@@ -189,7 +189,7 @@ func TestUpdateRaceInfo(t *testing.T) {
       }
 
       // Run the function under test.
-      err = txRepos.EventInfo().UpdateRaceInfo(ctx, tt.eventInfo,
+      err = txRepos.EventRaces().UpdateRaceInfo(ctx, tt.eventRaces,
         tt.racesToCreate, tt.racesToDelete, tt.racesToModFrom, tt.racesToModTo)
 
       // Check the result.
