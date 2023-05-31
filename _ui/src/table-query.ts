@@ -92,7 +92,7 @@ export class TableQuery extends LitElement {
         <form>
           <button type=button @click="${this.search}">Search</button>
           <button type=button @click="${this.clear}">Clear</button>
-          <query-fields tableDesc=${JSON.stringify(this.tableDesc)}></query-fields>
+          <query-fields .tableDesc=${this.tableDesc}></query-fields>
         </form>
     `;
   }

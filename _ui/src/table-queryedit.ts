@@ -73,15 +73,15 @@ export class TableQueryedit extends LitElement {
             <span slot="tab">Query</span>
             <section slot="panel">
               Table: ${this.tableName}
-              <table-query tableDesc=${JSON.stringify(this.tableDesc)}></table-query>
+              <table-query .tableDesc=${this.tableDesc}></table-query>
             </section>
             <span slot="tab">Edit</span>
             <section slot="panel">
-              <table-edit tableDesc=${JSON.stringify(this.tableDesc)}></table-edit>
+              <table-edit .tableDesc=${this.tableDesc}></table-edit>
             </section>
             <span slot="tab">Sheet</span>
             <section slot="panel">
-              <table-sheet tableDesc=${JSON.stringify(this.tableDesc)}></table-edit>
+              <table-sheet .tableDesc=${this.tableDesc}></table-edit>
             </section>
         </jraceman-tabs>
     `;

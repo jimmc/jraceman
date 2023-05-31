@@ -161,14 +161,14 @@ export class TableSheet extends LitElement {
     return html`
         <form>
           ${when(this.haveResults, ()=>html`[${this.queryResults.Rows.length}]`)}
-          <query-fields tableDesc=${JSON.stringify(this.filterFieldTableDesc())} tableClass=inline>
+          <query-fields .tableDesc=${this.filterFieldTableDesc()} tableClass=inline>
           </query-fields>
           <button type=button @click="${this.search}">Search</button>
           <button type=button @click="${this.edit}" ?disabled="${this.selectedRowIndex<0}">Edit</button>
           <button type=button @click="${this.delete}" ?disabled="${this.selectedRowIndex<0}">Delete</button>
         </form>
-        <sheet-editor tableDesc=${JSON.stringify(this.tableDesc)}
-            queryResults=${JSON.stringify(this.queryResults)}
+        <sheet-editor .tableDesc=${this.tableDesc}
+            .queryResults=${this.queryResults}
             @row-selected="${this.rowSelected}" @row-deleted="${this.rowDeleted}">
         </sheet-editor>
     `;
