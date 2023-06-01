@@ -66,4 +66,15 @@ export class TableDescSupport {
       return val;       // no conversion for strings or unknown types
     }
   }
+
+  // emptyQueryResuts returns an empty QueryResultsData for use in initializers or
+  // other places where we don't have any results data.
+  static emptyQueryResults(): QueryResultsData {
+    const empty: QueryResultsData = {
+      Table: '(unset in table-desc)',
+      Columns: [],
+      Rows: [],
+    }
+    return empty
+  }
 }
