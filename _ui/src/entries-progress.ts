@@ -1,11 +1,17 @@
 import { LitElement, html, css } from 'lit'
+import { PropertyValues } from 'lit-element'
 import { customElement, property } from 'lit/decorators.js'
 import { when } from 'lit/directives/when.js'
 import { repeat } from 'lit/directives/repeat.js'
 
+import './sheet-editor.js'
+
+import { ApiHelper } from './api-helper.js'
 import { ApiManager, XhrOptions } from './api-manager.js'
 import { PostError } from './message-log.js'
 import { EventRaces } from './event-races.js'
+import { SheetEditor } from './sheet-editor.js'
+import { QueryResultsData, TableDesc, TableDescSupport } from './table-desc.js'
 
 interface FromRoundInfo {
   RoundNumber: number;
@@ -22,21 +28,52 @@ export class EntriesProgress extends LitElement {
   static styles = css`
   `;
 
+  // eventId is for the event as selected in our parent and passed in to us.
   @property()
   eventId = ""
 
+  // eventRaces gets loaded when eventId changes.
+  eventRaces?: EventRaces;
+
+  // fromRounds is the list of rounds for this race, less one.
+  // Round 0 is the "draw" round, the rest are for progressing from that round.
   @property()
   fromRounds: FromRoundInfo[] = []
 
-  entries: any  // TODO
+  // entriesTableDesc is the table descriptor for the entry table.
+  entryTableDesc: TableDesc = {Table:'', Columns:[]}
 
+  // entries is the set of entry records for the selected event.
+  entries: QueryResultsData = TableDescSupport.emptyQueryResults()
+
+  // selectedRoundNumber is the "from" round number as selected by the user.
   selectedRoundNumber = 0
 
-  update(changedProperties: Map<string, unknown>) {
+  // sheetEditor is our editing sheet
+  sheetEditor?: SheetEditor
+
+  // sheetTableDesc is the tableDesc we send to the sheetEditor.
+  @property()
+  sheetTableDesc: TableDesc = {
+    Table: '(unset in entries-progress)',
+    Columns: [],
+  }
+
+  // sheetQueryResults is the row data we send to the sheetEditor.
+  @property()
+  sheetQueryResults: QueryResultsData = TableDescSupport.emptyQueryResults()
+
+  firstUpdated(changedProperties:PropertyValues<this>) {
+    super.firstUpdated(changedProperties);
+    this.sheetEditor = this.shadowRoot!.querySelector("sheet-editor")! as SheetEditor
+  }
+
+  async update(changedProperties: Map<string, unknown>) {
     if (changedProperties.has("eventId")) {
       // When the eventId changes, update our event info.
-      this.loadEventRaces()  // No need to await here, just kick it off.
-      this.loadEventEntries()
+      this.loadEventEntries()   // Don't wait here, kick of the next load.
+      await this.loadEventRaces()     // We need to wait for the event race info so we can load lanes.
+      this.loadEventLanes()
     }
     super.update(changedProperties)
   }
@@ -63,6 +100,7 @@ export class EntriesProgress extends LitElement {
       return
     }
     console.log("entries-progress eventRaces", eventRaces)
+    this.eventRaces = eventRaces
     this.fromRounds = this.eventRacesToRoundSelectedInfo(eventRaces)
   }
 
@@ -79,14 +117,63 @@ export class EntriesProgress extends LitElement {
       params: params,
     }
     try {
-      const entries = await ApiManager.xhrJson(path, options)
+      this.entryTableDesc = await ApiHelper.loadTableDesc('entry')
+      const entries = await ApiManager.xhrJson(path, options) as QueryResultsData
       console.log("entries-progress entries", entries)
       this.entries = entries
+      //TODO - the following lines are for testing only.
+      this.sheetTableDesc = this.entryTableDesc
+      this.sheetQueryResults = this.entries
     } catch (e) {
       console.error(e)
       const errstr = "Error getting entries: " + e
       PostError("entries-progress", errstr)
       return
+    }
+  }
+
+  // Load the lanes for all of the races that have been loaded into this.eventRaces.
+  async loadEventLanes() {
+    if (!this.eventRaces || !this.eventRaces.Races) {
+      console.error("Attempted to load event lanes but there are no races")
+    }
+    const races = this.eventRaces!.Races
+    if (races.length==0) {
+      console.info("No races in event, so no lanes to load")
+    }
+    for (let race of races) {
+      if (race.RaceID=="") {
+        console.log("No raceID for this race, not fetching lanes")
+      } else {
+        const lanes = await this.loadRaceLanes(race.RaceID)
+        console.log("lanes for RaceID", race.RaceID, lanes)
+        race.Lanes = lanes
+      }
+    }
+  }
+
+  // Load all of the lanes for the specified race.
+  async loadRaceLanes(raceId: string): Promise<QueryResultsData> {
+    const path = '/api/query/lane/'
+    const params = [
+      { name: "raceId", op: "eq", value: raceId },
+    ]
+    const options: XhrOptions = {
+      method: "POST",
+      params: params,
+    }
+    try {
+      const raceLanes = await ApiManager.xhrJson(path, options) as QueryResultsData
+      if (!raceLanes.Table) {
+        raceLanes.Table = 'lane'
+      }
+      console.log("entries-progress raceLanes", raceLanes)
+      return raceLanes
+    } catch (e) {
+      console.error(e)
+      const errstr = "Error getting entries: " + e
+      PostError("entries-progress", errstr)
+      return TableDescSupport.emptyQueryResults()
     }
   }
 
@@ -129,6 +216,10 @@ export class EntriesProgress extends LitElement {
           <button>Delete Entry</button>
           <button>Draw</button>
           <button>Undraw</button>
+          <br/>
+          <sheet-editor .tableDesc=${this.sheetTableDesc}
+            .queryResults=${this.sheetQueryResults}>
+          </sheet-editor>
         `,
         ()=>html`Select an Event`
       )}
