@@ -5,7 +5,7 @@ import (
   "fmt"
 )
 
-// EvenInfoRepo describes how various types related to events are loaded and saved.
+// EventRacesRepo describes how various types related to event races are loaded and saved.
 type EventRacesRepo interface {
   EventRaceInfo(ID string) (*EventRaces, error)
   UpdateRaceInfo(ctx context.Context, eventRaces *EventRaces, racesToCreate, racesToDelete, racesToModFrom, racesToModTo []*RaceInfo) error
