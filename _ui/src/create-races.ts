@@ -106,6 +106,12 @@ export class CreateRaces extends LitElement {
     if (deleteWouldFail) {
       PostInfo("create-races", "* NOTE: This operation would fail because some races to be deleted have lane data, and 'Allow deleting races with lane data' is not selected")
     }
+    if (!dryRun) {
+      await this.loadEventRaces()       // If we made any changes, refresh our summary info.
+      // Preserve the value entered by the user in case they want to tweak it.
+      const numEntriesField = (this.shadowRoot!.querySelector("#entries")! as HTMLInputElement)
+      numEntriesField.value = ""+numEntries
+    }
   }
 
   update(changedProperties: Map<string, unknown>) {
