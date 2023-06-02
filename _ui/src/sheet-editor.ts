@@ -77,7 +77,7 @@ export class SheetEditor extends LitElement {
   }
 
   isReadOnly(col:ColumnDesc) {
-    return (col.Name=='id')
+    return (col.Name=='id' || col.ReadOnly)
   }
 
   onClick(e: PointerEvent) {

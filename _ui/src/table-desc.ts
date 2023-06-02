@@ -4,6 +4,7 @@ export interface ColumnDesc {
   Type: string;
   FKTable: string;
   FKItems: FKItem[];
+  ReadOnly?: boolean;
 }
 
 export interface TableDesc {

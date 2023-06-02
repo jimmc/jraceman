@@ -8,8 +8,9 @@ import './sheet-editor.js'
 
 import { ApiHelper } from './api-helper.js'
 import { ApiManager, XhrOptions } from './api-manager.js'
-import { PostError } from './message-log.js'
 import { EventRaces } from './event-races.js'
+import { PostError } from './message-log.js'
+import { ProgressionLanes } from './progression-lanes.js'
 import { SheetEditor } from './sheet-editor.js'
 import { QueryResultsData, TableDesc, TableDescSupport } from './table-desc.js'
 
@@ -47,6 +48,7 @@ export class EntriesProgress extends LitElement {
   entries: QueryResultsData = TableDescSupport.emptyQueryResults()
 
   // selectedRoundNumber is the "from" round number as selected by the user.
+  @property()
   selectedRoundNumber = 0
 
   // sheetEditor is our editing sheet
@@ -69,11 +71,17 @@ export class EntriesProgress extends LitElement {
   }
 
   async update(changedProperties: Map<string, unknown>) {
-    if (changedProperties.has("eventId")) {
+    if (changedProperties.has("eventId") || changedProperties.has("selectedRoundNumber")) {
       // When the eventId changes, update our event info.
-      this.loadEventEntries()   // Don't wait here, kick of the next load.
-      await this.loadEventRaces()     // We need to wait for the event race info so we can load lanes.
+      // Loading the races doesn't depend on the entries, so we could do these
+      // two in parallel. We need the races to load the lanes, and we need the
+      // entries and the lanes to collect the sheetQueryResults.
+      await this.loadEventEntries()
+      await this.loadEventRaces()
       this.loadEventLanes()
+      this.sheetTableDesc = ProgressionLanes.lanesFromRoundTableDesc()
+      this.sheetQueryResults = ProgressionLanes.collectLanesFromRound(
+          this.entries, this.eventRaces!, this.selectedRoundNumber)
     }
     super.update(changedProperties)
   }
@@ -121,9 +129,6 @@ export class EntriesProgress extends LitElement {
       const entries = await ApiManager.xhrJson(path, options) as QueryResultsData
       console.log("entries-progress entries", entries)
       this.entries = entries
-      //TODO - the following lines are for testing only.
-      this.sheetTableDesc = this.entryTableDesc
-      this.sheetQueryResults = this.entries
     } catch (e) {
       console.error(e)
       const errstr = "Error getting entries: " + e
@@ -145,6 +150,7 @@ export class EntriesProgress extends LitElement {
       if (race.RaceID=="") {
         console.log("No raceID for this race, not fetching lanes")
       } else {
+        // TODO - we only need races for fromRound and fromRound+1
         const lanes = await this.loadRaceLanes(race.RaceID)
         console.log("lanes for RaceID", race.RaceID, lanes)
         race.Lanes = lanes
@@ -197,6 +203,8 @@ export class EntriesProgress extends LitElement {
   onRoundChange() {
     const newSelectedRoundNumber = (this.shadowRoot!.querySelector('#round_list') as HTMLSelectElement)!.value
     console.log("onRoundChange, selected round number is now", newSelectedRoundNumber)
+    this.selectedRoundNumber = parseInt(newSelectedRoundNumber)
+    this.requestUpdate()
   }
 
   render() {
