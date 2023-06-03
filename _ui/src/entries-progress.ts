@@ -41,7 +41,7 @@ export class EntriesProgress extends LitElement {
   @property()
   fromRounds: FromRoundInfo[] = []
 
-  // entriesTableDesc is the table descriptor for the entry table.
+  // entryTableDesc is the table descriptor for the entry table.
   entryTableDesc: TableDesc = {Table:'', Columns:[]}
 
   // entries is the set of entry records for the selected event.
@@ -81,7 +81,7 @@ export class EntriesProgress extends LitElement {
       this.loadEventLanes()
       this.sheetTableDesc = ProgressionLanes.lanesFromRoundTableDesc()
       this.sheetQueryResults = ProgressionLanes.collectLanesFromRound(
-          this.entries, this.eventRaces!, this.selectedRoundNumber)
+          this.entryTableDesc, this.entries, this.eventRaces!, this.selectedRoundNumber)
     }
     super.update(changedProperties)
   }

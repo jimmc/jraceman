@@ -244,10 +244,12 @@ export class SheetEditor extends LitElement {
         <tr>
           ${/*@ts-ignore*/
             repeat(this.tableDesc.Columns, (col:ColumnDesc/*, colIndex*/) => html`
-            ${when(this.isReadOnly(col),()=>html`
-              <th class=readonly>${col.Label}</th>
-            `,()=>html`
-              <th>${col.Label}</th>
+            ${when(!col.Hidden,()=>html`
+              ${when(this.isReadOnly(col),()=>html`
+                <th class=readonly>${col.Label}</th>
+              `,()=>html`
+                <th>${col.Label}</th>
+              `)}
             `)}
           `)}
         </tr>
@@ -256,26 +258,28 @@ export class SheetEditor extends LitElement {
           <tr rowIndex=${rowIndex} selected=${this.isRowIndexSelected(rowIndex)}>
           ${/*@ts-ignore*/
             repeat(this.tableDesc.Columns, (col:ColumnDesc, colIndex) => html`
-            <td colIndex=${colIndex} selected=${this.isRowIndexSelected(rowIndex)}>
-              ${when(this.isReadOnly(col),()=>html`
-                ${row[colIndex]}
-              `, ()=>html`
-                ${when(col.FKTable, ()=>html`
-                  <select id="val_${col.Name}_${row[0]}" @change="${this.onChange}">
-                    ${repeat(col.FKItems, (keyitem) => html`
-                      <option value="${keyitem.ID}"
-                          ?selected=${row[colIndex]==keyitem.ID}>
-                        ${keyitem.Summary}
-                      </option>
-                    `)}
-                  </select>
+            ${when(!col.Hidden,()=>html`
+              <td colIndex=${colIndex} selected=${this.isRowIndexSelected(rowIndex)}>
+                ${when(this.isReadOnly(col),()=>html`
+                  ${row[colIndex]}
                 `, ()=>html`
-                  <input @input="${this.onInputText}" @change="${this.onChange}"
-                      type=text value="${row[colIndex]}">
-                  </input>
+                  ${when(col.FKTable, ()=>html`
+                    <select id="val_${col.Name}_${row[0]}" @change="${this.onChange}">
+                      ${repeat(col.FKItems, (keyitem) => html`
+                        <option value="${keyitem.ID}"
+                            ?selected=${row[colIndex]==keyitem.ID}>
+                          ${keyitem.Summary}
+                        </option>
+                      `)}
+                    </select>
+                  `, ()=>html`
+                    <input @input="${this.onInputText}" @change="${this.onChange}"
+                        type=text value="${row[colIndex]}">
+                    </input>
+                  `)}
                 `)}
-              `)}
-            </td>
+              </td>
+            `)}
           `)}
           </tr>
         `)}

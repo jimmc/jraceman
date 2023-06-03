@@ -1,12 +1,12 @@
 import { EventRaces } from './event-races.js'
-import { QueryResultsColumnDesc, QueryResultsData, TableDesc } from './table-desc.js'
+import { ColumnDesc, QueryResultsColumnDesc, QueryResultsData, TableDesc } from './table-desc.js'
 
 // ProgressionLanes provides support functions for dealing with the rows
 // of the sheet in the ByEvent tab Entries/Progress task.
 export class ProgressionLanes {
 
   // These are the fields that we collect for a progression lane. Some are hidden, most are read-only.
-  static progressionLaneColumnDescriptors = [
+  static progressionLaneColumnDescriptors: ColumnDesc[] = [
     { Name: 'entryid', Label: 'EntryId', Type: 'string', FKTable: 'entry', FKItems: [], Hidden: true },
     { Name: 'fromlaneid', Label: 'FromLaneId', Type: 'string', FKTable: 'lane', FKItems: [], Hidden: true },
     { Name: 'tolaneid', Label: 'ToLaneId', Type: 'string', FKTable: 'lane', FKItems: [], Hidden: true },
@@ -38,6 +38,7 @@ export class ProgressionLanes {
   }
 
   public static collectLanesFromRound(
+        entryTableDesc: TableDesc,      // from entriesProgress.entryTableDesc
         entries: QueryResultsData,      // from EntriesProgress.entries
         eventRaces: EventRaces,         // from EntriesProgress.eventRaces
         fromRound: number               // from EntriesProgress.selectedRoundNumber
@@ -48,6 +49,9 @@ export class ProgressionLanes {
     const progLaneColMap = ProgressionLanes.makeColumnIndexMap(ProgressionLanes.progressionLaneColumnDescriptors)
     const progLaneFieldCount = Object.keys(progLaneColMap).length
     const resultRows = []
+    // Plug in the FKItems from entryTableDesc into progressionLaneColumnDescriptors
+    ProgressionLanes.progressionLaneColumnDescriptors[progLaneColMap['personid']].FKItems =
+        entryTableDesc.Columns[entryColMap['personid']].FKItems
     for (let entryRow of entries.Rows) {
       const entryId = entryRow[entryColMap["id"]]
       const progressionLaneData = new Array(progLaneFieldCount)

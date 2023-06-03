@@ -5,6 +5,7 @@ export interface ColumnDesc {
   FKTable: string;
   FKItems: FKItem[];
   ReadOnly?: boolean;
+  Hidden?: boolean;
 }
 
 export interface TableDesc {
