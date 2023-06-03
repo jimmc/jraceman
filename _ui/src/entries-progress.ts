@@ -78,7 +78,7 @@ export class EntriesProgress extends LitElement {
       // entries and the lanes to collect the sheetQueryResults.
       await this.loadEventEntries()
       await this.loadEventRaces()
-      this.loadEventLanes()
+      await this.loadEventLanes()
       this.sheetTableDesc = ProgressionLanes.lanesFromRoundTableDesc()
       this.sheetQueryResults = ProgressionLanes.collectLanesFromRound(
           this.entryTableDesc, this.entries, this.eventRaces!, this.selectedRoundNumber)

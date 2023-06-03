@@ -48,6 +48,7 @@ export class ProgressionLanes {
     const entryRowMap: {[entryId:string]:any[]} = {}
     const progLaneColMap = ProgressionLanes.makeColumnIndexMap(ProgressionLanes.progressionLaneColumnDescriptors)
     const progLaneFieldCount = Object.keys(progLaneColMap).length
+    let laneColMap: {[columnName:string]:number} = {}
     const resultRows = []
     // Plug in the FKItems from entryTableDesc into progressionLaneColumnDescriptors
     ProgressionLanes.progressionLaneColumnDescriptors[progLaneColMap['personid']].FKItems =
@@ -70,11 +71,31 @@ export class ProgressionLanes {
       // TODO - TeamId field comes from person record
     }
     for (let race of eventRaces.Races) {
-      if (race.Round == fromRound) {
-        // TODO - look up entryId, copy fields from race into that row
-      }
-      if (race.Round == toRound) {
-        // TODO - look up entryId, copy fields from race into that row
+      if (race.Lanes && race.Lanes.Rows.length>0) {
+        if (Object.keys(laneColMap).length==0) {
+          laneColMap = ProgressionLanes.makeColumnIndexMap(race.Lanes.Columns)
+        }
+        for (let laneRow of race.Lanes.Rows) {
+          const laneId = laneRow[laneColMap['id']]
+          const laneEntryId = laneRow[laneColMap['entryid']]
+          const progressionLaneData = entryRowMap[laneEntryId]
+          if (race.Round == fromRound) {
+            progressionLaneData[progLaneColMap['fromlaneid']] = laneId
+            progressionLaneData[progLaneColMap['fromround']] = laneRow[laneColMap['round']]
+            progressionLaneData[progLaneColMap['fromsection']] = laneRow[laneColMap['section']]
+            progressionLaneData[progLaneColMap['fromlane']] = laneRow[laneColMap['lane']]
+            progressionLaneData[progLaneColMap['fromresult']] = laneRow[laneColMap['result']]
+            progressionLaneData[progLaneColMap['fromplace']] = laneRow[laneColMap['place']]
+            progressionLaneData[progLaneColMap['fromscoreplace']] = laneRow[laneColMap['scoreplace']]
+          }
+          if (race.Round == toRound) {
+            progressionLaneData[progLaneColMap['tolaneid']] = laneId
+            progressionLaneData[progLaneColMap['toround']] = laneRow[laneColMap['round']]
+            progressionLaneData[progLaneColMap['tosection']] = laneRow[laneColMap['section']]
+            progressionLaneData[progLaneColMap['tolane']] = laneRow[laneColMap['lane']]
+            progressionLaneData[progLaneColMap['toresult']] = laneRow[laneColMap['result']]
+          }
+        }
       }
     }
     const result:QueryResultsData = {
