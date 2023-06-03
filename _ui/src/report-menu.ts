@@ -1,7 +1,8 @@
-import {LitElement, html, css} from 'lit';
-import {customElement} from 'lit/decorators.js';
+import { LitElement, html, css } from 'lit'
+import { customElement } from 'lit/decorators.js'
 
 import './jraceman-dropdown.js'
+
 import { ReportResults } from './report-results.js'
 
 // A drop-down menu for report operations.

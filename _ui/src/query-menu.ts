@@ -1,7 +1,8 @@
-import {LitElement, html, css, render} from 'lit';
-import {customElement} from 'lit/decorators.js';
+import { LitElement, html, css, render } from 'lit'
+import { customElement } from 'lit/decorators.js'
 
 import './jraceman-dropdown.js'
+
 import { QueryResults } from './query-results.js'
 
 // A drop-down menu for query operations.

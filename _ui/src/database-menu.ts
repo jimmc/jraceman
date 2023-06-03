@@ -1,9 +1,10 @@
 import {LitElement, html, css} from 'lit';
 import {customElement} from 'lit/decorators.js';
 
-import { ApiManager, XhrOptions} from "./api-manager.js"
-import "./jraceman-dropdown.js"
-import { PostError, PostInfo } from "./message-log.js"
+import './jraceman-dropdown.js'
+
+import { ApiManager, XhrOptions} from './api-manager.js'
+import { PostError, PostInfo } from './message-log.js'
 
 // A drop-down menu for database operations.
 @customElement('database-menu')

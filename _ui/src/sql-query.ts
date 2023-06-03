@@ -1,9 +1,9 @@
-import {LitElement, html, css} from 'lit';
-import {customElement} from 'lit/decorators.js';
+import { LitElement, html, css } from 'lit'
+import { customElement } from 'lit/decorators.js'
 
-import { ApiManager } from "./api-manager.js"
-import { PostError } from "./message-log.js"
-import { QueryResultsEvent } from "./table-desc.js"
+import { ApiManager } from './api-manager.js'
+import { PostError } from './message-log.js'
+import { QueryResultsEvent } from './table-desc.js'
 
 // Allows the user to enter and execute an SQL query.
 @customElement('sql-query')

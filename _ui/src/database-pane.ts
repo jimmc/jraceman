@@ -1,8 +1,8 @@
-import {LitElement, html, css} from 'lit';
-import {customElement} from 'lit/decorators.js';
+import {LitElement, html, css} from 'lit'
+import {customElement} from 'lit/decorators.js'
 
-import "./jraceman-tabs.js"
-import "./table-manager.js"
+import './jraceman-tabs.js'
+import './table-manager.js'
 
 // A pane for database stuff
 @customElement('database-pane')

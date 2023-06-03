@@ -1,7 +1,7 @@
-import {LitElement, html, css} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
-import {repeat} from 'lit/directives/repeat.js';
-import {when} from 'lit/directives/when.js';
+import { LitElement, html, css } from 'lit'
+import { customElement, property } from 'lit/decorators.js'
+import { repeat } from 'lit/directives/repeat.js'
+import { when } from 'lit/directives/when.js'
 
 import { TableDesc } from './table-desc.js'
 

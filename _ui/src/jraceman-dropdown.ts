@@ -1,5 +1,5 @@
-import {LitElement, html, css} from 'lit';
-import {customElement} from 'lit/decorators.js';
+import { LitElement, html, css } from 'lit'
+import { customElement } from 'lit/decorators.js'
 
 // jraceman-dropdown provides a control and content element
 // for drop-down menus.

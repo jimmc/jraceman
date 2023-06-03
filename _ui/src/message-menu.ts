@@ -3,6 +3,7 @@ import { customElement } from 'lit/decorators.js'
 import { when } from 'lit/directives/when.js'
 
 import './jraceman-dropdown.js'
+
 import { MessageLog } from './message-log.js'
 
 // A drop-down menu for message operations.

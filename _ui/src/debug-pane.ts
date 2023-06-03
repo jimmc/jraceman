@@ -1,8 +1,9 @@
-import {LitElement, html, css} from 'lit';
-import {customElement} from 'lit/decorators.js';
-import { PostMessageParts } from './message-log.js'
+import { LitElement, html, css } from 'lit'
+import { customElement } from 'lit/decorators.js'
 
-import "./sql-query.js"
+import './sql-query.js'
+
+import { PostMessageParts } from './message-log.js'
 
 // A pane for debugging.
 @customElement('debug-pane')

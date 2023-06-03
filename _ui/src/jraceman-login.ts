@@ -1,10 +1,10 @@
-import {LitElement, html, css} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
-import {PropertyValues} from 'lit-element';
+import { LitElement, html, css } from 'lit'
+import { customElement, property } from 'lit/decorators.js'
+import { PropertyValues } from 'lit-element'
 
-import { ApiManager } from "./api-manager.js"
-import { PostError } from "./message-log.js"
-import { hash as sha256hash } from "./sha256.js"
+import { ApiManager } from './api-manager.js'
+import { PostError } from './message-log.js'
+import { hash as sha256hash } from './sha256.js'
 
 export interface LoginStateEvent {
   State: boolean;

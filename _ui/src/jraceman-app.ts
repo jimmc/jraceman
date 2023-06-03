@@ -1,6 +1,6 @@
-import { LitElement, html, css } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
-import { when } from 'lit/directives/when.js';
+import { LitElement, html, css } from 'lit'
+import { customElement, property } from 'lit/decorators.js'
+import { when } from 'lit/directives/when.js'
 
 import './auth-setup.js'
 import './by-event.js'
