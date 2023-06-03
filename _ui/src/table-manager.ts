@@ -9,17 +9,17 @@ import { ApiHelper } from './api-helper.js'
 import { TableDesc } from './table-desc.js'
 
 /**
- * table-queryedit provides tabs with query, edit, and sheet panels for a table.
+ * table-manager provides tabs with query, edit, and sheet panels for a table.
  */
-@customElement('table-queryedit')
-export class TableQueryedit extends LitElement {
+@customElement('table-manager')
+export class TableManager extends LitElement {
 
   @property({type: String})
-  tableName = "(unset-in-table-queryedit-name)"
+  tableName = "(unset-in-table-manager-name)"
 
   //@property({type: Object})
   tableDesc: TableDesc = {
-    Table: "(unset-in-table-queryedit-desc)",
+    Table: "(unset-in-table-manager-desc)",
     Columns: [],
   };
 
@@ -59,6 +59,6 @@ export class TableQueryedit extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'table-queryedit': TableQueryedit;
+    'table-manager': TableManager;
   }
 }

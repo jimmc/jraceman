@@ -2,7 +2,7 @@ import {LitElement, html, css} from 'lit';
 import {customElement} from 'lit/decorators.js';
 
 import "./jraceman-tabs.js"
-import "./table-queryedit.js"
+import "./table-manager.js"
 
 // A pane for database stuff
 @customElement('database-pane')
@@ -16,7 +16,7 @@ export class DatabasePane extends LitElement {
         <span slot="tab">Checks</span>
         <section slot="panel"><reports-pane apiName='check'></reports-pane></section>
         <span slot="tab">Context Options</span>
-        <section slot="panel"><table-queryedit tableName="contextoption"></table-queryedit></section>
+        <section slot="panel"><table-manager tableName="contextoption"></table-manager></section>
       </jraceman-tabs>
     `;
   }

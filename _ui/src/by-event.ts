@@ -6,7 +6,7 @@ import { when } from 'lit/directives/when.js'
 import './create-races.js'
 import './entries-progress.js'
 import './jraceman-tabs.js'
-import './table-queryedit.js'
+import './table-manager.js'
 
 import { ApiHelper, KeySummary } from './api-helper.js'
 import { PostError } from './message-log.js'

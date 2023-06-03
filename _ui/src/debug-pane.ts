@@ -18,11 +18,11 @@ export class DebugPane extends LitElement {
         <span slot="tab">Edit ID</span>
         <section slot="panel">Edit ID is not yet implemented</section>
         <span slot="tab">Options</span>
-        <section slot="panel"><table-queryedit tableName="option"></table-queryedit></section>
+        <section slot="panel"><table-manager tableName="option"></table-manager></section>
         <span slot="tab">Races</span>
-        <section slot="panel"><table-queryedit tableName="race"></table-queryedit></section>
+        <section slot="panel"><table-manager tableName="race"></table-manager></section>
         <span slot="tab">Lanes</span>
-        <section slot="panel"><table-queryedit tableName="lane"></table-queryedit></section>
+        <section slot="panel"><table-manager tableName="lane"></table-manager></section>
         <span slot="tab">Messages</span>
         <section slot="panel">
           <button @click=${this.onClick.bind(this,"Info","Sample info message")}>Post Info message</button>
