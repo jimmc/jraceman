@@ -87,6 +87,13 @@ export class TableSheet extends LitElement {
     }
   }
 
+  async setSheetData(results: QueryResultsData) {
+    console.log("TableSheet.setSheetData", results)
+    this.selectedRowIndex = -1
+    this.queryResults = results;
+    this.haveResults = true;
+  }
+
   async search() {
     console.log("TableSheet.search begin");
     this.haveResults = false

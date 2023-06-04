@@ -7,7 +7,7 @@ import './query-fields.js'
 import { ApiManager, XhrOptions } from './api-manager.js'
 import { PostError } from './message-log.js'
 import { QueryFields } from './query-fields.js'
-import { TableDesc, QueryResultsEvent } from './table-desc.js'
+import { TableDesc, QueryResultsData, QueryResultsEvent } from './table-desc.js'
 
 /**
  * table-query provides a form to do a query on a table.
@@ -83,8 +83,40 @@ export class TableQuery extends LitElement {
     document.dispatchEvent(event);
   }
 
+  async editInSheet() {
+    console.log("TableQuery.editInSheet begin");
+    const params = this.queryFields!.fieldsAsParams()
+    const options: XhrOptions = {
+      method: "POST",
+      params: params,
+    }
+    const queryPath = '/api/query/' + this.tableDesc.Table + '/'
+    let result: QueryResultsData
+    try {
+      result = await ApiManager.xhrJson(queryPath, options) as QueryResultsData
+      if (result && !result.Table) {
+        result.Table = this.tableDesc.Table
+      }
+    } catch(e) {
+      const evt = e as XMLHttpRequest
+      PostError("query", evt.responseText)
+      console.log("Error in table query", e)
+      return    // Don't attempt to update the QueryResults tab.
+    }
+    console.log("TableQuery.editInSheet results", result)
+    // Now tell results tab to display this data.
+    const event = new CustomEvent<QueryResultsEvent>('jraceman-query-to-sheet-event', {
+      detail: {
+        message: 'Query results for table '+this.tableDesc.Table,
+        results: result
+      } as QueryResultsEvent
+    })
+    console.log("TableQuery dispatching event", event)
+    this.dispatchEvent(event)
+  }
+
   isStringColumn(colType: string) {
-    return colType == "string";
+    return colType == "string"
   }
 
   render() {
@@ -92,6 +124,7 @@ export class TableQuery extends LitElement {
         <form>
           <button type=button @click="${this.search}">Search</button>
           <button type=button @click="${this.clear}">Clear</button>
+          <button type=button @click="${this.editInSheet}">Edit in Sheet</button>
           <query-fields .tableDesc=${this.tableDesc}></query-fields>
         </form>
     `;
