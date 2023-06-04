@@ -6,6 +6,7 @@ import { when } from 'lit/directives/when.js'
 import './sheet-editor.js'
 
 import { ApiManager, XhrOptions } from './api-manager.js'
+import { JracemanDialog } from './jraceman-dialog.js'
 import { PostError } from './message-log.js'
 import { QueryFields } from './query-fields.js'
 import { SheetEditor } from './sheet-editor.js'
@@ -87,8 +88,27 @@ export class TableSheet extends LitElement {
     }
   }
 
+  // Set the given data into our sheet.
   async setSheetData(results: QueryResultsData) {
     console.log("TableSheet.setSheetData", results)
+    const maxSafeRows = 500
+    if (results.Rows.length > maxSafeRows) {
+      const msg = "This query is returning " + results.Rows.length + " rows. " +
+          "This may cause your browser to hang or crash. " +
+          "You can use the Query tab and Edit-in-Sheet to select a smaller set of rows."
+      const buttons =
+          [ "Cancel", "Display all data anyway", "Display first " + maxSafeRows + " rows"]
+      const b = await JracemanDialog.messageDialog("Data size warning", msg, buttons)
+      if (b <= 0) {
+        // Canceled, don't show the rows
+        return
+      }
+      if (b == 2) {
+        results.Rows = results.Rows.slice(0, maxSafeRows)
+      }
+      // if b==1, just continue and display all rows.
+    }
+    this.haveResults = true;
     this.selectedRowIndex = -1
     this.queryResults = results;
     this.haveResults = true;
@@ -96,8 +116,6 @@ export class TableSheet extends LitElement {
 
   async search() {
     console.log("TableSheet.search begin");
-    this.haveResults = false
-    this.selectedRowIndex = -1
     const params = this.queryFields!.fieldsAsParams()
     const options: XhrOptions = {
       method: "POST",
@@ -109,8 +127,7 @@ export class TableSheet extends LitElement {
       if (result && !result.Table) {
         result.Table = this.tableDesc.Table;
       }
-      this.queryResults = result;
-      this.haveResults = true;
+      this.setSheetData(result)
     } catch(e) {
       const evt = e as XMLHttpRequest
       PostError("query", evt.responseText)
