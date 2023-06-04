@@ -67,7 +67,7 @@ export class SheetEditor extends LitElement {
   @property()
   selectedRowIndex = -1
 
-  fieldUpdatedCallback?: FieldUpdatedCallback
+  fieldUpdatedCallback: FieldUpdatedCallback = () => { return Error("No fieldUpdatedCallback set") }
 
   setFieldUpdatedCallback(cb: FieldUpdatedCallback) {
     this.fieldUpdatedCallback = cb
@@ -123,9 +123,10 @@ export class SheetEditor extends LitElement {
     }
     const id = this.idForRowIndex(rowIndex)
     console.log(" ..for rowId", id, " column", this.tableDesc.Columns[colIndex].Name)
-    const err = await this.fieldUpdatedCallback!(this.tableDesc, this.queryResults,
+    const err = await this.fieldUpdatedCallback(this.tableDesc, this.queryResults,
         rowIndex, colIndex, id, value)
     if (err) {
+      console.error(err)
       td.removeAttribute("editing")
       td.setAttribute("error","true")
     } else {
