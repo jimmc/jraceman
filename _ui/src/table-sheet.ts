@@ -11,7 +11,7 @@ import { PostError } from './message-log.js'
 import { QueryFields } from './query-fields.js'
 import { SheetEditor } from './sheet-editor.js'
 import { TableCustom } from './table-custom.js'
-import { TableDesc, ColumnDesc, QueryResultsData } from './table-desc.js'
+import { TableDesc, TableDescSupport, ColumnDesc, QueryResultsData } from './table-desc.js'
 
 /**
  * table-sheet provides a panel to edit fields in multiple rows and columns.
@@ -48,6 +48,7 @@ export class TableSheet extends LitElement {
     super.firstUpdated(changedProperties);
     this.sheetEditor = this.shadowRoot!.querySelector("sheet-editor")! as SheetEditor
     this.queryFields = this.shadowRoot!.querySelector("query-fields")! as QueryFields
+    this.sheetEditor!.setFieldUpdatedCallback(this.onFieldUpdated.bind(this))
   }
 
   // getSelectElement gets an HTMLSelectElement by selector.
@@ -147,6 +148,41 @@ export class TableSheet extends LitElement {
     const rowIndex = e.detail as number;
     this.queryResults.Rows.splice(rowIndex, 1)
     this.requestUpdate()
+    // TODO - send a delete request to the API
+  }
+
+  // onFieldUpdated is called from our sheet-editor when the user changes a field.
+  // We use a callback here rather than an event so that we can return a value
+  // indicating an error. On success, the return value is null.
+  // This function must confirm to SheetEditor.FieldUpdatedCallback.
+  async onFieldUpdated(tableDesc: TableDesc, _tableData: QueryResultsData,
+      _rowIndex: number, colIndex: number, id: string, colVal: string) {
+    console.log("in TableSheet.onFieldUpdated")
+    const col = tableDesc.Columns[colIndex]
+    const name = col.Label      // TODO - Is this the right way to get the field name?
+    console.log("Type of field " + name + " is " + col.Type)
+    // For non-string fields, convert from the string in the form
+    // to the appropriate data type for the field.
+    const convertedColVal = TableDescSupport.convertToType(colVal, col.Type)
+    const updatePath = '/api/crud/' + tableDesc.Table + '/' + id
+    const method = "PATCH"
+    const options: XhrOptions = {
+      method: method,
+      params: [
+        { "op": "replace", "path": "/" + name, "value": convertedColVal },
+      ]
+    }
+    try {
+      const result = await ApiManager.xhrJson(updatePath, options)
+      if (result && !result.Table) {
+        result.Table = tableDesc.Table
+      }
+      console.log(result)
+      return null       // No error
+    } catch(e) {
+      console.error("Error:", e/*.responseText*/)
+      return e
+    }
   }
 
   async edit() {

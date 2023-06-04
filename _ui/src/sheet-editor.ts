@@ -3,10 +3,12 @@ import { customElement, property } from 'lit/decorators.js'
 import { repeat } from 'lit/directives/repeat.js'
 import { when } from 'lit/directives/when.js'
 
-import { ApiManager, XhrOptions } from './api-manager.js'
 import { JracemanDialog } from './jraceman-dialog.js'
-import { TableDesc, TableDescSupport, ColumnDesc, QueryResultsData, QueryResultsEvent, RequestEditEvent } from './table-desc.js'
+import { TableDesc, ColumnDesc, QueryResultsData, QueryResultsEvent, RequestEditEvent } from './table-desc.js'
 import { TableEdit } from './table-edit.js'
+
+export type FieldUpdatedCallback = (tableDesc: TableDesc, tableData: QueryResultsData,
+    rowIndex: number, colIndex: number, id: string, colVal: string) => any
 
 /**
  * sheet-editor provides a table-layout for editing.
@@ -65,6 +67,12 @@ export class SheetEditor extends LitElement {
   @property()
   selectedRowIndex = -1
 
+  fieldUpdatedCallback?: FieldUpdatedCallback
+
+  setFieldUpdatedCallback(cb: FieldUpdatedCallback) {
+    this.fieldUpdatedCallback = cb
+  }
+
   onQueryResultsEvent(e:Event) {
     const evt = e as CustomEvent<QueryResultsEvent>
     console.log("SheetEditor got updated results", evt.detail.results)
@@ -115,7 +123,8 @@ export class SheetEditor extends LitElement {
     }
     const id = this.idForRowIndex(rowIndex)
     console.log(" ..for rowId", id, " column", this.tableDesc.Columns[colIndex].Name)
-    const err = await this.saveChange(id, colIndex, value)
+    const err = await this.fieldUpdatedCallback!(this.tableDesc, this.queryResults,
+        rowIndex, colIndex, id, value)
     if (err) {
       td.removeAttribute("editing")
       td.setAttribute("error","true")
@@ -204,35 +213,6 @@ export class SheetEditor extends LitElement {
       bubbles: true,
       detail: rowIndex,
     }))
-  }
-
-  async saveChange(id: string, colIndex: number, colVal: string) {
-    console.log("in SheetEditor.saveChange")
-    const col = this.tableDesc.Columns[colIndex]
-    const name = col.Label      // TODO - Is this the right way to get the field name?
-    console.log("Type of field " + name + " is " + col.Type)
-    // For non-string fields, convert from the string in the form
-    // to the appropriate data type for the field.
-    const convertedColVal = TableDescSupport.convertToType(colVal, col.Type)
-    const updatePath = '/api/crud/' + this.tableDesc.Table + '/' + id
-    const method = "PATCH"
-    const options: XhrOptions = {
-      method: method,
-      params: [
-        { "op": "replace", "path": "/" + name, "value": convertedColVal },
-      ]
-    }
-    try {
-      const result = await ApiManager.xhrJson(updatePath, options)
-      if (result && !result.Table) {
-        result.Table = this.tableDesc.Table
-      }
-      console.log(result)
-      return null       // No error
-    } catch(e) {
-      console.error("Error:", e/*.responseText*/)
-      return e
-    }
   }
 
   // TODO: We assume below that the ID column is 0 and its value is in row[0].
