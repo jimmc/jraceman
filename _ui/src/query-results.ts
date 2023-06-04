@@ -2,7 +2,7 @@ import { LitElement, html, css } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
 import { repeat } from 'lit/directives/repeat.js'
 
-import { ColumnDesc, QueryResultsData, QueryResultsEvent, RequestEditEvent } from './table-desc.js'
+import { ColumnDesc, TableData, QueryResultsEvent, RequestEditEvent } from './table-desc.js'
 
 /**
  * query-results provides a form to do a query on a table.
@@ -16,7 +16,7 @@ export class QueryResults extends LitElement {
   `;
 
   @property({type: Object})
-  queryResults: QueryResultsData = {
+  queryResults: TableData = {
     Table: "",
     Columns: [],
     Rows: [],

@@ -11,7 +11,7 @@ import { PostError } from './message-log.js'
 import { QueryFields } from './query-fields.js'
 import { SheetEditor } from './sheet-editor.js'
 import { TableCustom } from './table-custom.js'
-import { TableDesc, TableDescSupport, ColumnDesc, QueryResultsData } from './table-desc.js'
+import { TableDesc, TableDescSupport, ColumnDesc, TableData } from './table-desc.js'
 
 /**
  * table-sheet provides a panel to edit fields in multiple rows and columns.
@@ -28,7 +28,7 @@ export class TableSheet extends LitElement {
   };
 
   @property({type: Object /*, notify: true*/})
-  queryResults: QueryResultsData = {
+  queryResults: TableData = {
     Table: "(unset-in-query-results)",
     Columns: [],
     Rows: [],
@@ -90,7 +90,7 @@ export class TableSheet extends LitElement {
   }
 
   // Set the given data into our sheet.
-  async setSheetData(results: QueryResultsData) {
+  async setSheetData(results: TableData) {
     console.log("TableSheet.setSheetData", results)
     const maxSafeRows = 500
     if (results.Rows.length > maxSafeRows) {
@@ -155,7 +155,7 @@ export class TableSheet extends LitElement {
   // We use a callback here rather than an event so that we can return a value
   // indicating an error. On success, the return value is null.
   // This function must confirm to SheetEditor.FieldUpdatedCallback.
-  async onFieldUpdated(tableDesc: TableDesc, _tableData: QueryResultsData,
+  async onFieldUpdated(tableDesc: TableDesc, _tableData: TableData,
       _rowIndex: number, colIndex: number, id: string, colVal: string) {
     console.log("in TableSheet.onFieldUpdated")
     const col = tableDesc.Columns[colIndex]

@@ -18,21 +18,21 @@ export interface FKItem {
   Summary: string;
 }
 
-export interface QueryResultsColumnDesc {
+export interface TableDataColumnDesc {
   Name: string;
   Type: string;
 }
 
-export interface QueryResultsData {
+export interface TableData {
   Error?: string;
   Table: string;
-  Columns: QueryResultsColumnDesc[];
+  Columns: TableDataColumnDesc[];
   Rows: any[][];
 }
 
 export interface QueryResultsEvent {
   message: string;
-  results: QueryResultsData;
+  results: TableData;
 }
 
 export interface RequestEditEvent {
@@ -69,10 +69,10 @@ export class TableDescSupport {
     }
   }
 
-  // emptyQueryResuts returns an empty QueryResultsData for use in initializers or
+  // emptyTableData returns an empty TableData for use in initializers or
   // other places where we don't have any results data.
-  static emptyQueryResults(): QueryResultsData {
-    const empty: QueryResultsData = {
+  static emptyTableData(): TableData {
+    const empty: TableData = {
       Table: '(unset in table-desc)',
       Columns: [],
       Rows: [],

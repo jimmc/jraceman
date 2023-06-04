@@ -1,5 +1,5 @@
 import { EventRaces } from './event-races.js'
-import { ColumnDesc, QueryResultsColumnDesc, QueryResultsData, TableDesc } from './table-desc.js'
+import { ColumnDesc, TableDataColumnDesc, TableData, TableDesc } from './table-desc.js'
 
 // ProgressionLanes provides support functions for dealing with the rows
 // of the sheet in the ByEvent tab Entries/Progress task.
@@ -39,10 +39,10 @@ export class ProgressionLanes {
 
   public static collectLanesFromRound(
         entryTableDesc: TableDesc,      // from entriesProgress.entryTableDesc
-        entries: QueryResultsData,      // from EntriesProgress.entries
+        entries: TableData,      // from EntriesProgress.entries
         eventRaces: EventRaces,         // from EntriesProgress.eventRaces
         fromRound: number               // from EntriesProgress.selectedRoundNumber
-  ): QueryResultsData {                 // Return value is suitable for use as EntriesProgress.sheetQueryResults
+  ): TableData {                 // Return value is suitable for use as EntriesProgress.sheetQueryResults
     const toRound = fromRound + 1
     const entryColMap = ProgressionLanes.makeColumnIndexMap(entries.Columns)
     const entryRowMap: {[entryId:string]:any[]} = {}
@@ -98,7 +98,7 @@ export class ProgressionLanes {
         }
       }
     }
-    const result:QueryResultsData = {
+    const result:TableData = {
       Table: 'progressionLanes',        // Not a real table name
       Columns: ProgressionLanes.progressionLaneColumnDescriptors,        // TODO - strip down to name and type?
       Rows: resultRows,
@@ -108,8 +108,8 @@ export class ProgressionLanes {
 
   // makeColumnIndexMap takes an array of column descriptors (it just uses the Name field)
   // and returns a map from column name to array index, suitable for providing direct
-  // by name to columns in the rows of QueryResultsData.
-  static makeColumnIndexMap(columnDescriptors: QueryResultsColumnDesc[]): {[columnName:string]:number} {
+  // by name to columns in the rows of TableData.
+  static makeColumnIndexMap(columnDescriptors: TableDataColumnDesc[]): {[columnName:string]:number} {
     const columnMap: {[columnName:string]:number} = {}
     let colIndex = 0
     for (let colDesc of columnDescriptors) {

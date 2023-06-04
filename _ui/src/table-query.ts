@@ -7,7 +7,7 @@ import './query-fields.js'
 import { ApiManager, XhrOptions } from './api-manager.js'
 import { PostError } from './message-log.js'
 import { QueryFields } from './query-fields.js'
-import { TableDesc, QueryResultsData, QueryResultsEvent } from './table-desc.js'
+import { TableDesc, TableData, QueryResultsEvent } from './table-desc.js'
 
 /**
  * table-query provides a form to do a query on a table.
@@ -91,9 +91,9 @@ export class TableQuery extends LitElement {
       params: params,
     }
     const queryPath = '/api/query/' + this.tableDesc.Table + '/'
-    let result: QueryResultsData
+    let result: TableData
     try {
-      result = await ApiManager.xhrJson(queryPath, options) as QueryResultsData
+      result = await ApiManager.xhrJson(queryPath, options) as TableData
       if (result && !result.Table) {
         result.Table = this.tableDesc.Table
       }

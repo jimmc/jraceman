@@ -4,10 +4,10 @@ import { repeat } from 'lit/directives/repeat.js'
 import { when } from 'lit/directives/when.js'
 
 import { JracemanDialog } from './jraceman-dialog.js'
-import { TableDesc, ColumnDesc, QueryResultsData, QueryResultsEvent, RequestEditEvent } from './table-desc.js'
+import { TableDesc, ColumnDesc, TableData, QueryResultsEvent, RequestEditEvent } from './table-desc.js'
 import { TableEdit } from './table-edit.js'
 
-export type FieldUpdatedCallback = (tableDesc: TableDesc, tableData: QueryResultsData,
+export type FieldUpdatedCallback = (tableDesc: TableDesc, tableData: TableData,
     rowIndex: number, colIndex: number, id: string, colVal: string) => any
 
 /**
@@ -43,7 +43,7 @@ export class SheetEditor extends LitElement {
   };
 
   @property({type: Object})
-  queryResults: QueryResultsData = {
+  queryResults: TableData = {
     Table: "",
     Columns: [],
     Rows: [],

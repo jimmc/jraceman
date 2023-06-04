@@ -1,4 +1,4 @@
-import { QueryResultsData } from './table-desc.js'
+import { TableData } from './table-desc.js'
 
 export interface RoundCount {
   Count: number,        // int
@@ -16,7 +16,7 @@ export interface RaceInfo {
   AreaName: string,
   RaceNumber: number,   // float
   LaneCount: number,    // int
-  Lanes: QueryResultsData, // Not provided by EventRaces call; filled in by separately getting lanes
+  Lanes: TableData, // Not provided by EventRaces call; filled in by separately getting lanes
 }
 
 export interface EventRaces {

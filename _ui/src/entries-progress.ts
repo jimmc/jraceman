@@ -12,7 +12,7 @@ import { EventRaces } from './event-races.js'
 import { PostError } from './message-log.js'
 import { ProgressionLanes } from './progression-lanes.js'
 import { SheetEditor } from './sheet-editor.js'
-import { QueryResultsData, TableDesc, TableDescSupport } from './table-desc.js'
+import { TableData, TableDesc, TableDescSupport } from './table-desc.js'
 
 interface FromRoundInfo {
   RoundNumber: number;
@@ -45,7 +45,7 @@ export class EntriesProgress extends LitElement {
   entryTableDesc: TableDesc = {Table:'', Columns:[]}
 
   // entries is the set of entry records for the selected event.
-  entries: QueryResultsData = TableDescSupport.emptyQueryResults()
+  entries: TableData = TableDescSupport.emptyTableData()
 
   // selectedRoundNumber is the "from" round number as selected by the user.
   @property()
@@ -63,7 +63,7 @@ export class EntriesProgress extends LitElement {
 
   // sheetQueryResults is the row data we send to the sheetEditor.
   @property()
-  sheetQueryResults: QueryResultsData = TableDescSupport.emptyQueryResults()
+  sheetQueryResults: TableData = TableDescSupport.emptyTableData()
 
   firstUpdated(changedProperties:PropertyValues<this>) {
     super.firstUpdated(changedProperties);
@@ -126,7 +126,7 @@ export class EntriesProgress extends LitElement {
     }
     try {
       this.entryTableDesc = await ApiHelper.loadTableDesc('entry')
-      const entries = await ApiManager.xhrJson(path, options) as QueryResultsData
+      const entries = await ApiManager.xhrJson(path, options) as TableData
       console.log("entries-progress entries", entries)
       this.entries = entries
     } catch (e) {
@@ -159,7 +159,7 @@ export class EntriesProgress extends LitElement {
   }
 
   // Load all of the lanes for the specified race.
-  async loadRaceLanes(raceId: string): Promise<QueryResultsData> {
+  async loadRaceLanes(raceId: string): Promise<TableData> {
     const path = '/api/query/lane/'
     const params = [
       { name: "raceId", op: "eq", value: raceId },
@@ -169,7 +169,7 @@ export class EntriesProgress extends LitElement {
       params: params,
     }
     try {
-      const raceLanes = await ApiManager.xhrJson(path, options) as QueryResultsData
+      const raceLanes = await ApiManager.xhrJson(path, options) as TableData
       if (!raceLanes.Table) {
         raceLanes.Table = 'lane'
       }
@@ -179,7 +179,7 @@ export class EntriesProgress extends LitElement {
       console.error(e)
       const errstr = "Error getting entries: " + e
       PostError("entries-progress", errstr)
-      return TableDescSupport.emptyQueryResults()
+      return TableDescSupport.emptyTableData()
     }
   }
 
