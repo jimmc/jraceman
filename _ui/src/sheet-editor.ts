@@ -25,6 +25,9 @@ export class SheetEditor extends LitElement {
     table.sheet-editor th.readonly {
       font-weight: normal;
     }
+    table.sheet-editor td.readonly {
+      border: 1px solid lightgrey;
+    }
     tr[selected="true"] {
       background-color: lightblue;
     }
@@ -240,10 +243,11 @@ export class SheetEditor extends LitElement {
           ${/*@ts-ignore*/
             repeat(this.tableDesc.Columns, (col:ColumnDesc, colIndex) => html`
             ${when(!col.Hidden,()=>html`
-              <td colIndex=${colIndex} selected=${this.isRowIndexSelected(rowIndex)}>
-                ${when(this.isReadOnly(col),()=>html`
+              ${when(this.isReadOnly(col),()=>html`
+                <td class=readonly colIndex=${colIndex} selected=${this.isRowIndexSelected(rowIndex)}>
                   ${row[colIndex]}
                 `, ()=>html`
+                <td colIndex=${colIndex} selected=${this.isRowIndexSelected(rowIndex)}>
                   ${when(col.FKTable, ()=>html`
                     <select id="val_${col.Name}_${row[0]}" @change="${this.onChange}">
                       ${repeat(col.FKItems, (keyitem) => html`
@@ -258,8 +262,8 @@ export class SheetEditor extends LitElement {
                         type=text value="${row[colIndex]}">
                     </input>
                   `)}
-                `)}
-              </td>
+                </td>
+              `)}
             `)}
           `)}
           </tr>

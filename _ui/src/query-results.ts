@@ -10,6 +10,13 @@ import { ColumnDesc, TableData, QueryResultsEvent, RequestEditEvent } from './ta
 @customElement('query-results')
 export class QueryResults extends LitElement {
   static styles = css`
+    table.query-results th {
+      padding-left: 3px;
+      padding-right: 3px;
+    }
+    table.query-results td {
+      border: 1px solid whitesmoke
+    }
     tr[selected="true"] {
       background-color: lightblue;
     }
@@ -107,7 +114,7 @@ export class QueryResults extends LitElement {
     return html`
       Table: ${this.queryResults.Table}<br/>
       ${this.queryResults.Error}
-      <table @click="${this.onClick}">
+      <table class=query-results @click="${this.onClick}">
         <tr>
           ${/*@ts-ignore*/
             repeat(this.queryResults.Columns, (col:ColumnDesc/*, colIndex*/) => html`
